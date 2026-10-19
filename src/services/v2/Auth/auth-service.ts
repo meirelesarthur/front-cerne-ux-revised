@@ -31,6 +31,8 @@ import type { VerifyEmailResponse, ResendVerificationResponse } from '@/@types/v
 import { AUTH_TOKEN_STORAGE_KEY, IS_TOKEN_AUTH, WEB_CLIENT_TYPE } from '@/config/env';
 import api from '@/services/api';
 
+import { DEV_AUTH_BYPASS, devLogin, devLogout, devProfile } from './dev-auth-bypass';
+
 // ============================================
 // CSRF (Sanctum SPA)
 // ============================================
@@ -55,7 +57,7 @@ let csrfInitialized = false;
  * trafega no header Authorization, não em cookie.
  */
 export async function ensureCsrfCookie(force = false): Promise<void> {
-  if (IS_TOKEN_AUTH) return;
+  if (DEV_AUTH_BYPASS || IS_TOKEN_AUTH) return;
   if (csrfInitialized && !force) return;
   await axios.get(`${API_ORIGIN}/sanctum/csrf-cookie`, { withCredentials: true });
   csrfInitialized = true;
@@ -90,6 +92,8 @@ export interface SessionData {
  * Retorna { user, farms, active_farm_uuid, token } no envelope ApiResponse.
  */
 export async function login(credentials: LoginCredentials) {
+  if (DEV_AUTH_BYPASS) return devLogin() as any; // DEV ONLY — ver dev-auth-bypass.ts
+
   await ensureCsrfCookie(); // no-op no modo token
 
   const config = IS_TOKEN_AUTH
@@ -129,6 +133,11 @@ export async function register(data: {
  * Limpa o storage mesmo se a chamada falhar (ex.: já deslogado / offline).
  */
 export async function logout() {
+  if (DEV_AUTH_BYPASS) { // DEV ONLY — ver dev-auth-bypass.ts
+    devLogout();
+    clearAuthStorage();
+    return;
+  }
   try {
     await api.V2.post('/auth/logout');
   } finally {
@@ -146,6 +155,7 @@ export async function logout() {
  * lang, roles[] e permissions[]. Usado para hidratar o AuthContext.
  */
 export async function getUserProfile() {
+  if (DEV_AUTH_BYPASS) return devProfile() as any; // DEV ONLY — ver dev-auth-bypass.ts
   return api.V2.get<Response<UserProfile>>('/auth/me');
 }
 
