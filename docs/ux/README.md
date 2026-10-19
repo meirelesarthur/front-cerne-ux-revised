@@ -10,8 +10,29 @@ com rastreabilidade (o que mudou, por quê, onde, como validar).
 3. `npx vite --host --port 5180 --strictPort` → http://localhost:5180
 4. Na tela de login, qualquer e-mail/senha entra (usuário fictício, todas as permissões).
 
-Limites: só login/perfil/logout são simulados. Telas que buscam dados ficam vazias/com
-erro até haver backend (ou mock) — para melhorias nelas, documente o estado usado.
+### Dados simulados (mocks de dev)
+
+Com `VITE_DEV_MOCKS=true` (só `.env` local, só em modo dev), um adapter do axios
+(`src/mocks/dev-api/`) responde no lugar do backend:
+
+- **Rotas registradas** (`handlers/*.ts`) devolvem dados realistas: hoje Fazendas
+  (sintético), Bancos, Estados e Cidades (reais, do dump `init_db.sql`).
+- **Rotas não registradas** devolvem lista vazia (GET) ou sucesso genérico (escrita),
+  então toda tela abre e mostra o estado vazio em vez de erro de rede. Para deixar essas
+  rotas irem à rede real: `VITE_DEV_MOCKS_FALLBACK=false`.
+- Para simular uma tela nova: crie `handlers/<recurso>.ts` (lista `MockRoute[]`) e some
+  em `src/mocks/dev-api/index.ts`. Copie o contrato do `*-service.ts` da tela.
+
+**Dump do banco (`init_db.sql`, PostgreSQL, schema legado `gbcerne`)** — é uma base real
+(pessoas, fornecedores, financeiro). Regras: (1) não commitar dado pessoal; (2) só
+catálogos de referência são extraídos, via
+`node scripts/dev-mocks/extract-reference.mjs <init_db.sql>` (lista fechada em
+`REFERENCE_TABLES`); (3) dados de pessoas/fazendas/financeiro nos mocks são **sintéticos**,
+inspirados no formato do dump. O schema do dump é o legado: o front usa a API nova
+(UUID, contrato Laravel), então o dump serve de base de volume/forma, não de fonte direta.
+
+Limites: telas que dependem de dados sem handler aparecem vazias. Para melhorias nelas,
+crie o handler primeiro e documente o estado usado.
 
 > O bypass vive em `src/services/v2/Auth/dev-auth-bypass.ts`, só existe em `yarn dev`
 > (`import.meta.env.DEV`) e a flag vem **desligada** no `.env.example`. Não commitar `.env`.

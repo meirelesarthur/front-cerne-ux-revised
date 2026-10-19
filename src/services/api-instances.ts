@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { IS_COOKIE_AUTH } from '@/config/env';
+import { installDevMocks } from '@/mocks/dev-api';
 
 const timeout = Number(import.meta.env.VITE_API_TIMEOUT) || 30000;
 
@@ -40,6 +41,8 @@ const axiosInstanceCHAT: AxiosInstance = axios.create({
     Accept: 'application/json',
   },
 });
+
+installDevMocks(axiosInstanceV2); // DEV ONLY (VITE_DEV_MOCKS) — ver src/mocks/dev-api
 
 export {
   axiosInstanceV2,

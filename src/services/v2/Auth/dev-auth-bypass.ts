@@ -31,7 +31,7 @@ const devUser = {
   photo: null,
   photo_url: null,
   lang: 'pt-BR',
-  roles: ['Gestor_Plataf'],
+  roles: ['Administrador'],
   permissions: permissionsCatalog as string[],
   farm_scoped_permissions: [] as string[],
 };
