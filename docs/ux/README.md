@@ -53,3 +53,7 @@ Status: `proposta` · `implementada` · `validada` · `entregue ao Dev`.
 | 2026-10-19 | `.claude/launch.json`: porta 5180 (5173 ocupada por outro projeto local). | `.claude/launch.json` |
 | 2026-10-19 | Bypass de login só-dev. **Não deve ir ao repositório oficial** (ou ir desligado). | `src/services/v2/Auth/dev-auth-bypass.ts`, `auth-service.ts`, `.env.example` |
 | 2026-10-19 | `.gitignore` tinha a regra `Docs`, que no Windows ignora `docs/`; adicionada exceção `!/docs/`. | `.gitignore` |
+
+## Alinhamento ao Design System
+
+Mapa de divergências e plano em ondas: [alinhamento-ds.md](alinhamento-ds.md).
