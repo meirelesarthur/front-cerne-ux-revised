@@ -1,0 +1,41 @@
+export const GradientText = {
+  parts: ["wrapper", "overlay", "content"],
+  baseStyle: {
+    wrapper: {
+      position: "relative",
+      overflow: "hidden",
+      borderRadius: "lg",
+    },
+    overlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundSize: "300% 100%",
+      animation: `gradient linear infinite`,
+      zIndex: 0,
+      _before: {
+        content: `""`,
+        position: "absolute",
+        top: "2px",
+        left: "2px",
+        width: "calc(100% - 4px)",
+        height: "calc(100% - 4px)",
+        backgroundColor: "#060010",
+        borderRadius: "inherit",
+        zIndex: -1,
+      },
+    },
+    content: {
+      display: "inline-block",
+      position: "relative",
+      zIndex: 1,
+      backgroundSize: "300% 100%",
+      backgroundClip: "text",
+      "-webkit-background-clip": "text",
+      color: "transparent",
+      animation: `gradient linear infinite`,
+    },
+  },
+};

@@ -1,0 +1,216 @@
+// src/constants/languages/languageEnUs/languageRequestReceipts.ts
+// English (en-US) translation of the "Receipts" module (RequestReceipt —
+// Administrative / Supplies, esteira 97-Esteiras/040, TASK-RCB-FE-00). See
+// `@/@types/language/module-request-receipts` for the full contract.
+
+import { ModuleRequestReceipts } from '@/@types/language/module-request-receipts';
+
+export const languageRequestReceipts: ModuleRequestReceipts = {
+  requestReceipt: {
+    singularLabel: 'Receipt',
+    pluralLabel: 'Receipts',
+    titleModule: 'Receipts',
+    pageTitle: 'Receipts',
+    pageSubtitle: 'Manage receipt confirmation for purchase requests.',
+
+    list: {
+      table: {
+        code: 'Code',
+        type: 'Type',
+        status: 'Status',
+        requestDate: 'Request Date',
+        description: 'Description/Ticket',
+        nfe: 'Invoice',
+        duration: 'Duration',
+        requester: 'Requester',
+        responsible: 'Current Responsible',
+        farm: 'Farm',
+        updatedOn: 'Updated On',
+        launched: 'Posted',
+        actions: 'Actions',
+      },
+      launchedYes: 'Posted',
+      launchedNo: 'Pending',
+      emptyState: {
+        titleEmpty: 'No receipts registered',
+        titleFiltered: 'No receipts found',
+        descriptionEmpty: 'Receipts will appear here once there are requests to confirm.',
+        descriptionFiltered: 'Adjust the filters to find what you are looking for.',
+      },
+    },
+
+    filter: {
+      title: 'Filter Receipts',
+      search: 'Search',
+      searchPlaceholder: 'Search by description/ticket',
+      status: 'Status',
+      dateFrom: 'Start date',
+      dateTo: 'End date',
+      user: 'Requester',
+      farm: 'Farm',
+      type: 'Type',
+      responsible: 'Responsible',
+    },
+
+    actions: {
+      receive: 'Receive Request',
+      receiveToast: 'Request received successfully.',
+      view: 'View',
+      sla: 'SLA Report',
+      transfer: 'Transfer Responsible',
+      confirmReceipt: 'Confirm Receipt',
+      financial: 'Generate Financial',
+      informPayment: 'Finalize Order',
+      changeStatus: 'Roll Back Step',
+    },
+
+    confirm: {
+      pageTitle: 'Confirm Receipt',
+      pageSubtitle: 'Confirm receipt of the purchase request items.',
+      fields: {
+        code: 'Code',
+        responsible: 'Responsible',
+        receiptDate: 'Receipt Date',
+        nfe: 'Invoice',
+        purchaseStatus: 'Receipt Situation',
+        receiptNote: 'Notes',
+      },
+      purchaseStatusOptions: {
+        total: 'Purchase Received',
+        parcial: 'Partially Received',
+      },
+      items: {
+        title: 'Items',
+        empty: 'No items to confirm',
+        columns: {
+          description: 'Description',
+          quantity: 'Quantity',
+          status: 'Status',
+          deliveryDate: 'Delivery Date',
+        },
+      },
+      attachments: {
+        title: 'Attachments',
+        addButton: '+ Add Attachment',
+        removeButton: 'Remove',
+        emptyLabel: 'No attachment added',
+        fields: {
+          name: 'Attachment Description',
+          file: 'File',
+        },
+        removeLastRowError: 'Keep at least one attachment row.',
+        fillBeforeAddError: 'Fill the current row before adding another.',
+      },
+      validation: {
+        nfeRequired: 'Invoice is required',
+        nfeMaxLength: 'Invoice must be at most 9 characters long',
+        purchaseStatusRequired: 'Receipt Situation is required',
+        receiptDateRequired: 'Receipt Date is required',
+        receiptNoteMaxLength: 'Note must be at most 600 characters long',
+        attachmentFileRequiredWhenTotal: 'File is required when the receipt is Full',
+        attachmentNameRequiredWithFile: 'Attachment Description is required when there is a file',
+      },
+      submitToast: 'Receipt confirmed successfully.',
+    },
+
+    financial: {
+      pageTitle: 'Generate Financial',
+      pageSubtitle: 'Generate the financial title for the confirmed receipt.',
+      fields: {
+        vlTotal: 'Total Amount',
+        financialNumber: 'Number',
+        financialTypeId: 'Title Type',
+        financialProprietaryId: 'Owner',
+        financialProviderId: 'Provider',
+        financialNote: 'Note',
+        hasInput: 'Has Down Payment?',
+        inputValue: 'Down Payment Amount',
+        inputDate: 'Down Payment Date',
+        qtdInstallments: 'Number of Installments',
+        firstInstallment: '1st Installment Date',
+        intInstallments: 'Interval Between Installments (days)',
+        fiscalDocument: 'Fiscal Document?',
+        receiptDate: 'Receipt Date',
+        receiptNote: 'Notes',
+      },
+      placeholders: {
+        financialTypeId: 'Search a title type',
+        financialProprietaryId: 'Search an owner',
+        financialProviderId: 'Search a provider',
+      },
+      hasInputOptions: {
+        yes: 'Yes',
+        no: 'No',
+      },
+      fiscalDocumentOptions: {
+        yes: 'Yes',
+        no: 'No',
+      },
+      newProviderButton: '+ New Provider',
+      installments: {
+        title: 'Installments',
+        sumLabel: 'Installments sum',
+        emptyLabel: 'No installment generated',
+        columns: {
+          dueDate: 'Due Date',
+          value: 'Value',
+        },
+      },
+      ratio: {
+        title: 'Apportionment',
+        categoryLabel: 'Financial Category',
+        centerLabel: 'Cost Center',
+        planAccountLabel: 'Chart of Accounts',
+        percentLabel: 'Percentage',
+        valueLabel: 'Value',
+        addRowButton: '+ Add Apportionment',
+        removeRowButton: 'Remove',
+        emptyLabel: 'No apportionment added',
+        sumLabel: 'Apportionment sum',
+        sumWarning: 'The apportionment sum must total 100% of the amount.',
+      },
+      validation: {
+        financialNumberMaxLength: 'Number must be at most 15 characters long',
+        financialTypeIdRequired: 'Title Type is required',
+        financialNoteRequired: 'Note is required',
+        financialNoteMaxLength: 'Note must be at most 1000 characters long',
+        hasInputRequired: 'Select whether there is a down payment',
+        inputValueRequired: 'Down Payment Amount is required',
+        inputDateRequired: 'Down Payment Date is required',
+        qtdInstallmentsRequired: 'Number of Installments is required',
+        qtdInstallmentsMin: 'Number of Installments must be at least 1',
+        firstInstallmentRequired: '1st Installment Date is required',
+        vlTotalRequired: 'Total Amount is required',
+        vlTotalPositive: 'The title amount must be greater than zero',
+        financialNumberRequired: 'Title Number is required',
+        providerRequired: 'Provider is required',
+        installmentsAndRatioRequired: 'Please enter the installments and the apportionment.',
+        ratioTotalDiffers: 'The apportionment total differs from the total amount.',
+        ratioCategoryRequired: 'Financial Category is required',
+        ratioCenterRequired: 'Cost Center is required',
+      },
+      freezeErrorFallback: 'Could not generate financial — financial period frozen.',
+      submitToast: 'Financial generated successfully.',
+    },
+
+    informPayment: {
+      pageTitle: 'Finalize Order',
+      pageSubtitle: 'Provide the payment data to finalize the order.',
+      fields: {
+        finalDate: 'Finalization Date',
+        status: 'Status',
+        nfe: 'Invoice',
+        finalizationNote: 'Finalization Note',
+      },
+      statusOptions: {
+        pedidoFinalizado: 'Order Finalized',
+      },
+      validation: {
+        finalDateRequired: 'Finalization Date is required',
+        nfeRequired: 'Invoice is required',
+        nfeMaxLength: 'Invoice must be at most 9 characters long',
+      },
+      submitToast: 'Order finalized successfully.',
+    },
+  },
+};

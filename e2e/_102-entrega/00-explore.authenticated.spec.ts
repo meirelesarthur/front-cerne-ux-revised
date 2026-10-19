@@ -1,0 +1,26 @@
+import { test } from '@playwright/test';
+import { pickCombo, shot, setDate, pickChakra, pickAsync, typeMoney } from './lib';
+test.use({ viewport: { width: 1600, height: 1500 } });
+test('explore', async ({ page }) => {
+  test.setTimeout(45_000);
+  await page.goto('/financeiro/caixa/novo'); await page.waitForTimeout(5000);
+  await setDate(page, '2026-10-15');
+  await pickChakra(page, 'Tipo', 'Entrada');
+  const tc = page.locator('[data-scope=field][role=group]').filter({ has: page.locator('label', { hasText: 'Tp. Categoria' }) }).first();
+  await tc.getByRole('combobox').click(); await page.waitForTimeout(500);
+  console.log('TC options:', (await page.locator('div[role=option]:visible').evaluateAll(e=>e.map(x=>x.textContent+'|aria-disabled='+x.getAttribute('aria-disabled')+'|dd='+x.getAttribute('data-disabled')))).join(' ; '));
+  await shot(page, '000-explore-e');
+  await page.locator('div[role=option]:visible', {hasText:'Entrada'}).first().click();
+  await pickAsync(page, 'account_uuid', 0);
+  await pickCombo(page, 'Buscar proprietário', 0);
+  await pickAsync(page, 'client_uuid', 0);
+  await typeMoney(page, 'value', '12345');
+  console.log('value=', await page.locator('[id="value"]').inputValue());
+  await page.locator('[id="allocations.0.category_uuid"]').click(); await page.waitForTimeout(1000);
+  console.log('CAT opts', await page.locator('div[role=option]:visible').count());
+  await page.locator('div[role=option]:visible').first().click();
+  await pickAsync(page, 'allocations.0.center_uuid', 0);
+  await page.waitForTimeout(500);
+  await shot(page, '000-explore-c');
+  console.log(await page.locator('[id="allocations.0.value"]').inputValue(), await page.locator('[id="allocations.0.value-percent"]').inputValue());
+});

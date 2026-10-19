@@ -1,0 +1,211 @@
+// src/constants/languages/languageEnUs/languageEarnings.ts
+// EN-US translation of the "Monthly Earning" module (Earning —
+// Administrative, 97-Esteiras/002, Tasks 07/08/09).
+
+import { ModuleEarnings } from '@/@types/language/module-earnings';
+
+export const languageEarnings: ModuleEarnings = {
+  earning: {
+    singularLabel: 'Monthly Earning',
+    pluralLabel: 'Monthly Earnings',
+    titleModule: 'Monthly Earning',
+    list: {
+      pageTitle: 'Monthly Earning',
+      pageSubtitle: 'Manage the monthly earnings already recorded for employees.',
+      deletedToast: 'Earning removed successfully',
+      table: {
+        employee: 'Employee',
+        function: 'Function',
+        period: 'Month/Year',
+        type: 'Type',
+        total: 'Total',
+        vlCheque: 'Check Amount',
+        isPay: 'Paid?',
+        actions: 'Actions',
+      },
+      statusLabels: {
+        paid: 'Paid',
+        pending: 'Not paid',
+        toCalculate: 'To calculate',
+      },
+      actions: {
+        view: 'View',
+        edit: 'Edit',
+        delete: 'Delete',
+      },
+      emptyState: {
+        titleEmpty: 'No earning recorded.',
+        descriptionEmpty: 'Start by recording an earning for an employee.',
+        titleFiltered: 'No earning found.',
+        descriptionFiltered: 'Try adjusting the filters or clearing the search.',
+        cta: 'Record Earning',
+      },
+      filter: {
+        title: 'Filter Earnings',
+        employee: 'Employee',
+        employeePlaceholder: 'Search employee by name...',
+        function: 'Function',
+        year: 'Year',
+        month: 'Month',
+        type: 'Type',
+      },
+      launchButton: 'Record Earning',
+      deleteConfirm: {
+        title: 'Delete earning',
+        description: 'Are you sure you want to delete this earning? This action cannot be undone.',
+        periodCutoffError: 'You cannot delete an earning from a future period.',
+      },
+      bulk: {
+        selectAllLabel: 'Select all eligible rows',
+        selectRowLabel: 'Select this row',
+        selectedCountLabel: 'selected',
+        generateExpensesButton: 'Generate Expenses',
+        generateExpensesSuccessToast: 'Expenses generated successfully',
+        generateExpensesConfirmTitle: 'Generate Expenses',
+        generateExpensesConfirmDescription:
+          'Confirm generating expenses for the selected earnings?',
+        generateExpensesConfirmButton: 'Confirm',
+      },
+      importButton: 'Import/Export spreadsheet',
+    },
+    detail: {
+      title: 'Earning Detail',
+      backButton: 'Back',
+      generalData: {
+        title: 'General Data',
+      },
+      fields: {
+        employee: 'Employee',
+        function: 'Function',
+        period: 'Month/Year',
+        type: 'Type',
+        total: 'Total',
+        vlAccount: 'Account Amount',
+        vlCheque: 'Check Amount',
+        isPay: 'Paid?',
+        costCenter: 'Cost Center',
+        team: 'Team',
+        proprietary: 'Owner',
+        createdAt: 'Created at',
+      },
+      events: {
+        title: 'Events',
+        columns: {
+          event: 'Event',
+          value: 'Value',
+          condition: 'Condition',
+        },
+        empty: 'No event recorded.',
+      },
+      advancesPeriod: {
+        title: 'Period Advances',
+        columns: {
+          date: 'Date',
+          amount: 'Amount',
+        },
+        empty: 'No advance in this period.',
+      },
+      notFound: {
+        title: 'Earning not found',
+        description:
+          'The requested earning does not exist, was removed, or belongs to another farm.',
+      },
+      invalidParamsToast: {
+        title: 'Monthly Earning',
+        description: 'Invalid identifier — returning to the list.',
+      },
+    },
+    selectEmployeeModal: {
+      title: 'Record Earning',
+      subtitle: 'Select the employee to record or edit the earning for the period.',
+      searchPlaceholder: 'Search employee by name...',
+      confirmButton: 'Continue',
+      cancelButton: 'Cancel',
+      emptyState: 'No employee found.',
+    },
+    form: {
+      title: {
+        create: 'Record Earning',
+        edit: 'Edit Earning',
+      },
+      sections: {
+        generalData: 'General Data',
+        events: 'Events',
+        advancesPeriod: 'Period Advances',
+      },
+      fields: {
+        employee: 'Employee',
+        cpf: 'ID Number',
+        function: 'Function',
+        month: 'Month',
+        year: 'Year',
+        type: 'Type',
+        costCenter: 'Cost Center',
+        team: 'Team',
+        proprietary: 'Owner',
+        total: 'Total',
+        vlAccount: 'Account Amount',
+        vlCheque: 'Check Amount',
+      },
+      eventRow: {
+        event: 'Event',
+        value: 'Value',
+        condition: 'Condition',
+        addButton: 'Add event',
+        removeButton: 'Remove event',
+        emptyLabel: 'No event added.',
+        totalLabel: 'Events total',
+      },
+      proprietaryUnavailable: 'Field unavailable — no permission to query owners.',
+      teamUnavailable: 'Field unavailable — no permission to query teams.',
+      vlAccountExceedsTotalWarning:
+        'The account amount cannot be greater than the total — both fields were reset.',
+      periodCutoffError: 'You cannot record earnings for future months.',
+      validation: {
+        functionRequired: 'Select the function',
+        eventsRequired: 'Add at least one event',
+        eventValueRequired: 'Enter a valid value for the event',
+        duplicateEvent: 'This event was already added in another row',
+        totalRequired: 'Enter a valid value for the total',
+        vlAccountRequired: 'Enter a valid value for the account amount',
+        costCenterRequired: 'Select the cost center',
+      },
+    },
+    importModal: {
+      title: 'Import Earning Spreadsheet',
+      subtitle: 'Import a spreadsheet with the period entries.',
+      instructions: 'Download the template, fill in the data and upload the completed file.',
+      downloadShortcut: 'Download template',
+      downloadTemplateError: 'Error downloading the spreadsheet template.',
+      fileUpload: {
+        label: 'Spreadsheet (.xlsx)',
+        hint: 'Accepted formats: .xlsx — maximum 10MB.',
+        dropzoneTitle: 'Drag the spreadsheet here or click to select',
+        dropzoneDraggingTitle: 'Drop the spreadsheet here',
+        changeLabel: 'Change file',
+        removeLabel: 'Remove file',
+        errorTypeMessage: 'Invalid file format — upload a .xlsx file.',
+        errorSizeMessage: 'File exceeds the maximum allowed size (10MB).',
+      },
+      batchFields: {
+        month: 'Month',
+        year: 'Year',
+        type: 'Type',
+        costCenter: 'Cost Center',
+        team: 'Team',
+        proprietary: 'Owner',
+      },
+      rowErrors: {
+        title: 'Invalid rows',
+      },
+      result: {
+        employeesProcessedLabel: 'Employees processed',
+        rowsProcessedLabel: 'Rows processed',
+      },
+      importSuccessToast: 'Import completed successfully',
+      cancelButton: 'Cancel',
+      submitButton: 'Import',
+      closeButton: 'Close',
+    },
+  },
+};

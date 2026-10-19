@@ -1,0 +1,160 @@
+// src/constants/languages/languageEsEs/languageNatureOperations.ts
+// Traducción ES-ES del módulo de NATURALEZA DE OPERACIÓN (Registros Base /
+// Fiscales). TASK-NO-FE-01 cubrió list + filter (listado + eliminación
+// bloqueada). TASK-NO-FE-02 agrega la sección `form` (creación/edición —
+// bloque fiscal condicional).
+
+import { ModuleNatureOperations } from '@/@types/language/module-nature-operations';
+
+export const languageNatureOperations: ModuleNatureOperations = {
+  natureOperation: {
+    pluralLabel: 'Naturalezas de Operación',
+    singularLabel: 'Naturaleza de Operación',
+    list: {
+      pageTitle: 'Naturaleza de Operación',
+      pageSubtitle:
+        'Administre las naturalezas de operación fiscal (CFOPs predeterminados y clasificación Entrada/Salida).',
+      deletedToast: 'Naturaleza de Operación eliminada con éxito',
+      table: {
+        code: 'Código',
+        descricao: 'Descripción',
+        tipo: 'Tipo',
+        ativo: 'Estado',
+        active: 'Activo',
+        inactive: 'Inactivo',
+      },
+      tipoOptions: {
+        entrada: 'Entrada',
+        saida: 'Salida',
+      },
+      actions: {
+        edit: 'Editar',
+        delete: 'Eliminar',
+      },
+      emptyState: {
+        titleEmpty: 'Ninguna Naturaleza de Operación registrada.',
+        descriptionEmpty: 'Registre la primera naturaleza de operación para comenzar.',
+        titleEmptyNoCreate: 'Ninguna Naturaleza de Operación disponible.',
+        descriptionEmptyNoCreate:
+          'Aún no hay naturalezas de operación registradas. Comuníquese con el administrador de la plataforma.',
+        titleFiltered: 'Ninguna Naturaleza de Operación encontrada.',
+        descriptionFiltered: 'Intente ajustar los filtros o borrar la búsqueda.',
+        cta: 'Nueva Naturaleza de Operación',
+        descriptionEmptyWithTemplates:
+          'Registre la primera naturaleza de operación o use las plantillas predeterminadas del sistema (botón "Usar plantillas").',
+      },
+      importDefaults: {
+        button: 'Usar plantillas',
+        dialogTitle: 'Usar plantillas predeterminadas',
+        dialogDescription:
+          'Se agregarán a esta empresa las naturalezas de operación predeterminadas del sistema que aún no existen. Las ya registradas no se modificarán ni duplicarán.',
+        dialogConfirm: 'Agregar',
+        toastCreated: '{count} naturalezas agregadas',
+        toastAllExisting: 'Todas las naturalezas predeterminadas ya están registradas',
+      },
+    },
+    filter: {
+      title: 'Filtrar Naturalezas de Operación',
+      search: 'Buscar',
+      searchPlaceholder: 'Buscar por descripción o código',
+      tipo: 'Tipo',
+      tipoAll: 'Todos',
+      tipoOptions: {
+        entrada: 'Entrada',
+        saida: 'Salida',
+      },
+      ativo: 'Estado',
+      ativoAll: 'Todos',
+      activeOptions: {
+        active: 'Activo',
+        inactive: 'Inactivo',
+      },
+    },
+    form: {
+      title: { create: 'Nueva Naturaleza de Operación', edit: 'Editar Naturaleza de Operación' },
+      subtitle: {
+        create: 'Registre una nueva naturaleza de operación fiscal.',
+        edit: 'Actualice los datos de la naturaleza de operación.',
+      },
+      sections: {
+        general: 'General',
+        fiscalClassic: 'Fiscal Clásico',
+        taxReform: 'Reforma Tributaria — IBS/CBS/IS',
+      },
+      fields: {
+        code: 'Código',
+        descricao: 'Descripción',
+        tipo: 'Tipo',
+        cfopSaidaInterno: 'CFOP Salida Interna',
+        cfopSaidaExterno: 'CFOP Salida Externa/Interestatal',
+        cfopSaidaExportacao: 'CFOP Salida Exportación',
+        cfopEntradaInterno: 'CFOP Entrada Interna',
+        cfopEntradaExterno: 'CFOP Entrada Externa/Interestatal',
+        cfopEntradaExportacao: 'CFOP Entrada Exportación',
+        ativo: 'Activo',
+        sobrescreveCfopProduto: 'Sobrescribir CFOP del Producto',
+        overwriteProduct: 'Sobrescribir Información del Producto',
+        generateFinancial: 'Generar Financiero',
+        automaticCalculation: 'Cálculo Automático de ICMS',
+        taxRuleUuid: 'Regla Fiscal',
+        additionalInfoUuid: 'Información Complementaria',
+        cstCsosn: 'CST/CSOSN',
+        cstPis: 'CST PIS',
+        cstCofins: 'CST COFINS',
+        cstIpi: 'CST IPI',
+        cenqIpi: 'Encuadramiento Legal IPI',
+        percIcms: '% ICMS',
+        percPis: '% PIS',
+        percCofins: '% COFINS',
+        percIpi: '% IPI',
+        cest: 'CEST',
+        percentReduction: '% Reducción Base de Cálculo',
+        motDesIcms: 'Motivo de la Desoneración del ICMS',
+        motDesIcmsHint:
+          'Se exige informar ICMS desonerado (vICMSDeson > 0). Las opciones varían según el CST.',
+        percDif: '% Diferimiento',
+        percDifHint: 'Informe 100 para diferimiento total.',
+        percFcp: '% FCP',
+        percFcpHint: 'Opcional. Vacío o 0 = no informado.',
+        modalityBc: 'Modalidad Base de Cálculo ICMS',
+        origem: 'Origen de la Mercadería',
+        cstCsosnExp: 'CST/CSOSN Exportación',
+        cClassTrib: 'Clasificación Tributaria (cClassTrib)',
+        cstIbsCbs: 'CST IBS/CBS',
+        percIbsUf: '% IBS Estatal (UF)',
+        percIbsMun: '% IBS Municipal',
+        percReducaoAliqIbsUf: '% Reducción Alícuota IBS UF',
+        percReducaoAliqIbsMun: '% Reducción Alícuota IBS Municipio',
+        percDifIbsUf: '% Diferimiento IBS UF',
+        percDifIbsMun: '% Diferimiento IBS Municipio',
+        percCbs: '% CBS',
+        percReducaoAliqCbs: '% Reducción Alícuota CBS',
+        percDifCbs: '% Diferimiento CBS',
+        cstIs: 'CST Impuesto Selectivo (IS)',
+        percIs: '% Impuesto Selectivo (IS)',
+        percIsEspec: '% IS Específico',
+        adRemIbs: 'Alícuota Ad Rem IBS',
+        adRemCbs: 'Alícuota Ad Rem CBS',
+        tpCredPresIbsZfm: 'Tipo de Crédito Presunto IBS (ZFM)',
+        indDoacao: 'Indicador de Donación',
+      },
+      tipoOptions: {
+        entrada: 'Entrada',
+        saida: 'Salida',
+      },
+      booleanOptions: { yes: 'Sí', no: 'No' },
+      hints: { codeGenerated: 'Generado automáticamente' },
+      validation: {
+        requiredField: 'Este campo es obligatorio',
+        descricaoMaxLength: 'La descripción debe tener como máximo 80 caracteres',
+        cfopFormat: 'Debe contener 4 dígitos numéricos',
+        maxLength6: 'Debe tener como máximo 6 caracteres',
+        maxLength10: 'Debe tener como máximo 10 caracteres',
+        percentageRange: 'Ingrese un porcentaje entre 0 y 999,99',
+        percentageRange4: 'Ingrese un porcentaje entre 0 y 999,9999',
+        percentageRange100: 'Ingrese un porcentaje entre 0 y 100',
+        nonNegative: 'Ingrese un valor mayor o igual a 0',
+      },
+    },
+  },
+};

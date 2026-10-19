@@ -1,0 +1,140 @@
+// src/constants/languages/languageEnUs/languageRequisitions.ts
+// EN-US translation of the "Requisição/Saída" module (Requisition —
+// Inventory, write, 97-Esteiras/002, Tasks 04/05).
+
+import { ModuleRequisitions } from '@/@types/language/module-requisitions';
+
+export const languageRequisitions: ModuleRequisitions = {
+  requisition: {
+    singularLabel: 'Requisition',
+    pluralLabel: 'Requisitions',
+    list: {
+      columns: {
+        code: 'Code',
+        product: 'Product',
+        quantity: 'Quantity',
+        warehouse: 'Warehouse',
+        costCenter: 'Cost Center',
+        user: 'Responsible',
+        status: 'Status',
+        createdAt: 'Issue Date',
+      },
+      actions: {
+        view: 'View',
+        delete: 'Delete',
+        generateDocument: 'Document for Signature',
+        importDocument: 'Import Signed Document',
+        viewSignedDocument: 'Signed Document',
+      },
+      emptyState: {
+        titleEmpty: 'No requisitions registered.',
+        descriptionEmpty: 'Start by adding the first requisition.',
+        titleFiltered: 'No requisitions found.',
+        descriptionFiltered: 'Try adjusting the filters or clearing the search.',
+        cta: 'Add Requisition',
+      },
+      deletedToast: 'Requisition removed successfully',
+      documentErrorToast: 'Could not open the document. Please try again.',
+    },
+    filter: {
+      title: 'Filter requisitions',
+      product: 'Product',
+      productPlaceholder: 'Search by product',
+      warehouse: 'Warehouse',
+      warehousePlaceholder: 'Search by warehouse',
+      costCenter: 'Cost Center',
+      costCenterPlaceholder: 'Search by cost center',
+      dateFrom: 'Start date',
+      dateTo: 'End date',
+    },
+    detail: {
+      title: 'Requisition',
+      invalidParamsToast: {
+        title: 'Invalid requisition',
+        description: 'The provided identifier is not valid.',
+      },
+      notFound: {
+        title: 'Requisition not found',
+        description: 'The requested requisition does not exist or was removed.',
+      },
+      fields: {
+        code: 'Code',
+        requester: 'Requester',
+        classification: 'Classification',
+        area: 'Area',
+        product: 'Product',
+        warehouse: 'Warehouse',
+        quantity: 'Quantity',
+        user: 'Responsible',
+        createdAt: 'Created at',
+      },
+      backButton: 'Back',
+      deleteButton: 'Delete',
+    },
+    importDocumentModal: {
+      title: 'Import Signed Document',
+      subtitle: 'Upload the signed document (PDF or image) to complete the requisition.',
+      fileUpload: {
+        label: 'Signed document',
+        hint: 'PDF, JPG or PNG file up to 5MB.',
+        dropzoneTitle: 'Drag a file or click to select',
+        dropzoneDraggingTitle: 'Drop the file here',
+        changeLabel: 'Change file',
+        removeLabel: 'Remove file',
+        errorTypeMessage: 'File type not accepted. Send a PDF, JPG or PNG.',
+        errorSizeMessage: 'File exceeds the maximum size allowed (5MB).',
+      },
+      cancelButton: 'Cancel',
+      submitButton: 'Import',
+      importSuccessToast: 'Signed document imported successfully',
+      genericErrorToast: 'Could not import the document. Please try again.',
+    },
+    form: {
+      title: {
+        create: 'New Requisition',
+      },
+      fields: {
+        header: {
+          code: 'Code',
+          user: 'Responsible',
+          date: 'Date',
+          requester: 'Requester',
+          classification: 'Classification',
+          area: 'Area',
+        },
+        classificationOptions: {
+          notClassified: 'Not Classified',
+          capex: 'CAPEX',
+          opex: 'OPEX',
+        },
+        item: {
+          product: 'Product',
+          measurement: 'Unit',
+          stockAvailable: 'Stock',
+          quantity: 'Quantity',
+          unitValue: 'Unit Value',
+          totalValue: 'Total Value',
+          costCenter: 'Cost Center',
+          warehouse: 'Warehouse',
+          addItem: 'Add Item',
+          removeItem: 'Remove',
+          sectionTitle: 'Requisition Items',
+          insufficientStock: 'The quantity cannot exceed the available balance.',
+          duplicateStock: 'This stock has already been selected in another line.',
+          footerTotalLabel: 'Grand Total',
+        },
+      },
+      validation: {
+        requesterRequired: 'Enter the requester.',
+        classificationRequired: 'Select the classification.',
+        costCenterRequired: 'Select the cost center.',
+        warehouseRequired: 'Select the warehouse.',
+        itemsMin: 'Add at least one item.',
+        itemStockRequired: 'Select the product/stock.',
+        itemQuantityRequired: 'Enter the quantity.',
+        quantityMin: 'Enter a quantity greater than zero.',
+        numberType: 'Enter a valid number.',
+      },
+    },
+  },
+};

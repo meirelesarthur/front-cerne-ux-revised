@@ -1,0 +1,39 @@
+# =============================================================================
+# GB Cerne — Frontend (deploy no servidor)
+#
+# O servidor NÃO tem código-fonte nem faz build: apenas puxa a imagem pronta do
+# Docker Hub e a executa. A MESMA imagem serve qualquer ambiente — os valores
+# das VITE_* são injetados em RUNTIME (o start do container troca os
+# placeholders do bundle pelos valores das envs abaixo).
+#
+# Build/push (feito fora daqui, na dev/CI) é um comando fixo, SEM --build-arg:
+#   docker build -t greenbeltti/gbcerne-front:latest .
+#   docker push greenbeltti/gbcerne-front:latest
+#
+# Porta: host 5173 → container 8080. A 5173 é a origem confiada pelo backend
+# (SANCTUM_STATEFUL_DOMAINS / CORS). A 8080 do host já é do nginx do backend.
+#
+# Uso no servidor (as VITE_* vêm do .env ao lado deste arquivo, ou do shell):
+#   docker compose pull
+#   docker compose up -d          # front em http://localhost:5173
+#   docker compose down
+# =============================================================================
+
+services:
+  front:
+    image: greenbeltti/gbcerne-front:latest
+    container_name: gbcerne-front
+    ports:
+      - "5173:8080"
+    environment:
+      # Injetadas no bundle no start do container. Ajuste no .env do servidor.
+      VITE_API_PHP_BACK_URL: ${VITE_API_PHP_BACK_URL:-http://localhost:8080/api/v1}
+      VITE_API_ALEEX_BACK_URL: ${VITE_API_ALEEX_BACK_URL:-}
+      VITE_API_TIMEOUT: ${VITE_API_TIMEOUT:-30000}
+      VITE_APP_NAME: ${VITE_APP_NAME:-GB Cerne}
+      VITE_APP_VERSION: ${VITE_APP_VERSION:-1.0.0}
+      VITE_APP_ENVIRONMENT: ${VITE_APP_ENVIRONMENT:-production}
+      VITE_USE_MOCK_API: ${VITE_USE_MOCK_API:-false}
+      # cookie (default) = Sanctum SPA mesmo domínio; token = Bearer cross-domain.
+      VITE_AUTH_MODE: ${VITE_AUTH_MODE:-cookie}
+    restart: unless-stopped

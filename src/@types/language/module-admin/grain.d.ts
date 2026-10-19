@@ -1,0 +1,41 @@
+import { Label } from "@/@types/label";
+
+export interface GrainLanguage extends Label {
+  name: string;
+  symbol: string;
+  divisionUnitName: string;
+  divisionUnitKilograms: string;
+  description: string;
+  enabled: string;
+  commercials: string;
+  discards: string;
+  qualities: string;
+  varieties: string;
+  products: string;
+  validationrecords: string;
+  validationrecord: string;
+  byDefaults: string;
+  title: string;
+  options: string;
+  type: string;
+  grainCounting: string;
+  grainCountingTooltip: string;
+  mensegeActiveProductHeader: string;
+  mensegeActiveProductBody: string;
+  mensegeActiveValidationRecordHeader: string;
+  mensegeActiveValidationRecordBody: string;
+  mensegeInactiveProductHeader: string;
+  mensegeInactiveProductBody: string;
+  mensegeInactiveValidationRecordHeader: string;
+  mensegeInactiveValidationRecordBody: string;
+  mensegeDeleteDiscardHeader: string;
+  mensegeDeleteDiscardBody: string;
+  mensegeDeleteCommercialHeader: string;
+  mensegeDeleteCommercialBody: string;
+  mensegeDeleteQualityHeader: string;
+  mensegeDeleteQualityBody: string;
+  mensegeDeleteVarietyHeader: string;
+  mensegeDeleteVarietyBody: string;
+  mensegeDeleteValidationRecordHeader: string;
+  mensegeDeleteValidationRecordBody: string;
+}

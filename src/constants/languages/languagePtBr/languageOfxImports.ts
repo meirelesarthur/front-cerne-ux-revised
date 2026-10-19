@@ -1,0 +1,197 @@
+// src/constants/languages/languagePtBr/languageOfxImports.ts
+// Tradução PT-BR do módulo "Importação OFX" (OfxImport — Financeiro, F-114,
+// 97-Esteiras/064, TASK-064-OFX-FE-01). Título de tela mirror do item de
+// menu já existente `fin-cnc-ofx` ("Importação OFX",
+// `navigationTree.ts:2129`).
+
+import { ModuleOfxImports } from '@/@types/language/module-ofx-imports';
+
+export const languageOfxImports: ModuleOfxImports = {
+  ofxImport: {
+    singularLabel: 'Importação OFX',
+    pluralLabel: 'Importações OFX',
+    list: {
+      pageTitle: 'Importação OFX',
+      pageSubtitle: 'Administre os arquivos de extrato bancário importados.',
+      deletedToast: 'Importação OFX removida com sucesso',
+      searchPlaceholder: 'Buscar por descrição',
+      table: {
+        code: 'Código',
+        description: 'Descrição',
+        account: 'Conta',
+        startDate: 'Dt. Início',
+        endDate: 'Dt. Fim',
+      },
+      actions: {
+        view: 'Visualizar',
+        edit: 'Editar',
+        reconcile: 'Conciliar',
+        delete: 'Excluir',
+      },
+      emptyState: {
+        titleEmpty: 'Nenhuma importação OFX cadastrada.',
+        descriptionEmpty: 'Comece importando o primeiro extrato bancário.',
+        titleFiltered: 'Nenhuma importação encontrada.',
+        descriptionFiltered: 'Tente ajustar os filtros ou limpar a busca.',
+        cta: 'Nova Importação',
+      },
+      deleteConfirm: {
+        title: 'Excluir importação OFX',
+        description: 'Tem certeza que deseja excluir esta importação',
+      },
+    },
+    filter: {
+      title: 'Filtrar Importações OFX',
+      description: 'Descrição',
+      account: 'Conta',
+      accountPlaceholder: 'Buscar conta',
+      startDate: 'Dt. Início',
+      endDate: 'Dt. Fim',
+    },
+    form: {
+      title: {
+        create: 'Nova Importação OFX',
+        edit: 'Editar Importação OFX',
+        view: 'Visualizar Importação OFX',
+      },
+      subtitle: {
+        create: 'Envie um arquivo de extrato bancário (.ofx) para importar.',
+        edit: 'Altere os dados da importação OFX.',
+        view: 'Detalhes da importação OFX.',
+      },
+      fields: {
+        code: 'Código',
+        description: 'Descrição',
+        account: 'Conta',
+        startDate: 'Dt. Início',
+        endDate: 'Dt. Fim',
+        ofxFile: 'Arquivo OFX',
+      },
+      placeholders: {
+        account: 'Buscar conta',
+      },
+      fileUpload: {
+        dropzoneTitle: 'Arraste um arquivo .ofx ou clique para selecionar',
+        dropzoneDraggingTitle: 'Solte o arquivo aqui',
+        hint: 'Apenas arquivos .ofx, máximo 10MB.',
+        changeLabel: 'Trocar arquivo',
+        removeLabel: 'Remover arquivo',
+        replaceLabel: 'Substituir arquivo',
+        existingFileLabel: 'Arquivo atual',
+        errorTypeMessage: 'Tipo de arquivo não aceito.',
+        errorSizeMessage: 'Arquivo excede o tamanho máximo.',
+      },
+      actions: {
+        download: 'Baixar anexo',
+        downloadError: 'Não foi possível baixar o anexo. Tente novamente.',
+      },
+      validation: {
+        descriptionRequired: 'Informe a descrição.',
+        descriptionMaxLength: 'Máximo de 255 caracteres.',
+        accountRequired: 'Selecione a conta.',
+        startDateRequired: 'Informe a data de início.',
+        endDateRequired: 'Informe a data de fim.',
+        ofxFileRequired: 'Selecione o arquivo OFX.',
+      },
+    },
+    reconciliation: {
+      pageTitlePrefix: 'Conciliação',
+      backToHub: 'Voltar',
+      loadError: 'Não foi possível carregar a conciliação bancária.',
+      cards: {
+        total: 'Total de Transações',
+        matched: 'Conciliadas',
+        pending: 'Pendentes',
+        progress: 'Progresso',
+      },
+      search: {
+        placeholder: 'Buscar transação...',
+      },
+      status: {
+        reconciled: 'Conciliado',
+        matchedPendingApply: 'Pronto para aplicar',
+        pending: 'Pendente',
+      },
+      classification: {
+        investment: 'Aplicação',
+        redemption: 'Resgate',
+        common: 'Comum',
+      },
+      emptyState: {
+        title: 'Nenhuma transação encontrada.',
+        description: 'Ajuste a busca ou aguarde o próximo extrato.',
+      },
+      actions: {
+        apply: 'Aplicar Conciliação',
+        applySuccess: 'Conciliação aplicada com sucesso.',
+        applyNothingToApply: 'Não há transações casadas aguardando aplicação.',
+        applyError: 'Não foi possível aplicar a conciliação.',
+        linkTitle: 'Vincular título',
+        createMovement: 'Criar movimento',
+        unreconcile: 'Desconciliar',
+        unreconcileConfirmTitle: 'Desconciliar movimento',
+        unreconcileConfirmDescription: 'O movimento voltará ao estado pendente. Deseja continuar?',
+        unreconcileSuccess: 'Movimento desconciliado com sucesso.',
+        unreconcileError: 'Não foi possível desconciliar o movimento.',
+      },
+      investmentBanner: {
+        title: 'Aplicações e Resgates em Lote',
+        description:
+          'Existem transações de aplicação/resgate ainda sem movimento correspondente. Concilie em lote para agilizar.',
+        cta: 'Conciliar em Lote',
+        modalTitle: 'Conciliar Aplicações e Resgates em Lote',
+        modalDescription:
+          'Será criado 1 movimento de transferência para cada transação abaixo, entre a conta bancária e a conta de investimento vinculada.',
+        missingInvestmentAccount:
+          'Esta conta bancária não tem uma conta de investimento vinculada — configure o vínculo em Contas Bancárias antes de conciliar em lote.',
+        columnMemo: 'Descrição',
+        columnDate: 'Data',
+        columnValue: 'Valor',
+        confirmButton: 'Confirmar Lote',
+        successToast: 'Lote aplicado com sucesso.',
+        partialErrorToast: 'de transações aplicadas antes do erro',
+      },
+      newMovementModal: {
+        title: 'Novo Movimento',
+        hint: 'Data, valor e tipo vêm da transação bancária e não podem ser alterados.',
+        typeCategoryLabel: 'Tp. Categoria',
+        submitButton: 'Salvar Movimento',
+        successToast: 'Movimento criado com sucesso.',
+      },
+      writeoffModal: {
+        expenseTitle: 'Vincular Título de Despesa',
+        incomeTitle: 'Vincular Título de Receita',
+        hint: 'Selecione o(s) título(s) em aberto que correspondem a esta transação bancária.',
+        providerLabel: 'Fornecedor',
+        providerPlaceholder: 'Buscar fornecedor',
+        clientLabel: 'Cliente',
+        clientPlaceholder: 'Buscar cliente',
+        dueDateFrom: 'Vencimento De',
+        dueDateTo: 'Vencimento Até',
+        columnSelect: '',
+        columnNumber: 'Número',
+        columnDueDate: 'Vencimento',
+        columnBalance: 'Saldo',
+        emptyTitles: 'Nenhum título em aberto encontrado para os filtros informados.',
+        selectPartyHint: 'Selecione um fornecedor/cliente para listar os títulos em aberto.',
+        selectAtLeastOneError: 'Selecione ao menos 1 título para continuar.',
+        continueButton: 'Continuar',
+        selectedTotalLabel: 'Total selecionado',
+      },
+    },
+    report: {
+      pageTitle: 'Meses Conciliados',
+      pageSubtitle: 'Quantidade de movimentos conciliados por mês.',
+      table: {
+        monthYear: 'Mês/Ano',
+        quantity: 'Qtd. Conciliados',
+      },
+      loadError: 'Não foi possível carregar o relatório de meses conciliados.',
+      retry: 'Tentar novamente',
+      emptyState: {
+        title: 'Nenhum mês conciliado ainda.',
+        description: 'Concilie movimentos bancários para ver o relatório aqui.',
+      },
+    },
+  },
+};

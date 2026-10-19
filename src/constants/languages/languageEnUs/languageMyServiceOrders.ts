@@ -1,0 +1,142 @@
+// src/constants/languages/languageEnUs/languageMyServiceOrders.ts
+// EN-US translation of the OPERATIONAL module — My Service Orders
+// (MyServiceOrder) — own domain, pipeline 063 (TASK-MOS-FE-01).
+
+import { ModuleMyServiceOrders } from '@/@types/language/module-my-service-orders';
+
+export const languageMyServiceOrders: ModuleMyServiceOrders = {
+  myServiceOrder: {
+    singularLabel: 'My Service Order',
+    pluralLabel: 'My Service Orders',
+    list: {
+      pageTitle: 'My Service Orders',
+      pageSubtitle: 'Service orders under your execution responsibility.',
+      table: {
+        status: 'Status',
+        code: 'Code',
+        dtEmission: 'Issue Date',
+        deadline: 'Deadline',
+        user: 'Requester',
+        executor: 'Responsible',
+      },
+      actions: {
+        view: 'View',
+        execute: 'Execute',
+      },
+      filter: {
+        title: 'Filter My Service Orders',
+        code: 'Code',
+        codePlaceholder: 'Search by code',
+        startDate: 'Start date',
+        endDate: 'End date',
+        paginationQuantity: 'Items per page',
+      },
+      emptyState: {
+        title: 'No service order found.',
+        description: 'Service orders under your responsibility will appear here.',
+        titleFiltered: 'No service order found.',
+        descriptionFiltered: 'Try adjusting the filters or clearing the search.',
+      },
+      error: {
+        message: 'Unable to load service orders.',
+        retry: 'Try again',
+      },
+    },
+    form: {
+      title: 'Execute Service Order',
+      subtitle: 'Record the execution of this service order.',
+      sections: {
+        execution: 'Execution',
+        labor: 'Labor',
+        equipment: 'Machinery/Implements',
+        products: 'Supplies',
+        productions: 'Production',
+        protections: 'Protections (PPE)',
+        attachments: 'Evidence',
+      },
+      readonly: {
+        sections: {
+          identification: 'Service Order Identification',
+          serviceType: 'Service Type',
+          execution: 'Execution',
+          conditions: 'Conditions and Restrictions',
+          instructions: 'Detailed Instructions',
+          safety: 'Safety and Sustainability',
+        },
+        fields: {
+          code: 'Code',
+          user: 'Requester',
+          executor: 'Supervisor',
+          dtEmission: 'Issue Date',
+          executionDate: 'Execution Date',
+          deadline: 'Final Deadline',
+          serviceFarm: 'Farm',
+          category: 'Usage',
+          operation: 'Operation',
+          activity: 'Activity',
+          area: 'Area',
+          cultivation: 'Crop/Variety',
+          batch: 'Batch',
+          categoryAnimal: 'Category',
+          weatherRequirements: 'Weather Requirements',
+          minimumTemperature: 'Minimum Temperature (°C)',
+          maximumTemperature: 'Maximum Temperature (°C)',
+          allowedWorkingPeriodStart: 'Allowed Working Period (Start)',
+          allowedWorkingPeriodEnd: 'Allowed Working Period (End)',
+          serviceDescription: 'Service Description',
+          expectedResultDescription: 'Expected Result',
+          successCriteriaDescription: 'Success Criteria',
+          roadmapDescription: 'Roadmap/Planning',
+          environmentalRestrictions: 'Environmental Restrictions',
+          legalCompliance: 'Legal Compliance',
+        },
+      },
+      fields: {
+        status: 'Status',
+        executionStartDate: 'Start Date',
+        executionEndDate: 'Completion Date',
+        executionProblems: 'Issues Found',
+        correctiveActions: 'Corrective Actions',
+        attachmentFile: 'File',
+        attachmentName: 'Attachment name',
+      },
+      placeholders: {
+        status: 'Select the status',
+      },
+      checklist: {
+        itemLabel: 'Item',
+        isChecked: 'Completed',
+        emptyRow: 'No item registered in this section.',
+      },
+      attachmentRow: {
+        addButton: 'Add attachment',
+        removeButton: 'Remove',
+        dropzoneTitle: 'Drag a file or click to select',
+        dropzoneDragging: 'Drop the file here',
+        changeLabel: 'Change file',
+        clearFileLabel: 'Remove file',
+        replaceLabel: 'Replace',
+        existingFileLabel: 'File already uploaded',
+        hint: 'PDF, image (JPG, PNG, GIF), Word, Excel, CSV or TXT — up to 10 MB.',
+        errorType: 'File type not accepted. Upload PDF, image, Word, Excel, CSV or TXT.',
+        errorSize: 'The file must be at most 10 MB.',
+        defaultName: 'Attachment name',
+        nameRequired: 'Enter a name for the attachment.',
+      },
+      updatedToast: 'Execution recorded successfully',
+      notFound: {
+        title: 'Service order not available.',
+        description:
+          'This service order could not be loaded. It may no longer exist or may not be assigned to you.',
+        back: 'Back to the list',
+      },
+      readOnly: {
+        title: 'View Service Order',
+        subtitle: 'Review this service order. Execution is not available in its current status.',
+        statusLabel: 'Status',
+        back: 'Back',
+      },
+      executionEndDateRequiredWhenCompleted: 'Required when status is "Completed".',
+    },
+  },
+};

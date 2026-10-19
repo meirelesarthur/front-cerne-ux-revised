@@ -1,0 +1,207 @@
+// src/constants/languages/languageEsEs/languageFazendas.ts
+// Traducción ES-ES del módulo administrativo de FINCAS (Registros Base,
+// ejecución 024).
+
+import { ModuleFarms } from '@/@types/language/module-farms';
+
+export const languageFazendas: ModuleFarms = {
+  farm: {
+    singularLabel: 'Finca',
+    list: {
+      pageTitle: 'Fincas',
+      pageSubtitle: 'Administre el registro de fincas del contratante.',
+      deletedToast: 'Finca eliminada con éxito',
+      // TASK-072-FE-11 — aviso do guard "contratante sem fazenda".
+      noFarmNotice: 'Registre su primera finca para acceder a esta área.',
+      table: {
+        description: 'Nombre',
+        city: 'Ciudad/Provincia',
+        explorationType: 'Tipo de Explotación',
+        totalArea: 'Área Total',
+        tenant: 'Contratante',
+        active: 'Estado',
+        activeLabel: 'Activo',
+        inactiveLabel: 'Inactivo',
+      },
+      actions: {
+        view: 'Ver finca',
+        edit: 'Editar',
+        delete: 'Eliminar',
+        addArea: 'Agregar Área',
+        addMultipleAreas: 'Agregar Múltiples Áreas',
+      },
+      emptyState: {
+        titleEmpty: 'Ninguna finca registrada.',
+        descriptionEmpty: 'Comience agregando la primera finca.',
+        titleFiltered: 'Ninguna finca encontrada.',
+        descriptionFiltered: 'Intente ajustar los filtros o borrar la búsqueda.',
+        cta: 'Nueva Finca',
+      },
+    },
+    filter: {
+      title: 'Filtrar fincas',
+      search: 'Buscar',
+      searchPlaceholder: 'Buscar por nombre',
+      isEnabled: 'Estado',
+      isEnabledAll: 'Todos',
+      enabledOptions: {
+        active: 'Activo',
+        inactive: 'Inactivo',
+      },
+      tenantId: 'Contratante (ID)',
+      tenantIdPlaceholder: 'ID del contratante',
+    },
+    form: {
+      title: {
+        create: 'Nueva Finca',
+        edit: 'Editar Finca',
+      },
+      subtitle: {
+        create: 'Registre una nueva finca del contratante.',
+        edit: 'Actualice los datos de la finca.',
+      },
+      steps: {
+        identificacao: 'Identificación',
+        documentacao: 'Documentación',
+        endereco: 'Dirección',
+        demarcacao: 'Demarcación',
+        financeiro: 'Financiero',
+        configuracoes: 'Configuraciones',
+      },
+      stepsSubtitle: {
+        identificacao: 'Indique el nombre, documento y teléfono de contacto de la finca.',
+        documentacao:
+          'Registre los documentos oficiales y defina el tipo de explotación de la propiedad.',
+        endereco: 'Indique la ubicación de la finca para registros y correspondencia.',
+        demarcacao:
+          'Dibuje el perímetro de la propiedad en el mapa o importe un archivo KML — el área y las coordenadas se calculan automáticamente.',
+        financeiro:
+          'Configure el área, el valor por hectárea y la tasa de remuneración de la finca.',
+        configuracoes:
+          'Vincule la finca a los centros de costo y defina las configuraciones finales.',
+      },
+      footer: {
+        back: 'Volver',
+        next: 'Siguiente',
+        save: 'Guardar',
+        stepCounter: {
+          label: 'Paso',
+          of: 'de',
+        },
+      },
+      close: 'Cerrar',
+      fields: {
+        description: 'Nombre',
+        descriptive: 'Nombre completo',
+        nif: 'CPF/CNPJ',
+        phone: 'Teléfono',
+        image: 'Logo',
+        tenantId: 'Contratante (ID)',
+        explorationType: 'Tipo de Explotación',
+        car: 'CAR',
+        nirf: 'NIRF',
+        ccir: 'CCIR',
+        cafir: 'CAFIR',
+        caepf: 'CAEPF',
+        stateRegistration: 'IE (Finca)',
+        countryId: 'País',
+        zipCode: 'Código Postal',
+        city: 'Ciudad',
+        district: 'Barrio',
+        number: 'Número',
+        latitude: 'Latitud',
+        longitude: 'Longitud',
+        coin: 'Moneda',
+        totalArea: 'Área Total (ha)',
+        valueHa: 'Valor por Hectárea',
+        rate: 'Tasa (%)',
+        isEnabled: 'Activo',
+        useCashBook: 'Habilita Caja de la Finca',
+        costProcessingDate: 'Día de Cierre de Costo',
+        controlSuppliesStock: 'Controla Stock de Insumos',
+        note: 'Observaciones',
+        centers: 'Centros de Costo',
+      },
+      placeholders: {
+        description: 'Ej.: Finca Santa Rita',
+        descriptive: 'Ej.: Finca Santa Rita LTDA',
+        latitude: 'Ej.: -16.6799',
+        longitude: 'Ej.: -49.2550',
+        centersSearch: 'Buscar centro de costo',
+      },
+      hints: {
+        imageAccepted: 'Formatos aceptados: JPEG, PNG, JPG, GIF, SVG.',
+        imageMaxSize: 'Tamaño máximo: 2 MB.',
+        tenantIdCreateOnly:
+          'Obligatorio para Gestor de Plataforma en la creación. No es posible cambiar el contratante de una finca existente por aquí.',
+        centers: 'Seleccione los centros de costo vinculados a esta finca.',
+      },
+      explorationTypeOptions: {
+        individual: 'Explotación individual (Propiedad propia)',
+        condominium: 'Condominio',
+        leased: 'Propiedad arrendada',
+        partnership: 'Asociación',
+        loan: 'Comodato',
+        others: 'Otros',
+      },
+      coinOptions: {
+        real: 'Real (R$)',
+      },
+      yesNoOptions: {
+        yes: 'Sí',
+        no: 'No',
+      },
+      image: {
+        dropzoneTitle: 'Arrastre una imagen o haga clic para seleccionar',
+        dropzoneDragging: 'Suelte la imagen aquí',
+        changeLabel: 'Cambiar imagen',
+        removeLabel: 'Eliminar imagen',
+        errorType: 'Formato no aceptado. Envíe un archivo JPEG, PNG, JPG, GIF o SVG.',
+        errorSize: 'El archivo excede el tamaño máximo de 2 MB.',
+      },
+      centersField: {
+        selectAllLabel: 'Marcar todos',
+        deselectAllLabel: 'Desmarcar todos',
+        selectedCountLabel: 'Seleccionados',
+        emptyLabel: 'Ningún centro de costo encontrado.',
+        errorLabel: 'Error al cargar los centros de costo.',
+        retryLabel: 'Intentar de nuevo',
+      },
+      demarcacao: {
+        mapHint: 'Use las herramientas en el mapa para dibujar el polígono de la propiedad.',
+        noPerimeter: 'Ningún perímetro demarcado — puede avanzar y definirlo después.',
+        perimeterDefinedLabel: 'Perímetro demarcado',
+        areaUnit: 'ha',
+        importButton: 'Importar KML',
+        importInProgress: 'Importando...',
+        importSuccessToast: 'Archivo importado con éxito',
+        importErrorToast:
+          'Error al importar KML: verifique que el archivo contenga un polígono válido.',
+        importInvalidExtension: 'Envíe un archivo .kml o .kmz.',
+      },
+      toasts: {
+        createdSuccess: 'Finca creada con éxito',
+        updatedSuccess: 'Finca actualizada con éxito',
+        deletedSuccess: 'Finca eliminada con éxito',
+        activateFailed:
+          'Finca creada, pero no fue posible activarla. Selecciónela en el selector de fincas de la parte superior.',
+      },
+      validation: {
+        descriptionRequired: 'El nombre es obligatorio',
+        descriptionMaxLength: 'El nombre debe tener como máximo 80 caracteres',
+        descriptiveRequired: 'El nombre completo es obligatorio',
+        descriptiveMaxLength: 'El nombre completo debe tener como máximo 80 caracteres',
+        phoneRequired: 'El teléfono es obligatorio',
+        countryIdRequired: 'El país es obligatorio',
+        zipCodeRequired: 'El código postal es obligatorio',
+        districtRequired: 'El barrio es obligatorio',
+        coinRequired: 'La moneda es obligatoria',
+        totalAreaRequired: 'El área total es obligatoria',
+        valueHaRequired: 'El valor por hectárea es obligatorio',
+        costProcessingDateRequired: 'El día de cierre de costo es obligatorio',
+        costProcessingDateRange: 'El día debe estar entre 1 y 28',
+        nifInvalid: 'CPF/CNPJ inválido',
+      },
+    },
+  },
+};

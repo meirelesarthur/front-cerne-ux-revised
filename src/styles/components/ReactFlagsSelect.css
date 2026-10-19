@@ -1,0 +1,47 @@
+.ReactFlagsSelect-module_flagsSelect__2pfa2 {
+  background-color: var(--chakra-colors-header-panel-b-g) !important;
+  color: var(--chakra-colors-semantic-neutral-900) !important;
+  padding: 0 !important;
+  border-radius: 4px !important;
+}
+
+.ReactFlagsSelect-module_selectOptions__3LNBJ {
+  background-color: var(--chakra-colors-header-panel-b-g) !important;
+  color: var(--chakra-colors-semantic-neutral-900) !important;
+  border: none !important;
+}
+
+.ReactFlagsSelect-module_filterBox__3m8EU input {
+  background-color: var(--chakra-colors-header-panel-b-g) !important;
+  color: var(--chakra-colors-semantic-neutral-900) !important;
+}
+
+.ReactFlagsSelect-module_selectBtn__19wW7 {
+  cursor: pointer !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 5px 10px !important;
+  font-family: inherit !important;
+  border: none !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: var(--chakra-colors-semantic-neutral-900) !important;
+}
+
+/* .ReactFlagsSelect-module_selectBtn__19wW7::after {
+  border-top: var(--chakra-colors-semantic-neutral-700) !important;
+  border-left: 5px solid #fff0 !important;
+  border-right: 5px solid #fff0 !important;
+  border-bottom: 0 !important;
+} */
+
+.ReactFlagsSelect-module_filterBox__3m8EU {
+  background: var(--chakra-colors-header-panel-b-g) !important;
+}
+
+.ReactFlagsSelect-module_selectOptionWithlabel__2GpmM:hover {
+  background-color: var(--chakra-colors-primitive-b-g-hover) !important;
+  color: var(--chakra-colors-semantic-neutral-900) !important;
+}

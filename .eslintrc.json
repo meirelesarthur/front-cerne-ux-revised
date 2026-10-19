@@ -1,0 +1,135 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "google",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "prettier",
+    "import",
+    "simple-import-sort",
+    "@tanstack/query"
+  ],
+  "rules": {
+    "prettier/prettier": ["error"],
+    "react/prop-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "no-explicit-any": "off",
+    "require-jsdoc": "off",
+    "import/no-named-as-default": "off",
+    "import/default": "off",
+    "react/display-name": "off",
+    "import/order": [
+      1,
+      {
+        "newlines-between": "always",
+        "groups": ["builtin", "external", "internal", "sibling", "parent", "type"],
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@/components/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/contexts/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/hooks/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/utils/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/constants/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/validations/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/services/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/@types/**",
+            "group": "sibling",
+            "position": "before"
+          },
+          {
+            "pattern": "@/assets/**",
+            "group": "sibling",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react", "sibling"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ],
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    // "@tanstack/query/exhaustive-deps": "error",
+    // "@tanstack/query/prefer-query-object-syntax": "error",
+    "no-console": [
+      "warn",
+      {
+        "allow": ["error"]
+      }
+    ],
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": "allow-with-description",
+        "minimumDescriptionLength": 0
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  },
+  "ignorePatterns": ["vite-env.d.ts"]
+}

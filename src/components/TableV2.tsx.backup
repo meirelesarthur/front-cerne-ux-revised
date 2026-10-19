@@ -1,0 +1,379 @@
+import { cloneElement, Fragment, ReactElement, ReactNode } from "react";
+
+import {
+  Box,
+  Center,
+  Table as ChakraTable,
+  Flex,
+  HStack,
+  Select,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+  useMediaQuery,
+} from "@chakra-ui/react";
+import { flexRender, Row } from "@tanstack/react-table";
+import { IoTimeOutline } from "react-icons/io5";
+
+import { useLanguage } from "@/hooks/useLanguage";
+import { useTable } from "@/hooks/useTable";
+
+import { HeadingTextGrid } from "./HeadingTextGrid";
+import { IconButtonTable } from "./IconButtonTable";
+import { Pagination } from "./Pagination";
+
+interface TableProps {
+  header?: ReactNode;
+  rowSubComponent?: (props: { row: Row<any> }) => ReactElement;
+  form?: boolean;
+  title?: string;
+  marginTop?: string;
+  isLoading?: boolean;
+}
+
+export function TableV2({
+  header,
+  rowSubComponent,
+  form,
+  title,
+  marginTop,
+}: TableProps) {
+  const { table, pagination, onSelectPage, hasFooter } = useTable();
+  const { languageGB } = useLanguage();
+  const [isMobile, isMobileSx] = useMediaQuery([
+    "(max-width: 680px)",
+    "(max-width: 360px)",
+  ]);
+
+  return (
+    <Box>
+      {form && (header || title) && (
+        <Flex
+          flex="1"
+          height="50px"
+          flexDirection={isMobile ? "column" : "row"}
+          alignItems={isMobile ? "center" : "center"}
+          paddingX="4"
+          borderTopRadius="md"
+          justifyContent={isMobile ? "center" : "space-between"}
+          gap={isMobile ? 4 : 0}
+          marginTop={isMobile ? "4" : marginTop || "0"}
+          background="gridHeadEndFooter"
+          // borderX="1px"
+          // borderTop="1px"
+          style={
+            form
+              ? {
+                  borderTop: "1px solid",
+                  borderLeft: "1px solid",
+                  borderRight: "1px solid",
+                  borderColor: "var(--chakra-colors-borderGrid)",
+                }
+              : {}
+          }
+        >
+          <Flex
+            justifyContent={isMobileSx ? "center" : "space-between"}
+            wrap="wrap"
+            alignItems="center"
+            // gap={isMobile ? 4 : 0}
+            width="full"
+            color="white"
+          >
+            {form && title ? (
+              <HeadingTextGrid>{title}</HeadingTextGrid>
+            ) : (
+              header
+            )}
+          </Flex>
+        </Flex>
+      )}
+      <Box
+        width="full"
+        overflowX="auto"
+        borderTop="1px"
+        marginTop={!form ? (isMobile ? "4" : marginTop || "6") : ""}
+        borderTopRadius={form ? "" : "md"}
+        borderColor="borderGrid"
+        css={{
+          "&::-webkit-scrollbar": {
+            height: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "#F0F0F0",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#C4C4C4",
+            borderRadius: "1.5rem",
+          },
+        }}
+        style={
+          form
+            ? {
+                borderLeft: "1px solid",
+                borderRight: "1px solid",
+                borderColor: "var(--chakra-colors-borderGrid)",
+              }
+            : {}
+        }
+      >
+        <ChakraTable variant="v2">
+          <Thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr
+                key={headerGroup.id}
+                borderBottom="1px solid"
+                borderColor="borderGrid"
+              >
+                {headerGroup.headers.map((header) => (
+                  <Th
+                    key={header.id}
+                    style={header.column.columnDef.meta?.style || undefined}
+                    paddingTop={
+                      header.column.columnDef.id === "acoes" ? 0 : "10px"
+                    }
+                    width={
+                      header.column.columnDef.id === "acoes"
+                        ? "112px"
+                        : // : header.column.columnDef.header ===
+                          //     headerGroup.headers[
+                          //       form && title
+                          //         ? headerGroup.headers.length - 1
+                          //         : headerGroup.headers.length - 2
+                          //     ].column.columnDef.header
+                          //   ? ""
+                          "300px"
+                    }
+                  >
+                    <Flex
+                      justifyContent={
+                        header.column.columnDef.id === "edit" ||
+                        header.column.columnDef.id === "acoes"
+                          ? "end"
+                          : "left"
+                      }
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </Flex>
+                  </Th>
+                ))}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {table.getRowModel().rows.length === 0 ? (
+              <Tr>
+                <Td colSpan={100}>
+                  <Center padding="2" color="textGridColor">
+                    <Text fontSize="lg">
+                      {languageGB.defaltStrings.emptyData}
+                    </Text>
+                  </Center>
+                </Td>
+              </Tr>
+            ) : (
+              <>
+                {table.getRowModel().rows.map((row) => (
+                  <Fragment key={row.id}>
+                    <Tr key={row.id}>
+                      {row.getVisibleCells().map((cell, index) => (
+                        <Td
+                          key={cell.id}
+                          onClick={
+                            cell.column.id === "acoes" ||
+                            cell.column.id === "pdf" ||
+                            cell.column.id === "select"
+                              ? null!
+                              : row.getToggleSelectedHandler()
+                          }
+                          opacity={row.original.enabled === false ? "0.5" : "1"}
+                          textDecoration={
+                            row.original.enabled === false ? "line-through" : ""
+                          }
+                          backgroundColor={
+                            row.original.idTemp ? "registerTemperaryBG" : ""
+                          }
+                          borderBottom="1px solid"
+                          borderColor="borderGrid"
+                          paddingBottom={
+                            cell.column.id === "acoes" || "edit" ? 0 : "10px"
+                          }
+                          paddingTop={
+                            cell.column.id === "acoes" || "edit" ? 0 : "10px"
+                          }
+                          background={
+                            row.getIsSelected() ? "selectedTextGridColor" : ""
+                          }
+                          cursor="pointer"
+                          style={cell.column.columnDef.meta?.style || undefined}
+                        >
+                          <Flex
+                            justifyContent={
+                              cell.column.columnDef.id === "edit" ||
+                              cell.column.columnDef.id === "acoes"
+                                ? "end"
+                                : "left"
+                            }
+                            flexDirection="row"
+                            paddingRight={
+                              cell.column.columnDef.id === "edit" ? 2 : 0
+                            }
+                          >
+                            {row.original.idTemp &&
+                              row.getVisibleCells().length - 1 === index && (
+                                <IconButtonTable
+                                  aria-label=""
+                                  mensegerTooltip={
+                                    languageGB.defaltStrings.registerNoSeve
+                                  }
+                                  icon={<IoTimeOutline />}
+                                  size="xs"
+                                  color="yellow.900"
+                                  variant="ghost_warning"
+                                />
+                              )}
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Flex>
+                        </Td>
+                      ))}
+                    </Tr>
+                    {row.getIsSelected() && row.getCanExpand() && (
+                      <Tr borderBottom="1px solid" borderColor="borderGrid">
+                        <Td
+                          colSpan={row.getVisibleCells().length}
+                          data-fefe={row.getIsExpanded()}
+                          padding="10 !important"
+                        >
+                          {rowSubComponent
+                            ? cloneElement(
+                                rowSubComponent({ row }) as ReactElement,
+                                {
+                                  row,
+                                },
+                              )
+                            : null}
+                        </Td>
+                      </Tr>
+                    )}
+                  </Fragment>
+                ))}
+              </>
+            )}
+          </Tbody>
+          {hasFooter && (
+            <Tfoot>
+              {table.getFooterGroups().map((footerGroup) => (
+                <Tr key={footerGroup.id}>
+                  {footerGroup.headers.map((header) => (
+                    <Th key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.footer,
+                        header.getContext(),
+                      )}
+                    </Th>
+                  ))}
+                </Tr>
+              ))}
+            </Tfoot>
+          )}
+        </ChakraTable>
+      </Box>
+      {!!pagination ? (
+        <>
+          {/* <Flex height="50px" background="gridHeadEndFooter"></Flex> */}
+          <Flex
+            width="full"
+            height="40px"
+            background="gridHeadEndFooter"
+            color="white"
+            alignItems="center"
+            wrap="wrap"
+            paddingX="4"
+            borderBottomRadius="md"
+            justifyContent="space-between"
+            // marginBottom={form && !title ? "0" : isMobile ? "10" : "14"}
+            style={
+              form
+                ? {
+                    borderLeft: "1px solid var(--chakra-colors-borderGrid)",
+                    borderRight: "1px solid var(--chakra-colors-borderGrid)",
+                    borderBottom: "1px solid var(--chakra-colors-borderGrid)",
+                  }
+                : {}
+            }
+          >
+            {pagination.totalRecords >= 1 && (
+              <>
+                <Text fontSize="sm" orientation="horizontal" color="gray.400">
+                  {`${languageGB.defaltStrings.showing} ${
+                    table.getRowModel().rows.length
+                  } ${languageGB.defaltStrings.of} ${
+                    pagination?.totalRecords || 0
+                  }`}
+                </Text>
+                <Flex>
+                  <HStack
+                    spacing="2"
+                    flexDirection="row"
+                    marginLeft="4"
+                    paddingTop={"1"}
+                    display={isMobile ? "none" : "flex"}
+                  >
+                    <Text fontSize="sm" color="gray.400">
+                      {languageGB.defaltStrings.linePerPage}
+                    </Text>
+                    <Select
+                      data-cy="selectShowLines"
+                      size="sm"
+                      width="3.2rem"
+                      variant="flushed"
+                      border="0"
+                      color="gray.400"
+                      value={table.getState().pagination.pageSize}
+                      onChange={onSelectPage}
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </Select>
+                  </HStack>
+                  <Pagination />
+                </Flex>
+              </>
+            )}
+          </Flex>
+        </>
+      ) : (
+        <Flex
+          width="full"
+          height="40px"
+          background="gridHeadEndFooter"
+          color="white"
+          paddingX="4"
+          borderBottomRadius="md"
+          style={
+            form
+              ? {
+                  borderLeft: "1px solid var(--chakra-colors-borderGrid)",
+                  borderRight: "1px solid var(--chakra-colors-borderGrid)",
+                  borderBottom: "1px solid var(--chakra-colors-borderGrid)",
+                }
+              : {}
+          }
+        />
+      )}
+    </Box>
+  );
+}

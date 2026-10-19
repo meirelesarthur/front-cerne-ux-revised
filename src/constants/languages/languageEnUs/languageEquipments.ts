@@ -1,0 +1,377 @@
+// src/constants/languages/languageEnUs/languageEquipments.ts
+// EN-US translation of the "Inventory" module (Equipment — Base
+// Registrations / Goods-Assets, execução 026, TASK-FE-1002). Labels
+// faithful to the legacy (`trad.inventario`/`trad.iv_inventario`). See
+// `@/@types/language/module-equipments` for the full contract.
+
+import { ModuleEquipments } from '@/@types/language/module-equipments';
+
+export const languageEquipments: ModuleEquipments = {
+  equipment: {
+    singularLabel: 'Inventory',
+    pluralLabel: 'Inventory',
+
+    list: {
+      pageTitle: 'Inventory',
+      pageSubtitle: 'Manage the farm physical goods and assets.',
+      table: {
+        code: 'Code',
+        description: 'Description',
+        family: 'Family',
+        proprietary: 'Owner',
+        status: 'Status',
+        statusActive: 'Active',
+        statusInactive: 'Inactive',
+        vlAcquisition: 'Acquisition Value',
+      },
+      actions: {
+        view: 'View',
+        edit: 'Edit',
+        delete: 'Delete',
+      },
+      emptyState: {
+        titleEmpty: 'No items registered',
+        descriptionEmpty: 'Register the first Inventory item.',
+        titleEmptyNoCreate: 'No items registered',
+        descriptionEmptyNoCreate: 'No item has been registered yet.',
+        titleFiltered: 'No results found',
+        descriptionFiltered: 'Adjust the filters to find what you are looking for.',
+        cta: 'Add item',
+      },
+      noFarmSelected: {
+        title: 'Select a farm',
+        description: 'Select an active farm to view the Inventory.',
+      },
+      deleteConfirm: {
+        title: 'Delete Inventory item',
+        description: 'Are you sure you want to delete this item? This action cannot be undone.',
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+      },
+      toasts: {
+        deleteSuccess: 'Item deleted successfully.',
+      },
+    },
+
+    filter: {
+      title: 'Filter Inventory',
+      search: 'Search',
+      searchPlaceholder: 'Search by description',
+      family: 'Asset Family',
+      familyAll: 'All',
+      proprietary: 'Owner',
+      proprietaryAll: 'All',
+      startDate: 'Start date',
+      endDate: 'End date',
+      apply: 'Filter',
+      clear: 'Clear filters',
+    },
+
+    form: {
+      title: {
+        create: 'New Inventory Item',
+        edit: 'Edit Inventory Item',
+      },
+      subtitle: {
+        create: 'Register a new asset/good on the farm.',
+        edit: 'Edit the selected asset/good data.',
+      },
+      tabs: {
+        identification: 'Identification',
+        financialDepreciation: 'Financial/Depreciation',
+        fiscalVehicle: 'Fiscal/Vehicle',
+        costCenterApportionment: 'Apportionment',
+        attachments: 'Attachments',
+      },
+      // Additive (dev's E2E fix, execution 026) — Back/Next wizard buttons.
+      footer: {
+        back: 'Back',
+        next: 'Next',
+      },
+      fields: {
+        family: 'Asset Family',
+        description: 'Description',
+        specification: 'Specification',
+        model: 'Model',
+        patrimony: 'Asset Tag',
+        product: 'Product',
+        status: 'Status',
+        statusActive: 'Active',
+        statusInactive: 'Inactive',
+        image: 'Image',
+        code: 'Code',
+        features: 'Features',
+        featureFuelSupply: 'Fuel Supply',
+        featureMaintenance: 'Maintenance',
+        featureBatch: 'Batch',
+        featureAppropriation: 'Appropriation',
+        equipmentType: 'Equipment Type',
+        equipmentTypeOwn: 'Own',
+        equipmentTypeOutsourced: 'Outsourced',
+
+        vlTimeProductive: 'Productive Hour/Km Value',
+        provider: 'Supplier',
+        dtAcquisition: 'Acquisition Date',
+        vlAcquisition: 'Acquisition Value',
+        hourMeter: 'Hour Meter/Km',
+        yearMod: 'Year/Model',
+        hasDepreciation: 'Has Depreciation',
+        hasDepreciationYes: 'Yes',
+        hasDepreciationNo: 'No',
+        lifeBens: 'Useful Life (years)',
+        depreciationType: 'Depreciation Type',
+        depreciationTypeWithResidual: 'With Residual Value',
+        depreciationTypeWithoutResidual: 'Without Residual Value',
+        residual: 'Residual (%)',
+        vlResidual: 'Residual Value',
+        vlDepreciate: 'Value to Depreciate',
+        depreciation: 'Depreciation (%)',
+
+        useFiscal: 'Uses Fiscal Data',
+        useFiscalYes: 'Yes',
+        useFiscalNo: 'No',
+        chassi: 'Chassis',
+        renavam: 'Renavam',
+        serie: 'Series',
+        plate: 'Plate',
+        color: 'Color',
+        uf: 'State',
+        brand: 'Brand',
+        rntrc: 'RNTRC',
+        type: 'Vehicle Type',
+        bodyType: 'Body Type',
+        wheelType: 'Wheel Type',
+        tara: 'Tare',
+        capacity: 'Capacity',
+        ownerType: 'Owner Type',
+        ownerTypePhysical: 'Individual',
+        ownerTypeLegal: 'Legal Entity',
+        ownerDocument: 'Owner Document (ID/Tax No.)',
+        ownerName: 'Owner Name',
+        ownerIe: 'Owner State Registration',
+        ownerUf: 'Owner State',
+        ownerTp: 'Type (TAC)',
+
+        costCenter: 'Cost Center',
+        percentage: 'Percentage (%)',
+
+        attachmentName: 'Attachment Description',
+        attachmentFile: 'File',
+      },
+      placeholders: {
+        family: 'Select the Asset Family',
+        product: 'Search a product',
+        provider: 'Search a supplier',
+        uf: 'Select the state',
+        ownerUf: 'Select the state',
+        costCenter: 'Search a cost center',
+      },
+      // Additive (TASK-FE-1007) — legacy fixed codes (agro365
+      // `app/Equipment.php::opTypes/opBodyTypes/opWheelTypes/opOwnerTypes`,
+      // labels 1:1 from `lang/en/trad.php`).
+      fiscalCatalogs: {
+        type: {
+          '02': 'Cyclomoto',
+          '03': 'Motonet',
+          '04': 'Motocycle',
+          '05': 'Tricycle',
+          '06': 'Automobile',
+          '07': 'Microbus',
+          '08': 'Bus',
+          '10': 'Trailer',
+          '11': 'Semi-Trailer',
+          '13': 'Load Truck',
+          '14': 'Truck',
+          '17': 'Tractor Truck',
+          '18': 'Wheel Tractor',
+          '19': 'Crawler Tractor',
+          '20': 'Mixed Tractor',
+          '21': 'Quadricycle',
+          '22': 'ESP / Bus',
+          '23': 'Pickup Truck',
+          '24': 'Cargo/Truck',
+          '25': 'Utility',
+        },
+        bodyType: {
+          '00': 'Not Applicable',
+          '01': 'Open',
+          '02': 'Closed/Box',
+          '03': 'Bulk',
+          '04': 'Container',
+        },
+        wheelType: {
+          '01': 'Munck Truck',
+          '02': 'Stump Truck',
+          '03': 'Tractor Truck',
+          '04': 'Van',
+          '05': 'Utility',
+          '06': 'Other',
+        },
+        ownerTp: {
+          0: 'Attached TAC',
+          1: 'Independent TAC',
+          2: 'Other',
+        },
+      },
+      // Correction (TASK-FE-1005) — block missing from original TASK-FE-1002
+      // delivery, exact mirror of familyEquipments.form.image.
+      image: {
+        dropzoneTitle: 'Drag an image or click to select',
+        dropzoneDragging: 'Drop the image here',
+        changeLabel: 'Change image',
+        removeLabel: 'Remove image',
+        errorType: 'Format not accepted. Upload a JPEG, PNG, JPG, GIF or SVG file.',
+        errorSize: 'File exceeds the 2 MB maximum size.',
+      },
+      hints: {
+        codeGeneratedByServer: 'Automatically generated on save',
+        equipmentTypeLockedByFamily:
+          'Available only for Machinery, Implements, Agricultural Equipment or Vehicles',
+        frozenByDepreciation: 'Locked — this item already has depreciation entries',
+        fiscalBlockDisabled: 'Enable "Uses Fiscal Data" to edit this block',
+      },
+      sections: {
+        costCenterApportionmentSum: 'The percentages must add up to 100%',
+      },
+      costCenterRow: {
+        addButton: '+ Add Cost Center',
+        removeButton: 'Remove',
+        emptyLabel: 'No cost center added',
+      },
+      attachmentRow: {
+        addButton: '+ Add item',
+        removeButton: 'Remove',
+        emptyLabel: 'No attachment added',
+        defaultName: 'Not Informed',
+        dropzoneTitle: 'Drag a file or click to select',
+        dropzoneDragging: 'Drop the file here',
+        changeLabel: 'Change file',
+        clearFileLabel: 'Clear selection',
+        replaceLabel: 'Replace file',
+        existingFileLabel: 'Current attachment',
+        errorType: 'File type not accepted.',
+        errorSize: 'File exceeds the maximum size of 10 MB.',
+      },
+      validation: {
+        familyRequired: 'Asset Family is required',
+        descriptionRequired: 'Description is required',
+        descriptionMaxLength: 'Description must be at most 60 characters',
+        specificationMaxLength: 'Specification must be at most 200 characters',
+        modelMaxLength: 'Model must be at most 30 characters',
+        patrimonyMaxLength: 'Asset Tag must be at most 40 characters',
+        statusRequired: 'Status is required',
+        vlTimeProductiveRequired: 'Productive Hour/Km Value is required',
+        vlAcquisitionRequired: 'Acquisition Value is required',
+        hasDepreciationRequired: 'Has Depreciation is required',
+        yearModRequired: 'Year/Model is required',
+        depreciationTypeRequired: 'Depreciation Type is required',
+        residualRequiredWithResidualType:
+          'Residual (%) is required when the type is "With Residual Value"',
+        lifeBensRequiredWithDepreciation: 'Useful Life (years) is required when Has Depreciation',
+        dtAcquisitionRequiredWithDepreciation: 'Acquisition Date is required when Has Depreciation',
+        chassiMaxLength: 'Chassis must be at most 17 characters',
+        renavamMaxLength: 'Renavam must be at most 11 characters',
+        serieMaxLength: 'Series must be at most 40 characters',
+        plateMaxLength: 'Plate must be at most 10 characters',
+        plateRequiredWithFiscal: 'Plate is required when "Uses Fiscal Data" is enabled',
+        typeRequiredWithFiscal: 'Vehicle Type is required when "Uses Fiscal Data" is enabled',
+        bodyTypeRequiredWithFiscal: 'Body Type is required when "Uses Fiscal Data" is enabled',
+        wheelTypeRequiredWithFiscal: 'Wheel Type is required when "Uses Fiscal Data" is enabled',
+        taraRequiredWithFiscal: 'Tare is required when "Uses Fiscal Data" is enabled',
+        capacityRequiredWithFiscal: 'Capacity is required when "Uses Fiscal Data" is enabled',
+        ownerTypeRequiredWithFiscal: 'Owner Type is required when "Uses Fiscal Data" is enabled',
+        ownerDocumentRequiredWithFiscal:
+          'Owner Document (ID/Tax No.) is required when "Uses Fiscal Data" is enabled',
+        ownerNameRequiredWithFiscal: 'Owner Name is required when "Uses Fiscal Data" is enabled',
+        ownerIeRequiredWithFiscal:
+          'Owner State Registration is required when "Uses Fiscal Data" is enabled',
+        ownerUfRequiredWithFiscal: 'Owner State is required when "Uses Fiscal Data" is enabled',
+        ownerTpRequiredWithFiscal: 'Type (TAC) is required when "Uses Fiscal Data" is enabled',
+        colorMaxLength: 'Color must be at most 10 characters',
+        rntrcMaxLength: 'RNTRC must be at most 12 characters',
+        ownerNameMaxLength: 'Owner Name must be at most 100 characters',
+        ownerIeMaxLength: 'Owner State Registration must be at most 12 characters',
+        costCenterPercentageRequired: 'Percentage is required for each added Cost Center',
+        costCenterPercentageSum100: 'The apportionment percentages must add up to exactly 100%',
+        attachmentNameMaxLength: 'Attachment Description must be at most 100 characters',
+      },
+      toasts: {
+        createSuccess: 'Inventory item created successfully.',
+        updateSuccess: 'Inventory item updated successfully.',
+      },
+      errors: {
+        frozenByDepreciationRejected:
+          'Financial fields cannot be changed — this item already has depreciation entries.',
+      },
+    },
+
+    // Detail (TASK-FE-1010) — additive.
+    detail: {
+      notFound: {
+        title: 'Record not found',
+        description: 'The requested Inventory item does not exist or has been removed.',
+        back: 'Back',
+      },
+      actions: {
+        edit: 'Edit',
+      },
+      sections: {
+        identification: 'Identification',
+        financialDepreciation: 'Financial/Depreciation',
+        depreciationData: 'Depreciation Data',
+        fiscalVehicle: 'Fiscal/Vehicle',
+        costCenterApportionment: 'Linked Cost Centers',
+        attachments: 'Attachments',
+      },
+      noData: '—',
+      attachments: {
+        download: 'Download file',
+        unavailable: 'File not available',
+      },
+      apportionment: {
+        total: 'Total:',
+      },
+    },
+
+    // Spreadsheet import/export (TASK-FE-1012) — additive.
+    excel: {
+      downloadTemplate: 'Download template',
+      export: 'Export',
+      downloadTemplateError: 'Could not download the template. Please try again.',
+      exportError: 'Could not export the data. Please try again.',
+      import: {
+        menuLabel: 'Import',
+        title: 'Import Inventory',
+        subtitle: 'Download the template, fill it in and upload it to register items in bulk.',
+        instructions:
+          'The Description column and the Asset Family column (matched by description) are required in every row. Select the Family, the Depreciation flag, the Depreciation Type and the Owner from the validated dropdowns (helper tabs in the spreadsheet).',
+        warning: {
+          title: 'Import only creates new items',
+          description:
+            'Each spreadsheet row creates a new Inventory item — the import never matches or updates items already registered, even with the same description.',
+        },
+        downloadShortcut: 'Download template',
+        fileUpload: {
+          label: 'Filled spreadsheet',
+          hint: 'Upload the .xlsx file filled in from the downloaded template.',
+          dropzoneTitle: 'Drag the spreadsheet or click to select',
+          dropzoneDraggingTitle: 'Drop the spreadsheet here',
+          changeLabel: 'Change file',
+          removeLabel: 'Remove file',
+          errorTypeMessage: 'Format not accepted. Upload a .xlsx file.',
+          errorSizeMessage: 'File exceeds the 10MB maximum size.',
+        },
+        cancelButton: 'Cancel',
+        submitButton: 'Import',
+        importSuccessToast: 'Inventory import completed successfully.',
+        result: {
+          created: 'Created',
+        },
+        rowErrors: {
+          title: 'Some rows could not be imported — fix them and upload again',
+        },
+        closeButton: 'Close',
+      },
+    },
+  },
+};

@@ -1,0 +1,216 @@
+// src/constants/languages/languagePtBr/languageRequestReceipts.ts
+// Tradução pt-BR do módulo "Recebimentos" (RequestReceipt — Administrativo /
+// Suprimentos, esteira 97-Esteiras/040, TASK-RCB-FE-00). Ver
+// `@/@types/language/module-request-receipts` para o contrato completo.
+
+import { ModuleRequestReceipts } from '@/@types/language/module-request-receipts';
+
+export const languageRequestReceipts: ModuleRequestReceipts = {
+  requestReceipt: {
+    singularLabel: 'Recebimento',
+    pluralLabel: 'Recebimentos',
+    titleModule: 'Recebimentos',
+    pageTitle: 'Recebimentos',
+    pageSubtitle: 'Gerencie a confirmação de recebimento das solicitações de compra.',
+
+    list: {
+      table: {
+        code: 'Código',
+        type: 'Tipo',
+        status: 'Status',
+        requestDate: 'Dt. Pedido',
+        description: 'Descrição/Chamado',
+        nfe: 'NF-e',
+        duration: 'Duração',
+        requester: 'Solicitante',
+        responsible: 'Responsável Atual',
+        farm: 'Fazenda',
+        updatedOn: 'Atualizado em',
+        launched: 'Lançado',
+        actions: 'Ações',
+      },
+      launchedYes: 'Lançado',
+      launchedNo: 'Pendente',
+      emptyState: {
+        titleEmpty: 'Nenhum recebimento cadastrado',
+        titleFiltered: 'Nenhum recebimento encontrado',
+        descriptionEmpty: 'Recebimentos aparecerão aqui quando houver solicitações a confirmar.',
+        descriptionFiltered: 'Ajuste os filtros para encontrar o que procura.',
+      },
+    },
+
+    filter: {
+      title: 'Filtrar Recebimentos',
+      search: 'Buscar',
+      searchPlaceholder: 'Buscar por descrição/chamado',
+      status: 'Status',
+      dateFrom: 'Data inicial',
+      dateTo: 'Data final',
+      user: 'Solicitante',
+      farm: 'Fazenda',
+      type: 'Tipo',
+      responsible: 'Responsável',
+    },
+
+    actions: {
+      receive: 'Receber Solicitação',
+      receiveToast: 'Solicitação recebida com sucesso.',
+      view: 'Visualizar',
+      sla: 'Relatório SLA',
+      transfer: 'Transferir Responsável',
+      confirmReceipt: 'Confirmar Recebimento',
+      financial: 'Gerar Financeiro',
+      informPayment: 'Finalizar Pedido',
+      changeStatus: 'Voltar Etapa',
+    },
+
+    confirm: {
+      pageTitle: 'Confirmar Recebimento',
+      pageSubtitle: 'Confirme o recebimento dos itens da solicitação de compra.',
+      fields: {
+        code: 'Código',
+        responsible: 'Responsável',
+        receiptDate: 'Data Recebimento',
+        nfe: 'Número da NFe',
+        purchaseStatus: 'Status do Pedido',
+        receiptNote: 'Observações',
+      },
+      purchaseStatusOptions: {
+        total: 'Compra Recebida',
+        parcial: 'Recebida Parcial',
+      },
+      items: {
+        title: 'Itens',
+        empty: 'Nenhum item para confirmar',
+        columns: {
+          description: 'Descrição',
+          quantity: 'Quantidade',
+          status: 'Status',
+          deliveryDate: 'Data de Entrega',
+        },
+      },
+      attachments: {
+        title: 'Anexos',
+        addButton: '+ Adicionar Anexo',
+        removeButton: 'Remover',
+        emptyLabel: 'Nenhum anexo adicionado',
+        fields: {
+          name: 'Descrição',
+          file: 'Arquivo',
+        },
+        removeLastRowError: 'Mantenha ao menos uma linha de anexo.',
+        fillBeforeAddError: 'Preencha a linha atual antes de adicionar outra.',
+      },
+      validation: {
+        nfeRequired: 'Número da NFe é obrigatório',
+        nfeMaxLength: 'Número da NFe deve ter no máximo 9 caracteres',
+        purchaseStatusRequired: 'Status do Pedido é obrigatório',
+        receiptDateRequired: 'Data Recebimento é obrigatória',
+        receiptNoteMaxLength: 'Observações deve ter no máximo 600 caracteres',
+        attachmentFileRequiredWhenTotal: 'Arquivo é obrigatório quando o status é Compra Recebida',
+        attachmentNameRequiredWithFile: 'Descrição do Anexo é obrigatória quando há arquivo',
+      },
+      submitToast: 'Recebimento confirmado com sucesso.',
+    },
+
+    financial: {
+      pageTitle: 'Gerar Financeiro',
+      pageSubtitle: 'Gere o título financeiro referente ao recebimento confirmado.',
+      fields: {
+        vlTotal: 'Valor Total',
+        financialNumber: 'Nº Título',
+        financialTypeId: 'Tipo',
+        financialProprietaryId: 'Proprietário Gestor',
+        financialProviderId: 'Fornecedor',
+        financialNote: 'Histórico',
+        hasInput: 'Possui entrada ?',
+        inputValue: 'Valor da Entrada',
+        inputDate: 'Data da Entrada',
+        qtdInstallments: 'Nª Parcelas',
+        firstInstallment: 'Venc. 1ª. PC',
+        intInstallments: 'Int. Parcelas (dias)',
+        fiscalDocument: 'Dedutível',
+        receiptDate: 'Data Recebimento',
+        receiptNote: 'Observações',
+      },
+      placeholders: {
+        financialTypeId: 'Busque um tipo de título',
+        financialProprietaryId: 'Busque um proprietário',
+        financialProviderId: 'Busque um fornecedor',
+      },
+      hasInputOptions: {
+        yes: 'Sim',
+        no: 'Não',
+      },
+      fiscalDocumentOptions: {
+        yes: 'Sim',
+        no: 'Não',
+      },
+      newProviderButton: '+ Novo Fornecedor',
+      installments: {
+        title: 'Parcelamento',
+        sumLabel: 'Soma das parcelas',
+        emptyLabel: 'Nenhuma parcela gerada',
+        columns: {
+          dueDate: 'Vencimento',
+          value: 'Valor',
+        },
+      },
+      ratio: {
+        title: 'Rateio',
+        categoryLabel: 'Categoria',
+        centerLabel: 'Centro de Custo',
+        planAccountLabel: 'Conta Contábil',
+        percentLabel: '(%)',
+        valueLabel: 'Valor',
+        addRowButton: '+ Adicionar Rateio',
+        removeRowButton: 'Remover',
+        emptyLabel: 'Nenhum rateio adicionado',
+        sumLabel: 'Soma do rateio',
+        sumWarning: 'A soma do rateio deve totalizar 100% do valor.',
+      },
+      validation: {
+        financialNumberMaxLength: 'Número deve ter no máximo 15 caracteres',
+        financialTypeIdRequired: 'Tipo é obrigatório',
+        financialNoteRequired: 'Histórico é obrigatório',
+        financialNoteMaxLength: 'O campo Histórico deve ter no máximo 1000 caracteres',
+        hasInputRequired: 'Selecione se possui entrada',
+        inputValueRequired: 'Valor da Entrada é obrigatório',
+        inputDateRequired: 'Data da Entrada é obrigatória',
+        qtdInstallmentsRequired: 'Nª Parcelas é obrigatório',
+        qtdInstallmentsMin: 'Nª Parcelas deve ser ao menos 1',
+        firstInstallmentRequired: 'Venc. 1ª. PC é obrigatório',
+        vlTotalRequired: 'Valor Total é obrigatório',
+        vlTotalPositive: 'O valor do título deve ser maior que zero',
+        financialNumberRequired: 'Nº Título é obrigatório',
+        providerRequired: 'Fornecedor é obrigatório',
+        installmentsAndRatioRequired: 'Favor inserir as parcelas a pagar e o rateio.',
+        ratioTotalDiffers: 'O total do rateio difere do valor total.',
+        ratioCategoryRequired: 'Categoria é obrigatória',
+        ratioCenterRequired: 'Centro de Custo é obrigatório',
+      },
+      freezeErrorFallback: 'Não foi possível gerar o financeiro — período financeiro congelado.',
+      submitToast: 'Financeiro gerado com sucesso.',
+    },
+
+    informPayment: {
+      pageTitle: 'Finalizar Pedido',
+      pageSubtitle: 'Informe os dados de pagamento para finalizar o pedido.',
+      fields: {
+        finalDate: 'Data Finalização',
+        status: 'Status',
+        nfe: 'Número da NFe',
+        finalizationNote: 'Observações',
+      },
+      statusOptions: {
+        pedidoFinalizado: 'Pedido Finalizado',
+      },
+      validation: {
+        finalDateRequired: 'Data Finalização é obrigatória',
+        nfeRequired: 'Número da NFe é obrigatório',
+        nfeMaxLength: 'Número da NFe deve ter no máximo 9 caracteres',
+      },
+      submitToast: 'Pedido finalizado com sucesso.',
+    },
+  },
+};

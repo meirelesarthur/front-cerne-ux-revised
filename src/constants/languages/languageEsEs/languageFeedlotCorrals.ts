@@ -1,0 +1,195 @@
+// src/constants/languages/languageEsEs/languageFeedlotCorrals.ts
+// Traducción ES-ES del módulo OPERACIONAL — pantalla standalone de Currais
+// (FeedlotCorral, F-035, lote 043, TASK-043-CUR-T01 — fundación). Mirror
+// `languageFeedlotSectors`.
+
+import { ModuleFeedlotCorrals } from '@/@types/language/module-feedlot-corrals';
+
+export const languageFeedlotCorrals: ModuleFeedlotCorrals = {
+  feedlotCorral: {
+    singularLabel: 'Corral',
+    pluralLabel: 'Corrales',
+    list: {
+      pageTitle: 'Corrales',
+      pageSubtitle: 'Registro de los corrales de confinamiento.',
+      deletedToast: 'Corral eliminado con éxito',
+      table: {
+        identification: 'Identificación',
+        name: 'Nombre',
+        feedlotSector: 'Sector',
+        installationType: 'Instalación',
+        areaTotal: 'Área Total',
+        floor: 'Piso',
+        shading: 'Sombreado',
+        trough: 'Comedero',
+        drinkingFountain: 'Bebedero',
+        status: 'Situación',
+        capacity: 'Capacidad',
+        animalsCount: 'Animales',
+        createdAt: 'Creado el',
+      },
+      actions: {
+        view: 'Visualizar',
+        edit: 'Editar',
+        changeStatus: 'Cambiar Situación',
+        history: 'Historial',
+        delete: 'Eliminar',
+      },
+      emptyState: {
+        titleEmpty: 'Ningún corral registrado.',
+        descriptionEmpty: 'Comience agregando su primer corral.',
+        titleEmptyNoCreate: 'Ningún corral registrado.',
+        descriptionEmptyNoCreate: 'No tiene permiso para registrar un nuevo corral.',
+        titleFiltered: 'Ningún corral encontrado.',
+        descriptionFiltered: 'Intente ajustar los filtros o borrar la búsqueda.',
+        cta: 'Nuevo Corral',
+      },
+      changeStatusDetachConfirm: {
+        title: 'Eliminar lotes del corral',
+        description:
+          'Este corral está ocupado con {count} animal(es) vinculado(s) a lote(s). Al cambiar la situación, los lotes serán desvinculados y sus fechas/dieta serán eliminadas. ¿Desea continuar?',
+      },
+    },
+    filter: {
+      title: 'Filtrar corrales',
+      name: 'Nombre',
+      namePlaceholder: 'Buscar por nombre',
+      feedlotSector: 'Sector',
+      feedlotSectorPlaceholder: 'Buscar por sector',
+      status: 'Situación',
+      statusAll: 'Todas',
+    },
+    detail: {
+      generalData: { title: 'Datos Generales' },
+      fields: {
+        identification: 'Identificación',
+        name: 'Nombre',
+        feedlotSector: 'Sector',
+        installationType: 'Instalación',
+        status: 'Situación',
+        width: 'Ancho',
+        length: 'Largo',
+        areaTotal: 'Área Total',
+        capacity: 'Capacidad',
+        coverage: 'Cobertura',
+        floor: 'Piso',
+        shading: 'Sombreado',
+        trough: 'Comedero',
+        drinkingFountain: 'Bebedero',
+        createdAt: 'Creado el',
+        updatedAt: 'Actualizado el',
+      },
+      actions: { edit: 'Editar' },
+      notFound: {
+        title: 'Corral no encontrado.',
+        description: 'El corral que busca no existe o fue eliminado.',
+        back: 'Volver al listado',
+      },
+    },
+    history: {
+      table: {
+        corral: 'Corral',
+        beforeStatus: 'Situación Anterior',
+        afterStatus: 'Situación Nueva',
+        note: 'Observación',
+        createdAt: 'Fecha/Hora',
+        user: 'Usuario',
+      },
+      emptyState: {
+        title: 'Ningún historial registrado.',
+        description: 'Aún no hay cambios de situación registrados para este corral.',
+      },
+      error: {
+        message: 'No fue posible cargar el historial de este corral.',
+        retry: 'Intentar de nuevo',
+      },
+    },
+    form: {
+      title: { create: 'Nuevo Corral', edit: 'Editar Corral' },
+      fields: { feedlotSector: 'Sector' },
+      placeholders: { feedlotSector: 'Seleccione el sector' },
+      hints: { identificationGenerated: 'Generado automáticamente' },
+      validation: { feedlotSectorRequired: 'El sector es obligatorio.' },
+    },
+    wizard: {
+      step1: 'Identificación y Situación',
+      step2: 'Dimensiones y Estructura',
+      step3: 'Lotes',
+      stepErrors: 'Complete los campos obligatorios de esta etapa antes de continuar.',
+      submit: {
+        situationPermissionDenied:
+          'No tiene permiso para actualizar la situación de este corral (requiere acceso al Mapa de Confinamiento o a los Corrales).',
+        partialSaveTitle: 'Corral guardado parcialmente',
+        partialSaveBatchesDescription:
+          'El corral fue guardado, pero los lotes no fueron vinculados. Abra el registro nuevamente para intentarlo de nuevo.',
+        partialSaveSituationDescription:
+          'El corral fue guardado, pero la situación no fue actualizada. Abra el registro nuevamente para intentarlo de nuevo.',
+      },
+      lots: {
+        heading: 'Lotes del Corral',
+        description: 'Vincule los lotes que ocuparán este corral.',
+        blockedHeading: 'Lotes bloqueados',
+        blockedDescription:
+          'La situación actual del corral no permite incluir o cambiar lotes en esta etapa.',
+        statusBlockedTooltip: 'No disponible para la situación actual del corral.',
+        addBlockedTitle: 'Seleccione un lote',
+        addBlockedDescription: 'Seleccione el lote de la línea actual antes de agregar otra.',
+        removeConfirmTitle: 'Eliminar lote',
+        removeConfirmDescription: '¿Está seguro que desea eliminar esta línea de lote',
+        summaryCount: 'Lotes seleccionados: {count}',
+        summaryTotalAnimals: 'Animales vinculados: {total}',
+        batchModal: {
+          titleCreate: 'Nuevo Lote',
+          titleEdit: 'Editar Lote',
+          fields: {
+            date: 'Fecha',
+            parameterWeight: 'Peso',
+            specie: 'Especie',
+            categories: 'Categorías',
+            description: 'Descripción',
+          },
+          cancelButton: 'Cancelar',
+          submitButton: 'Guardar',
+          createdToast: 'Lote creado con éxito',
+          updatedToast: 'Lote actualizado con éxito',
+        },
+      },
+    },
+    enums: {
+      installationType: { cover: 'Cubierto', uncovered: 'Descubierto' },
+      status: {
+        available: 'Vacío',
+        reserved: 'Vacío Sanitario',
+        occupied: 'Ocupado',
+        maintenance: 'Mantenimiento',
+        cleaning: 'Limpieza',
+        sanitaryHold: 'Enfermería',
+        closed: 'Interdictado',
+      },
+      coverage: {
+        open: 'Abierto',
+        partiallyCovered: 'Cobertura Parcial',
+        fullyCovered: 'Cobertura Total',
+        metalShed: 'Galpón Metálico',
+        insulatedShed: 'Galpón con Aislamiento',
+        thermoacousticRoof: 'Teja Termoacústica',
+        fiberCementRoof: 'Fibrocemento',
+        clayTileRoof: 'Cerámica',
+        tensionedFabricRoof: 'Lona Tensada',
+        shadeNet: 'Malla Sombra',
+      },
+      floor: {
+        compactedDirt: 'Tierra Apisonada',
+        concreteFloor: 'Concreto',
+        groovedConcrete: 'Concreto Ranurado',
+        gravelFloor: 'Grava',
+        stoneFloor: 'Piedra',
+        sandFloor: 'Arena',
+        rubberFlooring: 'Piso de Goma',
+        deepBedding: 'Cama Profunda',
+        slattedFloor: 'Piso Enrejillado',
+      },
+      shading: { natural: 'Natural', artificial: 'Artificial', none: 'No Posee' },
+    },
+  },
+};

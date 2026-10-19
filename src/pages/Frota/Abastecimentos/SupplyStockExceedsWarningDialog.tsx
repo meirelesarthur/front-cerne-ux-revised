@@ -1,0 +1,86 @@
+// src/pages/Frota/Abastecimentos/SupplyStockExceedsWarningDialog.tsx
+// -----------------------------------------------------------------------------
+// Modal de aviso quando a Quantidade informada de uma linha ultrapassa a
+// quantidade disponível em estoque do item selecionado — Tarefa 41. Mesmo
+// COMPORTAMENTO (bloqueio + aviso) do sibling
+// `Operacional/Appropriations/tabs/StockQuantityExceedsWarningDialog.tsx`,
+// NÃO reusado literalmente porque aquele componente multiplica por "área
+// produtiva" (conceito de Apontamentos, sem equivalente em Abastecimentos —
+// CRUD flat, sem área) — casca visual idêntica (Dialog.Root + Portal, mirror
+// `DeleteConfirmDialog.tsx`), textos próprios de `languageSupplies`.
+// -----------------------------------------------------------------------------
+
+import { Dialog, Flex, Icon, Portal, Text, VStack } from '@chakra-ui/react';
+import { FiAlertTriangle } from 'react-icons/fi';
+
+import { Button } from '@/components/Button';
+
+import { useLanguage } from '@/hooks/useLanguage';
+
+export interface SupplyStockExceedsWarningDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  informedQuantity: number;
+  stockQuantity: number;
+}
+
+function formatNumber(value: number) {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+export function SupplyStockExceedsWarningDialog({
+  isOpen,
+  onClose,
+  informedQuantity,
+  stockQuantity,
+}: SupplyStockExceedsWarningDialogProps) {
+  const { languageGB } = useLanguage();
+  const text = languageGB.supplies.supply.form.stockExceedsDialog;
+
+  return (
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(details: { open: boolean }) => {
+        if (!details.open) onClose();
+      }}
+      lazyMount
+      unmountOnExit
+    >
+      <Portal>
+        <Dialog.Backdrop />
+        {/* @ts-ignore ChakraUI v3 headless dialog: tipos ainda não compatíveis */}
+        <Dialog.Positioner>
+          {/* @ts-ignore ChakraUI v3 headless dialog: tipos ainda não compatíveis */}
+          <Dialog.Content>
+            <Dialog.Header>
+              {/* @ts-ignore ChakraUI v3 headless dialog: tipos ainda não compatíveis */}
+              <Dialog.Title>
+                <Flex align="center" gap={2}>
+                  <Icon as={FiAlertTriangle} color="orange.400" boxSize={5} />
+                  <Text>{text.title}</Text>
+                </Flex>
+              </Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Text>{text.intro}</Text>
+
+              <VStack align="stretch" gap={1} mt={4}>
+                <Text fontSize="sm">
+                  {text.informedQuantityLabel}: {formatNumber(informedQuantity)}
+                </Text>
+                <Text fontSize="sm">
+                  {text.stockQuantityLabel}: {formatNumber(stockQuantity)}
+                </Text>
+              </VStack>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button title={text.confirm} variant="outline" onClick={onClose} />
+            </Dialog.Footer>
+            {/* @ts-ignore ChakraUI v3 headless dialog */}
+            <Dialog.CloseTrigger />
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
+  );
+}

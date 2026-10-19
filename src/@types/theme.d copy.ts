@@ -1,0 +1,105 @@
+// @types/theme.ts
+export interface SemanticTokensColors {
+  [key: string]: any;
+  loadingBG: { value: string };
+  primitiveBG: { value: string };
+  primitiveBGHover: { value: string };
+  primitiveTexteColor: { value: string };
+  secondaryTexteColor: { value: string };
+  primitiveDisableTextColor: { value: string };
+  primaryMain: { value: string };
+  primaryDarker: { value: string };
+  primaryDark: { value: string };
+  primaryLight: { value: string };
+  primaryLighter: { value: string };
+  primary: { value: string };
+  primary2: { value: string };
+  primary300: { value: string };
+  primary400: { value: string };
+  primary500: { value: string };
+  secondaryMain: { value: string };
+  secondaryDark: { value: string };
+  secondaryDarker: { value: string };
+  secondaryLight: { value: string };
+  secondaryLighter: { value: string };
+  secondary: { value: string };
+  secondary2: { value: string };
+  secondary300: { value: string };
+  secondary400: { value: string };
+  secondaryBG: { value: string };
+  outlineBorder: { value: string };
+  headerPanelBG: { value: string };
+  menuBG: { value: string };
+  menuTextColor: { value: string };
+  menuSelectedTextColor: { value: string };
+  menuSelectedBG: { value: string };
+  menuLateralBG: { value: string };
+  border1: { value: string };
+  border2: { value: string };
+  borderGrid: { value: string };
+  formBG: { value: string };
+  gridBG: { value: string };
+  gridHeadEndFooter: { value: string };
+  gridHeadSecondary: { value: string };
+  textGridColor: { value: string };
+  selectedTextGridColor: { value: string };
+  textInlineBG: { value: string };
+  tabSelectedBG: { value: string };
+  tabBG: { value: string };
+  textReadOnlyColor: { value: string };
+  buttonOutlineBG: { value: string };
+  buttonSolidBG: { value: string };
+  buttonSolidColor: { value: string };
+  paginationColor: { value: string };
+  paginationBG: { value: string };
+  paginationSelectedBG: { value: string };
+  cardColor: { value: string };
+  placeholderColor: { value: string };
+  inputBG: { value: string };
+  tabs: {
+    textColor: { value: string };
+    textSelectedColor: { value: string };
+    tabBG: { value: string };
+    tabBG2: { value: string };
+    tabSelectedBG: { value: string };
+    tabSelectedBG2: { value: string };
+    tabDisabledBG: { value: string };
+    painelBG: { value: string };
+  };
+  headerWindowBG: {
+    create: { value: string };
+    update: { value: string };
+    consult: { value: string };
+  };
+  headerWindowColor: {
+    create: { value: string };
+    update: { value: string };
+    consult: { value: string };
+  };
+  semanticNeutral: Record<number, { value: string }>;
+  foreground: Record<number | string, { value: string }>;
+  feedBack: {
+    successMain: { value: string };
+    warnMain: { value: string };
+    errorMain: { value: string };
+    infoMain: { value: string };
+    success: { value: string };
+    warn: { value: string };
+    error: { value: string };
+    info: { value: string };
+  };
+  colorCicle: {
+    success: { value: string };
+    warn: { value: string };
+    error: { value: string };
+    info: { value: string };
+  };
+  colorIcon: {
+    success: { value: string };
+    warn: { value: string };
+    error: { value: string };
+    info: { value: string };
+  };
+  bodyBackground: { value: string };
+  bodyColor: { value: string };
+}

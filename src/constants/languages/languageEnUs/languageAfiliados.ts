@@ -1,0 +1,137 @@
+// src/constants/languages/languageEnUs/languageAfiliados.ts
+// EN-US translation of the Affiliates module (Partner — Base Registrations /
+// People, execution 024).
+
+import { ModuleAfiliados } from '@/@types/language/module-afiliados';
+
+export const languageAfiliados: ModuleAfiliados = {
+  partner: {
+    singularLabel: 'Affiliate',
+    pluralLabel: 'Affiliates',
+    titleModule: 'Affiliates',
+    status: {
+      enabled: 'Enabled',
+      blocked: 'Blocked',
+      cancelled: 'Cancelled',
+    },
+    list: {
+      pageTitle: 'Affiliates',
+      pageSubtitle: 'Manage the affiliates registered on the platform.',
+      deletedToast: 'Affiliate deleted successfully',
+      table: {
+        name: 'Name',
+        nif: 'Tax ID',
+        phone: 'Phone',
+        status: 'Status',
+        dtAffiliation: 'Affiliation Date',
+        dueDate: 'Expiration Date',
+        dueDateIndeterminate: 'Indefinite',
+      },
+      actions: {
+        edit: 'Edit',
+        delete: 'Delete',
+      },
+      emptyState: {
+        titleEmpty: 'No affiliates registered.',
+        descriptionEmpty: 'Start by adding the first affiliate.',
+        titleEmptyNoCreate: 'No affiliates available.',
+        descriptionEmptyNoCreate:
+          'There are no affiliates registered yet. Contact the platform administrator.',
+        titleFiltered: 'No affiliates found.',
+        descriptionFiltered: 'Try adjusting the filters or clearing the search.',
+        cta: 'New Affiliate',
+      },
+      deleteConfirm: {
+        title: 'Delete affiliate',
+        description: 'Are you sure you want to delete the affiliate',
+        warning: 'This action cannot be undone.',
+      },
+    },
+    filter: {
+      title: 'Filter affiliates',
+      search: 'Search',
+      searchPlaceholder: 'Search by name or Tax ID',
+      status: 'Status',
+      statusAll: 'All',
+    },
+    form: {
+      title: {
+        create: 'New Affiliate',
+        edit: 'Edit Affiliate',
+      },
+      subtitle: {
+        create: 'Register a new affiliate.',
+        edit: 'Update the affiliate data.',
+      },
+      fields: {
+        nif: 'Tax ID',
+        nickname: 'Legal Name',
+        name: 'Trade Name',
+        email: 'Email',
+        phone: 'Phone',
+        cellphone: 'Mobile',
+        zipCode: 'ZIP Code',
+        address: 'Address',
+        city: 'City',
+        contact: 'Contact',
+        contactPhone: 'Contact Phone',
+        status: 'Status',
+        dtAffiliation: 'Affiliation Date',
+        commission: 'Commission (%)',
+        dueDate: 'Expiration Date',
+        qtdFarms: 'No. of Farms',
+        businessRule: 'Business Rule',
+        note: 'Notes',
+        contractFile: 'Contract (PDF)',
+      },
+      placeholders: {
+        nickname: 'E.g.: Affiliate Supplies Co.',
+        name: 'E.g.: Agro Supplies',
+        email: 'name@domain.com',
+        address: 'Street, number, neighborhood',
+        city: 'Search by city',
+      },
+      hints: {
+        cityRequired: 'City is required.',
+      },
+      validation: {
+        nifRequired: 'Tax ID is required',
+        nifInvalid: 'Invalid Tax ID',
+        nicknameRequired: 'Legal name is required',
+        nicknameMaxLength: 'Legal name must be at most 60 characters',
+        nameRequired: 'Trade name is required',
+        nameMaxLength: 'Trade name must be at most 30 characters',
+        emailRequired: 'Email is required',
+        emailInvalid: 'Invalid email',
+        emailMaxLength: 'Email must be at most 89 characters',
+        phoneRequired: 'Phone is required',
+        addressRequired: 'Address is required',
+        addressMaxLength: 'Address must be at most 120 characters',
+        cityRequired: 'Select a city',
+        statusRequired: 'Select a status',
+        dtAffiliationRequired: 'Affiliation date is required',
+        commissionRequired: 'Commission is required',
+        commissionInvalid: 'Enter a numeric value',
+        commissionMin: 'Commission cannot be negative',
+        qtdFarmsRequired: 'Number of farms is required',
+        qtdFarmsInvalid: 'Enter a numeric value',
+        qtdFarmsMin: 'Quantity cannot be negative',
+      },
+      contractFile: {
+        dropzoneTitle: 'Drag a PDF or click to select',
+        dropzoneDraggingTitle: 'Drop the file here',
+        changeLabel: 'Change file',
+        removeLabel: 'Remove',
+        replaceLabel: 'Replace',
+        errorType: 'File type not accepted. Upload a PDF file.',
+        errorSize: 'File exceeds the maximum allowed size (1MB).',
+        existingFileLabel: 'Current contract',
+      },
+      deleteConfirm: {
+        title: 'Delete affiliate',
+        description: 'Are you sure you want to delete the affiliate',
+        warning: 'This action cannot be undone.',
+      },
+    },
+  },
+};

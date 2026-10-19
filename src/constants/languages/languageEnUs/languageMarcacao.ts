@@ -1,0 +1,225 @@
+// src/constants/languages/languageEnUs/languageMarcacao.ts
+// Tradução EN-US do módulo de MARCAÇÃO (Operacional > Agricultura > Manejo).
+// Namespace `marcacao` — LIVRE (`ARCHITECTURE-MARCACAO-FE.md`). O objeto
+// exportado satisfaz `ModuleMarcacao` diretamente em `marking` (sem
+// envelope `marcacao` extra — a chave de namespace já vem de
+// `LanguageDate.marcacao: ModuleMarcacao`, mirror `ModuleMovementSales`).
+
+import { ModuleMarcacao } from '@/@types/language/module-marcacao';
+
+export const languageMarcacao: ModuleMarcacao = {
+  marking: {
+    singularLabel: 'Marking',
+    pluralLabel: 'Markings',
+    list: {
+      pageTitle: 'Marking',
+      pageSubtitle: 'Manage the farm markings.',
+      deletedToast: 'Marking deleted successfully.',
+      table: {
+        code: 'Code',
+        area: 'Area',
+        responsible: 'Responsible',
+        variety: 'Variety',
+        quantity: 'Quantity',
+        harvest: 'Harvest',
+        week: 'Week',
+        date: 'Date',
+        color: 'Color',
+        status: 'Status',
+      },
+      actions: {
+        view: 'View',
+        print: 'Print',
+        edit: 'Edit',
+        editDisabledTooltip: 'This marking is no longer open and cannot be edited.',
+        forecast: 'Forecast',
+        forecastDisabledTooltip: 'This marking has already been done.',
+        done: 'Mark as done',
+        doneDisabledTooltip: 'This marking does not have a forecast yet.',
+        delete: 'Delete',
+      },
+      emptyState: {
+        titleEmpty: 'No markings registered.',
+        descriptionEmpty: 'Start by adding the first marking.',
+        titleFiltered: 'No records found.',
+        descriptionFiltered: 'Try adjusting the filters.',
+      },
+      error: {
+        message: 'Unable to load data.',
+        retry: 'Try again',
+      },
+    },
+    filter: {
+      title: 'Filter markings',
+      area: 'Area',
+      harvest: 'Harvest',
+      variety: 'Variety',
+      user: 'Responsible',
+      status: 'Status',
+      color: 'Color',
+      startDate: 'Start date',
+      endDate: 'End date',
+      week: 'Week',
+    },
+    deleteDialog: {
+      title: 'Confirm deletion',
+      descriptionTemplate:
+        'Marking {code} will be permanently deleted. This action cannot be undone.',
+    },
+    status: {
+      marcado: 'Marked',
+      previsto: 'Forecast',
+      realizado: 'Done',
+    },
+    colors: {
+      amarelo: 'Yellow',
+      azulClaro: 'Light blue',
+      branco: 'White',
+      marrom: 'Brown',
+      preto: 'Black',
+      rosa: 'Pink',
+      roxo: 'Purple',
+      verde: 'Green',
+      vermelho: 'Red',
+      rosaClaro: 'Light pink',
+      rosaPink: 'Hot pink',
+      palha: 'Straw',
+      azulEscuro: 'Dark blue',
+      azulMarinho: 'Navy blue',
+      laranja: 'Orange',
+      azulRoyal: 'Royal blue',
+    },
+    form: {
+      title: {
+        create: 'New Marking',
+        edit: 'Edit Marking',
+        view: 'View Marking',
+      },
+      fields: {
+        code: 'Code',
+        area: 'Area',
+        date: 'Date',
+        variety: 'Variety',
+        user: 'Responsible',
+        quantity: 'Quantity',
+        harvest: 'Harvest',
+        employee: 'Employee',
+        center: 'Cost center',
+        color: 'Color',
+        week: 'Week',
+        weekStartDate: 'Start date',
+        weekEndDate: 'End date',
+      },
+      placeholders: {
+        area: 'Select the area',
+        variety: 'Select the variety',
+        user: 'Select the responsible',
+        harvest: 'Select the harvest',
+        employee: 'Select the employee',
+        center: 'Select the cost center',
+        color: 'Select the color',
+      },
+      hints: {
+        colorSuggestionByHarvest: 'Suggested color by the harvest for this week: {color}',
+      },
+      cascade: {
+        errorToast:
+          'Could not find the harvest week for the given date. Select another harvest or date.',
+      },
+    },
+    forecast: {
+      title: 'Marking Forecast',
+      subtitle: 'Enter the harvest forecast lines.',
+      bulkSubtitleTemplate: 'Apply forecast to {count} selected markings.',
+      fields: {
+        order: 'Order',
+        percentage: 'Percentage (%)',
+        averageWeight: 'Average weight',
+        averagePrice: 'Average price',
+        days: 'Days',
+        quantity: 'Quantity',
+        incomeBoxes: 'Boxes',
+        total: 'Total',
+        forecastDate: 'Forecast date',
+      },
+      addLine: 'Add item',
+      removeLine: 'Remove item',
+      maxLinesWarning: 'Limit of 4 forecast lines per marking.',
+      emptyIdsToast: 'Select at least one marking to forecast in bulk.',
+      successToast: 'Forecast saved successfully.',
+      validation: {
+        sumPercentage100: 'The sum of the forecast percentages must be exactly 100%.',
+      },
+    },
+    done: {
+      title: 'Marking Done',
+      subtitle: 'Enter the harvest done lines.',
+      bulkSubtitleTemplate: 'Apply done to {count} selected markings.',
+      fields: {
+        order: 'Order',
+        orderPlaceholder: 'Select the forecast line',
+        date: 'Date',
+        quantity: 'Quantity',
+        discard: 'Discard',
+        averageWeight: 'Average weight',
+        averagePrice: 'Average price',
+        status: 'Status',
+        color: 'Color',
+        total: 'Total',
+      },
+      statusOptions: {
+        aberto: 'Open',
+        parcial: 'Partial',
+        concluido: 'Done',
+      },
+      addLine: 'Add item',
+      removeLine: 'Remove item',
+      maxLinesWarning: 'The last line is already done — no new items can be added.',
+      emptyIdsToast: 'Select at least one marking to mark as done in bulk.',
+      successToast: 'Done saved successfully.',
+      validation: {
+        uniqueOrder: 'The order of the done lines cannot repeat.',
+      },
+    },
+    excel: {
+      downloadTemplate: 'Download template',
+      downloadTemplateError: 'Could not download the template.',
+      export: 'Export',
+      exportError: 'Could not export the markings.',
+      import: {
+        menuLabel: 'Import',
+        title: 'Import markings',
+        subtitle: 'Import markings from a spreadsheet (.xlsx).',
+        instructions:
+          'The spreadsheet must follow the template with the columns Area, Date, Variety, Quantity and Harvest.',
+        warning: {
+          title: 'Warning',
+          description:
+            'If any row in the spreadsheet is invalid, the whole import is rejected — no marking is created.',
+        },
+        fileUpload: {
+          label: 'File',
+          hint: '.xlsx format, up to 10MB.',
+          dropzoneTitle: 'Drag the file here or click to select',
+          dropzoneDraggingTitle: 'Drop the file here',
+          changeLabel: 'Change file',
+          removeLabel: 'Remove',
+          errorTypeMessage: 'Invalid file format. Upload a .xlsx file.',
+          errorSizeMessage: 'File too large. The limit is 10MB.',
+        },
+        rowErrors: {
+          title: 'Invalid rows',
+        },
+        result: {
+          rowsProcessedTemplate: '{count} markings imported.',
+          codeRangeTemplate: 'Generated codes: {first} to {last}.',
+        },
+        cancelButton: 'Cancel',
+        submitButton: 'Import',
+        closeButton: 'Close',
+        successToast: 'Marking import completed successfully.',
+        noPermission: 'You do not have permission to import markings.',
+      },
+    },
+  },
+};

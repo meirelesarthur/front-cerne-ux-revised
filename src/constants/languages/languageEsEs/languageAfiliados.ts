@@ -1,0 +1,137 @@
+// src/constants/languages/languageEsEs/languageAfiliados.ts
+// Traducción ES-ES del módulo de Afiliados (Partner — Registros Base /
+// Personas, ejecución 024).
+
+import { ModuleAfiliados } from '@/@types/language/module-afiliados';
+
+export const languageAfiliados: ModuleAfiliados = {
+  partner: {
+    singularLabel: 'Afiliado',
+    pluralLabel: 'Afiliados',
+    titleModule: 'Afiliados',
+    status: {
+      enabled: 'Habilitado',
+      blocked: 'Bloqueado',
+      cancelled: 'Cancelado',
+    },
+    list: {
+      pageTitle: 'Afiliados',
+      pageSubtitle: 'Administre los afiliados registrados en la plataforma.',
+      deletedToast: 'Afiliado eliminado con éxito',
+      table: {
+        name: 'Nombre',
+        nif: 'CPF/CNPJ',
+        phone: 'Teléfono',
+        status: 'Estado',
+        dtAffiliation: 'Fecha de Afiliación',
+        dueDate: 'Fecha de Vigencia',
+        dueDateIndeterminate: 'Indeterminado',
+      },
+      actions: {
+        edit: 'Editar',
+        delete: 'Eliminar',
+      },
+      emptyState: {
+        titleEmpty: 'No hay afiliados registrados.',
+        descriptionEmpty: 'Comience agregando el primer afiliado.',
+        titleEmptyNoCreate: 'No hay afiliados disponibles.',
+        descriptionEmptyNoCreate:
+          'Todavía no hay afiliados registrados. Comuníquese con el administrador de la plataforma.',
+        titleFiltered: 'No se encontraron afiliados.',
+        descriptionFiltered: 'Intente ajustar los filtros o limpiar la búsqueda.',
+        cta: 'Nuevo Afiliado',
+      },
+      deleteConfirm: {
+        title: 'Eliminar afiliado',
+        description: '¿Está seguro de que desea eliminar el afiliado',
+        warning: 'Esta acción no se puede deshacer.',
+      },
+    },
+    filter: {
+      title: 'Filtrar afiliados',
+      search: 'Buscar',
+      searchPlaceholder: 'Buscar por nombre o CPF/CNPJ',
+      status: 'Estado',
+      statusAll: 'Todos',
+    },
+    form: {
+      title: {
+        create: 'Nuevo Afiliado',
+        edit: 'Editar Afiliado',
+      },
+      subtitle: {
+        create: 'Registre un nuevo afiliado.',
+        edit: 'Actualice los datos del afiliado.',
+      },
+      fields: {
+        nif: 'CPF/CNPJ',
+        nickname: 'Razón Social',
+        name: 'Nombre Comercial',
+        email: 'Correo electrónico',
+        phone: 'Teléfono',
+        cellphone: 'Celular',
+        zipCode: 'Código Postal',
+        address: 'Dirección',
+        city: 'Ciudad',
+        contact: 'Contacto',
+        contactPhone: 'Teléfono del Contacto',
+        status: 'Estado',
+        dtAffiliation: 'Fecha de Afiliación',
+        commission: 'Comisión (%)',
+        dueDate: 'Fecha de Vigencia',
+        qtdFarms: 'Cant. de Fincas',
+        businessRule: 'Regla de Negocio',
+        note: 'Observaciones',
+        contractFile: 'Contrato (PDF)',
+      },
+      placeholders: {
+        nickname: 'Ej.: Afiliado Insumos S.A.',
+        name: 'Ej.: Insumos Agro',
+        email: 'nombre@dominio.com',
+        address: 'Calle, número, barrio',
+        city: 'Buscar por ciudad',
+      },
+      hints: {
+        cityRequired: 'La ciudad es obligatoria.',
+      },
+      validation: {
+        nifRequired: 'El CPF/CNPJ es obligatorio',
+        nifInvalid: 'CPF/CNPJ inválido',
+        nicknameRequired: 'La razón social es obligatoria',
+        nicknameMaxLength: 'La razón social debe tener como máximo 60 caracteres',
+        nameRequired: 'El nombre comercial es obligatorio',
+        nameMaxLength: 'El nombre comercial debe tener como máximo 30 caracteres',
+        emailRequired: 'El correo electrónico es obligatorio',
+        emailInvalid: 'Correo electrónico inválido',
+        emailMaxLength: 'El correo electrónico debe tener como máximo 89 caracteres',
+        phoneRequired: 'El teléfono es obligatorio',
+        addressRequired: 'La dirección es obligatoria',
+        addressMaxLength: 'La dirección debe tener como máximo 120 caracteres',
+        cityRequired: 'Seleccione una ciudad',
+        statusRequired: 'Seleccione un estado',
+        dtAffiliationRequired: 'La fecha de afiliación es obligatoria',
+        commissionRequired: 'La comisión es obligatoria',
+        commissionInvalid: 'Ingrese un valor numérico',
+        commissionMin: 'La comisión no puede ser negativa',
+        qtdFarmsRequired: 'La cantidad de fincas es obligatoria',
+        qtdFarmsInvalid: 'Ingrese un valor numérico',
+        qtdFarmsMin: 'La cantidad no puede ser negativa',
+      },
+      contractFile: {
+        dropzoneTitle: 'Arrastre un PDF o haga clic para seleccionar',
+        dropzoneDraggingTitle: 'Suelte el archivo aquí',
+        changeLabel: 'Cambiar archivo',
+        removeLabel: 'Eliminar',
+        replaceLabel: 'Sustituir',
+        errorType: 'Formato no aceptado. Envíe un archivo PDF.',
+        errorSize: 'El archivo excede el tamaño máximo permitido (1MB).',
+        existingFileLabel: 'Contrato actual',
+      },
+      deleteConfirm: {
+        title: 'Eliminar afiliado',
+        description: '¿Está seguro de que desea eliminar el afiliado',
+        warning: 'Esta acción no se puede deshacer.',
+      },
+    },
+  },
+};

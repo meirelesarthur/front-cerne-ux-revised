@@ -1,0 +1,281 @@
+// src/constants/languages/languageEsEs/languageProducts.ts
+// Traducción ES-ES del módulo de PRODUCTOS (Product — Registros Base /
+// Estructura / "Catálogo", ejecución 025). TASK-FE-500 (fundación de
+// datos) — `singularLabel`/`pluralLabel`/`form.validation`. TASK-FE-502
+// agrega `list`/`filter` (pantalla de listado). Ver
+// `@/@types/language/module-products` para el contrato completo.
+
+import { ModuleProducts } from '@/@types/language/module-products';
+
+export const languageProducts: ModuleProducts = {
+  product: {
+    singularLabel: 'Producto',
+    pluralLabel: 'Productos',
+
+    form: {
+      validation: {
+        descriptionRequired: 'La descripción es obligatoria',
+        descriptionMaxLength: 'La descripción debe tener como máximo 181 caracteres',
+        lasPriceRequired: 'El valor de referencia es obligatorio',
+        lasPriceMin: 'El valor de referencia no puede ser negativo',
+        activePrincipleMaxLength: 'El principio activo debe tener como máximo 50 caracteres',
+        secondMeasurementRequiredWithFactor:
+          'La 2ª Unidad de Medida es obligatoria cuando se informa el Tipo de Factor o el Factor',
+        factorTypeRequiredWithFactor:
+          'El Tipo de Factor es obligatorio cuando se informa la 2ª Unidad de Medida o el Factor',
+        factorRequiredWithSecondMeasurement:
+          'El Factor es obligatorio cuando se informa la 2ª Unidad de Medida o el Tipo de Factor',
+        ncmRequiredForProductionGroup:
+          'El NCM es obligatorio para productos del grupo "Producción"',
+        cultivationRequiredForProductionGroup:
+          'Cultivo/Variedad es obligatorio para productos del grupo "Producción"',
+        qualityMaxLength: 'La calidad debe tener como máximo 191 caracteres',
+        qualityOnlyForProductionGroup:
+          'La calidad solo se acepta para productos del grupo "Producción"',
+        fiscalStringMaxLength: 'El valor excede el tamaño máximo permitido para este campo',
+        percentageRange100: 'Ingrese un porcentaje entre 0 y 100',
+      },
+      title: {
+        create: 'Nuevo Producto',
+        edit: 'Editar Producto',
+      },
+      subtitle: {
+        create: 'Registre un nuevo producto en el catálogo.',
+        edit: 'Edite los datos del producto seleccionado.',
+      },
+      tabs: {
+        identification: 'Identificación',
+        stockFinancial: 'Stock y Financiero',
+        fiscal: 'Fiscal',
+      },
+      fields: {
+        description: 'Descripción',
+        code: 'Código',
+        measurement: 'Unidad de Medida',
+        group: 'Grupo',
+        category: 'Categoría',
+        kind: 'Clase',
+        isEnabled: 'Activo',
+        isEquipment: 'Es Equipo',
+        hasLot: 'Controla Lote',
+        ncm: 'NCM',
+        minStock: 'Stock Mínimo',
+        controlStock: 'Controla Stock',
+        lasPrice: 'Valor de Referencia',
+        averageCost: 'Costo Promedio',
+        secondMeasurement: '2ª Unidad de Medida',
+        factorType: 'Tipo de Factor',
+        factorTypeMultiply: 'Multiplica',
+        factorTypeDivide: 'Divide',
+        factor: 'Factor',
+        activePrinciple: 'Principio Activo',
+        financialCategory: 'Categoría Financiera',
+        defaultWarehouse: 'Almacén Predeterminado',
+        defaultCostCenter: 'Centro de Costo Predeterminado',
+        addressing: 'Direccionamiento',
+        taxRule: 'Regla Fiscal',
+        cultivation: 'Cultivo/Variedad',
+        quality: 'Calidad',
+        packages: 'Embalajes',
+        // -- Pestaña 3 "Fiscal" (~40 campos, TASK-FE-507) — Fiscal Clásico --
+        isFiscal: 'Producto Fiscal',
+        allowPointing: 'Permite Apuntamiento',
+        reference: 'Referencia',
+        barcode: 'Código de Barras',
+        cfopSaidaInterno: 'CFOP Salida Interna',
+        cfopSaidaExterno: 'CFOP Salida Externa',
+        cstCsosn: 'CST/CSOSN',
+        cstCsosnExp: 'CST/CSOSN Exportación',
+        cstPis: 'CST PIS',
+        cstCofins: 'CST COFINS',
+        cstIpi: 'CST IPI',
+        percIcms: '% ICMS',
+        percPis: '% PIS',
+        percCofins: '% COFINS',
+        percIpi: '% IPI',
+        percentReduction: '% Reducción',
+        motDesIcms: 'Motivo de la Desoneración del ICMS',
+        motDesIcmsHint:
+          'Se exige informar ICMS desonerado (vICMSDeson > 0). Las opciones varían según el CST.',
+        percDif: '% Diferimiento',
+        percDifHint: 'Informe 100 para diferimiento total.',
+        percFcp: '% FCP',
+        percFcpHint: 'Opcional. Vacío o 0 = no informado.',
+        origem: 'Origen de la Mercancía',
+        cest: 'CEST',
+        modalityBc: 'Modalidad de la BC del ICMS',
+        cenqIpi: 'Encuadramiento IPI',
+        cbenef: 'Código de Beneficio Fiscal',
+        // -- Reforma Tributaria (IBS/CBS/IS) --
+        cClassTrib: 'Clasificación Tributaria',
+        cstIbsCbs: 'CST IBS/CBS',
+        percIbsUf: '% IBS Estado',
+        percIbsMun: '% IBS Municipio',
+        percReducaoAliqIbsUf: '% Reducción Alícuota IBS Estado',
+        percReducaoAliqIbsMun: '% Reducción Alícuota IBS Municipio',
+        percDifIbsUf: '% Diferimiento IBS Estado',
+        percDifIbsMun: '% Diferimiento IBS Municipio',
+        percCbs: '% CBS',
+        percReducaoAliqCbs: '% Reducción Alícuota CBS',
+        percDifCbs: '% Diferimiento CBS',
+        cstIs: 'CST IS',
+        percIs: '% IS',
+        percIsEspec: '% IS Específico',
+        uTribIs: 'Unidad Tributable IS',
+        adRemIbs: 'Ad Rem IBS',
+        adRemCbs: 'Ad Rem CBS',
+        // -- Zona Franca de Manaos / Donación --
+        tpCredPresIbsZfm: 'Crédito Presumido IBS ZFM',
+        indDoacao: 'Indicador de Donación',
+      },
+      placeholders: {
+        code: 'Generado al guardar',
+        description: 'Informe la descripción del producto',
+        measurement: 'Seleccione la unidad de medida',
+        group: 'Seleccione el grupo',
+        category: 'Seleccione la categoría',
+        categoryDisabledHint: 'Seleccione un grupo primero',
+        kind: 'Seleccione la clase',
+        kindDisabledHint: 'Seleccione una categoría primero',
+        ncm: 'Escriba al menos 3 caracteres para buscar',
+        secondMeasurement: 'Seleccione la 2ª unidad de medida',
+        factorType: 'Seleccione el tipo de factor',
+        financialCategory: 'Seleccione la categoría financiera',
+        defaultWarehouse: 'Seleccione el almacén predeterminado',
+        defaultCostCenter: 'Seleccione el centro de costo predeterminado',
+        addressing: 'Seleccione el direccionamiento',
+        taxRule: 'Seleccione la regla fiscal',
+        cultivation: 'Seleccione el cultivo/variedad',
+        quality: 'Informe la calidad',
+        cstCsosn: 'Seleccione el CST/CSOSN',
+        cstCsosnExp: 'Seleccione el CST/CSOSN de exportación',
+        cstPis: 'Seleccione el CST del PIS',
+        cstCofins: 'Seleccione el CST del COFINS',
+        cstIpi: 'Seleccione el CST del IPI',
+        origem: 'Seleccione el origen de la mercancía',
+        modalityBc: 'Seleccione la modalidad de la BC',
+        cstIbsCbs: 'Seleccione el CST IBS/CBS',
+        tpCredPresIbsZfm: 'Seleccione el crédito presumido IBS ZFM',
+      },
+      hints: {
+        ncmSearchMinLength: 'Escriba al menos 3 caracteres para buscar',
+        ncmRequiredForProductionGroup: 'Obligatorio para productos del grupo "Producción"',
+        codeGeneratedByServer: 'Generado automáticamente después de guardar',
+        isEquipment:
+          'Equivale a "Agregar al inventario". Al guardar un producto nuevo con esta opción en Sí, se le llevará al registro de inventario para dar de alta el equipo.',
+        cultivationRequiredForProductionGroup: 'Obligatorio para productos del grupo "Producción"',
+        cultivationDisabledOutsideProductionGroup:
+          'Solo disponible para productos del grupo "Producción"',
+        qualityDisabledOutsideProductionGroup:
+          'Solo disponible para productos del grupo "Producción"',
+        packagesDisabledOutsideProductionGroup:
+          'Solo disponible para productos del grupo "Producción"',
+        averageCostReadOnly: 'Calculado automáticamente por el sistema',
+        taxRuleRequiresFiscalProduct: "Marque 'Producto Fiscal' como Sí para habilitar.",
+        ncmXmlSuggestionPrefix: 'Sugerencia del XML de la nota importada',
+        descriptionXmlOrigin: 'Importado del XML de la nota — revise antes de guardar',
+      },
+      toasts: {
+        taxRuleAutofillApplied:
+          'Campos fiscales completados automáticamente por la Regla Fiscal seleccionada.',
+      },
+      errors: {
+        taxRuleAutofillFailed:
+          'No fue posible cargar los datos fiscales de la Regla Fiscal seleccionada.',
+        invalidFieldsOtherTab: 'Hay campos con error en otra pestaña del formulario.',
+        invalidFieldsCurrentTab:
+          'Hay campos con error en esta pestaña. Corríjalos antes de guardar.',
+      },
+      fiscalSections: {
+        classic: 'Fiscal Clásico',
+        taxReform: 'Reforma Tributaria — IBS/CBS/IS',
+        zfmDonation: 'Zona Franca de Manaos / Donación',
+      },
+      packagesField: {
+        searchPlaceholder: 'Buscar embalaje',
+        selectAllLabel: 'Marcar todos',
+        deselectAllLabel: 'Desmarcar todos',
+        selectedCountLabel: 'Seleccionados',
+        emptyLabel: 'Ningún embalaje registrado.',
+        errorLabel: 'Error al cargar los embalajes.',
+        retryLabel: 'Intentar de nuevo',
+      },
+    },
+    list: {
+      pageTitle: 'Productos',
+      pageSubtitle: 'Administre los productos registrados, organizados por grupo/categoría/clase.',
+      table: {
+        code: 'Código',
+        description: 'Descripción',
+        group: 'Grupo',
+        category: 'Categoría',
+        kind: 'Clase',
+        kindEmpty: '—',
+        minStock: 'Stock Mínimo',
+        active: 'Activo',
+        activeLabel: 'Activo',
+        inactiveLabel: 'Inactivo',
+      },
+      actions: {
+        view: 'Ver producto',
+        edit: 'Editar',
+      },
+      emptyState: {
+        titleEmpty: 'Ningún producto registrado.',
+        descriptionEmpty: 'Comience agregando el primer producto.',
+        titleEmptyNoCreate: 'Ningún producto disponible.',
+        descriptionEmptyNoCreate:
+          'Aún no hay productos registrados. Póngase en contacto con el administrador de la plataforma.',
+        titleFiltered: 'Ningún producto encontrado.',
+        descriptionFiltered: 'Intente ajustar los filtros o borrar la búsqueda.',
+        cta: 'Nuevo Producto',
+      },
+      noFarmSelected: {
+        title: 'Seleccione una finca',
+        description:
+          'El catálogo de Productos es compartido por todas las fincas del tenant, pero el acceso exige una finca activa seleccionada.',
+      },
+    },
+    filter: {
+      title: 'Filtrar productos',
+      search: 'Buscar',
+      searchPlaceholder: 'Buscar por descripción o código',
+      group: 'Grupo',
+      groupAll: 'Todos',
+      category: 'Categoría',
+      categoryAll: 'Todas',
+      categoryDisabledHint: 'Seleccione un grupo primero',
+      kind: 'Clase',
+      kindAll: 'Todas',
+      kindDisabledHint: 'Seleccione una categoría primero',
+      hasLot: 'Controla Lote',
+      hasLotAll: 'Todos',
+      hasLotOptions: {
+        yes: 'Sí',
+        no: 'No',
+      },
+      isEquipment: 'Es Equipo',
+      isEquipmentAll: 'Todos',
+      isEquipmentOptions: {
+        yes: 'Sí',
+        no: 'No',
+      },
+      isFiscal: 'Es Producto Fiscal',
+      isFiscalAll: 'Todos',
+      isFiscalOptions: {
+        yes: 'Sí',
+        no: 'No',
+      },
+    },
+    detail: {
+      subtitlePrefix: 'Producto',
+      notInformed: 'No informado',
+      packagesEmpty: 'Ningún embalaje vinculado.',
+      notFound: {
+        title: 'Producto no encontrado',
+        description: 'El producto solicitado no existe o fue eliminado del catálogo.',
+        back: 'Volver al listado',
+      },
+    },
+  },
+};

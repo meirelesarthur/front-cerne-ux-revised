@@ -1,0 +1,225 @@
+// src/constants/languages/languagePtBr/languageMarcacao.ts
+// Tradução PT-BR do módulo de MARCAÇÃO (Operacional > Agricultura > Manejo).
+// Namespace `marcacao` — LIVRE (`ARCHITECTURE-MARCACAO-FE.md`). O objeto
+// exportado satisfaz `ModuleMarcacao` diretamente em `marking` (sem
+// envelope `marcacao` extra — a chave de namespace já vem de
+// `LanguageDate.marcacao: ModuleMarcacao`, mirror `ModuleMovementSales`).
+
+import { ModuleMarcacao } from '@/@types/language/module-marcacao';
+
+export const languageMarcacao: ModuleMarcacao = {
+  marking: {
+    singularLabel: 'Marcação',
+    pluralLabel: 'Marcações',
+    list: {
+      pageTitle: 'Marcação',
+      pageSubtitle: 'Gerencie as marcações da fazenda.',
+      deletedToast: 'Marcação excluída com sucesso.',
+      table: {
+        code: 'Código',
+        area: 'Área',
+        responsible: 'Responsável',
+        variety: 'Variedade',
+        quantity: 'Quantidade',
+        harvest: 'Safra',
+        week: 'Semana',
+        date: 'Data',
+        color: 'Cor',
+        status: 'Status',
+      },
+      actions: {
+        view: 'Visualizar',
+        print: 'Imprimir',
+        edit: 'Editar',
+        editDisabledTooltip: 'Esta marcação não está mais em aberto e não pode ser editada.',
+        forecast: 'Prever',
+        forecastDisabledTooltip: 'Esta marcação já foi realizada.',
+        done: 'Realizar',
+        doneDisabledTooltip: 'Esta marcação ainda não tem previsão cadastrada.',
+        delete: 'Excluir',
+      },
+      emptyState: {
+        titleEmpty: 'Nenhuma marcação cadastrada.',
+        descriptionEmpty: 'Comece adicionando a primeira marcação.',
+        titleFiltered: 'Nenhum registro encontrado.',
+        descriptionFiltered: 'Tente ajustar os filtros.',
+      },
+      error: {
+        message: 'Não foi possível carregar os dados.',
+        retry: 'Tentar novamente',
+      },
+    },
+    filter: {
+      title: 'Filtrar marcações',
+      area: 'Área',
+      harvest: 'Safra',
+      variety: 'Variedade',
+      user: 'Responsável',
+      status: 'Status',
+      color: 'Cor',
+      startDate: 'Data inicial',
+      endDate: 'Data final',
+      week: 'Semana',
+    },
+    deleteDialog: {
+      title: 'Confirmar exclusão',
+      descriptionTemplate:
+        'A marcação {code} será excluída permanentemente. Esta ação não pode ser desfeita.',
+    },
+    status: {
+      marcado: 'Marcado',
+      previsto: 'Previsto',
+      realizado: 'Realizado',
+    },
+    colors: {
+      amarelo: 'Amarelo',
+      azulClaro: 'Azul claro',
+      branco: 'Branco',
+      marrom: 'Marrom',
+      preto: 'Preto',
+      rosa: 'Rosa',
+      roxo: 'Roxo',
+      verde: 'Verde',
+      vermelho: 'Vermelho',
+      rosaClaro: 'Rosa Claro',
+      rosaPink: 'Rosa Pink',
+      palha: 'Palha',
+      azulEscuro: 'Azul Escuro',
+      azulMarinho: 'Azul Marinho',
+      laranja: 'Laranja',
+      azulRoyal: 'Azul Royal',
+    },
+    form: {
+      title: {
+        create: 'Nova Marcação',
+        edit: 'Editar Marcação',
+        view: 'Visualizar Marcação',
+      },
+      fields: {
+        code: 'Código',
+        area: 'Área',
+        date: 'Data',
+        variety: 'Variedade',
+        user: 'Responsável',
+        quantity: 'Quantidade',
+        harvest: 'Safra',
+        employee: 'Funcionário',
+        center: 'Centro de Custo',
+        color: 'Cor',
+        week: 'Semana',
+        weekStartDate: 'Dt. Início',
+        weekEndDate: 'Dt. Fim',
+      },
+      placeholders: {
+        area: 'Selecione a área',
+        variety: 'Selecione a variedade',
+        user: 'Selecione o responsável',
+        harvest: 'Selecione a safra',
+        employee: 'Selecione o funcionário',
+        center: 'Selecione o centro de custo',
+        color: 'Selecione a cor',
+      },
+      hints: {
+        colorSuggestionByHarvest: 'Cor sugerida pela safra desta semana: {color}',
+      },
+      cascade: {
+        errorToast:
+          'Não foi possível localizar a semana da safra para a data informada. Selecione outra safra ou data.',
+      },
+    },
+    forecast: {
+      title: 'Previsão de Marcação',
+      subtitle: 'Informe as linhas de previsão de colheita.',
+      bulkSubtitleTemplate: 'Aplicar previsão a {count} marcações selecionadas.',
+      fields: {
+        order: 'Ordem',
+        percentage: 'Percentual (%)',
+        averageWeight: 'Peso médio',
+        averagePrice: 'Preço médio',
+        days: 'Dias',
+        quantity: 'Quantidade',
+        incomeBoxes: 'Caixas',
+        total: 'Total',
+        forecastDate: 'Data prevista',
+      },
+      addLine: 'Adicionar item',
+      removeLine: 'Remover item',
+      maxLinesWarning: 'Limite de 4 linhas de previsão por marcação.',
+      emptyIdsToast: 'Selecione ao menos uma marcação para prever em lote.',
+      successToast: 'Previsão salva com sucesso.',
+      validation: {
+        sumPercentage100: 'A soma dos percentuais de previsão deve ser exatamente 100%.',
+      },
+    },
+    done: {
+      title: 'Realizado de Marcação',
+      subtitle: 'Informe as linhas de realizado da colheita.',
+      bulkSubtitleTemplate: 'Aplicar realizado a {count} marcações selecionadas.',
+      fields: {
+        order: 'Ordem',
+        orderPlaceholder: 'Selecione a linha de previsão',
+        date: 'Data',
+        quantity: 'Quantidade',
+        discard: 'Descarte',
+        averageWeight: 'Peso médio',
+        averagePrice: 'Preço médio',
+        status: 'Status',
+        color: 'Cor',
+        total: 'Total',
+      },
+      statusOptions: {
+        aberto: 'Aberto',
+        parcial: 'Parcial',
+        concluido: 'Concluído',
+      },
+      addLine: 'Adicionar item',
+      removeLine: 'Remover item',
+      maxLinesWarning: 'A última linha já está concluída — não é possível adicionar novos itens.',
+      emptyIdsToast: 'Selecione ao menos uma marcação para realizar em lote.',
+      successToast: 'Realizado salvo com sucesso.',
+      validation: {
+        uniqueOrder: 'A ordem das linhas de realizado não pode se repetir.',
+      },
+    },
+    excel: {
+      downloadTemplate: 'Baixar modelo',
+      downloadTemplateError: 'Não foi possível baixar o modelo.',
+      export: 'Exportar',
+      exportError: 'Não foi possível exportar as marcações.',
+      import: {
+        menuLabel: 'Importar',
+        title: 'Importar marcações',
+        subtitle: 'Importe marcações a partir de uma planilha (.xlsx).',
+        instructions:
+          'A planilha deve seguir o modelo com as colunas Área, Data, Variedade, Quantidade e Safra.',
+        warning: {
+          title: 'Atenção',
+          description:
+            'Se qualquer linha da planilha for inválida, a importação inteira é rejeitada — nenhuma marcação é criada.',
+        },
+        fileUpload: {
+          label: 'Arquivo',
+          hint: 'Formato .xlsx, até 10MB.',
+          dropzoneTitle: 'Arraste o arquivo aqui ou clique para selecionar',
+          dropzoneDraggingTitle: 'Solte o arquivo aqui',
+          changeLabel: 'Trocar arquivo',
+          removeLabel: 'Remover',
+          errorTypeMessage: 'Formato de arquivo inválido. Envie um arquivo .xlsx.',
+          errorSizeMessage: 'Arquivo muito grande. O limite é de 10MB.',
+        },
+        rowErrors: {
+          title: 'Linhas inválidas',
+        },
+        result: {
+          rowsProcessedTemplate: '{count} marcações importadas.',
+          codeRangeTemplate: 'Códigos gerados: {first} a {last}.',
+        },
+        cancelButton: 'Cancelar',
+        submitButton: 'Importar',
+        closeButton: 'Fechar',
+        successToast: 'Importação de marcações concluída com sucesso.',
+        noPermission: 'Você não tem permissão para importar marcações.',
+      },
+    },
+  },
+};

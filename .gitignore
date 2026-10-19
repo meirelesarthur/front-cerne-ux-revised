@@ -1,0 +1,63 @@
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.login
+
+# E2E autenticado local — pode conter sessão/cookies e nunca é versionado.
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+e2e/.auth/
+e2e/artifacts/
+
+# PWA
+dev-dist
+sw.js
+workbox-*.js
+
+# Build
+build
+coverage
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Chakra UI
+styled-system
+
+front-referencia
+/ia-planejamento*
+analise-streaming
+Docs
+systen-history
+/ignorar

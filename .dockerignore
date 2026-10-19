@@ -1,0 +1,24 @@
+node_modules
+dist
+build
+.git
+.github
+.vscode
+*.log
+.DS_Store
+coverage
+.turbo
+.next
+.cache
+dev-dist
+front-referencia
+.env
+.env.*
+!.env.example
+
+# Arquivos de backup/cópia que não devem ser buildados
+*copy.tsx
+*copy.ts
+*.backup
+*.bak
+*.old
