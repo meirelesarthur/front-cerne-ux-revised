@@ -123,10 +123,10 @@ const colors: SemanticTokensColors = {
     "3.2": { value: "{colors.gray.550}" },
   },
   feedBack: {
-    successMain: { value: "{colors.green.500}" },
-    warnMain: { value: "{colors.yellow.800}" },
-    errorMain: { value: "{colors.red.800}" },
-    infoMain: { value: "{colors.blue.500}" },
+    successMain: { value: "{colors.green.700}" },
+    warnMain: { value: "{colors.yellow.700}" },
+    errorMain: { value: "{colors.red.700}" },
+    infoMain: { value: "#2563eb" },
     success: { value: "{colors.blue.100}" },
     warn: { value: "{colors.yellow.200}" },
     error: { value: "{colors.red.200}" },
@@ -361,15 +361,16 @@ const styles = {
     },
     ".chakra-button__icon": { fontSize: "2xl" },
     ".chakra-menu__icon-wrapper": { fontSize: "2xl!important" },
-    // Oculta a barra de rolagem em todo o app (decisão do dev), mantendo a
-    // rolagem 100% funcional (wheel/trackpad/teclado) — só a barra some.
+    // DS: scrollbar fina de 4px, visível (thumb neutral300, hover neutral400).
+    // Antes: oculta em todo o app ("decisão do dev"); revertido ao desenho oficial.
     "*": {
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
+      scrollbarWidth: "thin",
+      scrollbarColor: "#d1d5db transparent",
     },
-    "*::-webkit-scrollbar": {
-      display: "none",
-    },
+    "*::-webkit-scrollbar": { width: "4px", height: "4px" },
+    "*::-webkit-scrollbar-track": { background: "transparent" },
+    "*::-webkit-scrollbar-thumb": { background: "#d1d5db", borderRadius: "9999px" },
+    "*::-webkit-scrollbar-thumb:hover": { background: "#9ca3af" },
   },
 };
 

@@ -99,6 +99,28 @@ Duplicidades a unificar: `ui/DashboardGrid.tsx` × `Dashboard/DashboardGrid.tsx`
 
 Depois da onda 3, começam os **ajustes manuais** por funcionalidade (`docs/ux/funcionalidades/<slug>.md`).
 
+## 7.1 Progresso (atualizado em 2026-10-19)
+
+Decisões do Arthur: cor `#059669` · estratégia (a) tema/recipes do Chakra · mocks de dev autorizados · **Dashboards e Relatórios fora do escopo (não tocar)**.
+
+**Onda 0 — concluída.** `VITE_DEV_MOCKS` (adapter axios em `src/mocks/dev-api/`): Fazendas (sintético), Bancos/Estados/Cidades (reais, do dump), fallback que devolve lista vazia nas rotas sem handler. Teste de navegação: **223 rotas de menu** (exceto Dashboards/Relatórios) abrem sem tela de erro; as que ainda não têm handler mostram estado vazio.
+
+**Onda 1 (tema) — aplicada, validada visualmente em Fazendas (claro):**
+
+| Item | Situação | O que mudou |
+|------|----------|-------------|
+| T1 cor primária | feito | rampa `blue`: 500 → `#059669`, 600/700/900 → `#047857` (`color-tokens.ts`) |
+| T2 escala de fontes | feito | `fontSizes` com nomes e valores do DS (xs 12, sm 13, base 14, md 16, lg 18, xl 20, 2xl 24, 3xl 30, 4xl 38) em `chakra.config.ts`. **Efeito:** texto ~1px maior na maioria das telas — conferir overflow em telas densas |
+| T3 botão | parcial | radius 4 → 8; `sm` 32 → 34. Mantido: `lg` 38 (default, = `md` do DS). Pendente: reconciliar variantes (`solid/outline/ghost_*`) com primary/secondary/destructive/ghost |
+| T4 input | feito | radius 6 → 8; foco com glow `rgba(5,150,105,.12)`; readonly com cursor `default` |
+| T6 feedback | feito | `successMain` green.700, `warnMain` yellow.700, `errorMain` red.700 (AA), `infoMain` azul `#2563eb` (era verde) |
+| T7 dark | parcial | sombra do card = `cardDark`; scrollbar GBMode. Pendente: `gb.surface`, `row.hoverGb`, `chart.gridGb`, botão sólido |
+| T8 sombra de card | feito | `PageCard` usa `cardShadow` (theme-aware) |
+| T11 scrollbar | feito | scrollbar fina 4px visível (claro e GBMode); antes estava oculta por "decisão do dev" |
+| T5, T9, T10, T12 | pendente | neutros (risco amplo), tokens de transição/layout, `html` com rem variável, arquitetura de troca de tema |
+
+Pendências de validação: tema escuro, formulários (input), modais, telas densas após o T2.
+
 ## 8. Decisões que preciso de você
 
 1. **Cor da marca:** o DS tem `#059669` em `tokens.ts`, mas o próprio DS registra uma pendência (discovery cita `#178048`/`#38b76c`, "reconstruídas, não oficiais"). Para a onda 1 vou usar `#059669` (o que está em `tokens.ts`). Confirme.

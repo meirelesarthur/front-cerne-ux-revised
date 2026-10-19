@@ -21,7 +21,7 @@ export const inputRecipe = {
     },
     _focus: {
       borderColor: "primaryMain",
-      boxShadow: `0 0 0 1px var(--chakra-colors-primary-main)`,
+      boxShadow: "0 0 0 3px rgba(5, 150, 105, 0.12)", // DS glow.brand
     },
     _disabled: {
       bg: "semanticNeutral.200",
@@ -32,7 +32,7 @@ export const inputRecipe = {
     _readOnly: {
       bg: "semanticNeutral.200",
       color: "semanticNeutral.700",
-      cursor: "not-allowed",
+      cursor: "default", // DS: readonly != disabled (não sugere bloqueio)
     },
   },
 
@@ -53,7 +53,7 @@ export const inputRecipe = {
     },
     size: {
       md: {
-        borderRadius: "6px",
+        borderRadius: "8px", // DS radius.base
       },
     },
   },

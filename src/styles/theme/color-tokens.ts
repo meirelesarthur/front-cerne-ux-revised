@@ -50,7 +50,16 @@ export const colorTokens = {
   green: { ...brandRamp },
   // "blue" repontado para a rampa brand: o app usa blue.* como cor primária,
   // então isso torna botões/sidebar/estados ativos verdes sem tocar em semantics.
-  blue: { ...brandRamp },
+  // DS: primário = brand[600] #059669, hover/texto = brand[700] #047857. Os semânticos
+  // `primaryMain`/`buttonSolidBG` usam blue.500 e o hover usa blue.900, então a rampa
+  // `blue` é deslocada (500→brand600, 600/700/900→brand700) em vez de copiar a brand.
+  blue: {
+    ...brandRamp,
+    500: { value: "#059669" },
+    600: { value: "#047857" },
+    700: { value: "#047857" },
+    900: { value: "#047857" },
+  },
   // Neutros — rampa neutral do CERNE
   gray: {
     50: { value: "#fafafa" },

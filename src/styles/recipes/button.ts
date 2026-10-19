@@ -3,7 +3,7 @@ export const buttonRecipe = {
   description: 'The styles for the Button component',
   base: {
     fontWeight: '600',
-    borderRadius: '4px',
+    borderRadius: '8px', // DS radius.base
     color: 'buttonSolidColor',
     whiteSpace: 'noWrap',
     fontSize: '14px',
@@ -209,7 +209,7 @@ export const buttonRecipe = {
         paddingY: 2,
       },
       sm: {
-        height: '32px',
+        height: '34px', // DS btn.sm
         fontSize: '14px',
         paddingX: 3,
         paddingY: 3,

@@ -38,16 +38,21 @@ const rawTheme = {
       },
     },
     // Escala tipográfica do design system CERNE (px)
+    // Escala do DS (tokens.ts font.size): mesmos NOMES e VALORES. Antes os nomes
+    // estavam deslocados um degrau (sm=12, base=13, md=14...), o que deixava todo o
+    // texto ~1px menor que o desenho oficial.
     fontSizes: {
-      xs: { value: '11px' },
-      sm: { value: '12px' },
-      base: { value: '13px' },
-      md: { value: '14px' },
-      lg: { value: '15px' },
-      xl: { value: '16px' },
-      '2xl': { value: '22px' },
-      '3xl': { value: '26px' },
-      '4xl': { value: '32px' },
+      "3xs": { value: "10px" },
+      "2xs": { value: "11px" },
+      xs: { value: "12px" },
+      sm: { value: "13px" },
+      base: { value: "14px" },
+      md: { value: "16px" },
+      lg: { value: "18px" },
+      xl: { value: "20px" },
+      "2xl": { value: "24px" },
+      "3xl": { value: "30px" },
+      "4xl": { value: "38px" },
     },
     fontWeights: {
       normal: { value: '400' },

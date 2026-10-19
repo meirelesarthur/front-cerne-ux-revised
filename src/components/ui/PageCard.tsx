@@ -16,7 +16,7 @@ export interface PageCardProps {
 export function PageCard({ children, fullHeight = false }: PageCardProps) {
   if (!fullHeight) {
     return (
-      <Box bg="formBG" borderRadius="xl" boxShadow="md" overflow="hidden">
+      <Box bg="formBG" borderRadius="xl" boxShadow="cardShadow" overflow="hidden">
         {children}
       </Box>
     );
@@ -26,7 +26,7 @@ export function PageCard({ children, fullHeight = false }: PageCardProps) {
     <Box
       bg="formBG"
       borderRadius="xl"
-      boxShadow="md"
+      boxShadow="cardShadow"
       overflow="hidden"
       height="100%"
       display="flex"

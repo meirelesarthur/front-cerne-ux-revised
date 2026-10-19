@@ -186,7 +186,7 @@ const colors: SemanticTokensColors = {
   cardBorder: { value: '#1c3f2c' }, // border.default
   cardTextPrimary: { value: '#e2f0e8' }, // fg.default
   cardTextSecondary: { value: '#7da893' }, // fg.muted
-  cardShadow: { value: '0 1px 4px rgba(0, 0, 0, 0.3)' }, // GBMode shadow
+  cardShadow: { value: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)' }, // DS shadow.cardDark
   // Chart colors
   chartGridLine: { value: '{colors.gray.700}' },
   chartAxisText: { value: '{colors.gray.500}' },
@@ -360,15 +360,15 @@ const styles = {
     },
     ".chakra-button__icon": { fontSize: "2xl" },
     ".chakra-menu__icon-wrapper": { fontSize: "2xl!important" },
-    // Oculta a barra de rolagem em todo o app (decisão do dev), mantendo a
-    // rolagem 100% funcional (wheel/trackpad/teclado) — só a barra some.
+    // DS GBMode: scrollbar fina de 4px, visível (thumb #1c3f2c, hover #2a5c40).
     "*": {
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
+      scrollbarWidth: "thin",
+      scrollbarColor: "#1c3f2c transparent",
     },
-    "*::-webkit-scrollbar": {
-      display: "none",
-    },
+    "*::-webkit-scrollbar": { width: "4px", height: "4px" },
+    "*::-webkit-scrollbar-track": { background: "transparent" },
+    "*::-webkit-scrollbar-thumb": { background: "#1c3f2c", borderRadius: "9999px" },
+    "*::-webkit-scrollbar-thumb:hover": { background: "#2a5c40" },
   },
 };
 
