@@ -13,7 +13,7 @@
 
 import type { ReactNode } from 'react';
 
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 
 import type { PessoaFormValues } from '../pessoa.types';
 import type { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
@@ -25,20 +25,8 @@ export interface StepProps {
   disabled?: boolean;
 }
 
-export function StepHeading({ title, subtitle }: { title: string; subtitle?: string }) {
-  return (
-    <Box mb={6}>
-      <Heading size="md" fontWeight="600" color="fg.default">
-        {title}
-      </Heading>
-      {subtitle && (
-        <Text fontSize="sm" color="fg.muted" mt={1}>
-          {subtitle}
-        </Text>
-      )}
-    </Box>
-  );
-}
+// Cabeçalho de etapa: componente do kit (DS StepHeader) — sem cópia local.
+export { StepHeader as StepHeading } from '@/components/ui/StepHeader';
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (

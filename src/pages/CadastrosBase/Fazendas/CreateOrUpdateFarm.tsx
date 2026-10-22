@@ -46,9 +46,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Button } from '@/components/Button';
 import { Form } from '@/components/Form';
+import { StepFooter } from '@/components/ui/StepFooter';
 import { Steps, StepsList, StepsRoot } from '@/components/ui/steps';
+import { FormContainer } from '@/components/Layout/FormContainer';
 import { toaster } from '@/components/ui/toaster';
 
 import { useActivateFarm } from '@/hooks/useActivateFarm';
@@ -71,7 +72,6 @@ import { createFarm, updateFarm } from '@/services/v2/Farms/farm-admin-service';
 import type { FarmDetail, FarmFormType, FarmPayload } from '@/@types/v2/Farms/farm-admin';
 
 import { farmSchemaResolver } from './farm-schema';
-import { FarmFormShell } from './FarmFormShell';
 import { StepConfiguracoes } from './steps/StepConfiguracoes';
 import { StepDemarcacao } from './steps/StepDemarcacao';
 import { StepDocumentacao } from './steps/StepDocumentacao';
@@ -506,39 +506,30 @@ export default function CreateOrUpdateFarm() {
     }
   }
 
-  // Contador "Etapa X de Y" (TASK-FE-408) — vive no `FarmFormShell` local
-  // (GAP-FE-128: casca própria de Fazenda, não mudança aditiva no
-  // `FormFooter` compartilhado por 40 telas).
+  // Contador "Etapa X de Y" — texto vem do i18n; o rodapé é o `StepFooter` do kit (DS).
   const stepCounterLabel = `${text.form.footer.stepCounter.label} ${idx + 1} ${text.form.footer.stepCounter.of} ${STEPS.length}`;
 
   return (
-    <FarmFormShell
+    <FormContainer
       title={isEditing ? text.form.title.edit : text.form.title.create}
-      stepLabel={stepCounterLabel}
-      backAction={
-        <Button
-          title={text.form.footer.back}
-          variant="outline"
-          onClick={handleBack}
-          type="button"
-          disabled={isSubmitting}
+      subtitle={isEditing ? text.form.subtitle.edit : text.form.subtitle.create}
+      footer={
+        <StepFooter
+          stepLabel={stepCounterLabel}
+          backLabel={text.form.footer.back}
+          nextLabel={isLast ? text.form.footer.save : text.form.footer.next}
+          onBack={handleBack}
+          onNext={handleNext}
+          backDisabled={isSubmitting}
+          nextLoading={isSubmitting}
+          nextDisabled={isSubmitting || isLoading}
+          hideNext={!canSave}
         />
-      }
-      nextAction={
-        canSave && (
-          <Button
-            title={isLast ? text.form.footer.save : text.form.footer.next}
-            onClick={handleNext}
-            type="button"
-            loading={isSubmitting}
-            disabled={isSubmitting || isLoading}
-          />
-        )
       }
     >
       {/* `<Form>` só como wrapper de padding — a navegação/salvamento do
           wizard é 100% via `onClick={handleNext}` no rodapé do
-          `FarmFormShell`, nunca via submit nativo (mesmo padrão de
+          `StepFooter`, nunca via submit nativo (mesmo padrão de
           `CreateOrUpdatePessoa.tsx`). */}
       <Form noPadding onSubmit={(e) => e.preventDefault()}>
         <StepsRoot step={idx} count={STEPS.length}>
@@ -551,6 +542,6 @@ export default function CreateOrUpdateFarm() {
           <Steps.Content index={idx}>{renderStep()}</Steps.Content>
         </StepsRoot>
       </Form>
-    </FarmFormShell>
+    </FormContainer>
   );
 }

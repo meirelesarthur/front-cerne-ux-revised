@@ -36,8 +36,11 @@ export const buttonRecipe = {
       secondary: {
         bg: 'buttonOutlineBG',
         color: 'semanticNeutral.700',
-        border: '1.5px solid',
-        borderColor: 'semanticNeutral.300',
+        // DS: contorno neutro[250] de 1.5px (ring). Props separadas: o shorthand `border`
+        // sozinho emitia a cor como currentColor (escura) e descartava `borderColor`.
+        borderWidth: '1.5px',
+        borderStyle: 'solid',
+        borderColor: 'semanticNeutral.200',
         _hover: {
           bg: 'semanticNeutral.100',
           color: 'semanticNeutral.800',

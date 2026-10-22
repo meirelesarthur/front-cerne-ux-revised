@@ -118,16 +118,16 @@
 
 import { useMemo, useRef, useState } from 'react';
 
-import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { useDisclosure } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Button } from '@/components/Button';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { Form } from '@/components/Form';
 import { FormContainer } from '@/components/Layout/FormContainer';
+import { StepFooter } from '@/components/ui/StepFooter';
 import { Steps, StepsList, StepsRoot } from '@/components/ui/steps';
 import { toaster } from '@/components/ui/toaster';
 
@@ -852,37 +852,18 @@ export default function CreateOrUpdatePessoa() {
   return (
     <FormContainer
       title={isEditing ? text.form.title.edit : text.form.title.create}
+      subtitle={isEditing ? text.form.subtitle.edit : text.form.subtitle.create}
       footer={
-        <Box
-          width="full"
-          display="grid"
-          gridTemplateColumns="1fr auto 1fr"
-          alignItems="center"
-          gap={4}
-        >
-          <Flex justify="flex-start">
-            <Button
-              title={text.form.footer.back}
-              variant="outline"
-              type="button"
-              onClick={idx > 0 ? handleBack : guardedBack}
-            />
-          </Flex>
-          <Text fontSize="sm" color="fg.muted" textAlign="center">
-            {stepCounterLabel}
-          </Text>
-          <Flex justify="flex-end">
-            {canSave && (
-              <Button
-                title={isLast ? text.form.footer.save : text.form.footer.next}
-                onClick={handleNext}
-                type="button"
-                loading={isSubmitting}
-                disabled={isSubmitting || isLoading}
-              />
-            )}
-          </Flex>
-        </Box>
+        <StepFooter
+          stepLabel={stepCounterLabel}
+          backLabel={text.form.footer.back}
+          nextLabel={isLast ? text.form.footer.save : text.form.footer.next}
+          onBack={idx > 0 ? handleBack : guardedBack}
+          onNext={handleNext}
+          nextLoading={isSubmitting}
+          nextDisabled={isSubmitting || isLoading}
+          hideNext={!canSave}
+        />
       }
     >
       {/* TASK-FE-326 — `<Form>` só como wrapper de padding (paddingX="10",

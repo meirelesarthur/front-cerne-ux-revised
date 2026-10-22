@@ -110,7 +110,7 @@ Decisões do Arthur: cor `#059669` · estratégia (a) tema/recipes do Chakra · 
 | Item | Situação | O que mudou |
 |------|----------|-------------|
 | T1 cor primária | feito | rampa `blue`: 500 → `#059669`, 600/700/900 → `#047857` (`color-tokens.ts`) |
-| T2 escala de fontes | feito | `fontSizes` com nomes e valores do DS (xs 12, sm 13, base 14, md 16, lg 18, xl 20, 2xl 24, 3xl 30, 4xl 38) em `chakra.config.ts`. **Efeito:** texto ~1px maior na maioria das telas — conferir overflow em telas densas |
+| T2 escala de fontes | **revertido (diagnóstico errado)** | A escala do front tem os mesmos VALORES do DS em 12/13/14px (xs 11, sm 12, base 13, md 14 ≈ DS 2xs/xs/sm/base), só com nomes deslocados. Os componentes padrão do Chakra dependem desses nomes (`textStyle: md` etc.): renomear pelo DS levou botões e inputs a 16px. Mantida a escala original; componentes novos do kit usam os nomes do front ou px explícito. Lg/xl/2xl+ divergem do DS (15/16/22/26/32 vs 18/20/24/30/38): tratar caso a caso |
 | T3 botão | parcial | radius 4 → 8; `sm` 32 → 34. Mantido: `lg` 38 (default, = `md` do DS). Pendente: reconciliar variantes (`solid/outline/ghost_*`) com primary/secondary/destructive/ghost |
 | T4 input | feito | radius 6 → 8; foco com glow `rgba(5,150,105,.12)`; readonly com cursor `default` |
 | T6 feedback | feito | `successMain` green.700, `warnMain` yellow.700, `errorMain` red.700 (AA), `infoMain` azul `#2563eb` (era verde) |
