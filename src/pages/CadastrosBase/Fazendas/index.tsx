@@ -28,7 +28,7 @@
 
 import { ElementType, useEffect, useMemo, useState } from 'react';
 
-import { Alert, Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Alert, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Warehouse } from 'lucide-react';
 import { FiEdit, FiEye, FiLayers, FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -38,6 +38,7 @@ import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { HeaderGrid } from '@/components/HeaderGrid';
+import { Badge, type BadgeVariant } from '@/components/ui/Badge';
 import { Table } from '@/components/Table';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -63,6 +64,16 @@ import { useFarmsList } from './useFarms';
 
 import { areaCreateMultipleRoute, areaCreateRoute } from '../Areas/area-routes';
 import { AreasSubList } from '../Areas/AreasSubList';
+
+// Tipo de exploração (1..6) → variante do Badge do kit (DS). Ordem estável, sem semântica de negócio.
+const EXPLORATION_VARIANTS: Record<number, BadgeVariant> = {
+  1: 'success',
+  2: 'info',
+  3: 'warning',
+  4: 'purple',
+  5: 'cyan',
+  6: 'neutral',
+};
 
 export default function FarmsList() {
   const { languageGB } = useLanguage();
@@ -203,9 +214,10 @@ export default function FarmsList() {
         header: text.list.table.explorationType,
         cell: ({ row }) =>
           row.original.exploration_type ? (
-            <Badge colorPalette="blue" variant="subtle" py={1} px={3}>
-              {row.original.exploration_type.label}
-            </Badge>
+            <Badge
+              variant={EXPLORATION_VARIANTS[row.original.exploration_type.value] ?? 'neutral'}
+              label={row.original.exploration_type.label}
+            />
           ) : (
             <Text fontSize="sm" color="fg.muted">
               —
@@ -230,13 +242,9 @@ export default function FarmsList() {
         header: text.list.table.active,
         cell: ({ row }) => (
           <Badge
-            colorPalette={row.original.is_enabled ? 'green' : 'gray'}
-            variant="subtle"
-            py={1}
-            px={3}
-          >
-            {row.original.is_enabled ? text.list.table.activeLabel : text.list.table.inactiveLabel}
-          </Badge>
+            variant={row.original.is_enabled ? 'success' : 'neutral'}
+            label={row.original.is_enabled ? text.list.table.activeLabel : text.list.table.inactiveLabel}
+          />
         ),
         meta: styleColumTable.sm,
       }),

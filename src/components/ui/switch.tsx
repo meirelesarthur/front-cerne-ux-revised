@@ -21,11 +21,38 @@ export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       <ChakraSwitch.Root {...rest}>
         <ChakraSwitch.HiddenInput ref={ref} />
         {/* @ts-ignore - Chakra UI v3 TypeScript definitions don't properly declare children prop */}
-        <ChakraSwitch.Control>
-          <ChakraSwitch.Thumb />
+        {/* DS ToggleSwitch: trilho 42x22, bolinha 18 branca com sombra, off = neutro 200,
+            on = brand 600; a bolinha anda 20px (t.size.toggle). */}
+        <ChakraSwitch.Control
+          css={{
+            width: "42px",
+            height: "22px",
+            padding: "2px",
+            borderRadius: "full",
+            bg: "semanticNeutral.200",
+            transition: "background 0.2s ease",
+            "&[data-state=checked]": { bg: "green.600" },
+            "&[data-disabled]": { opacity: 0.5, cursor: "not-allowed" },
+          }}
+        >
+          <ChakraSwitch.Thumb
+            css={{
+              boxSize: "18px",
+              bg: "white",
+              boxShadow: "sm",
+              translate: "none",
+              transform: "translateX(0)",
+              transition: "transform 0.2s ease",
+              "&[data-state=checked]": { transform: "translateX(20px)", translate: "none" },
+            }}
+          />
         </ChakraSwitch.Control>
         {/* @ts-ignore - Chakra UI v3 TypeScript definitions don't properly declare children prop */}
-        {children && <ChakraSwitch.Label>{children}</ChakraSwitch.Label>}
+        {children && (
+          <ChakraSwitch.Label fontSize="base" fontWeight="medium">
+            {children}
+          </ChakraSwitch.Label>
+        )}
       </ChakraSwitch.Root>
     );
   }

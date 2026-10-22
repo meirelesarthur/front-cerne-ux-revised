@@ -174,7 +174,10 @@ export function CustomDialog({
   // hard-codado por modal.
   const isFormSize = size === 'form';
   const dialogSize = isFormSize ? 'xl' : size;
-  const resolvedMaxW = maxW ?? (isFormSize ? 'min(1200px, 80vw)' : undefined);
+  // DS Modal: sm 400 · md 520 · lg 640 (px). Sem `maxW`, essas larguras valem para as sizes do kit.
+  const dsWidth = { sm: '400px', md: '520px', lg: '640px' } as const;
+  const resolvedMaxW =
+    maxW ?? (isFormSize ? 'min(1200px, 80vw)' : dsWidth[size as keyof typeof dsWidth]);
 
   return (
     <Dialog.Root
@@ -189,13 +192,18 @@ export function CustomDialog({
       {...(persistentElements ? { persistentElements } : {})}
     >
       <Portal>
-        <Dialog.Backdrop />
+        {/* DS: overlay rgba(0,0,0,.45) (t.color.overlay.modal) */}
+        <Dialog.Backdrop bg="rgba(0, 0, 0, 0.45)" />
         {/* @ts-ignore */}
         <Dialog.Positioner>
           {/* @ts-ignore */}
           <Dialog.Content
             bg="cardBG"
-            borderRadius="xl"
+            // DS Modal: raio 20, sombra `modal`, contorno 1px neutro
+            borderRadius="3xl"
+            boxShadow="modal"
+            borderWidth="1px"
+            borderColor="border.muted"
             p={0}
             // Casca de modal (equivalente do C14 para formulários): o
             // `Dialog.Content` é um flex-column LIMITADO em altura — header e
@@ -214,13 +222,13 @@ export function CustomDialog({
             {title && (
               <Dialog.Header
                 flexShrink={0}
-                p={5}
-                pb={3}
+                px="20px"
+                py="16px"
                 {...(headerBorder ? { borderBottomWidth: '1px', borderColor: 'border.muted' } : {})}
               >
                 <Flex direction="column" gap={subtitle ? 1 : 0}>
                   {/* @ts-ignore */}
-                  <Dialog.Title fontSize="lg" fontWeight="bold">
+                  <Dialog.Title fontSize="16px" fontWeight="semibold" lineHeight="1.35">
                     {titleIcon ? (
                       <HStack gap={2}>
                         <Icon as={titleIcon} color={titleIconColor} />
@@ -233,7 +241,7 @@ export function CustomDialog({
                     )}
                   </Dialog.Title>
                   {subtitle && (
-                    <Text fontSize="sm" color="fg.muted" fontWeight="normal">
+                    <Text fontSize="base" color="fg.muted" fontWeight="normal">
                       {subtitle}
                     </Text>
                   )}
@@ -253,8 +261,7 @@ export function CustomDialog({
               flexBasis="auto"
               minH={0}
               overflowY="auto"
-              px={5}
-              pb={5}
+              p="20px"
             >
               {callout && (
                 <Box
@@ -297,9 +304,9 @@ export function CustomDialog({
               <Flex
                 flexShrink={0}
                 justify="flex-end"
-                gap={3}
-                px={5}
-                py={3}
+                gap="8px"
+                px="20px"
+                py="16px"
                 {...(footerBorder ? { borderTopWidth: '1px', borderColor: 'border.muted' } : {})}
               >
                 {footer ?? <Button title="Fechar" variant="outline" onClick={onClose} />}

@@ -194,13 +194,19 @@ export const buttonRecipe = {
       // `solid_danger`, nomeada como o `variant="destructive"` do cerne para
       // ficar explícita a intenção semântica de "ação irreversível".
       destructive: {
-        bg: 'feedBack.errorMain',
-        color: 'white',
-        _hover: { bg: '#911419' },
-        _active: { bg: '#911419' },
+        // DS (Button variant='destructive'): fundo branco, texto de erro (red 700) e contorno
+        // 1.5px red 100; hover preenche com red 100. Ação irreversível sem 'gritar' vermelho sólido.
+        bg: 'buttonOutlineBG',
+        color: 'red.700',
+        borderWidth: '1.5px',
+        borderStyle: 'solid',
+        borderColor: 'red.100',
+        _hover: { bg: 'red.100' },
+        _active: { bg: 'red.100' },
         _disabled: {
           bg: 'semanticNeutral.200',
           color: 'primitiveDisableTextColor',
+          borderColor: 'semanticNeutral.200',
         },
       },
     },

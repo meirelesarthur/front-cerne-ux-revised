@@ -25,7 +25,6 @@ import {
 import {
   FiAlertTriangle,
   FiBell,
-  FiChevronRight,
   FiMenu,
   FiMessageSquare,
   FiSidebar,
@@ -34,6 +33,7 @@ import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 import { AccountMenu } from "@/components/Header/AccountMenu";
+import { BreadcrumbTrail } from "@/components/ui/BreadcrumbTrail";
 import { ErrorLogPanel } from "@/components/ErrorLogPanel";
 import { FarmSwitcher } from "@/components/FarmSwitcher";
 import { HeaderSearch } from "@/components/HeaderSearch";
@@ -73,6 +73,16 @@ export function Header({
 
   const { unreadCount: errorCount } = useErrorLog();
 
+  const breadcrumbItems = [
+    { label: "Início" },
+    ...(expandedModule
+      ? [{ label: languageGB.sidebar.navigation[expandedModule.id] ?? expandedModule.label }]
+      : []),
+    ...(activeItem
+      ? [{ label: languageGB.sidebar.navigation[activeItem.id] ?? activeItem.label }]
+      : []),
+  ];
+
   return (
     <Box
       position="relative"
@@ -101,40 +111,8 @@ export function Header({
             </IconButton>
           )}
 
-          {/* Breadcrumb: Início › [Módulo] › [Item] */}
-          <HStack gap={1} fontSize="sm" minW={0}>
-            <Text color="topBarTextSecondary" fontWeight="medium" whiteSpace="nowrap">
-              Início
-            </Text>
-            {expandedModule && (
-              <>
-                <Icon as={FiChevronRight} boxSize={3.5} color="topBarTextSecondary" flexShrink={0} />
-                <Text
-                  color={activeItem ? "topBarTextSecondary" : "topBarTextColor"}
-                  fontWeight={activeItem ? "medium" : "semibold"}
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {languageGB.sidebar.navigation[expandedModule.id] ?? expandedModule.label}
-                </Text>
-              </>
-            )}
-            {activeItem && (
-              <>
-                <Icon as={FiChevronRight} boxSize={3.5} color="topBarTextSecondary" flexShrink={0} />
-                <Text
-                  color="topBarTextColor"
-                  fontWeight="semibold"
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {languageGB.sidebar.navigation[activeItem.id] ?? activeItem.label}
-                </Text>
-              </>
-            )}
-          </HStack>
+          {/* Breadcrumb: Início / [Módulo] / [Item] — componente do kit (DS Breadcrumb) */}
+          <BreadcrumbTrail items={breadcrumbItems} />
         </HStack>
 
         {/* Direita — busca funcional + ações */}

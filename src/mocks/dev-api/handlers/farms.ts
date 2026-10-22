@@ -9,7 +9,7 @@ const farm = (
   nif: string,
   city: string,
   uf: string,
-  type: 'agricultural' | 'livestock' | 'mixed',
+  type: 1 | 2 | 3,
   label: string,
   area: number,
 ) => ({
@@ -49,18 +49,18 @@ const farm = (
 });
 
 const FARMS = [
-  farm(1, 'Fazenda Santa Luzia', '12.345.678/0001-90', 'Sorriso', 'MT', 'agricultural', 'Agrícola', 2450),
-  farm(2, 'Fazenda Bela Vista', '987.654.321-00', 'Rondonópolis', 'MT', 'livestock', 'Pecuário', 1800),
-  farm(3, 'Fazenda Cerrado Verde', '23.456.789/0001-11', 'Rio Verde', 'GO', 'agricultural', 'Agrícola', 3200),
-  farm(4, 'Fazenda Três Irmãos', '876.543.210-99', 'Jataí', 'GO', 'mixed', 'Misto', 950),
-  farm(5, 'Fazenda Pantanal Sul', '34.567.890/0001-22', 'Cáceres', 'MT', 'livestock', 'Pecuário', 2100),
-  farm(6, 'Fazenda Horizonte', '765.432.109-88', 'Uberaba', 'MG', 'mixed', 'Misto', 680),
-  farm(7, 'Fazenda São Benedito', '45.678.901/0001-33', 'Uberlândia', 'MG', 'agricultural', 'Agrícola', 1250),
-  farm(8, 'Fazenda Nova Esperança', '654.321.098-77', 'Primavera do Leste', 'MT', 'agricultural', 'Agrícola', 1750),
-  farm(9, 'Fazenda Boa Safra', '56.789.012/0001-44', 'Lucas do Rio Verde', 'MT', 'agricultural', 'Agrícola', 4100),
-  farm(10, 'Fazenda Ouro Verde', '543.210.987-66', 'Campo Grande', 'MS', 'livestock', 'Pecuário', 3600),
-  farm(11, 'Fazenda Vale do Sol', '67.890.123/0001-55', 'Dourados', 'MS', 'mixed', 'Misto', 1400),
-  farm(12, 'Fazenda Recanto', '432.109.876-55', 'Barreiras', 'BA', 'agricultural', 'Agrícola', 2750),
+  farm(1, 'Fazenda Santa Luzia', '12.345.678/0001-90', 'Sorriso', 'MT', 1, 'Agrícola', 2450),
+  farm(2, 'Fazenda Bela Vista', '987.654.321-00', 'Rondonópolis', 'MT', 2, 'Pecuário', 1800),
+  farm(3, 'Fazenda Cerrado Verde', '23.456.789/0001-11', 'Rio Verde', 'GO', 1, 'Agrícola', 3200),
+  farm(4, 'Fazenda Três Irmãos', '876.543.210-99', 'Jataí', 'GO', 3, 'Misto', 950),
+  farm(5, 'Fazenda Pantanal Sul', '34.567.890/0001-22', 'Cáceres', 'MT', 2, 'Pecuário', 2100),
+  farm(6, 'Fazenda Horizonte', '765.432.109-88', 'Uberaba', 'MG', 3, 'Misto', 680),
+  farm(7, 'Fazenda São Benedito', '45.678.901/0001-33', 'Uberlândia', 'MG', 1, 'Agrícola', 1250),
+  farm(8, 'Fazenda Nova Esperança', '654.321.098-77', 'Primavera do Leste', 'MT', 1, 'Agrícola', 1750),
+  farm(9, 'Fazenda Boa Safra', '56.789.012/0001-44', 'Lucas do Rio Verde', 'MT', 1, 'Agrícola', 4100),
+  farm(10, 'Fazenda Ouro Verde', '543.210.987-66', 'Campo Grande', 'MS', 2, 'Pecuário', 3600),
+  farm(11, 'Fazenda Vale do Sol', '67.890.123/0001-55', 'Dourados', 'MS', 3, 'Misto', 1400),
+  farm(12, 'Fazenda Recanto', '432.109.876-55', 'Barreiras', 'BA', 1, 'Agrícola', 2750),
 ];
 
 export const farmRoutes: MockRoute[] = [

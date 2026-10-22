@@ -7,7 +7,7 @@
 // do comportamento visual anteriores (bloco de `tone`, `warningText`,
 // `hideQuestionMark`, `loading`, `colorPalette`, textos i18n) preservados.
 
-import { Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { FiAlertTriangle, FiInfo } from 'react-icons/fi';
 
 import { Button } from '@/components/Button';
@@ -43,6 +43,7 @@ export interface DeleteConfirmDialogProps {
    * passam a prop mantêm o texto padrão.
    */
   cancelButtonText?: string;
+  /** @deprecated Sem efeito: o visual do botão de confirmação vem do DS (variant destructive). Mantida só por compatibilidade de API. */
   colorPalette?: string;
   /**
    * Omite o "?" final do corpo (default `false`, preserva 100% do
@@ -73,7 +74,6 @@ export function DeleteConfirmDialog({
   warningText,
   confirmButtonText,
   cancelButtonText,
-  colorPalette = 'red',
   hideQuestionMark = false,
   tone,
 }: DeleteConfirmDialogProps) {
@@ -94,43 +94,30 @@ export function DeleteConfirmDialog({
     if (!isLoading) onClose();
   };
 
+  // DS ConfirmDialog: sempre há ícone de tom (destrutivo por padrão; informativo
+  // quando `hideQuestionMark`, que não é uma pergunta de confirmação).
+  const resolvedTone: DeleteConfirmDialogTone = tone ?? (hideQuestionMark ? "info" : "danger");
+  const toneStyle = toneConfig[resolvedTone];
+  const isDestructive = resolvedTone !== "info";
+
   return (
     <CustomDialog
       isOpen={isOpen}
       onClose={handleClose}
       preventCloseOnOutside={isLoading}
-      size="md"
-      minW="min(440px, 92vw)"
-      title={
-        <>
-          {tone && (
-            <Flex
-              align="center"
-              justify="center"
-              boxSize="10"
-              borderRadius="full"
-              bg={toneConfig[tone].bg}
-              color={toneConfig[tone].color}
-              mb={3}
-              aria-hidden="true"
-            >
-              <Icon as={toneConfig[tone].icon} boxSize={5} />
-            </Flex>
-          )}
-          <Text>{title || defaultTitle}</Text>
-        </>
-      }
+      size="sm"
+      headerBorder={false}
       footer={
         <>
           <Button
-            title={cancelButtonText || languageGB.defaltStrings?.cancel || 'Cancelar'}
-            variant="outline"
+            title={cancelButtonText || languageGB.defaltStrings?.cancel || "Cancelar"}
+            variant="ghost"
             onClick={handleClose}
             disabled={isLoading}
           />
           <Button
             title={confirmButtonText || defaultConfirmButton}
-            colorPalette={colorPalette}
+            variant={isDestructive ? "destructive" : "solid"}
             onClick={onConfirm}
             loading={isLoading}
             disabled={isLoading}
@@ -138,20 +125,40 @@ export function DeleteConfirmDialog({
         </>
       }
     >
-      <Text py={1}>
-        {description || defaultDescription}{' '}
-        {itemName && (
-          <Text as="span" fontWeight="bold">
-            {itemName}
+      {/* DS: círculo de 40px com o ícone à esquerda; título (16px semibold) e mensagem à direita. */}
+      <Flex gap="12px" align="flex-start">
+        <Flex
+          align="center"
+          justify="center"
+          boxSize="40px"
+          flexShrink={0}
+          borderRadius="full"
+          bg={toneStyle.bg}
+          color={toneStyle.color}
+          aria-hidden="true"
+        >
+          <Icon as={toneStyle.icon} boxSize={5} />
+        </Flex>
+        <Box flex="1" minW={0}>
+          <Text fontSize="16px" fontWeight="semibold" lineHeight="1.35" color="fg.default">
+            {title || defaultTitle}
           </Text>
-        )}
-        {!hideQuestionMark && '?'}
-      </Text>
-      {warningText !== '' && (
-        <Text mt={3} fontSize="sm" color="fg.muted">
-          {warningText || defaultWarning}
-        </Text>
-      )}
+          <Text mt="8px" fontSize="md" color="fg.muted" lineHeight="1.5">
+            {description || defaultDescription}{" "}
+            {itemName && (
+              <Text as="span" fontWeight="bold" color="fg.default">
+                {itemName}
+              </Text>
+            )}
+            {!hideQuestionMark && "?"}
+          </Text>
+          {warningText !== "" && (
+            <Text mt="8px" fontSize="base" color="fg.muted">
+              {warningText || defaultWarning}
+            </Text>
+          )}
+        </Box>
+      </Flex>
     </CustomDialog>
   );
 }

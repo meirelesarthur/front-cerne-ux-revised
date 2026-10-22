@@ -127,10 +127,11 @@ const colors: SemanticTokensColors = {
     warnMain: { value: "{colors.yellow.700}" },
     errorMain: { value: "{colors.red.700}" },
     infoMain: { value: "#2563eb" },
-    success: { value: "{colors.blue.100}" },
-    warn: { value: "{colors.yellow.200}" },
-    error: { value: "{colors.red.200}" },
-    info: { value: "{colors.blue.100}" },
+    // DS feedback.*.bg: success brand50 · error red100 · warning amber50 · info blue50
+    success: { value: "{colors.green.50}" },
+    warn: { value: "{colors.yellow.50}" },
+    error: { value: "{colors.red.100}" },
+    info: { value: "#eff6ff" },
   },
   colorCicle: {
     success: { value: "{colors.blue.100}" },

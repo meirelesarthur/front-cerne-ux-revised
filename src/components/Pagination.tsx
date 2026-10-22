@@ -1,14 +1,76 @@
+// src/components/Pagination.tsx
+// Paginação ligada à tabela (`useTable`). Visual fiel ao `Pagination.tsx` do design
+// system `cerne`: botões quadrados de 34px (`t.size.pageBtn`), raio md, contorno
+// neutro, página atual preenchida em brand[600], reticências "…" com a mesma largura,
+// anterior/próxima com 40% de opacidade quando desabilitados. A lógica (índice
+// 1-based da tabela, guarda de reentrada, recuperação de página fora do range) é a
+// do front e foi mantida; só a apresentação foi componentizada (`PageButton`).
+
 import { useState } from "react";
 
-import { Center, HStack, Icon, IconButton } from "@chakra-ui/react";
-import { FiMoreHorizontal } from "react-icons/fi";
+import { Center, HStack, Icon } from "@chakra-ui/react";
 
 import { useTable } from "@/hooks/useTable";
 
 import rangeOfNumbers from "@/utils/rangeOfNumbers";
 
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import { Button } from "./Button";
+
+const PAGE_BUTTON_SIZE = "34px"; // DS: t.size.pageBtn
+
+interface PageButtonProps {
+  label: string | number;
+  onClick?: () => void;
+  isActive?: boolean;
+  isDisabled?: boolean;
+  ariaLabel?: string;
+  children?: React.ReactNode;
+}
+
+/** Botão quadrado de paginação (número ou seta) — única fonte do visual do DS. */
+function PageButton({ label, onClick, isActive = false, isDisabled = false, ariaLabel, children }: PageButtonProps) {
+  return (
+    <Center
+      as="button"
+      type="button"
+      onClick={isDisabled || isActive ? undefined : onClick}
+      disabled={isDisabled}
+      aria-label={ariaLabel ?? `Página ${label}`}
+      aria-current={isActive ? "page" : undefined}
+      boxSize={PAGE_BUTTON_SIZE}
+      flexShrink={0}
+      borderRadius="md"
+      borderWidth="1px"
+      borderStyle="solid"
+      borderColor={isActive ? "green.600" : "semanticNeutral.200"}
+      bg={isActive ? "green.600" : "paginationBG"}
+      color={isActive ? "white" : "semanticNeutral.500"}
+      fontSize="base"
+      fontWeight="medium"
+      userSelect="none"
+      opacity={isDisabled ? 0.4 : 1}
+      cursor={isDisabled ? "not-allowed" : isActive ? "default" : "pointer"}
+      transition="background 0.15s ease, color 0.15s ease, border-color 0.15s ease"
+      _hover={isDisabled || isActive ? undefined : { bg: "semanticNeutral.100" }}
+    >
+      {children ?? label}
+    </Center>
+  );
+}
+
+function Ellipsis() {
+  return (
+    <Center
+      width={PAGE_BUTTON_SIZE}
+      color="semanticNeutral.400"
+      fontSize="base"
+      userSelect="none"
+      aria-hidden="true"
+    >
+      …
+    </Center>
+  );
+}
 
 export function Pagination() {
   const { table } = useTable();
@@ -66,24 +128,11 @@ export function Pagination() {
       const canRecover = lastValidPage >= 1;
 
       return (
-        <Button
-          variant="outline"
-          title={canRecover ? lastValidPage.toString() : '1'}
-          aria-label={canRecover ? `Ir para a página ${lastValidPage}` : undefined}
+        <PageButton
+          label={canRecover ? lastValidPage : 1}
+          ariaLabel={canRecover ? `Ir para a página ${lastValidPage}` : undefined}
           onClick={canRecover ? () => setPageIndex(lastValidPage) : undefined}
-          backgroundColor="paginationBG"
-          color="white"
-          borderColor="green.600"
-          boxSize="24px"
-          fontSize="8px"
-          fontWeight="semibold"
-          border="0"
-          borderRadius="md"
-          cursor={canRecover ? 'pointer' : 'initial'}
-          _hover={{
-            backgroundColor: 'paginationSelectedBG',
-            color: 'paginationSelectedColor',
-          }}
+          isDisabled={!canRecover}
         />
       );
     }
@@ -91,25 +140,11 @@ export function Pagination() {
     return getPaginationGroup().map((value) => {
       if (pageCount < value + 1) return null;
       return (
-        <Button
+        <PageButton
           key={value}
-          variant="outline"
-          title={value.toString()}
-          padding="0"
+          label={value}
+          isActive={pageIndex === value}
           onClick={() => setPageIndex(value)}
-          backgroundColor={pageIndex === value ? 'paginationSelectedBG' : undefined}
-          color={pageIndex === value ? 'paginationSelectedColor' : 'paginationColor'}
-          borderColor={pageIndex === value ? 'paginationSelectedBG' : 'semanticNeutral.100'}
-          border="0"
-          boxSize="24px"
-          fontSize="8px"
-          fontWeight="semibold"
-          borderRadius="md"
-          cursor={pageIndex === value ? 'initial' : 'pointer'}
-          _hover={{
-            backgroundColor: 'paginationSelectedBG',
-            color: 'paginationSelectedColor',
-          }}
         />
       );
     });
@@ -130,32 +165,8 @@ export function Pagination() {
 
     return (
       <>
-        <Button
-          title="1"
-          onClick={() => setPageIndex(1)}
-          variant="outline"
-          boxSize="24px"
-          padding="0"
-          borderColor="paginationBG"
-          fontSize="8px"
-          color="paginationColor"
-          backgroundColor="paginationBG"
-          border="0"
-          borderRadius="md"
-          _hover={{
-            backgroundColor: 'paginationSelectedBG',
-            color: 'paginationSelectedColor',
-          }}
-        />
-        <Center
-          boxSize="24px"
-          fontSize="8px"
-          color="paginationColor"
-          backgroundColor="paginationBG"
-          borderRadius="md"
-        >
-          <Icon as={FiMoreHorizontal} />
-        </Center>
+        <PageButton label={1} onClick={() => setPageIndex(1)} />
+        <Ellipsis />
       </>
     );
   }
@@ -167,76 +178,33 @@ export function Pagination() {
 
     return (
       <>
-        <Center
-          boxSize="24px"
-          color="paginationColor"
-          backgroundColor="paginationBG"
-          fontSize="xs"
-          borderRadius="md"
-        >
-          <Icon as={FiMoreHorizontal} />
-        </Center>
-        <Button
-          title={(pageCount - 1).toString()}
-          onClick={() => setPageIndex(pageCount - 1)}
-          variant="outline"
-          padding="0"
-          boxSize="24px"
-          borderColor="border1"
-          fontSize="xs"
-          color="paginationColor"
-          border="0"
-          borderRadius="md"
-          _hover={{
-            backgroundColor: 'paginationSelectedBG',
-            color: 'paginationSelectedColor',
-          }}
-        />
+        <Ellipsis />
+        <PageButton label={pageCount - 1} onClick={() => setPageIndex(pageCount - 1)} />
       </>
     );
   }
 
   return (
     <HStack gap={1} flex="1" flexDirection="row" justifyContent="flex-end" alignItems="center">
-      <IconButton
+      <PageButton
+        label="anterior"
+        ariaLabel="Página anterior"
         onClick={previousPage}
-        disabled={!table.getCanPreviousPage() || pageIndex === 1}
-        aria-label="Página anterior"
-        border="0"
-        variant="outline"
-        boxSize="24px"
-        borderColor="border1"
-        fontSize="xs"
-        color="paginationColor"
-        borderRadius="md"
-        _hover={{
-          backgroundColor: 'paginationSelectedBG',
-          color: 'paginationSelectedColor',
-        }}
+        isDisabled={!table.getCanPreviousPage() || pageIndex === 1}
       >
-        <Icon as={MdKeyboardArrowLeft} />
-      </IconButton>
+        <Icon as={MdKeyboardArrowLeft} boxSize={5} />
+      </PageButton>
       {renderFirstPage()}
       {renderPages()}
       {renderLastPage()}
-      <IconButton
+      <PageButton
+        label="próxima"
+        ariaLabel="Próxima página"
         onClick={nextPage}
-        disabled={!table.getCanNextPage() || pageCount === -1}
-        aria-label="Próxima página"
-        border="0"
-        variant="outline"
-        boxSize="24px"
-        borderColor="border1"
-        fontSize="xs"
-        color="paginationColor"
-        borderRadius="md"
-        _hover={{
-          backgroundColor: 'paginationSelectedBG',
-          color: 'paginationSelectedColor',
-        }}
+        isDisabled={!table.getCanNextPage() || pageCount === -1}
       >
-        <Icon as={MdKeyboardArrowRight} />
-      </IconButton>
+        <Icon as={MdKeyboardArrowRight} boxSize={5} />
+      </PageButton>
     </HStack>
   );
 }
