@@ -10,279 +10,14 @@
 // arquivo dedicado com o shape `NavModule/NavGroup/NavSubItem` (idêntico ao
 // cerne) mantém o porte fiel e fácil de auditar linha a linha contra a fonte.
 //
+// Ícones: papéis do registry do DS (`@/design/icons`, família HugeIcons) — a árvore não
+// importa biblioteca de ícone; quem renderiza usa `<Icon name={item.icon}>`.
+//
 // `mainMenu.ts` continua existindo (outros pontos do código podem referenciar
 // `MainMenuItem`), mas o Sidebar/SecondaryNav/Header/Router passam a consumir
 // exclusivamente esta árvore.
 
-import {
-  LayoutDashboard,
-  Star,
-  TrendingUp,
-  HeartPulse,
-  Layers,
-  Building2,
-  Clock,
-  Gauge,
-  Wallet,
-  Truck,
-  Receipt,
-  ReceiptText,
-  BarChart3,
-  Network,
-  Users,
-  CreditCard,
-  Scale,
-  Wheat,
-  Beef,
-  Package,
-  SlidersHorizontal,
-  ShoppingCart,
-  Warehouse,
-  UserCheck,
-  Files,
-  ScrollText,
-  ServerCog,
-  CloudRain,
-  ShoppingBag,
-  ClipboardCheck,
-  GitMerge,
-  FileText,
-  // "Produtos x Prev. Entrega" (Relatórios → Suprimentos, F-309, esteira
-  // 97-Esteiras/058, TASK-058-F309-FE-02) — ícone distinto de `FileText`
-  // (já usado pelos irmãos `rel-sup-sla`/`rel-sup-gerencial-solicitacoes`
-  // dentro do MESMO grupo), reforça a diferenciação visual do 3º filho.
-  PackageSearch,
-  MoreHorizontal,
-  Globe,
-  Upload,
-  Table,
-  Handshake,
-  HelpCircle,
-  // Ícones de item-folha (3º nível) — adicionados para fidelidade visual ao
-  // design system `cerne` (MCPs/cerne/src/data/menuData.ts), que já expõe
-  // `icon` em todo `NavSubItem`. Mapeamento 1:1 por `id` quando o item existe
-  // na referência; itens exclusivos desta árvore (sem equivalente no cerne)
-  // recebem ícone semanticamente compatível (não há layout novo sendo
-  // inventado, só a escolha decorativa de um ícone Lucide já do catálogo).
-  Activity,
-  AlertTriangle,
-  ArrowDownCircle,
-  ArrowLeftRight,
-  ArrowUpCircle,
-  Baby,
-  Banknote,
-  BarChart,
-  // Batida (FoodBeat, TASK-FB-FE-07 v2.0, decisão do dono 2026-08-12): filho
-  // "Batida" do grupo "Fábrica" — mesmo ícone escolhido pelo design system
-  // `cerne` para este exato item (`src/data/menuData.ts:315-321`).
-  Blend,
-  Bookmark,
-  BookOpen,
-  Boxes,
-  Briefcase,
-  Calculator,
-  Calendar,
-  CalendarCheck,
-  CalendarClock,
-  CalendarX,
-  ClipboardList,
-  // Configuração (Config, execução 032, TASK-FE-2603): item de menu NOVO,
-  // preenche a lacuna já apontada pelo comentário em `cfg-app`/`cad-est-sis`
-  // abaixo ("Config" antes de "Aplicativos"/"Atualizações" no legado).
-  // Distinto de `Settings`/`Settings2` já em uso (`cfg-par`).
-  Cog,
-  // Custeio/Lote (execução 074, custeio-lote-contrato-front.md §6) — item de
-  // menu NOVO (`rel-pec-cus`). 0 ocorrências prévias neste arquivo
-  // (confirmado por grep), mesma regra já aplicada a `HeartPulse`/`History`.
-  Coins,
-  Contact,
-  Dna,
-  DollarSign,
-  // Bebedouros (DrinkingFountain, execução 029, TASK-FE-2304 — chokepoint de
-  // FUNDAÇÃO): item de menu NOVO, ícone proposto pelo contrato de tela
-  // (`contrato-fe-convencoes-chokepoints.md §7`, `contrato-fe-bebedouros.md
-  // §7 D-FE-1) — afinidade semântica com o domínio de água.
-  Droplet,
-  Factory,
-  FileCheck,
-  FileCode,
-  FileInput,
-  FilePlus,
-  FileSearch,
-  // "NFe/Emitidas" (Relatórios → Gestão Fiscal, F-287, esteira
-  // 97-Esteiras/079, TASK-F287-FE-02) — ícone distinto de `FileText`
-  // (já usado pelo irmão `rel-gfi-faturamento` dentro do MESMO grupo) e de
-  // `Scale`/`GitCompare` (pai/irmão restantes), fidelidade visual.
-  FileSpreadsheet,
-  FileSignature,
-  FileType,
-  // Formulação (Food, TASK-FB-FE-07 v2.0, decisão do dono 2026-08-12): filho
-  // "Formulação" do grupo "Fábrica" — mesmo ícone escolhido pelo design
-  // system `cerne` para este exato item (`src/data/menuData.ts:315-321`).
-  FlaskConical,
-  Fuel,
-  // Planos (PlanRole, AJUSTE de navegação pós-TASK-FE-2704): o item já vivia
-  // só no ícone dedicado do NavRail (Gem, ver NavRail.tsx) e por isso NÃO
-  // aparecia na busca do menu, que varre exclusivamente este `navigationTree`
-  // — o dono pediu paridade de busca. Mesmo ícone `Gem` do NavRail, para não
-  // introduzir uma segunda metáfora visual para a mesma feature.
-  Gem,
-  GitBranch,
-  GitCompare,
-  // Compra de Animais (MovementPurchase, TASK-CP-04, contrato-frontend-
-  // compras-movimento.md §4.3): ícone do item de menu NOVO `ope-pec-com` —
-  // afinidade semântica com pagamento/aquisição, distinto de `ShoppingCart`
-  // (adm-sup-com, "Compras" administrativo) e `ShoppingBag` (ope-pec-ven,
-  // "Venda de Animais"); confirmado disponível em `lucide-react`.
-  HandCoins,
-  Heart,
-  // Histórico Reprodutivo (ReproductiveHistoryReport, execução 074,
-  // historico-reprodutivo-contrato-front.md §6): ícone do item-filho NOVO de
-  // "Pecuária" (`rel-pec-hist`) — afinidade semântica direta (histórico),
-  // não usado em nenhum outro nó da árvore (evita duplicar ícone, mesma
-  // regra já aplicada a `HeartPulse` em `rel-pec-vac`).
-  History,
-  IdCard,
-  Inbox,
-  Info,
-  // Permissões (Permission, execução 032, TASK-FE-2404): item de menu NOVO.
-  // `ShieldCheck`/`Lock` já usados por outros itens deste arquivo
-  // (Autorizadores/Autorização/Congelamentos Financeiros) — ícone distinto
-  // para não colidir visualmente, mesma afinidade semântica (acesso/RBAC).
-  KeyRound,
-  Landmark,
-  LineChart,
-  ListChecks,
-  ListTree,
-  Lock,
-  Map,
-  MapPin,
-  // Atualizações do Sistema (SystemUpdate, execução 031, TASK-FE-1104): item
-  // de menu NOVO, ícone semanticamente compatível (comunicado/changelog) —
-  // mesma lógica de "afinidade semântica" já usada por Bebedouros (Droplet).
-  Megaphone,
-  Package2,
-  PackageCheck,
-  PackageMinus,
-  PackageOpen,
-  PackagePlus,
-  PawPrint,
-  PenLine,
-  Percent,
-  // Composição Rebanho (F-269, lote 079, F-269-plano-frontend.md §6
-  // TASK-F269-FE-03) — item de menu NOVO (`rel-pec-composicao-rebanho`). 0
-  // ocorrências prévias neste arquivo (confirmado por grep) — afinidade
-  // semântica direta com "composição" (setores de um todo).
-  PieChart,
-  // Custeio/Animal (F-248, esteira 075, CusteioAnimal-contrato-front.md §6)
-  // — item de menu NOVO (`rel-pec-cus-an`). 0 ocorrências prévias neste
-  // arquivo (confirmado por grep), mesma regra já aplicada a `Coins`/
-  // `HeartPulse`/`History`. Distinto de `Coins` (já usado por Custeio/Lote).
-  PiggyBank,
-  RefreshCw,
-  Repeat,
-  RotateCw,
-  Route,
-  Ruler,
-  // Dieta (Diet, TASK-FE-DIET-07, GAP-DIET-FE-02): item de menu NOVO
-  // (grupo pai "Dieta" com 2 filhos — "Dietas"/"Batidas"), mirror EXATO da
-  // reestruturação já feita para "Fábrica" (Food/FoodBeat). `Salad` =
-  // afinidade semântica com o domínio de alimentação/dieta; `Blend` (já
-  // importado acima) reusado para "Batidas" (mesma escolha do design
-  // system `cerne` para o filho "Batida" de Fábrica).
-  Salad,
-  Settings,
-  Settings2,
-  // Compartilhamento (Sharing, F-122, 97-Esteiras/070, TASK-CP-FE-01): ícone
-  // do item de menu NOVO `int-compartilhamento` — afinidade semântica direta
-  // (compartilhar/vincular Contratante), confirmado disponível em
-  // `lucide-react`, sem colisão com nenhum ícone já importado.
-  Share2,
-  ShieldCheck,
-  // Sanitário (Sanitary, TASK-SAN-FE-09, F-062, 97-Esteiras/002 execução 002):
-  // ícone do item-filho NOVO de "Manejo" (`ope-pec-man-san`) — afinidade
-  // semântica com o domínio (proteção sanitária do rebanho), distinto de
-  // `Syringe` (já usado por "Vacinas", `cad-pec-vac`) para não repetir ícone
-  // entre itens do mesmo módulo Pecuária. Confirmado disponível em
-  // `lucide-react`.
-  ShieldPlus,
-  Smartphone,
-  // Mortes (DeathAnimal, TASK-DA-FE-01, execução 049): ícone do item de menu
-  // NOVO `ope-pec-mor` — semanticamente direto para o domínio (mesmo
-  // racional de `Baby` para Nascimentos/`Droplet` para Bebedouros), sem
-  // precedente de posição no legado (LACUNA, default aplicado).
-  Skull,
-  // Mortes — relatório genérico (F-254, esteira 97-Esteiras/077,
-  // CONTRATOS/front/F-254-plano-front.md): ícone do item de menu NOVO
-  // `rel-pec-mor` — `Skull` já está reservado ao irmão SISBOV
-  // (`rel-pec-mortes-sisbov`), `Biohazard` tem afinidade semântica com
-  // "morte/perda" sem colidir (confirmado disponível em `lucide-react`,
-  // nenhuma ocorrência prévia em `src/`).
-  Biohazard,
-  // Identificação/SISBOV (F-270, esteira 97-Esteiras/078,
-  // CONTRATOS/F-270-contrato-legado.md): ícone do item de menu NOVO
-  // `rel-pec-identificacao-sisbov` — `Baby`/`Skull` já reservados aos
-  // irmãos SISBOV (`rel-pec-nascimentos-sisbov`/`rel-pec-mortes-sisbov`),
-  // `ScanBarcode` tem afinidade semântica direta (a tela baixa o relatório
-  // com código de barra SISBOV, confirmado disponível em `lucide-react`,
-  // nenhuma ocorrência prévia em `src/`).
-  ScanBarcode,
-  // Apartação (Separation, 97-Esteiras/005 Tarefa 24, `GAP-APARTACAO-FE-01`):
-  // ícone do item de menu NOVO `ope-pec-apa` — confirmado disponível em
-  // `lucide-react` (frontend-contract-apartacao.md §2.1).
-  Split,
-  Sprout,
-  Stethoscope,
-  Syringe,
-  Tag,
-  // Touros/Sêmen/Embrião (BullSeedSeason, 97-Esteiras/005 Tarefa 24,
-  // `GAP-BSS-FE-01`): ícone do item-filho NOVO de "Reprodução"
-  // (`ope-pec-rep-bss`) — confirmado disponível em `lucide-react`, sem
-  // colisão de import (ver contrato de tela §1, item "Fato" da tabela §1.1).
-  TestTube,
-  Timer,
-  // Apontamento Máquina (Appropriation, Tarefa 46, frontend-contract-
-  // apontamento-maquina.md §2): ícone do item-filho NOVO de "Agricultura"
-  // (`rel-agr-apo`) — confirmado sem colisão de import neste arquivo.
-  Tractor,
-  // Prod./Área (F-299, 97-Esteiras/012, Tarefa 47, frontend-contract-prod-
-  // area.md §2.2): ícone do item-filho NOVO de "Agricultura" (`rel-agr-pro`)
-  // — `Wheat` já é o ícone do próprio `rel-agr` e `Tractor` já é
-  // `rel-agr-apo`; `LandPlot` confirmado sem colisão de import neste arquivo.
-  LandPlot,
-  TrendingDown,
-  Undo2,
-  UserCog,
-  UserPlus,
-  Wrench,
-  XCircle,
-  // Máquinas (MachinesReport, F-278, esteira 97-Esteiras/052,
-  // TASK-052-278-FE-02): ícone do item-filho NOVO de "Gestão de Frotas"
-  // (`rel-gfr-maquinas`) — `Truck`/`Wrench`/`Tractor`/`Cog`/`Gauge`/
-  // `Settings`/`Settings2` já em uso neste arquivo; `Forklift` confirmado
-  // sem colisão de import, afinidade semântica direta com máquinas/frota.
-  Forklift,
-  // Estq. Animais/Categoria (CategoryAnimalReport, F-242, esteira
-  // 97-Esteiras/077): ícone do item-filho NOVO de "Pecuária" (`rel-pec-cat`)
-  // — afinidade semântica com "categoria"; `Tag` (singular) já em uso por
-  // outros grupos deste arquivo, `Tags` (plural) confirmado sem colisão de
-  // import.
-  Tags,
-  // Descarte Romaneio (F-256, execução 97-Esteiras/078, F-256-plano-
-  // frontend.md): ícone do item-filho NOVO de "Agricultura"
-  // (`rel-agr-descarte-romaneio`) — afinidade semântica direta com
-  // descarte; `Recycle` confirmado sem colisão de import neste arquivo.
-  Recycle,
-  // Vendas/Funcionário (F-314, esteira 97-Esteiras/079,
-  // F-314-plano-frontend.md): ícone do item-filho NOVO `rel-ven-funcionario`
-  // — `Users`/`ShoppingBag`/`FileText` já em uso pelos irmãos do MESMO grupo
-  // `rel-ven` (produto/cliente-produto/cliente); `UserCheck`/`Contact`/
-  // `IdCard`/`Briefcase` já ocupados em outros grupos deste arquivo.
-  // `UserRound` confirmado sem colisão de import, afinidade semântica direta
-  // com "funcionário".
-  UserRound,
-  type LucideIcon,
-} from 'lucide-react';
+import type { IconName } from '@/components/ui/Icon';
 
 export interface NavSubItem {
   id: string;
@@ -293,14 +28,14 @@ export interface NavSubItem {
    * ADITIVO — item sem `icon` continua renderizando igual a antes (mudança
    * puramente visual, sem alterar a árvore de navegação nem seu consumo).
    */
-  icon?: LucideIcon;
+  icon?: IconName;
   children?: Omit<NavSubItem, 'children'>[];
 }
 
 export interface NavGroup {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: IconName;
   items: NavSubItem[];
 }
 
@@ -308,81 +43,81 @@ export interface NavModule {
   id: string;
   label: string;
   emoji: string;
-  icon: LucideIcon;
+  icon: IconName;
   path?: string;
   groups?: NavGroup[];
   flatItems?: NavSubItem[];
 }
 
 export const menuModules: NavModule[] = [
-  { id: 'painel', label: 'Home', emoji: '🏠', icon: LayoutDashboard, path: '/home' },
+  { id: 'painel', label: 'Home', emoji: '🏠', icon: 'dashboard', path: '/home' },
   {
     id: 'favoritos',
     label: 'Favoritos',
     emoji: '⭐',
-    icon: Star,
+    icon: 'star',
     flatItems: [
-      { id: 'fav-dfe', label: 'DFe Recebidas', path: '/favoritos/dfe', icon: Inbox },
-      { id: 'fav-pagar', label: 'C. a Pagar', path: '/favoritos/pagar', icon: ArrowUpCircle },
+      { id: 'fav-dfe', label: 'DFe Recebidas', path: '/favoritos/dfe', icon: 'inbox' },
+      { id: 'fav-pagar', label: 'C. a Pagar', path: '/favoritos/pagar', icon: 'trend-up' },
       {
         id: 'fav-receber',
         label: 'C. a Receber',
         path: '/favoritos/receber',
-        icon: ArrowDownCircle,
+        icon: 'trend-down',
       },
-      { id: 'fav-caixa', label: 'Mov. Caixa/Bancário', path: '/favoritos/caixa', icon: Wallet },
-      { id: 'fav-ofx', label: 'Importação OFX', path: '/favoritos/ofx', icon: Upload },
+      { id: 'fav-caixa', label: 'Mov. Caixa/Bancário', path: '/favoritos/caixa', icon: 'wallet' },
+      { id: 'fav-ofx', label: 'Importação OFX', path: '/favoritos/ofx', icon: 'document-import' },
     ],
   },
   {
     id: 'dashboards',
     label: 'Dashboards',
     emoji: '📈',
-    icon: TrendingUp,
+    icon: 'trend-up',
     flatItems: [
       {
         id: 'dash-overview',
         label: 'Visão Geral',
         path: '/dashboards/visao-geral',
-        icon: LayoutDashboard,
+        icon: 'dashboard',
       },
-      { id: 'dash-fin', label: 'Financeiros', path: '/dashboards/financeiro', icon: Wallet },
-      { id: 'dash-sup', label: 'Suprimentos', path: '/dashboards/suprimentos', icon: ShoppingCart },
-      { id: 'dash-pec', label: 'Pecuária de Corte', path: '/dashboards/pecuaria', icon: Beef },
+      { id: 'dash-fin', label: 'Financeiros', path: '/dashboards/financeiro', icon: 'wallet' },
+      { id: 'dash-sup', label: 'Suprimentos', path: '/dashboards/suprimentos', icon: 'cart' },
+      { id: 'dash-pec', label: 'Pecuária de Corte', path: '/dashboards/pecuaria', icon: 'cattle' },
       {
         id: 'dash-dep',
         label: 'Depreciações',
         path: '/dashboards/depreciacoes',
-        icon: TrendingDown,
+        icon: 'trend-down',
       },
-      { id: 'dash-ati', label: 'Ativos', path: '/dashboards/ativos', icon: Package },
-      { id: 'dash-usr', label: 'Análise de Usuários', path: '/dashboards/usuarios', icon: Users },
-      { id: 'dash-plu', label: 'Pluviometria', path: '/dashboards/pluviometria', icon: CloudRain },
-      { id: 'dash-lcx', label: 'Livro Caixa', path: '/dashboards/livro-caixa', icon: BookOpen },
+      { id: 'dash-ati', label: 'Ativos', path: '/dashboards/ativos', icon: 'package' },
+      { id: 'dash-usr', label: 'Análise de Usuários', path: '/dashboards/usuarios', icon: 'users' },
+      { id: 'dash-plu', label: 'Pluviometria', path: '/dashboards/pluviometria', icon: 'rain' },
+      { id: 'dash-lcx', label: 'Livro Caixa', path: '/dashboards/livro-caixa', icon: 'book' },
       {
         id: 'dash-cur',
         label: 'Lotação de Currais',
         path: '/dashboards/lotacao-currais',
-        icon: Warehouse,
+        icon: 'warehouse',
       },
       {
         id: 'dash-des',
         label: 'Desempenho de Lotes',
         path: '/dashboards/desempenho-lotes',
-        icon: Activity,
+        icon: 'activity',
       },
       {
         id: 'dash-nut',
         label: 'Estoque Nutrição',
         path: '/dashboards/estoque-nutricao',
-        icon: Package2,
+        icon: 'package-alt',
       },
-      { id: 'dash-rac', label: 'Consumo de Ração', path: '/dashboards/consumo-racao', icon: Wheat },
+      { id: 'dash-rac', label: 'Consumo de Ração', path: '/dashboards/consumo-racao', icon: 'grain' },
       {
         id: 'dash-cco',
         label: 'Custos do Confinamento',
         path: '/dashboards/custos-confinamento',
-        icon: Receipt,
+        icon: 'receipt',
       },
       // Programa ABC Corte (execução 046, TASK-DASH-FE-05 — fundação).
       // UX-GAP-046-01: não existe página equivalente em
@@ -396,7 +131,7 @@ export const menuModules: NavModule[] = [
         id: 'dash-abc',
         label: 'Programa ABC Corte',
         path: '/dashboards/abc-indicators',
-        icon: BarChart3,
+        icon: 'chart-bar',
       },
     ],
   },
@@ -404,26 +139,26 @@ export const menuModules: NavModule[] = [
     id: 'cadastros',
     label: 'Cadastros Base',
     emoji: '🗂️',
-    icon: Layers,
+    icon: 'layers',
     groups: [
       {
         id: 'cad-estrutura',
         label: 'Estrutura',
-        icon: Layers,
+        icon: 'layers',
         items: [
           {
             id: 'cad-est-cc',
             label: 'Centros de Custo',
             path: '/cadastros-base/centros-custo',
-            icon: Layers,
+            icon: 'layers',
           },
           {
             id: 'cad-est-faz',
             label: 'Fazendas',
             path: '/cadastros-base/fazendas',
-            icon: Building2,
+            icon: 'building',
           },
-          { id: 'cad-est-saf', label: 'Safras', path: '/cadastros-base/safras', icon: Calendar },
+          { id: 'cad-est-saf', label: 'Safras', path: '/cadastros-base/safras', icon: 'calendar' },
           // TASK-083: "Produtos" reagrupado em SUBMENU recolhível (rejeição AD
           // F-173 — "Grupos não encontrada no menu"). As 5 rotas/permissões
           // dos filhos são inalteradas; só a apresentação no menu muda.
@@ -436,61 +171,61 @@ export const menuModules: NavModule[] = [
             id: 'cad-est-pro',
             label: 'Produtos',
             path: '/cadastros-base/produtos',
-            icon: Package2,
+            icon: 'package-alt',
             children: [
               {
                 id: 'cad-est-pro-lista',
                 label: 'Produtos',
                 path: '/cadastros-base/produtos',
-                icon: Package2,
+                icon: 'package-alt',
               },
               {
                 id: 'cad-est-emb',
                 label: 'Embalagens',
                 path: '/cadastros-base/embalagens',
-                icon: Package,
+                icon: 'package',
               },
               {
                 id: 'cad-est-end',
                 label: 'Endereçamentos',
                 path: '/cadastros-base/enderecos',
-                icon: MapPin,
+                icon: 'location',
               },
               {
                 id: 'cad-est-arm',
                 label: 'Armazéns',
                 path: '/cadastros-base/armazens',
-                icon: Warehouse,
+                icon: 'warehouse',
               },
               {
                 id: 'cad-est-sal-ini',
                 label: 'Saldo Inicial',
                 path: '/cadastros-base/estoques-iniciais',
-                icon: Wallet,
+                icon: 'wallet',
               },
               {
                 id: 'cad-est-pro-gru',
                 label: 'Grupos',
                 path: '/cadastros-base/produtos/grupos',
-                icon: Boxes,
+                icon: 'stock',
               },
               {
                 id: 'cad-est-pro-cat',
                 label: 'Categorias',
                 path: '/cadastros-base/produtos/categorias',
-                icon: Tag,
+                icon: 'tag',
               },
               {
                 id: 'cad-est-pro-cla',
                 label: 'Classes',
                 path: '/cadastros-base/produtos/classes',
-                icon: Layers,
+                icon: 'layers',
               },
               {
                 id: 'cad-est-med',
                 label: 'Un. de Medida',
                 path: '/cadastros-base/unidade-medida',
-                icon: Ruler,
+                icon: 'ruler',
               },
             ],
           },
@@ -503,22 +238,22 @@ export const menuModules: NavModule[] = [
             id: 'cad-est-rat',
             label: 'Rateios / Categorias',
             path: '/cadastros-base/rateios-categorias',
-            icon: Percent,
+            icon: 'percent',
           },
         ],
       },
       {
         id: 'cad-pessoas',
         label: 'Pessoas',
-        icon: Users,
+        icon: 'users',
         items: [
           {
             id: 'cad-pes-per',
             label: 'Perfil de Usuário',
             path: '/cadastros-base/perfil',
-            icon: UserCog,
+            icon: 'user-settings',
           },
-          { id: 'cad-pes-uni', label: 'Pessoas', path: '/cadastros-base/pessoas', icon: Users },
+          { id: 'cad-pes-uni', label: 'Pessoas', path: '/cadastros-base/pessoas', icon: 'users' },
           // TASK-PY-FE-02: item NOVO "Proprietários", separado de "Pessoas"
           // (mesmo racional de coexistência de `Provider`). Posição espelha
           // o legado (app/Support/PermissionTree.php:424-459, "Proprietários"
@@ -528,7 +263,7 @@ export const menuModules: NavModule[] = [
             id: 'cad-pes-prp',
             label: 'Proprietários',
             path: '/cadastros-base/proprietarios',
-            icon: Contact,
+            icon: 'contact',
           },
           // TASK-EMP-FE-02: item NOVO "Funcionários" — fecha literalmente o
           // comentário antigo deste bloco ("Funcionários ainda não tem
@@ -542,7 +277,7 @@ export const menuModules: NavModule[] = [
             id: 'cad-pes-fun',
             label: 'Funcionários',
             path: '/cadastros-base/funcionarios',
-            icon: IdCard,
+            icon: 'safety',
           },
           // TASK-PR-FE-02: item NOVO, separado de "Pessoas" (decisão do
           // dono: COEXISTIR — Provider-FrontEnd-contrato.md `## 11` item 1).
@@ -554,7 +289,7 @@ export const menuModules: NavModule[] = [
             id: 'cad-for-lis',
             label: 'Fornecedores',
             path: '/cadastros-base/fornecedores',
-            icon: Truck,
+            icon: 'truck',
           },
           // TASK-CL-FE-02: item NOVO "Clientes" — SCAFFOLD ADIANTADO POR
           // ESPELHAMENTO (ver nota de topo de Clientes/index.tsx), escrito
@@ -566,25 +301,25 @@ export const menuModules: NavModule[] = [
             id: 'cad-pes-cli',
             label: 'Clientes',
             path: '/cadastros-base/clientes',
-            icon: Handshake,
+            icon: 'handshake',
           },
           {
             id: 'cad-pes-usr',
             label: 'Usuários',
             path: '/cadastros-base/usuarios',
-            icon: UserCheck,
+            icon: 'user-check',
           },
           {
             id: 'cad-pes-aut',
             label: 'Autorizadores',
             path: '/cadastros-base/autorizadores',
-            icon: ShieldCheck,
+            icon: 'shield-check',
           },
           {
             id: 'cad-pes-afi',
             label: 'Afiliados',
             path: '/cadastros-base/pessoas/afiliados',
-            icon: UserPlus,
+            icon: 'users',
           },
           // Contratantes (Tenant, TASK-TN-FE-02) MOVIDO de `cad-gerais`
           // (homologação do dono, 2026-08-13): entidade irmã de Afiliados na
@@ -597,32 +332,32 @@ export const menuModules: NavModule[] = [
             id: 'cad-pes-contr',
             label: 'Contratantes',
             path: '/cadastros-base/contratantes',
-            icon: Building2,
+            icon: 'building',
           },
         ],
       },
       {
         id: 'cad-financeiros',
         label: 'Financeiros',
-        icon: CreditCard,
+        icon: 'credit-card',
         items: [
           {
             id: 'cad-fin-bco',
             label: 'Contas Bancárias',
             path: '/cadastros-base/contas-bancarias',
-            icon: Landmark,
+            icon: 'bank',
           },
           {
             id: 'cad-fin-sal',
             label: 'Saldo Inicial',
             path: '/cadastros-base/saldo-inicial',
-            icon: Wallet,
+            icon: 'wallet',
           },
           {
             id: 'cad-fin-cnd',
             label: 'Condições de Pagamento',
             path: '/cadastros-base/condicoes-pagamento',
-            icon: CreditCard,
+            icon: 'credit-card',
           },
           // TASK-FE-032: posição confirmada no legado (agro365/resources/views/layouts/navbars/sidebar.blade.php)
           // — "Agrupadores" (`groupers_view`) vem logo após "Condições de Pagamento" e ANTES de
@@ -632,19 +367,19 @@ export const menuModules: NavModule[] = [
             id: 'cad-fin-agr',
             label: 'Agrupadores',
             path: '/cadastros-base/agrupadores',
-            icon: ListTree,
+            icon: 'list-tree',
           },
           {
             id: 'cad-fin-acg',
             label: 'Agrupadores Contábeis',
             path: '/cadastros-base/agrupadores-contabeis',
-            icon: ListTree,
+            icon: 'list-tree',
           },
           {
             id: 'cad-fin-cat',
             label: 'Categorias Financeiras',
             path: '/cadastros-base/categorias',
-            icon: Tag,
+            icon: 'tag',
           },
           // TASK-CTY-01: posição exata confirmada no backend
           // (PermissionTree.php:585-612) — "Tipos de Categoria" vem
@@ -654,24 +389,24 @@ export const menuModules: NavModule[] = [
             id: 'cad-fin-cty',
             label: 'Tipos de Categoria',
             path: '/cadastros-base/tipos-de-categoria',
-            icon: Tag,
+            icon: 'tag',
           },
           {
             id: 'cad-fin-tt',
             label: 'Tipos de Título',
             path: '/cadastros-base/tipos-titulo',
-            icon: FileType,
+            icon: 'document-type',
           },
           // TASK-BANK-FE-01: posição confirmada no legado (agro365/resources/views/layouts/navbars/
           // sidebar.blade.php:388-401) — ordem real `typetitles_view` → `banks_view` → `lowreasons_view`.
           // "Bancos" (`Bank`, catálogo de instituições financeiras) é feature DISTINTA de "Contas
           // Bancárias" (`BankAccount`/`cad-fin-bco`, acima), não confundir (DEC-020).
-          { id: 'cad-fin-bnk', label: 'Bancos', path: '/cadastros-base/bancos', icon: Landmark },
+          { id: 'cad-fin-bnk', label: 'Bancos', path: '/cadastros-base/bancos', icon: 'bank' },
           {
             id: 'cad-fin-mba',
             label: 'Motivos de Baixa',
             path: '/cadastros-base/motivos-de-baixa',
-            icon: XCircle,
+            icon: 'error',
           },
           // TASK-FE-213: posição confirmada no backend (PermissionTree.php:649-659, D7 do
           // Indexer-contrato §5) — 11ª/última posição do grupo "Financeiros", imediatamente após
@@ -680,56 +415,56 @@ export const menuModules: NavModule[] = [
             id: 'cad-fin-idx',
             label: 'Indexadores',
             path: '/cadastros-base/indexadores',
-            icon: Percent,
+            icon: 'percent',
           }, // NOVO
         ],
       },
       {
         id: 'cad-fiscais',
         label: 'Fiscais',
-        icon: Scale,
+        icon: 'scale',
         items: [
           {
             id: 'cad-fis-emi',
             label: 'Emissores NFe',
             path: '/cadastros-base/emissores',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'cad-fis-sin',
             label: 'Sincronização DFe',
             path: '/cadastros-base/sincronizacao-dfe',
-            icon: RefreshCw,
+            icon: 'refresh',
           },
           {
             id: 'cad-fis-nfse',
             label: 'NFSe Recebidas',
             path: '/cadastros-base/nfse-recebidas',
-            icon: FileCheck,
+            icon: 'refresh',
           },
           {
             id: 'cad-fis-reg',
             label: 'Regras Fiscais',
             path: '/cadastros-base/regras-fiscais',
-            icon: Scale,
+            icon: 'scale',
           },
           {
             id: 'cad-fis-cnt',
             label: 'Contador',
             path: '/cadastros-base/contador',
-            icon: Calculator,
+            icon: 'calculator',
           },
           {
             id: 'cad-fis-nat',
             label: 'Natureza de Operação',
             path: '/cadastros-base/natureza-operacao',
-            icon: GitBranch,
+            icon: 'git-branch',
           },
           {
             id: 'cad-fis-inf',
             label: 'Informações Complementares',
             path: '/cadastros-base/info-complementares',
-            icon: Info,
+            icon: 'info',
           },
           // CORREÇÃO (2026-07-20): "Plano de Contas" pertence a este grupo,
           // não a "Financeiros". Lastro no legado agro365
@@ -742,54 +477,54 @@ export const menuModules: NavModule[] = [
             id: 'cad-fis-pla',
             label: 'Plano de Contas',
             path: '/cadastros-base/plano-de-contas',
-            icon: ListTree,
+            icon: 'list-tree',
           },
         ],
       },
       {
         id: 'cad-agricolas',
         label: 'Agrícolas',
-        icon: Wheat,
+        icon: 'grain',
         items: [
           {
             id: 'cad-agr-ope',
             label: 'Operações',
             path: '/cadastros-base/operacoes',
-            icon: Settings2,
+            icon: 'settings-sliders',
           },
           {
             id: 'cad-agr-ati',
             label: 'Atividades',
             path: '/cadastros-base/atividades',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           {
             id: 'cad-agr-cul',
             label: 'Cultura / Variedade',
             path: '/cadastros-base/cultura',
-            icon: Sprout,
+            icon: 'sprout',
           },
           {
             id: 'cad-agr-cic',
             label: 'Ciclo de Produção',
             path: '/cadastros-base/ciclo-producao',
-            icon: RotateCw,
+            icon: 'rotate',
           },
         ],
       },
       {
         id: 'cad-pecuarios',
         label: 'Pecuários',
-        icon: Beef,
+        icon: 'cattle',
         items: [
           {
             id: 'cad-pec-esp',
             label: 'Espécies',
             path: '/cadastros-base/especies',
-            icon: PawPrint,
+            icon: 'cattle',
           },
-          { id: 'cad-pec-rac', label: 'Raças', path: '/cadastros-base/racas', icon: Dna },
-          { id: 'cad-pec-vac', label: 'Vacinas', path: '/cadastros-base/vacinas', icon: Syringe },
+          { id: 'cad-pec-rac', label: 'Raças', path: '/cadastros-base/racas', icon: 'lab' },
+          { id: 'cad-pec-vac', label: 'Vacinas', path: '/cadastros-base/vacinas', icon: 'safety' },
           // "Categorias" (animais) — presente só no nosso lado (feat(025),
           // commit 9f99743, ainda não mesclado em `develop` no momento deste
           // merge). Ícone Tag por consistência com os demais itens
@@ -798,59 +533,59 @@ export const menuModules: NavModule[] = [
             id: 'cad-pec-cat',
             label: 'Categorias',
             path: '/cadastros-base/categorias-animais',
-            icon: Tag,
+            icon: 'tag',
           },
           {
             id: 'cad-pec-cmp',
             label: 'Causa Morte/Perda',
             path: '/cadastros-base/causa-morte-perda',
-            icon: AlertTriangle,
+            icon: 'warning',
           },
           {
             id: 'cad-pec-est',
             label: 'Estágio Reprodutivo',
             path: '/cadastros-base/estagio-reprodutivo',
-            icon: Heart,
+            icon: 'heart',
           },
           {
             id: 'cad-pec-dtc',
             label: 'Técnicas de Diagnóstico',
             path: '/cadastros-base/tecnicas-diagnostico',
-            icon: Stethoscope,
+            icon: 'safety',
           },
           {
             id: 'cad-pec-tid',
             label: 'Tipos de Identificação',
             path: '/cadastros-base/tipos-identificacao',
-            icon: Tag,
+            icon: 'tag',
           },
           {
             id: 'cad-pec-obn',
             label: 'Observação Nascimento',
             path: '/cadastros-base/observacao-nascimento',
-            icon: Baby,
+            icon: 'cattle',
           }, // NOVO — vizinho de Tipos de Identificação (BirthNote-contrato.md §16)
           {
             id: 'cad-pec-par',
             label: 'Parâmetros / Peso',
             path: '/cadastros-base/parametros-peso',
-            icon: Scale,
+            icon: 'scale',
           },
           {
             id: 'cad-pec-pan',
             label: 'Parâmetros Animais',
             path: '/parameter-animals',
-            icon: Scale,
+            icon: 'scale',
           },
-          { id: 'cad-pec-for', label: 'Forragem', path: '/cadastros-base/forragem', icon: Wheat },
-          { id: 'cad-pec-reb', label: 'Rebanho', path: '/cadastros-base/rebanho', icon: Beef },
+          { id: 'cad-pec-for', label: 'Forragem', path: '/cadastros-base/forragem', icon: 'grain' },
+          { id: 'cad-pec-reb', label: 'Rebanho', path: '/cadastros-base/rebanho', icon: 'cattle' },
           {
             id: 'cad-pec-mod',
             label: 'Módulo Pastejo',
             path: '/cadastros-base/modulo-pastejo',
-            icon: Map,
+            icon: 'map',
           },
-          { id: 'cad-pec-coc', label: 'Cochos', path: '/cadastros-base/cochos', icon: Package2 },
+          { id: 'cad-pec-coc', label: 'Cochos', path: '/cadastros-base/cochos', icon: 'package-alt' },
           // NOVO (execução 029, TASK-FE-2304 — chokepoint de FUNDAÇÃO):
           // "Bebedouros" — posicionado imediatamente após "Cochos", mesma
           // vizinhança do legado (Cochos/Bebedouros sempre lado a lado no
@@ -859,20 +594,20 @@ export const menuModules: NavModule[] = [
             id: 'cad-pec-beb',
             label: 'Bebedouros',
             path: '/cadastros-base/bebedouros',
-            icon: Droplet,
+            icon: 'water',
           },
-          { id: 'cad-pec-lot', label: 'Lotes Animais', path: '/batches', icon: Layers },
+          { id: 'cad-pec-lot', label: 'Lotes Animais', path: '/batches', icon: 'layers' },
           {
             id: 'cad-pec-lmo',
             label: 'Lote / Módulo',
             path: '/cadastros-base/lote-modulo',
-            icon: Boxes,
+            icon: 'stock',
           },
           {
             id: 'cad-pec-lar',
             label: 'Lote / Área',
             path: '/cadastros-base/lote-area',
-            icon: MapPin,
+            icon: 'location',
           },
           // NOVO (cf1803e, módulo BaseRegistrations): "Diagnóstico Gestação"
           // — ícone Stethoscope por afinidade semântica com o grupo de
@@ -881,7 +616,7 @@ export const menuModules: NavModule[] = [
             id: 'cad-pec-dia',
             label: 'Diagnóstico Gestação',
             path: '/cadastros-base/diagnostico-gestacao',
-            icon: Stethoscope,
+            icon: 'safety',
           },
           // NOVO (TASK-BS-FE-03, módulo BaseRegistrations): "Escore Corporal"
           // — ícone Gauge (medição/escala), coerente com o ícone do legado
@@ -891,32 +626,32 @@ export const menuModules: NavModule[] = [
             id: 'cad-pec-esc',
             label: 'Escore Corporal',
             path: '/cadastros-base/escore-corporal',
-            icon: Gauge,
+            icon: 'gauge',
           },
         ],
       },
       {
         id: 'cad-bens',
         label: 'Bens / Ativos',
-        icon: Package,
+        icon: 'package',
         items: [
           {
             id: 'cad-ben-fam',
             label: 'Família de Bens',
             path: '/cadastros-base/familia-de-bens',
-            icon: Boxes,
+            icon: 'stock',
           },
           {
             id: 'cad-ben-inv',
             label: 'Inventário',
             path: '/cadastros-base/inventario',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           {
             id: 'cad-ben-dep',
             label: 'Depreciação Mensal',
             path: '/cadastros-base/depreciacao-mensal',
-            icon: TrendingDown,
+            icon: 'trend-down',
           },
           // NOVO (execução 055, DECISÃO DO DONO "navegação fiel ao
           // legado"): item PRÓPRIO, adjacente a "Depreciação Mensal" —
@@ -928,35 +663,35 @@ export const menuModules: NavModule[] = [
             id: 'cad-ben-dep-ani',
             label: 'Depreciação Animal',
             path: '/cadastros-base/depreciacao-animal',
-            icon: Beef,
+            icon: 'cattle',
           },
           {
             id: 'cad-ben-pre',
             label: 'Previsão de Depreciação',
             path: '/cadastros-base/previsao-depreciacao',
-            icon: LineChart,
+            icon: 'chart-line',
           },
         ],
       },
       {
         id: 'cad-gerais',
         label: 'Gerais',
-        icon: SlidersHorizontal,
+        icon: 'filter-advanced',
         items: [
-          { id: 'cad-ger-cid', label: 'Cidades', path: '/cadastros-base/cidades', icon: MapPin },
-          { id: 'cad-ger-est', label: 'Estados', path: '/cadastros-base/estados', icon: Undo2 },
+          { id: 'cad-ger-cid', label: 'Cidades', path: '/cadastros-base/cidades', icon: 'location' },
+          { id: 'cad-ger-est', label: 'Estados', path: '/cadastros-base/estados', icon: 'undo' },
           {
             id: 'cad-ger-svc',
             label: 'Serviços',
             path: '/cadastros-base/servicos',
-            icon: Briefcase,
+            icon: 'briefcase',
           }, // NOVO (ServiceExpense-contrato.md §15)
-          { id: 'cad-ger-rev', label: 'Estorno', path: '/cadastros-base/estorno', icon: Undo2 },
+          { id: 'cad-ger-rev', label: 'Estorno', path: '/cadastros-base/estorno', icon: 'transfer' },
           {
             id: 'cad-ger-par',
             label: 'Parametrizações do sistema',
             path: '/cadastros-base/parametrizacoes',
-            icon: Settings,
+            icon: 'settings',
           },
           // Contratantes (Tenant, TASK-TN-FE-02) MOVIDO para `cad-pessoas`
           // (homologação do dono, 2026-08-13): a nota anterior deste bloco
@@ -983,62 +718,62 @@ export const menuModules: NavModule[] = [
     id: 'administrativo',
     label: 'Administrativo',
     emoji: '🏢',
-    icon: Building2,
+    icon: 'building',
     groups: [
       {
         id: 'adm-suprimentos',
         label: 'Suprimentos',
-        icon: ShoppingCart,
+        icon: 'cart',
         items: [
-          { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: Timer },
+          { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: 'timer' },
           {
             id: 'adm-sup-meu',
             label: 'Meus Processos',
             path: '/administrativo/meus-processos',
-            icon: ListChecks,
+            icon: 'list-checks',
           },
           {
             id: 'adm-sup-sol',
             label: 'Solicitação',
             path: '/administrativo/solicitacao',
-            icon: FilePlus,
+            icon: 'document-add',
           },
           {
             id: 'adm-sup-rej',
             label: 'Rejeitados / Cancelados',
             path: '/administrativo/rejeitados',
-            icon: XCircle,
+            icon: 'error',
           },
           {
             id: 'adm-sup-cot',
             label: 'Cotações',
             path: '/administrativo/cotacoes',
-            icon: FileSearch,
+            icon: 'document-search',
           },
           {
             id: 'adm-sup-aut',
             label: 'Autorização',
             path: '/administrativo/autorizacao',
-            icon: ShieldCheck,
+            icon: 'shield-check',
           },
           {
             id: 'adm-sup-com',
             label: 'Compras',
             path: '/administrativo/compras',
-            icon: ShoppingCart,
+            icon: 'cart',
           },
           {
             id: 'adm-sup-rec',
             label: 'Recebimentos',
             path: '/administrativo/recebimentos',
-            icon: PackageCheck,
+            icon: 'package-check',
           },
         ],
       },
       {
         id: 'adm-estoque',
         label: 'Estoque',
-        icon: Warehouse,
+        icon: 'warehouse',
         items: [
           // Doc. Fiscal/Entrada (Invoice) — localização CANÔNICA (mirror 1:1
           // do legado, `sidebar.blade.php`, grupo único "Estoque"). Rota
@@ -1050,7 +785,7 @@ export const menuModules: NavModule[] = [
             id: 'adm-est-dfe',
             label: 'Doc. Fiscal / Entrada',
             path: '/administrativo/doc-fiscal',
-            icon: FileInput,
+            icon: 'document-import',
           },
           {
             id: 'adm-est-dfe2',
@@ -1062,7 +797,7 @@ export const menuModules: NavModule[] = [
             // `CLM-DFe-049`, 2 dos 3 locais de menu do legado apontando para
             // o mesmo índice).
             path: '/fiscal/dfes',
-            icon: Inbox,
+            icon: 'inbox',
           },
           // Entrada de Insumos (InputEntry) — esteira 037. GAP DE MENU achado
           // nesta esteira: `adm-est-dfe` é o módulo Invoice/NFe (feature
@@ -1071,49 +806,49 @@ export const menuModules: NavModule[] = [
             id: 'adm-est-eis',
             label: 'Entrada de Insumos',
             path: '/administrativo/entrada-insumos',
-            icon: PackagePlus,
+            icon: 'package-open',
           },
           {
             id: 'adm-est-bai',
             label: 'Baixa de Estoque',
             path: '/administrativo/baixa-estoque',
-            icon: PackageMinus,
+            icon: 'package-minus',
           },
           {
             id: 'adm-est-req',
             label: 'Requisição / Saída',
             path: '/administrativo/requisicao',
-            icon: PackageOpen,
+            icon: 'package-open',
           },
           {
             id: 'adm-est-dev',
             label: 'Devolução / Entrada',
             path: '/administrativo/devolucao',
-            icon: Undo2,
+            icon: 'undo',
           },
           {
             id: 'adm-est-cor',
             label: 'Correção de Estoque',
             path: '/administrativo/correcao',
-            icon: Wrench,
+            icon: 'wrench',
           },
           {
             id: 'adm-est-trm',
             label: 'Transferência entre Armazéns',
             path: '/administrativo/transf-armazens',
-            icon: ArrowLeftRight,
+            icon: 'arrow-left-right',
           },
           {
             id: 'adm-est-trf',
             label: 'Transferência entre Fazendas',
             path: '/administrativo/transf-fazendas',
-            icon: Repeat,
+            icon: 'repeat',
           },
           {
             id: 'adm-est-sal',
             label: 'Saldo de Estoque',
             path: '/administrativo/saldo-estoque',
-            icon: BarChart,
+            icon: 'chart-bar',
           },
           // Fábrica (TASK-FB-FE-07 v2.0, decisão do dono 2026-08-12): item-folha
           // reestruturado em grupo pai com 2 filhos — "Formulação" (Food) e
@@ -1125,19 +860,19 @@ export const menuModules: NavModule[] = [
             id: 'adm-est-fab',
             label: 'Fábrica',
             path: '/administrativo/fabrica',
-            icon: Factory,
+            icon: 'factory',
             children: [
               {
                 id: 'adm-est-fab-for',
                 label: 'Formulação',
                 path: '/administrativo/fabrica/formulacao',
-                icon: FlaskConical,
+                icon: 'lab',
               },
               {
                 id: 'adm-est-fab-bat',
                 label: 'Batida',
                 path: '/administrativo/fabrica/batidas',
-                icon: Blend,
+                icon: 'blend',
               },
             ],
           },
@@ -1146,59 +881,59 @@ export const menuModules: NavModule[] = [
       {
         id: 'adm-gestao-pessoal',
         label: 'Gestão Pessoal',
-        icon: UserCheck,
+        icon: 'user-check',
         items: [
-          { id: 'adm-gp-eve', label: 'Eventos', path: '/administrativo/eventos', icon: Calendar },
-          { id: 'adm-gp-fun', label: 'Funções', path: '/administrativo/funcoes', icon: Briefcase },
-          { id: 'adm-gp-equ', label: 'Equipes', path: '/administrativo/equipes', icon: Users },
+          { id: 'adm-gp-eve', label: 'Eventos', path: '/administrativo/eventos', icon: 'calendar' },
+          { id: 'adm-gp-fun', label: 'Funções', path: '/administrativo/funcoes', icon: 'briefcase' },
+          { id: 'adm-gp-equ', label: 'Equipes', path: '/administrativo/equipes', icon: 'users' },
           {
             id: 'adm-gp-fal',
             label: 'Registro de Faltas',
             path: '/administrativo/faltas',
-            icon: CalendarX,
+            icon: 'calendar-off',
           },
           {
             id: 'adm-gp-adi',
             label: 'Adiantamento Salarial',
             path: '/administrativo/adiantamento',
-            icon: DollarSign,
+            icon: 'currency',
           },
           {
             id: 'adm-gp-reg',
             label: 'Registro de Eventos',
             path: '/administrativo/registro-eventos',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           {
             id: 'adm-gp-fxe',
             label: 'Funcionário x Eventos',
             path: '/administrativo/func-eventos',
-            icon: UserCog,
+            icon: 'user-settings',
           },
           {
             id: 'adm-gp-apu',
             label: 'Apuração Mensal',
             path: '/administrativo/apuracao',
-            icon: Calculator,
+            icon: 'calculator',
           },
         ],
       },
       {
         id: 'adm-gestao-doc',
         label: 'Gestão Documentos',
-        icon: Files,
+        icon: 'documents',
         items: [
           {
             id: 'adm-gd-tip',
             label: 'Tipo Documento',
             path: '/administrativo/tipos-documento',
-            icon: Tag,
+            icon: 'document-type',
           },
           {
             id: 'adm-gd-doc',
             label: 'Documentos',
             path: '/administrativo/documentos',
-            icon: FileText,
+            icon: 'document',
           },
         ],
       },
@@ -1207,13 +942,13 @@ export const menuModules: NavModule[] = [
         // `recent-activities_view` (todas as roles exceto `Gestor_Plataf`).
         id: 'adm-atividades',
         label: 'Atividades',
-        icon: History,
+        icon: 'clock',
         items: [
           {
             id: 'adm-atv-rec',
             label: 'Atividades Recentes',
             path: '/administrativo/atividades-recentes',
-            icon: History,
+            icon: 'clock',
           },
         ],
       },
@@ -1222,13 +957,13 @@ export const menuModules: NavModule[] = [
         // `system-logs_view`, ver navigationPermissions.ts).
         id: 'adm-sistema',
         label: 'Sistema',
-        icon: ServerCog,
+        icon: 'wrench',
         items: [
           {
             id: 'adm-sis-log',
             label: 'Logs do Sistema',
             path: '/administrativo/logs',
-            icon: ScrollText,
+            icon: 'document',
           },
         ],
       },
@@ -1269,7 +1004,7 @@ export const menuModules: NavModule[] = [
     id: 'configuracoes',
     label: 'Configurações',
     emoji: '🔧',
-    icon: Settings,
+    icon: 'wrench',
     flatItems: [
       // Testeiras (Headband, TASK-HB-FE-04) — histórico: a nota anterior
       // (97-Esteiras/019, decisão do dono 2026-08-05, mesma janela de
@@ -1283,7 +1018,7 @@ export const menuModules: NavModule[] = [
       // Cadastros Base para o path atual acima, em `configuracoes`
       // (97-Esteiras/019, packet próprio pós-menu). Ver router/index.tsx e
       // as telas de Headbands para o restante da migração.
-      { id: 'cfg-tst', label: 'Testeiras', path: '/configuracoes/testeiras', icon: Tag },
+      { id: 'cfg-tst', label: 'Testeiras', path: '/configuracoes/testeiras', icon: 'tag' },
       // Marcadores (Marker, TASK-MK-FE-01) — histórico: nota original
       // (2026-07-30, via coordenador de sessão, ver Marker-FrontEnd-
       // contrato.md §5) fixava o item em `cad-gerais`, fidelidade ao grupo
@@ -1293,7 +1028,7 @@ export const menuModules: NavModule[] = [
       // reverteu deliberadamente aquela realização para criar o módulo
       // "Configurações" de topo de verdade, abaixo de Administrativo. `path`
       // mantido; `id` renomeado para `cfg-mrc`.
-      { id: 'cfg-mrc', label: 'Marcadores', path: '/cadastros-base/marcadores', icon: Bookmark },
+      { id: 'cfg-mrc', label: 'Marcadores', path: '/cadastros-base/marcadores', icon: 'star' },
       // Tutoriais (Help, TASK-HP-06) — tela e rota já existiam e já estavam
       // ✅ validadas; faltava só o item de menu (correção de homologação,
       // 2026-08-06, packet do Maestro — não passou pelo Arquiteto por ser
@@ -1305,7 +1040,7 @@ export const menuModules: NavModule[] = [
       // `helpers_view`, mesmo padrão de `cfg-tst`/`cfg-mrc`) — permissão já
       // existente em permissionsCatalog.json:479 e já usada no gate de rota
       // (`RequirePermission permission="helpers_view"`, router/index.tsx:1319).
-      { id: 'cfg-hlp', label: 'Tutoriais', path: '/configuracoes/helps', icon: HelpCircle },
+      { id: 'cfg-hlp', label: 'Tutoriais', path: '/configuracoes/helps', icon: 'help' },
       // Configuração (Config, execução 032, TASK-FE-2603) — item NOVO,
       // preenche a lacuna já apontada pelo comentário deste grupo acima
       // ("Config" (`config_view`) e "Atualizações" (`system_updates_view`),
@@ -1313,7 +1048,7 @@ export const menuModules: NavModule[] = [
       // escolha nova, é a posição exata já documentada. Gate de permissão em
       // navigationPermissions.ts (`cfg-cnf` → `config_view`, mesmo padrão de
       // `cfg-tst`/`cfg-mrc`/`cfg-hlp` acima).
-      { id: 'cfg-cnf', label: 'Configuração', path: '/configuracoes/config', icon: Cog },
+      { id: 'cfg-cnf', label: 'Configuração', path: '/configuracoes/config', icon: 'wrench' },
       // Aplicativos (App, TASK-APP-FE-01) — tela e rota NOVAS nesta Tarefa
       // (item de menu incluído desde o início, não em correção posterior —
       // ver histórico do grupo acima). Rótulo fiel ao legado (texto literal
@@ -1328,12 +1063,12 @@ export const menuModules: NavModule[] = [
       // (`apps_view`/`apps_create`/`apps_edit`/`apps_delete`,
       // App-contrato.md Seção 3) e já usada no gate de rota
       // (`RequirePermission permission="apps_view"`, router/index.tsx).
-      { id: 'cfg-app', label: 'Aplicativos', path: '/configuracoes/apps', icon: Smartphone },
+      { id: 'cfg-app', label: 'Aplicativos', path: '/configuracoes/apps', icon: 'blocks' },
       // Parâmetros (Parameter, execução 031, TASK-FE-031-43) — item NOVO,
       // nunca existiu antes neste menu; fecha a lacuna anotada acima
       // (execução 019 marcava "Parâmetros" como fora de escopo). `path`
       // limpo, sem migração de URL (contrato-front-parametros.md §3).
-      { id: 'cfg-par', label: 'Parâmetros', path: '/configuracoes/parametros', icon: Settings2 },
+      { id: 'cfg-par', label: 'Parâmetros', path: '/configuracoes/parametros', icon: 'wrench' },
       // CORREÇÃO PÓS-E2E (rodada 1, C4 — correcoes-e2e-dev-rodada-1.md):
       // "Atualizações do Sistema" (SystemUpdate, execução 031, TASK-FE-1104)
       // REPOSICIONADO de "Cadastros Base" (`cad-estrutura`) para cá — o dev
@@ -1345,7 +1080,7 @@ export const menuModules: NavModule[] = [
         id: 'cad-est-sis',
         label: 'Atualizações do Sistema',
         path: '/cadastros-base/atualizacoes-sistema',
-        icon: Megaphone,
+        icon: 'message',
       },
       // Permissões (Permission, execução 032, TASK-FE-2404) — item NOVO,
       // nunca existiu antes neste menu. Grupo "Configurações" por default do
@@ -1362,7 +1097,7 @@ export const menuModules: NavModule[] = [
         id: 'cfg-per',
         label: 'Permissões',
         path: '/cadastros-base/permissoes',
-        icon: KeyRound,
+        icon: 'key',
       },
       // IBPT (Ibpt — Tabela Fiscal de Incidência Tributária, execução 032,
       // TASK-FE-2414) — item NOVO, nunca existiu antes neste menu. Grupo
@@ -1378,7 +1113,7 @@ export const menuModules: NavModule[] = [
         id: 'cfg-ibp',
         label: 'IBPT',
         path: '/cadastros-base/ibpt',
-        icon: Receipt,
+        icon: 'receipt',
       },
       // Termos e Condições (PlatformDocument, execução 032, TASK-FE-2502) —
       // item NOVO, nunca existiu antes neste menu. Grupo "Configurações" por
@@ -1393,7 +1128,7 @@ export const menuModules: NavModule[] = [
         id: 'cfg-trm',
         label: 'Termos e Condições',
         path: '/cadastros-base/termos-condicoes',
-        icon: FileText,
+        icon: 'document',
       },
       // CORREÇÃO PÓS-E2E (rodada 1, C7 — correcoes-e2e-dev-rodada-1.md):
       // "Mercado Pago" (FinanceMp, execução 031, TASK-FE-031-46)
@@ -1402,7 +1137,7 @@ export const menuModules: NavModule[] = [
       // financeira operacional do dia a dia). Só a posição mudou: `id`/
       // `path`/`icon` inalterados, `fin-principal` preserva as demais
       // entradas na mesma ordem.
-      { id: 'fin-mp', label: 'Mercado Pago', path: '/financeiro/mercado-pago', icon: CreditCard },
+      { id: 'fin-mp', label: 'Mercado Pago', path: '/financeiro/mercado-pago', icon: 'credit-card' },
       // AJUSTE DE NAVEGAÇÃO (packet do Maestro, 2026-08-07): "Planos"
       // (PlanRole, TASK-FE-2704) só era alcançável pelo ícone dedicado do
       // NavRail (Gem, ver NavRail.tsx:15/33/325) — não tinha item aqui, então
@@ -1420,7 +1155,7 @@ export const menuModules: NavModule[] = [
         id: 'cfg-pln',
         label: 'Planos',
         path: '/planos',
-        icon: Gem,
+        icon: 'gem',
       },
     ],
   },
@@ -1428,26 +1163,26 @@ export const menuModules: NavModule[] = [
     id: 'operacional',
     label: 'Operacional',
     emoji: '⚙️',
-    icon: Gauge,
+    icon: 'gauge',
     groups: [
       {
         id: 'ope-agricultura',
         label: 'Agricultura',
-        icon: Wheat,
+        icon: 'grain',
         items: [
           {
             id: 'ope-agr-pla',
             label: 'Planejamentos',
             path: '/operacional/planejamentos',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           {
             id: 'ope-agr-apo',
             label: 'Apontamentos',
             path: '/operacional/apontamentos',
-            icon: PenLine,
+            icon: 'edit-line',
           },
-          { id: 'ope-agr-rom', label: 'Romaneios', path: '/operacional/romaneios', icon: FileText },
+          { id: 'ope-agr-rom', label: 'Romaneios', path: '/operacional/romaneios', icon: 'document' },
           // Colheita de Frutas (HarvestProduct, F-040, execução 040,
           // HarvestProduct-contrato-arquitetural.md §7.9): item de menu NOVO,
           // filho de "Agricultura" ao lado de "Romaneios"/"Marcação" — grupo
@@ -1460,7 +1195,7 @@ export const menuModules: NavModule[] = [
             id: 'ope-agr-col',
             label: 'Colheita de Frutas',
             path: '/operacional/colheita-frutas',
-            icon: Boxes,
+            icon: 'sprout',
           },
           // Marcação (Marking, TASK-MC-FE-09, esteira 97-Esteiras/044) — FIX
           // de placement (bug reportado pelo dono): a entrega original
@@ -1475,7 +1210,7 @@ export const menuModules: NavModule[] = [
           // item-pai-com-filhos usado em "Manejo"). Gate de permissão em
           // navigationPermissions.ts (`ope-agr-mar` → `markings_view`,
           // mesma permissão legada — nenhuma permissão nova cunhada).
-          { id: 'ope-agr-mar', label: 'Marcação', path: '/operacional/marcacao', icon: Tag },
+          { id: 'ope-agr-mar', label: 'Marcação', path: '/operacional/marcacao', icon: 'tag' },
           // "Carregamento" reestruturado de item-folha único para item-pai
           // com filhos (homologação do dono, 2026-08-25): o menu não expunha
           // "Fechamento Semana" (rota `/operacional/fechamento-semana` e
@@ -1498,19 +1233,19 @@ export const menuModules: NavModule[] = [
             id: 'ope-agr-car',
             label: 'Carregamento',
             path: '/operacional/carregamento',
-            icon: Truck,
+            icon: 'truck',
             children: [
               {
                 id: 'ope-agr-car-car',
                 label: 'Carregamentos',
                 path: '/operacional/carregamento',
-                icon: Truck,
+                icon: 'truck',
               },
               {
                 id: 'ope-agr-car-fec',
                 label: 'Fechamento Semana',
                 path: '/operacional/fechamento-semana',
-                icon: CalendarCheck,
+                icon: 'calendar-check',
               },
               // Contas a Receber (ChargeBillIncome, F-026, domínio PRÓPRIO —
               // TASK-CBI-FE-01, esteira 97-Esteiras/059): 3º filho de
@@ -1527,7 +1262,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-agr-car-cbi',
                 label: 'Contas a Receber',
                 path: '/operacional/carregamento/contas-a-receber',
-                icon: Truck,
+                icon: 'truck',
               },
               // Contas a Pagar (ChargeBillExpense, domínio PRÓPRIO —
               // TASK-CBE-07, esteira 97-Esteiras/062): 4º filho de
@@ -1543,7 +1278,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-agr-car-cbe',
                 label: 'Contas a Pagar',
                 path: '/operacional/carregamento/contas-a-pagar',
-                icon: Truck,
+                icon: 'truck',
               },
             ],
           },
@@ -1584,25 +1319,25 @@ export const menuModules: NavModule[] = [
             id: 'ope-agr-ras',
             label: 'Rastreabilidade',
             path: '/operacional/rastreabilidade/produtos',
-            icon: Route,
+            icon: 'route',
             children: [
               {
                 id: 'ope-agr-ras-pro',
                 label: 'Produtos',
                 path: '/operacional/rastreabilidade/produtos',
-                icon: Route,
+                icon: 'route',
               },
               {
                 id: 'ope-agr-ras-cfg',
                 label: 'Configuração',
                 path: '/operacional/rastreabilidade/configuracao',
-                icon: Settings,
+                icon: 'wrench',
               },
               {
                 id: 'ope-agr-ras-site',
                 label: 'Site',
                 path: '/operacional/rastreabilidade/site',
-                icon: Globe,
+                icon: 'globe',
               },
             ],
           },
@@ -1617,7 +1352,7 @@ export const menuModules: NavModule[] = [
             id: 'ope-agr-des',
             label: 'Descontos / Classificação',
             path: '/operacional/discount-tables',
-            icon: Percent,
+            icon: 'percent',
           },
           // Pesagem Rodoviária (ModuleWeighing, F-045, execução 044,
           // TASK-MWG-FE-13) — `path` CORRIGIDO: o item já existia
@@ -1633,20 +1368,20 @@ export const menuModules: NavModule[] = [
             id: 'ope-agr-pes',
             label: 'Pesagem Rodoviária',
             path: '/operacional/pesagem-rodoviaria',
-            icon: Scale,
+            icon: 'scale',
           },
           {
             id: 'ope-agr-con',
             label: 'Contratos de Venda',
             path: '/operacional/contratos-venda',
-            icon: FileSignature,
+            icon: 'signature',
           },
         ],
       },
       {
         id: 'ope-pecuaria',
         label: 'Pecuária',
-        icon: Beef,
+        icon: 'cattle',
         items: [
           {
             // Gestão Animais ganhou tela dedicada nesta reversão de SD-01
@@ -1663,19 +1398,19 @@ export const menuModules: NavModule[] = [
             id: 'ope-pec-ges',
             label: 'Gestão Animais',
             path: '/operacional/gestao-animais',
-            icon: Beef,
+            icon: 'cattle',
           },
           {
             id: 'ope-pec-inv',
             label: 'Inventariado',
             path: '/operacional/inventariado',
-            icon: ClipboardCheck,
+            icon: 'clipboard-check',
           },
           {
             id: 'ope-pec-pla',
             label: 'Planejamento Pecuário',
             path: '/operacional/planejamento-pecuario',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           // "Transferências" reestruturado de item-folha único para
           // item-pai com filhos (Tarefas 26/27, spa-contract-evolucao-
@@ -1692,7 +1427,7 @@ export const menuModules: NavModule[] = [
             id: 'ope-pec-tra',
             label: 'Transferências',
             path: '/operacional/transferencias',
-            icon: ArrowLeftRight,
+            icon: 'arrow-left-right',
             children: [
               // Correção de bug de menu (Execução 041, packet do Maestro,
               // 2026-08-25): "Transferências" virou grupo (children) ao
@@ -1710,13 +1445,13 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-tra-abc',
                 label: 'Transferência ABC',
                 path: '/operacional/transferencias',
-                icon: ArrowLeftRight,
+                icon: 'transfer',
               },
               {
                 id: 'ope-pec-tra-evo',
                 label: 'Evolução/Rebanho',
                 path: '/operacional/evolucao-rebanho',
-                icon: TrendingUp,
+                icon: 'trend-up',
               },
               // Segundo filho de "Transferências" (TASK-LOTE-FE-01, feature
               // Animais/Lote `426be835`, frontend-contract-animais-lote.md
@@ -1730,7 +1465,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-tra-anl',
                 label: 'Transferência Animais/Lote',
                 path: '/operacional/transferencia-animais-lote',
-                icon: ArrowLeftRight,
+                icon: 'transfer',
               },
               // Terceiro filho de "Transferências" (97-Esteiras/041,
               // TASK-FE-041-LF-01, TransferBatchFarm — transferência de
@@ -1746,7 +1481,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-tra-lf',
                 label: 'Lote/Fazenda',
                 path: '/operacional/lote-fazenda/transferencias',
-                icon: ArrowLeftRight,
+                icon: 'transfer',
               },
               // Quarto filho de "Transferências" (execução 042,
               // TASK-FE-042-306, GrouperBatch — Agrupar/Lotes). Mesmo padrão
@@ -1759,7 +1494,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-tra-ag',
                 label: 'Agrupar Lotes',
                 path: '/operacional/agrupar-lotes',
-                icon: Layers,
+                icon: 'layers',
               },
               // Quarto filho de "Transferências" (97-Esteiras/042,
               // TASK-FE-042-102, TransferAnimalFarm — transferência de
@@ -1776,7 +1511,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-tra-af',
                 label: 'Animal/Fazenda',
                 path: '/operacional/animal-fazenda/transferencias',
-                icon: ArrowLeftRight,
+                icon: 'transfer',
               },
               // Quinto filho de "Transferências" (97-Esteiras/070,
               // TASK-LMA-FE-02, BatchModuleAreaTransfer — Lote/Módulo/Área,
@@ -1793,7 +1528,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-tra-lma',
                 label: 'Lote/Módulo/Área',
                 path: '/operacional/lote-modulo-area/transferencias',
-                icon: ArrowLeftRight,
+                icon: 'transfer',
               },
             ],
           },
@@ -1827,14 +1562,14 @@ export const menuModules: NavModule[] = [
             id: 'ope-pec-mov',
             label: 'Movimentações',
             path: '/operacional/movimentacoes',
-            icon: Repeat,
+            icon: 'repeat',
             children: [
               // Mortes (DeathAnimal, TASK-DA-FE-01, execução 049) — MOVIDO de
               // filho DIRETO de "Pecuária" para filho de "Movimentações"
               // (homologação do dono, 2026-08-24). `id`/`path`/`icon`/rota
               // (`/operacional/mortes`) e permissão (`navigationPermissions.ts`,
               // `death_animals_view`) INALTERADOS — só a posição no menu mudou.
-              { id: 'ope-pec-mor', label: 'Mortes', path: '/operacional/mortes', icon: Skull },
+              { id: 'ope-pec-mor', label: 'Mortes', path: '/operacional/mortes', icon: 'alert' },
               // Nascimentos (TASK-NASC-FE-01, frontend-contract-nascimentos.md
               // §2.1, GAP-NASCIMENTOS-FE-02) — MOVIDO de irmão DIRETO de
               // "Pecuária" para filho de "Movimentações" (homologação do
@@ -1848,7 +1583,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-nas',
                 label: 'Nascimentos',
                 path: '/operacional/nascimentos',
-                icon: Baby,
+                icon: 'cattle',
               },
               // Venda de Animais (TASK-VD-FE-01, frontend-contract-vendas.md
               // §2.1) — MOVIDO de irmão DIRETO de "Pecuária" para filho de
@@ -1863,7 +1598,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-ven',
                 label: 'Venda de Animais',
                 path: '/operacional/venda-animais',
-                icon: ShoppingBag,
+                icon: 'shopping-bag',
               },
               // Processamentos (correção de lacuna, execução 039,
               // TASK-FE-039-PROC-*) — MOVIDO de irmão DIRETO de "Pecuária"
@@ -1876,7 +1611,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-pro',
                 label: 'Processamentos',
                 path: '/operacional/processamentos',
-                icon: Boxes,
+                icon: 'stock',
               },
               // Perdas (F-043 Perdas/LossAnimal, execução 040, contrato de
               // tela §7.5.4) — MOVIDO de irmão DIRETO de "Pecuária" para
@@ -1890,7 +1625,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-per',
                 label: 'Perdas',
                 path: '/operacional/perdas',
-                icon: TrendingDown,
+                icon: 'trend-down',
               },
               // Compras (TASK-CP-04, contrato-frontend-compras-movimento.md
               // §4.3) — MOVIDO de irmão DIRETO de "Pecuária" para filho de
@@ -1907,7 +1642,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-com',
                 label: 'Compras',
                 path: '/operacional/compra-animais',
-                icon: HandCoins,
+                icon: 'banknote',
               },
             ],
           },
@@ -1928,13 +1663,13 @@ export const menuModules: NavModule[] = [
             id: 'ope-pec-man',
             label: 'Manejo',
             path: '/operacional/manejo',
-            icon: Settings2,
+            icon: 'settings-sliders',
             children: [
               {
                 id: 'ope-pec-man-pas',
                 label: 'Pastagem',
                 path: '/operacional/pastagem',
-                icon: Map,
+                icon: 'map',
               },
               // Desmama (Weaning, TASK-WN-FE-06, esteira 97-Esteiras/043) —
               // mirror EXATO da estrutura de `ope-pec-man-pas` (único filho
@@ -1946,7 +1681,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-man-des',
                 label: 'Desmama',
                 path: '/operacional/desmame',
-                icon: Baby,
+                icon: 'cattle',
               },
               // Localizar Animal (Find Animal, TASK-FA-FE-06, F-042,
               // contrato-tela-lane-a-find-animal-frontend.md §6.1/§9) —
@@ -1961,7 +1696,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-man-loc',
                 label: 'Localizar Animal',
                 path: '/operacional/localizar-animal',
-                icon: MapPin,
+                icon: 'location',
               },
               // Sanitário (Sanitary, TASK-SAN-FE-09, F-062, contrato-tela-
               // lane-c-sanitario-frontend.md §9) — mirror EXATO da estrutura
@@ -1978,7 +1713,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-man-san',
                 label: 'Sanitário',
                 path: '/operacional/sanitario',
-                icon: ShieldPlus,
+                icon: 'shield',
               },
               // Pesagem (Weighing, TASK-PES-FE-08, F-071, contrato-tela-
               // lane-c-pesagem-frontend.md §9) — mirror EXATO da estrutura
@@ -1998,7 +1733,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-man-pes',
                 label: 'Pesagem',
                 path: '/operacional/pesagem',
-                icon: Scale,
+                icon: 'scale',
               },
               // Nutrição (Nutrition, F-050, esteira 066, TASK-NT-FE-02) —
               // mirror EXATO da estrutura de `ope-pec-man-pes`/`-san`/`-loc`/
@@ -2014,7 +1749,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-man-nut',
                 label: 'Nutrição',
                 path: '/operacional/nutricao',
-                icon: Wheat,
+                icon: 'grain',
               },
             ],
           },
@@ -2035,7 +1770,7 @@ export const menuModules: NavModule[] = [
             id: 'ope-pec-rep',
             label: 'Reprodução',
             path: '/operacional/reproducao',
-            icon: Heart,
+            icon: 'heart',
             children: [
               // Estação de Monta (BreedingSeason, reportado pelo dono —
               // ausência de item clicável no submenu) — mirror EXATO do
@@ -2056,13 +1791,13 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-rep-bs',
                 label: 'Estação de Monta',
                 path: '/operacional/reproducao',
-                icon: CalendarClock,
+                icon: 'calendar-clock',
               },
               {
                 id: 'ope-pec-rep-bss',
                 label: 'Touros/Sêmen/Embrião',
                 path: '/operacional/touros-semen-embriao',
-                icon: TestTube,
+                icon: 'lab',
               },
               // Lotes/Reprodução (BreedingBatch, 97-Esteiras/048 Tarefa 07,
               // contrato de tela §2) — mirror EXATO do padrão já aprovado
@@ -2079,7 +1814,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-rep-lb',
                 label: 'Lotes/Reprodução',
                 path: '/operacional/lotes-reproducao',
-                icon: Layers,
+                icon: 'layers',
               },
               // Protocolos/Estação (ProtocolSeason, F-057, execução 040,
               // contrato de tela §4.7) — mirror EXATO do padrão já aprovado
@@ -2097,7 +1832,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-rep-pse',
                 label: 'Protocolos/Estação',
                 path: '/operacional/protocolos-estacao',
-                icon: ClipboardList,
+                icon: 'clipboard-list',
               },
               // Acasalamento (BreedingMating, TASK-BM-FE-09, contrato-tela-
               // lane-b-breeding-mating-frontend.md §3/§9) — mirror EXATO do
@@ -2118,7 +1853,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-rep-bm',
                 label: 'Acasalamento',
                 path: '/operacional/acasalamento',
-                icon: Heart,
+                icon: 'heart',
               },
               // Gerenciamento Avançado (AdvancedReproductive, F-011,
               // 97-Esteiras/056 TASK-AR-FE-03) — mirror EXATO do padrão já
@@ -2135,7 +1870,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-rep-adv',
                 label: 'Gerenciamento Avançado',
                 path: '/operacional/gerenciamento-avancado',
-                icon: ClipboardList,
+                icon: 'clipboard-list',
               },
             ],
           },
@@ -2169,14 +1904,14 @@ export const menuModules: NavModule[] = [
             id: 'ope-pec-conf',
             label: 'Confinamento',
             path: '/operacional/dietas',
-            icon: Warehouse,
+            icon: 'warehouse',
             children: [
-              { id: 'ope-pec-die-die', label: 'Dietas', path: '/operacional/dietas', icon: Salad },
+              { id: 'ope-pec-die-die', label: 'Dietas', path: '/operacional/dietas', icon: 'nutrition' },
               {
                 id: 'ope-pec-die-bat',
                 label: 'Batidas',
                 path: '/operacional/dietas/batidas',
-                icon: Blend,
+                icon: 'blend',
               },
               // Pátios (FeedlotYard, TASK-PT-FE-01, execução 046) — 3º
               // item-folha do grupo, único que RENDERIZA sob o limite de 2
@@ -2191,7 +1926,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-die-pat',
                 label: 'Pátios',
                 path: '/operacional/patios',
-                icon: Warehouse,
+                icon: 'warehouse',
               },
               // Setores (FeedlotSector, TASK-FS-FE-01) — 4º item-folha do
               // grupo, ao lado de Pátios (mirror exato do precedente
@@ -2204,7 +1939,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-die-set',
                 label: 'Setores',
                 path: '/operacional/setores',
-                icon: Warehouse,
+                icon: 'warehouse',
               },
               // Currais (FeedlotCorral, MANUTENÇÃO FRONT — rota
               // `/operacional/currais` já existia em router/index.tsx
@@ -2220,7 +1955,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-die-cur',
                 label: 'Currais',
                 path: '/operacional/currais',
-                icon: Warehouse,
+                icon: 'warehouse',
               },
               // Mapa de Confinamento (FeedlotMap, TASK-FE-042-200, execução
               // 042) — 5º item-folha do grupo, ao lado de Pátios/Setores.
@@ -2230,7 +1965,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-mapa',
                 label: 'Mapa de Confinamento',
                 path: '/operacional/mapa',
-                icon: Map,
+                icon: 'map',
               },
               // Fases de Alimentação (FeedingPhase, F-034, TASK-FP-FE-04) —
               // 5º item-folha do grupo, default proposto pelo contrato de
@@ -2244,7 +1979,7 @@ export const menuModules: NavModule[] = [
                 id: 'ope-pec-die-fas',
                 label: 'Fases de Alimentação',
                 path: '/operacional/fases-alimentacao',
-                icon: CalendarClock,
+                icon: 'calendar-clock',
               },
             ],
           },
@@ -2254,66 +1989,66 @@ export const menuModules: NavModule[] = [
           // array (após `ope-pec-conf`) para minimizar sobreposição de diff
           // com a feature irmã Touros/Sêmen/Embrião, que também toca este
           // bloco (`ope-pec-rep`, acima).
-          { id: 'ope-pec-apa', label: 'Apartação', path: '/operacional/apartacao', icon: Split },
+          { id: 'ope-pec-apa', label: 'Apartação', path: '/operacional/apartacao', icon: 'git-branch' },
         ],
       },
       {
         id: 'ope-pluviometria',
         label: 'Pluviometria',
-        icon: CloudRain,
+        icon: 'rain',
         items: [
           {
             id: 'ope-plu',
             label: 'Pluviometria',
             path: '/operacional/pluviometria',
-            icon: CloudRain,
+            icon: 'rain',
           },
         ],
       },
       {
         id: 'ope-vendas',
         label: 'Vendas',
-        icon: ShoppingBag,
+        icon: 'shopping-bag',
         items: [
           {
             id: 'ope-ven-orc',
             label: 'Orçamentos',
             path: '/operacional/orcamentos',
-            icon: Calculator,
+            icon: 'calculator',
           },
           {
             id: 'ope-ven-ped',
             label: 'Pedidos',
             path: '/operacional/pedidos',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
-          { id: 'ope-ven-ven', label: 'Vendas', path: '/operacional/vendas', icon: ShoppingBag },
+          { id: 'ope-ven-ven', label: 'Vendas', path: '/operacional/vendas', icon: 'shopping-bag' },
         ],
       },
       {
         id: 'ope-ordens',
         label: 'Ordens de Serviço',
-        icon: ClipboardCheck,
+        icon: 'clipboard-check',
         items: [
           {
             id: 'ope-os-min',
             label: 'Minhas OS',
             path: '/operacional/minhas-os',
-            icon: ClipboardCheck,
+            icon: 'clipboard-check',
           },
           {
             id: 'ope-os-lis',
             label: 'Lista de OS',
             path: '/operacional/lista-os',
-            icon: ListChecks,
+            icon: 'list-checks',
           },
           {
             id: 'ope-os-mon',
             label: 'Monitoramento',
             path: '/operacional/monitoramento',
-            icon: Activity,
+            icon: 'activity',
           },
-          { id: 'ope-os-ava', label: 'Avaliações', path: '/operacional/avaliacoes', icon: Star },
+          { id: 'ope-os-ava', label: 'Avaliações', path: '/operacional/avaliacoes', icon: 'star' },
         ],
       },
     ],
@@ -2322,69 +2057,69 @@ export const menuModules: NavModule[] = [
     id: 'financeiro',
     label: 'Financeiro',
     emoji: '💰',
-    icon: Wallet,
+    icon: 'wallet',
     groups: [
       {
         id: 'fin-principal',
         label: 'Financeiro',
-        icon: Wallet,
+        icon: 'wallet',
         items: [
           {
             id: 'fin-pag',
             label: 'Contas a Pagar',
             path: '/financeiro/pagar',
-            icon: ArrowUpCircle,
+            icon: 'arrow-up-circle',
           },
           {
             id: 'fin-rec',
             label: 'Contas a Receber',
             path: '/financeiro/receber',
-            icon: ArrowDownCircle,
+            icon: 'arrow-down-circle',
           },
           {
             id: 'fin-cai',
             label: 'Mov. Caixa / Bancário',
             path: '/financeiro/caixa',
-            icon: Wallet,
+            icon: 'wallet',
           },
-          { id: 'fin-flu', label: 'Fluxo Bancário', path: '/financeiro/fluxo', icon: Landmark },
+          { id: 'fin-flu', label: 'Fluxo Bancário', path: '/financeiro/fluxo', icon: 'bank' },
           {
             id: 'fin-con',
             label: 'Gestão de Contratos',
             path: '/financeiro/contratos',
-            icon: FileSignature,
+            icon: 'signature',
           },
           {
             id: 'fin-pre',
             label: 'Prev. Orçamentária',
             path: '/financeiro/previsao',
-            icon: LineChart,
+            icon: 'chart-line',
           },
           {
             id: 'fin-cng',
             label: 'Congelamentos Financeiros',
             path: '/financeiro/congelamentos',
-            icon: Lock,
+            icon: 'lock',
           },
           {
             id: 'fin-imp',
             label: 'Importação Mov. Bancários',
             path: '/financeiro/importacao',
-            icon: Upload,
+            icon: 'upload',
           },
         ],
       },
       {
         id: 'fin-conciliacao',
         label: 'Conciliação',
-        icon: GitMerge,
+        icon: 'git-merge',
         items: [
-          { id: 'fin-cnc-ofx', label: 'Importação OFX', path: '/financeiro/ofx', icon: Upload },
+          { id: 'fin-cnc-ofx', label: 'Importação OFX', path: '/financeiro/ofx', icon: 'upload' },
           {
             id: 'fin-cnc-mes',
             label: 'Meses Conciliados',
             path: '/financeiro/meses-conciliados',
-            icon: CalendarCheck,
+            icon: 'calendar-check',
           },
         ],
       },
@@ -2394,22 +2129,22 @@ export const menuModules: NavModule[] = [
     id: 'frota',
     label: 'Gestão de Frota',
     emoji: '🚜',
-    icon: Truck,
+    icon: 'truck',
     flatItems: [
-      { id: 'fro-man', label: 'Manutenções', path: '/frota/manutencoes', icon: Wrench },
-      { id: 'fro-aba', label: 'Abastecimentos', path: '/frota/abastecimentos', icon: Fuel },
+      { id: 'fro-man', label: 'Manutenções', path: '/frota/manutencoes', icon: 'wrench' },
+      { id: 'fro-aba', label: 'Abastecimentos', path: '/frota/abastecimentos', icon: 'fuel' },
       {
         id: 'fro-pre',
         label: 'Manutenções Preventivas',
         path: '/frota/preventivas',
-        icon: ShieldCheck,
+        icon: 'shield-check',
       },
-      { id: 'fro-rev', label: 'Revisões Agendadas', path: '/frota/revisoes', icon: CalendarClock },
+      { id: 'fro-rev', label: 'Revisões Agendadas', path: '/frota/revisoes', icon: 'calendar-clock' },
       {
         id: 'fro-tra',
         label: 'Transferência de Máquinas',
         path: '/frota/transferencias',
-        icon: ArrowLeftRight,
+        icon: 'arrow-left-right',
       },
     ],
   },
@@ -2417,31 +2152,31 @@ export const menuModules: NavModule[] = [
     id: 'fiscal',
     label: 'Gestão Fiscal',
     emoji: '📄',
-    icon: Receipt,
+    icon: 'receipt',
     groups: [
       {
         id: 'fis-nfe',
         label: 'NF-e',
-        icon: FileText,
+        icon: 'document',
         items: [
           {
             id: 'fis-nfe-emi',
             label: 'NFe Emitidas',
             path: '/fiscal/nfe-emitidas',
-            icon: FileCheck,
+            icon: 'document-check',
           },
-          { id: 'fis-nfe-xml', label: 'Arquivos XML', path: '/fiscal/xml', icon: FileCode },
+          { id: 'fis-nfe-xml', label: 'Arquivos XML', path: '/fiscal/xml', icon: 'document-code' },
           // Path CORRIGIDO (execução 044, TASK-DFE-FE-11): apontava para
           // `/fiscal/dfe` (singular, placeholder pré-existente sem tela
           // real por trás — caía no `RoutePlaceholder`); a rota REAL desta
           // Tarefa é `/fiscal/dfes` (plural, `router/index.tsx`).
-          { id: 'fis-nfe-dfe', label: 'DFe Recebidas', path: '/fiscal/dfes', icon: Inbox },
+          { id: 'fis-nfe-dfe', label: 'DFe Recebidas', path: '/fiscal/dfes', icon: 'inbox' },
         ],
       },
       {
         id: 'fis-cte',
         label: 'CT-e',
-        icon: Truck,
+        icon: 'truck',
         items: [
           // Path CORRIGIDO (execução 045): apontava para `/fiscal/cte-lista`/
           // `/fiscal/cte-nova` (placeholders pré-existentes sem tela real
@@ -2449,34 +2184,34 @@ export const menuModules: NavModule[] = [
           // Tarefa são `/fiscal/ctes`/`/fiscal/ctes/create`
           // (`router/index.tsx`, mesmo path hardcoded internamente pelos
           // `navigate()` de `Cte/index.tsx`/`Cte/HeaderTable.tsx`).
-          { id: 'fis-cte-lis', label: 'Lista de CTe', path: '/fiscal/ctes', icon: ListChecks },
-          { id: 'fis-cte-nov', label: 'Nova CTe', path: '/fiscal/ctes/create', icon: FilePlus },
+          { id: 'fis-cte-lis', label: 'Lista de CTe', path: '/fiscal/ctes', icon: 'list-checks' },
+          { id: 'fis-cte-nov', label: 'Nova CTe', path: '/fiscal/ctes/create', icon: 'document-add' },
           {
             id: 'fis-cte-man',
             label: 'Manifestar CTe',
             path: '/fiscal/cte-manifestar',
-            icon: FileSignature,
+            icon: 'signature',
           },
         ],
       },
       {
         id: 'fis-mdfe',
         label: 'MDF-e',
-        icon: Files,
+        icon: 'documents',
         items: [
           {
             id: 'fis-mdf-lis',
             label: 'Lista de MDFe',
             path: '/fiscal/mdfe-lista',
-            icon: ListChecks,
+            icon: 'list-checks',
           },
-          { id: 'fis-mdf-nov', label: 'Nova MDFe', path: '/fiscal/mdfe-nova', icon: FilePlus },
+          { id: 'fis-mdf-nov', label: 'Nova MDFe', path: '/fiscal/mdfe-nova', icon: 'document-add' },
         ],
       },
       {
         id: 'fis-outros',
         label: 'Outros',
-        icon: MoreHorizontal,
+        icon: 'more-horizontal',
         items: [
           // Path CORRIGIDO (execução 045): apontava para `/fiscal/lcdpr`
           // (placeholder pré-existente sem tela real por trás — caía no
@@ -2489,13 +2224,13 @@ export const menuModules: NavModule[] = [
             id: 'fis-lcd',
             label: 'LCDPR — Livro Caixa Digital',
             path: '/fiscal/livro-caixa',
-            icon: BookOpen,
+            icon: 'book',
           },
           {
             id: 'fis-par',
             label: 'Partida Dobrada',
             path: '/fiscal/partida-dobrada',
-            icon: GitCompare,
+            icon: 'git-compare',
           },
         ],
       },
@@ -2505,7 +2240,7 @@ export const menuModules: NavModule[] = [
     id: 'relatorios',
     label: 'Relatórios',
     emoji: '📋',
-    icon: BarChart3,
+    icon: 'chart-column',
     flatItems: [
       // "Bens / Ativo" (Relatórios) reestruturado de item-folha único para
       // item-pai com filhos (F-260, TASK-INV-FE-02, esteira 075) — mirror
@@ -2521,13 +2256,13 @@ export const menuModules: NavModule[] = [
         id: 'rel-ben',
         label: 'Bens / Ativo',
         path: '/relatorios/bens',
-        icon: Package,
+        icon: 'package',
         children: [
           {
             id: 'rel-ben-inventario',
             label: 'Inventário',
             path: '/relatorios/bens/inventario',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           // Depreciação Acumulada (F-216, execução 059,
           // CONTRATO-F216-depreciacao-acumulada.md §6) — mirror EXATO do
@@ -2542,7 +2277,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-ben-depreciacao-acumulada',
             label: 'Depreciação Acumulada',
             path: '/relatorios/bens/depreciacao-acumulada',
-            icon: TrendingDown,
+            icon: 'trend-down',
           },
         ],
       },
@@ -2562,13 +2297,13 @@ export const menuModules: NavModule[] = [
         id: 'rel-agr',
         label: 'Agricultura',
         path: '/relatorios/agricultura',
-        icon: Wheat,
+        icon: 'grain',
         children: [
           {
             id: 'rel-agr-apo',
             label: 'Apontamento Máquina',
             path: '/relatorios/agricultura/apontamento-maquina',
-            icon: Tractor,
+            icon: 'truck',
           },
           // Ocorrências Talhões (F-232, Tarefa 50, esteira
           // CORE_WORKSPACE/97-Esteiras/015): 2º filho de "Agricultura"
@@ -2582,7 +2317,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-ocor',
             label: 'Ocorrências Talhões',
             path: '/relatorios/agricultura/ocorrencias-talhoes',
-            icon: AlertTriangle,
+            icon: 'warning',
           },
           // Prev. Área/Receita (F-280, TASK-MFA-FE-03, esteira 075): 2º
           // filho de "Agricultura" (`rel-agr-prev`). Gate de permissão em
@@ -2592,7 +2327,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-prev',
             label: 'Prev. Área/Receita',
             path: '/relatorios/agricultura/previsao-area-receita',
-            icon: TrendingUp,
+            icon: 'trend-up',
           },
           // Pesagem Rodoviária (F-284, ajuste do lote 075): 3º filho de
           // "Agricultura", mirror EXATO do padrão de `rel-agr-prev` acima.
@@ -2609,7 +2344,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-pesagem-rodoviaria',
             label: 'Pesagem Rodoviária',
             path: '/relatorios/agricultura/pesagem-rodoviaria',
-            icon: Scale,
+            icon: 'scale',
           },
           // Produção/Custeio/Área (F-298, esteira 051, TASK-298-FE-03) —
           // CANÁRIO da tela de relatório em código para o fan-out (F-279/
@@ -2623,7 +2358,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-pca',
             label: 'Produção/Custo/Área',
             path: '/relatorios/agricultura/producao-custeio-area',
-            icon: Calculator,
+            icon: 'calculator',
           },
           // Custeio/Área (F-252, lote 079, F-252-plano-frontend.md
           // TASK-252-FE-03) — tela NOVA, distinta de `rel-agr-pca` acima
@@ -2641,7 +2376,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-cus',
             label: 'Custeio/Área',
             path: '/relatorios/agricultura/custeio-area',
-            icon: Coins,
+            icon: 'banknote',
           },
           // Prod./Área (F-299, 97-Esteiras/012, Tarefa 47,
           // frontend-contract-prod-area.md §2.2) — irmão de
@@ -2654,7 +2389,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-pro',
             label: 'Prod./Área',
             path: '/relatorios/agricultura/producao-por-area',
-            icon: LandPlot,
+            icon: 'fence',
           },
           // Pesagens/Colheita (F-335, execução 053, roteiro-front-F335-
           // pesagens-colheita.md) — irmão de "Prod./Área", mesma estrutura.
@@ -2668,7 +2403,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-pes',
             label: 'Pesagens/Colheita',
             path: '/relatorios/agricultura/pesagens-colheita',
-            icon: Scale,
+            icon: 'scale',
           },
           // Romaneio/Vendas/Contrato (F-331, 97-Esteiras/008, TASK-RVC-FE-02)
           // — irmão de "Pesagens/Colheita", posicionado logo após (espelha a
@@ -2682,7 +2417,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-rvc',
             label: 'Romaneio/Vendas/Contrato',
             path: '/relatorios/agricultura/romaneio-vendas-contrato',
-            icon: FileText,
+            icon: 'document',
           },
           // Previsão Fazenda/Receita (F-281, esteira 97-Esteiras/055) —
           // mirror EXATO do padrão dos irmãos acima. Gate de permissão em
@@ -2695,7 +2430,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-pfr',
             label: 'Prev. Fazenda/Receita',
             path: '/relatorios/agricultura/previsao-fazenda-receita',
-            icon: LineChart,
+            icon: 'chart-line',
           },
           // Romaneio Cliente (F-332, esteira 97-Esteiras/058,
           // FRONT-F332-plano.md §2.1) — mirror EXATO do padrão dos irmãos
@@ -2710,7 +2445,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-romaneio-cliente',
             label: 'Romaneio Cliente',
             path: '/relatorios/agricultura/romaneio-cliente',
-            icon: FileText,
+            icon: 'document',
           },
           // Pesagem Entrada/Saída (F-336, esteira 97-Esteiras/058,
           // FRONT-F336-plano.md §2.1) — mirror EXATO do padrão dos irmãos
@@ -2723,7 +2458,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-pesagem-entrada-saida',
             label: 'Pesagem Entrada/Saída',
             path: '/relatorios/agricultura/pesagem-entrada-saida',
-            icon: Scale,
+            icon: 'scale',
           },
           // Rentabilidade/Cultura (F-302, esteira 077, F-302-plano-front.md
           // §6) — mirror EXATO do padrão dos irmãos acima. Gate de permissão
@@ -2738,7 +2473,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-ren',
             label: 'Rentabilidade/Cultura',
             path: '/relatorios/agricultura/rentabilidade-cultura',
-            icon: Percent,
+            icon: 'percent',
           },
           // Descarte Romaneio (F-256, esteira 078, F-256-plano-frontend.md)
           // — mirror EXATO do padrão dos irmãos acima. Evidência legada
@@ -2755,7 +2490,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-descarte-romaneio',
             label: 'Descarte Romaneio',
             path: '/relatorios/agricultura/descarte-romaneio',
-            icon: Recycle,
+            icon: 'repeat',
           },
           // Romaneio/Diferença (Tarefa 49, esteira 97-Esteiras/014,
           // front-architecture-romaneio-diferenca.md §2) — mirror EXATO do
@@ -2771,7 +2506,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-rom-dif',
             label: 'Romaneio/Diferença',
             path: '/relatorios/agricultura/romaneio-diferenca',
-            icon: ArrowLeftRight,
+            icon: 'transfer',
           },
           // Prod./Colaborador (F-300, esteira 97-Esteiras/079,
           // F-300-plano-frontend.md TASK-300-FE-03) — mirror EXATO do padrão
@@ -2785,7 +2520,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-poc',
             label: 'Prod./Colaborador',
             path: '/relatorios/agricultura/producao-colaborador',
-            icon: Users,
+            icon: 'users',
           },
           // Previsão Colheita/Área (F-282, esteira 059,
           // CONTRATO-F282-previsao-colheita-area.md §5) — mirror EXATO do
@@ -2799,7 +2534,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-prev-colheita-area',
             label: 'Previsão Colheita/Área',
             path: '/relatorios/agricultura/previsao-colheita-area',
-            icon: Sprout,
+            icon: 'sprout',
           },
           // Aplicação/Manejo Talhões (F-220, execução 059,
           // CONTRATO-F220-aplicacao-manejo-talhoes.md) — mirror EXATO do
@@ -2813,7 +2548,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-agr-aplicacao-manejo-talhoes',
             label: 'Aplicação/Manejo Talhões',
             path: '/relatorios/agricultura/aplicacao-manejo-talhoes',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
         ],
       },
@@ -2833,13 +2568,13 @@ export const menuModules: NavModule[] = [
         id: 'rel-pec',
         label: 'Pecuária',
         path: '/relatorios/pecuaria',
-        icon: Beef,
+        icon: 'cattle',
         children: [
           {
             id: 'rel-pec-evo',
             label: 'Evolução/Rebanho',
             path: '/relatorios/pecuaria/evolucao-rebanho',
-            icon: TrendingUp,
+            icon: 'trend-up',
           },
           // Vacas Prenhas (Tarefa 46, frontend-contract-vacas-prenhas.md
           // §2.2) — preserva o item de MENU dedicado que o legado tinha
@@ -2852,7 +2587,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-vac',
             label: 'Vacas Prenhas',
             path: '/relatorios/pecuaria/vacas-prenhas',
-            icon: HeartPulse,
+            icon: 'activity',
           },
           // Performance Animal (F-234, TASK-FE-PA-01, Tarefa 57) — mirror
           // EXATO do padrão `rel-pec-evo`/`rel-pec-vac` acima. Gate de
@@ -2865,7 +2600,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-pfa',
             label: 'Performance Animal',
             path: '/relatorios/pecuaria/performance-animal',
-            icon: DollarSign,
+            icon: 'currency',
           },
           // Manejo/Lote (F-279, esteira 051, TASK-279-FE-03) — fan-out do
           // canário `rel-agr-pca` (F-298), mirror EXATO do padrão
@@ -2879,7 +2614,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-man',
             label: 'Manejo/Lote',
             path: '/relatorios/pecuaria/manejo-lote',
-            icon: ClipboardList,
+            icon: 'clipboard-list',
           },
           // Pesagem/Lote (Tarefa 49, esteira CORE_WORKSPACE/97-Esteiras/014)
           // — item de MENU novo, mirror EXATO do padrão `rel-pec-man` acima.
@@ -2892,7 +2627,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-pes',
             label: 'Pesagem/Lote',
             path: '/relatorios/pecuaria/pesagem-lote',
-            icon: Scale,
+            icon: 'scale',
           },
           // Animais por Lote (Tarefa 51, esteira
           // CORE_WORKSPACE/97-Esteiras/015) — item de MENU novo, mirror
@@ -2905,7 +2640,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-apl',
             label: 'Animais por Lote',
             path: '/relatorios/pecuaria/animais-por-lote',
-            icon: Boxes,
+            icon: 'stock',
           },
           // Ficha Animal (F-225, 97-Esteiras/012, Tarefa 47,
           // frontend-contract-ficha-animal.md §2.2) — preserva o item de
@@ -2920,7 +2655,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-fic',
             label: 'Ficha Animal',
             path: '/relatorios/pecuaria/ficha-animal',
-            icon: FileText,
+            icon: 'document',
           },
           // Histórico Reprodutivo (execução 074,
           // historico-reprodutivo-contrato-front.md §6) — mirror EXATO do
@@ -2933,7 +2668,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-hist',
             label: 'Histórico Reprodutivo',
             path: '/relatorios/pecuaria/historico-reprodutivo',
-            icon: History,
+            icon: 'clock',
           },
           // Custeio/Lote (execução 074, custeio-lote-contrato-front.md §6)
           // — mirror EXATO do padrão `rel-pec-vac`/`rel-pec-hist` acima.
@@ -2948,7 +2683,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-cus',
             label: 'Custeio/Lote',
             path: '/relatorios/pecuaria/custeio-lote',
-            icon: Coins,
+            icon: 'banknote',
           },
           // Custeio/Animal (F-248, esteira 075,
           // CusteioAnimal-contrato-front.md §6) — mirror EXATO do padrão
@@ -2960,7 +2695,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-cus-an',
             label: 'Custeio/Animal',
             path: '/relatorios/pecuaria/custeio-animal',
-            icon: PiggyBank,
+            icon: 'banknote',
           },
           // Custeio/Área (F-251, CusteioAreaPecuaria-contrato-api.md,
           // lote 076) — mirror EXATO do padrão `rel-pec-cus`/`rel-pec-cus-an`
@@ -2974,7 +2709,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-cus-area',
             label: 'Custeio/Área',
             path: '/relatorios/pecuaria/custeio-area-pecuaria',
-            icon: HandCoins,
+            icon: 'banknote',
           },
           // Custeio/Módulo (F-250, esteira 080,
           // Custeio-Modulo-Contrato-Front.md §2) — mirror EXATO do padrão
@@ -2990,7 +2725,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-cus-md',
             label: 'Custeio/Módulo',
             path: '/relatorios/pecuaria/custeio-modulo',
-            icon: Map,
+            icon: 'map',
           },
           // Desempenho Pesagem Confinamento (F-263, lote 076,
           // `FeedlotWeighingPerformanceReport-contrato-api.md`) — mirror
@@ -3005,7 +2740,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-desempenho-pesagem-confinamento',
             label: 'Desempenho Pesagem Confinamento',
             path: '/relatorios/pecuaria/desempenho-pesagem-confinamento',
-            icon: Gauge,
+            icon: 'gauge',
           },
           // Custo Total de Reprodução (F-328, esteira 97-Esteiras/008,
           // TASK-FE-CTR-02) — inserido logo após `rel-pec-cus-an`, mesma
@@ -3023,7 +2758,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-cus-rep',
             label: 'Custo Total de Reprodução',
             path: '/relatorios/pecuaria/custo-total-reproducao',
-            icon: Calculator,
+            icon: 'calculator',
           },
           // Nascimentos/SISBOV (F-235, esteira 97-Esteiras/052,
           // TASK-052-235-FE-02, roteiro-front-F235-nascimentos-sisbov.md) —
@@ -3039,7 +2774,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-nascimentos-sisbov',
             label: 'Nascimentos/SISBOV',
             path: '/relatorios/pecuaria/nascimentos-sisbov',
-            icon: Baby,
+            icon: 'cattle',
           },
           // Mortes/SISBOV (F-253, esteira 97-Esteiras/054,
           // TASK-054-253-FE-02, roteiro-front-F253-mortes-sisbov.md) — mirror
@@ -3053,7 +2788,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-mortes-sisbov',
             label: 'Mortes/SISBOV',
             path: '/relatorios/pecuaria/mortes-sisbov',
-            icon: Skull,
+            icon: 'alert',
           },
           // Identificação/SISBOV (F-270, esteira 97-Esteiras/078,
           // CONTRATOS/F-270-contrato-legado.md) — mirror EXATO do padrão
@@ -3068,7 +2803,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-identificacao-sisbov',
             label: 'Identificação/SISBOV',
             path: '/relatorios/pecuaria/identificacao-sisbov',
-            icon: ScanBarcode,
+            icon: 'hash',
           },
           // Mortes GENÉRICO (F-254, esteira 97-Esteiras/077,
           // CONTRATOS/front/F-254-plano-front.md) — mirror EXATO do padrão
@@ -3081,7 +2816,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-mor',
             label: 'Mortes',
             path: '/relatorios/pecuaria/mortes',
-            icon: Biohazard,
+            icon: 'alert',
           },
           // Nascimentos GENÉRICO (F-236, esteira 97-Esteiras/053,
           // TASK-053-236-FE-02, roteiro-front-F236-nascimentos.md) — mirror
@@ -3097,7 +2832,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-nascimentos',
             label: 'Nascimentos',
             path: '/relatorios/pecuaria/nascimentos',
-            icon: PawPrint,
+            icon: 'cattle',
           },
           // Nutrição/Lote (F-288, esteira 97-Esteiras/053, TASK-288-FE-01,
           // roteiro-front-F288-nutricao.md §"Menu/Rota/Permissão") — mirror
@@ -3116,7 +2851,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-nut',
             label: 'Nutrição/Lote',
             path: '/relatorios/pecuaria/nutricao-consumo-lote',
-            icon: Wheat,
+            icon: 'grain',
           },
           // Registro Genealógico (F-222, esteira 97-Esteiras/055) — mirror
           // EXATO do padrão `rel-pec-vac`/`rel-pec-hist`/`rel-pec-cus` acima.
@@ -3131,7 +2866,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-arv',
             label: 'Registro Genealógico',
             path: '/relatorios/pecuaria/registro-genealogico',
-            icon: Dna,
+            icon: 'lab',
           },
           // Histórico de Animais/Lote (F-221, esteira 97-Esteiras/058,
           // FRONT-F221-plano.md §2.1) — mirror EXATO do padrão
@@ -3149,7 +2884,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-hal',
             label: 'Histórico de Animais/Lote',
             path: '/relatorios/pecuaria/historico-animais-lote',
-            icon: ListTree,
+            icon: 'list-tree',
           },
           // Movimentação/Rebanho (F-224, lote 076,
           // `AnimalMovementReport-contrato.md`) — mirror EXATO do padrão
@@ -3179,13 +2914,13 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-am',
             label: 'Aplicação/Manejo',
             path: '/relatorios/pecuaria/aplicacao-manejo',
-            icon: Sprout,
+            icon: 'sprout',
           },
           {
             id: 'rel-pec-mov',
             label: 'Movimentação/Rebanho',
             path: '/relatorios/pecuaria/movimentacao-rebanho',
-            icon: ArrowLeftRight,
+            icon: 'transfer',
           },
           // Estq. Animais/Categoria (F-242, esteira 97-Esteiras/077,
           // F-242-plano-front.md) — mirror EXATO do padrão `rel-pec-mov`
@@ -3202,7 +2937,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-cat',
             label: 'Estq. Animais/Categoria',
             path: '/relatorios/pecuaria/estoque-animais-categoria',
-            icon: Tags,
+            icon: 'tag',
           },
           // Transf/Lote/Módulo/Área (F-329, esteira 97-Esteiras/077,
           // F-329-plano-front.md) — mirror EXATO do padrão `rel-pec-cat`
@@ -3221,7 +2956,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-tba',
             label: 'Transf/Lote/Módulo/Área',
             path: '/relatorios/pecuaria/transferencia-lote-modulo-area',
-            icon: Repeat,
+            icon: 'transfer',
           },
           // Vendas/Animais (F-227, esteira 97-Esteiras/077,
           // F-227-plano-front.md) — mirror EXATO do padrão `rel-pec-cat`
@@ -3235,7 +2970,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-vda',
             label: 'Vendas/Animais',
             path: '/relatorios/pecuaria/vendas-animais',
-            icon: Handshake,
+            icon: 'handshake',
           },
           // Análise de Movimentação de Lote (F-223, esteira 059,
           // CONTRATO-F223-analise-mov-lote.md §3/§5) — mirror EXATO do
@@ -3251,7 +2986,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-analise-mov-lote',
             label: 'Análise de Movimentação de Lote',
             path: '/relatorios/pecuaria/analise-movimentacao-lote',
-            icon: BarChart3,
+            icon: 'chart-bar',
           },
           // Pesagem/Animal (F-334, execução 059,
           // CONTRATO-F334-pesagem-animal.md) — mirror EXATO do padrão dos
@@ -3265,7 +3000,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-pesagem-animal',
             label: 'Pesagem/Animal',
             path: '/relatorios/pecuaria/pesagem-animal',
-            icon: Ruler,
+            icon: 'ruler',
           },
           // Desmamas (F-333, esteira 97-Esteiras/060,
           // ROTEIRO-F333-FRONT-desmamas-tela.md §6, TASK-F333-FRONT-01) —
@@ -3282,7 +3017,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-des',
             label: 'Desmamas',
             path: '/relatorios/pecuaria/desmamas',
-            icon: Split,
+            icon: 'git-branch',
           },
           // Estoque/Rebanho (F-228, execução 97-Esteiras/078,
           // F-228-plano-frontend.md) — mirror EXATO do padrão `rel-pec-cat`/
@@ -3301,7 +3036,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-estoque-rebanho',
             label: 'Estoque/Rebanho',
             path: '/relatorios/pecuaria/estoque-rebanho',
-            icon: Warehouse,
+            icon: 'warehouse',
           },
           // Sanitário/Lote (F-318, execução 97-Esteiras/078,
           // F-318-plano-frontend.md, TASK-F318-F04) — RE-ALINHAMENTO: a
@@ -3322,7 +3057,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-sanitario-lote',
             label: 'Sanitário/Lote',
             path: '/relatorios/pecuaria/sanitario-lote',
-            icon: Stethoscope,
+            icon: 'safety',
           },
           // Prod. Receptora (F-307, lote 079, F-307-plano-frontend.md §5
           // TASK-F307-FE-03) — mirror EXATO do padrão `rel-pec-hist` acima.
@@ -3338,7 +3073,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-recept',
             label: 'Produtividade/Receptora',
             path: '/relatorios/pecuaria/produtividade-receptora',
-            icon: Droplet,
+            icon: 'water',
           },
           // Composição Rebanho (F-269, lote 079, F-269-plano-frontend.md §6
           // TASK-F269-FE-03) — mirror EXATO do padrão `rel-pec-recept`/
@@ -3353,7 +3088,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-pec-composicao-rebanho',
             label: 'Composição Rebanho',
             path: '/relatorios/pecuaria/composicao-rebanho',
-            icon: PieChart,
+            icon: 'chart-pie',
           },
         ],
       },
@@ -3375,43 +3110,43 @@ export const menuModules: NavModule[] = [
         id: 'rel-fin',
         label: 'Financeiro',
         path: '/relatorios/financeiro',
-        icon: Wallet,
+        icon: 'wallet',
         children: [
           {
             id: 'rel-fin-dre',
             label: 'DRE',
             path: '/relatorios/financeiro/dre',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-dre-annual',
             label: 'DRE Anual',
             path: '/relatorios/financeiro/dre-anual',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-contas-a-pagar',
             label: 'Contas a Pagar',
             path: '/relatorios/financeiro/contas-a-pagar',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-contas-pagas',
             label: 'Contas Pagas',
             path: '/relatorios/financeiro/contas-pagas',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-contas-a-receber',
             label: 'Contas a Receber',
             path: '/relatorios/financeiro/contas-a-receber',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-contas-recebidas',
             label: 'Contas Recebidas',
             path: '/relatorios/financeiro/contas-recebidas',
-            icon: FileText,
+            icon: 'document',
           },
           // Pagamento Previsto × Real (F-289, esteira 97-Esteiras/054,
           // TASK-289-FE-02) — mirror EXATO do padrão dos irmãos "Contas a
@@ -3424,7 +3159,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-pag-prev-real',
             label: 'Pagamento Previsto × Real',
             path: '/relatorios/financeiro/pagamento-previsto-real',
-            icon: FileText,
+            icon: 'document',
           },
           // Recebimento Previsto × Real (F-297, esteira 97-Esteiras/079,
           // TASK-079-297-FE-02) — mirror EXATO do padrão do irmão
@@ -3438,13 +3173,13 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-rec-prev-real',
             label: 'Recebimento Previsto × Real',
             path: '/relatorios/financeiro/recebimento-previsto-real',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-juros-pagos',
             label: 'Juros Pagos',
             path: '/relatorios/financeiro/juros-pagos',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Juros Recebidos (esteira
           // 97-Esteiras/014, Tarefa 49) — filho NOVO do grupo `rel-fin`,
@@ -3456,19 +3191,19 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-juros-recebidos',
             label: 'Juros Recebidos',
             path: '/relatorios/financeiro/juros-recebidos',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-apuracao-custo',
             label: 'Apuração de Custo',
             path: '/relatorios/financeiro/apuracao-de-custo',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-fin-custo-producao',
             label: 'Custo de Produção',
             path: '/relatorios/financeiro/custo-de-producao',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Previsto × Realizado (F-238,
           // HOMOLOGAÇÃO/correção 2026-09-05) — item de menu FALTANTE: a
@@ -3484,7 +3219,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-prev-real',
             label: 'Previsto × Realizado',
             path: '/financeiro/previsao/relatorio-previsto-realizado',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Centro de Custo (F-247, esteira
           // 97-Esteiras/052, TASK-052-247-FE-02) — filho NOVO do grupo
@@ -3495,7 +3230,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-centro-custo',
             label: 'Centro de Custo',
             path: '/relatorios/financeiro/centro-de-custo',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Livro Razão (F-274, esteira
           // 97-Esteiras/008, TASK-FE-LR-03) — filho NOVO do grupo `rel-fin`,
@@ -3510,7 +3245,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-livro-razao',
             label: 'Livro Razão',
             path: '/relatorios/financeiro/livro-razao',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Consolidado (Pagar/Receber) (F-214,
           // esteira 97-Esteiras/052, TASK-052-214-FE-02) — filho NOVO do
@@ -3522,7 +3257,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-consolidado',
             label: 'Consolidado (Pagar/Receber)',
             path: '/relatorios/financeiro/consolidado-pagar-receber',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Fluxo de Caixa Mensal (F-240, esteira
           // 97-Esteiras/053, TASK-053-240-FE-03) — filho NOVO do grupo
@@ -3533,7 +3268,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-cashflow-por-categoria',
             label: 'Fluxo de Caixa Mensal',
             path: '/relatorios/financeiro/fluxo-de-caixa-mensal',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Financeiro → Estoque Financeiro (F-241, esteira
           // 97-Esteiras/013, TASK-013-241-FE-04) — filho NOVO do grupo
@@ -3544,7 +3279,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-estoque-financeiro',
             label: 'Estoque Financeiro',
             path: '/relatorios/financeiro/estoque-financeiro',
-            icon: FileText,
+            icon: 'document',
           },
           // Adiantamento (F-219, esteira 97-Esteiras/055) — mirror EXATO do
           // padrão dos irmãos acima (`FileText` é o ícone-padrão de todo o
@@ -3556,7 +3291,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-adiantamento',
             label: 'Adiantamento',
             path: '/relatorios/financeiro/adiantamento',
-            icon: FileText,
+            icon: 'document',
           },
           // Agenda/Recebimentos (F-304, esteira 97-Esteiras/055) — mirror
           // EXATO do padrão dos irmãos acima. Gate de permissão em
@@ -3567,7 +3302,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-agenda-recebimentos',
             label: 'Agenda/Recebimentos',
             path: '/relatorios/financeiro/agenda-recebimentos',
-            icon: FileText,
+            icon: 'document',
           },
           // Custo de Produção Acumulado (F-217, esteira 97-Esteiras/058) —
           // mirror EXATO do padrão dos irmãos acima (`FileText` é o
@@ -3579,7 +3314,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-custo-producao-acumulado',
             label: 'Custo de Produção Acumulado',
             path: '/relatorios/financeiro/custo-de-producao-acumulado',
-            icon: FileText,
+            icon: 'document',
           },
           // Movimento Bancário (F-264, esteira 97-Esteiras/058,
           // TASK-058-F264-FE-02) — mirror EXATO do padrão dos irmãos acima
@@ -3592,7 +3327,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-movimento-bancario',
             label: 'Movimento Bancário',
             path: '/relatorios/financeiro/movimento-bancario',
-            icon: FileText,
+            icon: 'document',
           },
           // Fiscal/Não Fiscal (F-266, lote 076,
           // `FiscalDifferenceReport-contrato.md`) — filho NOVO do grupo
@@ -3605,7 +3340,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-fiscal-nao-fiscal',
             label: 'Fiscal/Não Fiscal',
             path: '/relatorios/financeiro/fiscal-nao-fiscal',
-            icon: FileText,
+            icon: 'document',
           },
           // Razão Categoria (F-273, execução 059,
           // CONTRATO-F273-razao-categoria.md) — mirror EXATO do padrão dos
@@ -3617,7 +3352,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-razao-categoria',
             label: 'Razão Categoria',
             path: '/relatorios/financeiro/razao-categoria',
-            icon: FileText,
+            icon: 'document',
           },
           // Agenda/Pagamentos (F-294, CONTRATO-F294-agenda-pagamentos.md,
           // esteira 97-Esteiras/059) — mirror EXATO do padrão dos irmãos
@@ -3628,7 +3363,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-agenda-pagamentos',
             label: 'Agenda/Pagamentos',
             path: '/relatorios/financeiro/agenda-pagamentos',
-            icon: FileText,
+            icon: 'document',
           },
           // Fluxo Mensal de Recebimento (F-303, esteira 97-Esteiras/059,
           // CONTRATO-F303-fluxo-mensal-recebimento.md) — mirror EXATO do
@@ -3640,7 +3375,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-fluxo-mensal-recebimento',
             label: 'Fluxo Mensal de Recebimento',
             path: '/relatorios/financeiro/fluxo-mensal-recebimento',
-            icon: FileText,
+            icon: 'document',
           },
           // Contas Tributárias (F-327, esteira 97-Esteiras/060) — item de
           // menu FALTANTE: a rota (`/relatorios/financeiro/contas-tributarias`,
@@ -3654,7 +3389,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-contas-tributarias',
             label: 'Contas Tributárias',
             path: '/relatorios/financeiro/contas-tributarias',
-            icon: FileText,
+            icon: 'document',
           },
           // Financiamentos (F-265, execução 97-Esteiras/078,
           // F-265-plano-frontend.md) — filho NOVO do grupo `rel-fin`, mirror
@@ -3667,7 +3402,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-financiamentos',
             label: 'Financiamentos',
             path: '/relatorios/financeiro/financiamentos',
-            icon: FileText,
+            icon: 'document',
           },
           // Fluxo Mensal de Pagamento (F-293, execução 97-Esteiras/078,
           // F-293-plano-frontend.md) — filho NOVO do grupo `rel-fin`, mirror
@@ -3682,7 +3417,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-fluxo-mensal-pagamento',
             label: 'Fluxo Mensal de Pagamento',
             path: '/relatorios/financeiro/fluxo-mensal-pagamento',
-            icon: FileText,
+            icon: 'document',
           },
           // Extrato Financeiro (F-233, execução 97-Esteiras/079,
           // F-233-plano-frontend.md) — filho NOVO do grupo `rel-fin`, mirror
@@ -3696,7 +3431,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-extrato-financeiro',
             label: 'Extrato Financeiro',
             path: '/relatorios/financeiro/extrato-financeiro',
-            icon: FileText,
+            icon: 'document',
           },
           // Conciliação de Contas (F-213, lote 079, rework FE — 3 ajustes do
           // dono, F-213-plano-frontend-rework.md) — item NOVO, sobrepõe
@@ -3711,7 +3446,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-fin-conciliacao-contas',
             label: 'Conciliação de Contas',
             path: '/relatorios/financeiro/conciliacao-de-contas',
-            icon: FileText,
+            icon: 'document',
           },
         ],
       },
@@ -3733,13 +3468,13 @@ export const menuModules: NavModule[] = [
         id: 'rel-est',
         label: 'Estoque',
         path: '/relatorios/estoque',
-        icon: Warehouse,
+        icon: 'warehouse',
         children: [
           {
             id: 'rel-est-custo-batida',
             label: 'Custo Produção Batida',
             path: '/relatorios/estoque/custo-producao-batida',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Estoque → Recebimentos (F-305, esteira
           // 97-Esteiras/074, TASK-RCB-FE-02) — 2º filho do grupo `rel-est`,
@@ -3751,7 +3486,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-recebimentos',
             label: 'Recebimentos',
             path: '/relatorios/estoque/recebimentos',
-            icon: ReceiptText,
+            icon: 'receipt-detail',
           },
           // Relatórios → Estoque → Movimentação de Estoque (F-1f1d23e3,
           // esteira 97-Esteiras/074, TASK-MOV-FE-02) — novo filho do grupo
@@ -3762,7 +3497,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-mov-estoque',
             label: 'Movimentação de Estoque',
             path: '/relatorios/estoque/movimentacao-estoque',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Estoque → Lote/Fornecedor (F-324, esteira
           // 97-Esteiras/052, TASK-052-324-FE-02) — 4º filho do grupo
@@ -3776,7 +3511,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-lote-fornecedor',
             label: 'Lote/Fornecedor',
             path: '/relatorios/estoque/lote-fornecedor',
-            icon: Truck,
+            icon: 'truck',
           },
           // Relatórios → Estoque → Baixa de Estoque (F-321, execução 013,
           // correção de conformidade — gap encontrado pelo dono ao testar
@@ -3794,7 +3529,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-baixa-estoque',
             label: 'Baixa de Estoque',
             path: '/administrativo/baixa-estoque/relatorio',
-            icon: PackageMinus,
+            icon: 'package-minus',
           },
           // Relatórios → Estoque → Curva ABC/Estoque (F-322, esteira
           // 97-Esteiras/077, CONTRATOS/front/F-322-plano-front.md) — 6º
@@ -3811,7 +3546,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-curva-abc',
             label: 'Curva ABC/Estoque',
             path: '/relatorios/estoque/curva-abc',
-            icon: BarChart3,
+            icon: 'chart-bar',
           },
           // Pesagem/Armazém/Cliente (F-337, execução 059,
           // CONTRATO-F337-pesagem-armazem-cliente.md) — domínio correto é
@@ -3829,7 +3564,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-pesagem-armazem-cliente',
             label: 'Pesagem/Armazém/Cliente',
             path: '/relatorios/estoque/pesagem-armazem-cliente',
-            icon: Scale,
+            icon: 'scale',
           },
           // DFe/Lançadas (F-255, execução 044, entregue órfão de item de
           // menu — reprovação confirmada pelo dono em runtime, execução 061,
@@ -3854,7 +3589,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-dfe-lancadas',
             label: 'DFe/Lançadas',
             path: '/relatorios/estoque/dfe-lancadas',
-            icon: Inbox,
+            icon: 'inbox',
           },
           // Relatórios → Estoque → Saídas x Centro Custo (F-301, esteira
           // 97-Esteiras/078, F-301-plano-frontend.md) — 7º filho do grupo
@@ -3869,7 +3604,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-saidas-centro-custo',
             label: 'Saídas x Centro Custo',
             path: '/relatorios/estoque/saidas-centro-custo',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Estoque → Requisição/Saída (F-312, esteira
           // 97-Esteiras/078, F-312-plano-frontend.md) — 8º filho do grupo
@@ -3884,7 +3619,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-requisicao-saida',
             label: 'Requisição/Saída',
             path: '/relatorios/estoque/requisicao-saida',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Estoque → Estoque Consolidado (F-323, feature_id
           // e70b8cad, esteira 97-Esteiras/079, F-323-plano-frontend.md) — 9º
@@ -3902,7 +3637,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-est-consolidado',
             label: 'Estoque Consolidado',
             path: '/relatorios/estoque/estoque-consolidado',
-            icon: Boxes,
+            icon: 'stock',
           },
         ],
       },
@@ -3928,19 +3663,19 @@ export const menuModules: NavModule[] = [
         id: 'rel-sup',
         label: 'Suprimentos',
         path: '/relatorios/suprimentos',
-        icon: ShoppingCart,
+        icon: 'cart',
         children: [
           {
             id: 'rel-sup-sla',
             label: 'Relatório SLA',
             path: '/relatorios/suprimentos',
-            icon: FileText,
+            icon: 'document',
           },
           {
             id: 'rel-sup-gerencial-solicitacoes',
             label: 'Gerencial de Solicitações',
             path: '/relatorios/suprimentos/gerencial-de-solicitacoes',
-            icon: FileText,
+            icon: 'document',
           },
           // 3º filho — "Produtos x Prev. Entrega" (F-309, esteira
           // 97-Esteiras/058, TASK-058-F309-FE-02). Mirror do label de menu
@@ -3951,7 +3686,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-sup-produtos-prev-entrega',
             label: 'Produtos x Prev. Entrega',
             path: '/relatorios/suprimentos/produtos-prev-entrega',
-            icon: PackageSearch,
+            icon: 'document-search',
           },
           // ANS (F-229, lote 076, `F-229-ans-report-contrato-api.md`) — 3º
           // filho de `rel-sup`, mirror EXATO do padrão `rel-sup-sla`/
@@ -3964,7 +3699,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-sup-ans',
             label: 'ANS',
             path: '/relatorios/suprimentos/ans',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Suprimentos → Savings (F-319, execução 013,
           // TASK-013-F319-FE-01) — 3º filho NOVO do grupo `rel-sup`, mirror
@@ -3976,7 +3711,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-sup-savings',
             label: 'Savings',
             path: '/relatorios/suprimentos/savings',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Suprimentos → Suprimentos (F-325, `supplies-report`,
           // execução CORE_WORKSPACE/97-Esteiras/015, Tarefa 52) — 5º filho
@@ -3991,7 +3726,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-sup-supplies-report',
             label: 'Suprimentos',
             path: '/relatorios/suprimentos/supplies-report',
-            icon: FileText,
+            icon: 'document',
           },
           // Relatórios → Suprimentos → Orçamentos (`request-quotation.report`,
           // F-311, execução 97-Esteiras/078, TASK-F311-F04) — novo filho do
@@ -4005,7 +3740,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-sup-orcamentos',
             label: 'Orçamentos/Fornecedor',
             path: '/relatorios/suprimentos/orcamentos',
-            icon: FileText,
+            icon: 'document',
           },
         ],
       },
@@ -4025,19 +3760,19 @@ export const menuModules: NavModule[] = [
         id: 'rel-ven',
         label: 'Vendas',
         path: '/relatorios/vendas',
-        icon: ShoppingBag,
+        icon: 'shopping-bag',
         children: [
           {
             id: 'rel-ven-produto',
             label: 'Produto',
             path: '/relatorios/vendas',
-            icon: ShoppingBag,
+            icon: 'shopping-bag',
           },
           {
             id: 'rel-ven-cliente-produto',
             label: 'Cliente/Produto',
             path: '/relatorios/vendas/cliente-produto',
-            icon: FileText,
+            icon: 'document',
           },
           // "Vendas/Cliente" (F-317, esteira 97-Esteiras/077,
           // F-317-plano-front.md) — 3º filho de `rel-ven`, mirror EXATO dos
@@ -4050,7 +3785,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-ven-cliente',
             label: 'Cliente',
             path: '/relatorios/vendas/cliente',
-            icon: Users,
+            icon: 'users',
           },
           // "Vendas/Funcionário" (F-314, esteira 97-Esteiras/079,
           // F-314-plano-frontend.md) — 4º filho de `rel-ven`, mirror EXATO
@@ -4063,7 +3798,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-ven-funcionario',
             label: 'Funcionário',
             path: '/relatorios/vendas/funcionario',
-            icon: UserRound,
+            icon: 'user-check',
           },
         ],
       },
@@ -4093,19 +3828,19 @@ export const menuModules: NavModule[] = [
         id: 'rel-gpe',
         label: 'Gestão Pessoal',
         path: '/relatorios/gestao-pessoal',
-        icon: Users,
+        icon: 'users',
         children: [
           {
             id: 'rel-gpe-horas-logadas',
             label: 'Horas Logadas',
             path: '/relatorios/gestao-pessoal/horas-logadas',
-            icon: Clock,
+            icon: 'clock',
           },
           {
             id: 'rel-gpe-apu',
             label: 'Apuração Mensal',
             path: '/relatorios/gestao-pessoal/apuracao-mensal',
-            icon: FileText,
+            icon: 'document',
           },
         ],
       },
@@ -4129,13 +3864,13 @@ export const menuModules: NavModule[] = [
         id: 'rel-gfi',
         label: 'Gestão Fiscal',
         path: '/relatorios/gestao-fiscal',
-        icon: Scale,
+        icon: 'scale',
         children: [
           {
             id: 'rel-gfi-partida-dobrada',
             label: 'Partida Dobrada',
             path: '/relatorios/gestao-fiscal/partida-dobrada',
-            icon: GitCompare,
+            icon: 'git-compare',
           },
           // Faturamento (F-286, esteira 97-Esteiras/054, TASK-054-286-FE-02)
           // — mirror EXATO do padrão `rel-gfi-partida-dobrada` acima. Gate de
@@ -4147,7 +3882,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-gfi-faturamento',
             label: 'Faturamento',
             path: '/relatorios/gestao-fiscal/faturamento',
-            icon: FileText,
+            icon: 'document',
           },
           // NFe/Emitidas (F-287, esteira 97-Esteiras/079, TASK-F287-FE-02) —
           // mirror EXATO do padrão `rel-gfi-faturamento` acima. Gate de
@@ -4161,7 +3896,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-gfi-nfe-report',
             label: 'NFe/Emitidas',
             path: '/relatorios/gestao-fiscal/nfe-report',
-            icon: FileSpreadsheet,
+            icon: 'spreadsheet',
           },
         ],
       },
@@ -4180,13 +3915,13 @@ export const menuModules: NavModule[] = [
         id: 'rel-gfr',
         label: 'Gestão de Frotas',
         path: '/relatorios/frotas',
-        icon: Truck,
+        icon: 'truck',
         children: [
           {
             id: 'rel-gfr-maquinas',
             label: 'Máquinas',
             path: '/relatorios/frotas/maquinas',
-            icon: Forklift,
+            icon: 'warehouse',
           },
           // Abastecimentos (F-277, esteira 97-Esteiras/054,
           // TASK-054-277-FE-02) — mirror EXATO do padrão `rel-gfr-maquinas`
@@ -4198,7 +3933,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-gfr-abastecimentos',
             label: 'Abastecimentos',
             path: '/relatorios/frotas/abastecimentos',
-            icon: Fuel,
+            icon: 'fuel',
           },
           // Manutenções (F-276, execução 97-Esteiras/078,
           // F-276-plano-frontend.md) — mirror EXATO do padrão
@@ -4212,7 +3947,7 @@ export const menuModules: NavModule[] = [
             id: 'rel-gfr-manutencoes',
             label: 'Manutenções',
             path: '/relatorios/frotas/manutencoes',
-            icon: Wrench,
+            icon: 'wrench',
           },
         ],
       },
@@ -4222,52 +3957,52 @@ export const menuModules: NavModule[] = [
     id: 'integracoes',
     label: 'Integrações',
     emoji: '🔗',
-    icon: Network,
+    icon: 'network',
     groups: [
       {
         id: 'int-dominio',
         label: 'Software Domínio',
-        icon: Globe,
+        icon: 'globe',
         items: [
           {
             id: 'int-dom-soft',
             label: 'Software Domínio',
             path: '/integracoes/dominio',
-            icon: Globe,
+            icon: 'globe',
           },
         ],
       },
       {
         id: 'int-exp-dom',
         label: 'Exportação / Domínio',
-        icon: Upload,
+        icon: 'upload',
         items: [
           {
             id: 'int-exp-bco',
             label: 'Mov. Bancário',
             path: '/integracoes/exp-bancario',
-            icon: Landmark,
+            icon: 'bank',
           },
           {
             id: 'int-exp-fol',
             label: 'Folha Salarial',
             path: '/integracoes/exp-folha',
-            icon: Banknote,
+            icon: 'banknote',
           },
           {
             id: 'int-exp-cp',
             label: 'Contas Pagar / Receber',
             path: '/integracoes/exp-cp',
-            icon: CreditCard,
+            icon: 'credit-card',
           },
-          { id: 'int-exp-nfse', label: 'NFSe', path: '/integracoes/exp-nfse', icon: FileText },
+          { id: 'int-exp-nfse', label: 'NFSe', path: '/integracoes/exp-nfse', icon: 'document' },
         ],
       },
       {
         id: 'int-exp-csv',
         label: 'Exportações / CSV',
-        icon: Table,
-        items: [{ id: 'int-csv', label: 'Exportação CSV', path: '/integracoes/csv', icon: Table }],
+        icon: 'table',
+        items: [{ id: 'int-csv', label: 'Exportação CSV', path: '/integracoes/csv', icon: 'table' }],
       },
       {
         // Compartilhamento (Sharing, F-122, 97-Esteiras/070, TASK-CP-FE-01):
@@ -4276,13 +4011,13 @@ export const menuModules: NavModule[] = [
         // Domínio/CSV). 1 item-folha, mesmo padrão dos grupos irmãos.
         id: 'int-compartilhamento-group',
         label: 'Compartilhamento',
-        icon: Share2,
+        icon: 'network',
         items: [
           {
             id: 'int-compartilhamento',
             label: 'Compartilhamento',
             path: '/integracoes/compartilhamento',
-            icon: Share2,
+            icon: 'share',
           },
         ],
       },

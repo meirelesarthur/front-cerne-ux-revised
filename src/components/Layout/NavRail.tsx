@@ -21,17 +21,15 @@ import {
   Box,
   Drawer,
   Flex,
-  Icon,
   IconButton,
   Image,
   Portal,
   Text,
 } from "@chakra-ui/react";
-import { LuPanelLeftClose } from "react-icons/lu";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import logoMin from "@/assets/logo-min.svg";
 import logoMinWhite from "@/assets/logo-min-white.svg";
+import { Icon as GbIcon } from "@/components/ui/Icon";
 import { Tooltip } from "@/components/ui/tooltip";
 import { type NavModule } from "@/config/v2/navigationTree";
 import { useMenuModules } from "@/hooks/useMenuModules";
@@ -157,7 +155,7 @@ function NavRailContent({
             color="sidebarSubtitleColor"
             _hover={{ bg: "sidebarItemHoverBG", color: "sidebarTextHover" }}
           >
-            <Icon as={LuPanelLeftClose} boxSize={4} />
+            <GbIcon name="sidebar-collapse" size={15} />
           </IconButton>
         )}
       </Flex>
@@ -166,7 +164,6 @@ function NavRailContent({
       <Flex direction="column" gap="2px" flex="1" overflowY="auto" overflowX="hidden">
         {visibleModules.map((module) => {
           const isActive = isModuleActive(module);
-          const ModuleIcon = module.icon;
           const hasChildren = !!(module.groups || module.flatItems);
           const isExpanded = expandedModuleId === module.id;
 
@@ -205,7 +202,7 @@ function NavRailContent({
               transition="background-color 0.15s ease, color 0.15s ease"
               cursor="pointer"
             >
-              <Icon as={ModuleIcon} boxSize={5} flexShrink={0} />
+              <GbIcon name={module.icon} size={collapsed ? 16 : 15} />
               {!collapsed && (
                 <>
                   <Text as="span" flex="1" textAlign="left" lineClamp="1">
@@ -213,13 +210,14 @@ function NavRailContent({
                   </Text>
                   {hasChildren && (
                     // Chevron padronizado (Ajustes Globais): `<` fechado / `>` aberto.
-                    <Icon
-                      as={isExpanded ? ChevronRight : ChevronLeft}
-                      boxSize={4}
+                    <Box
+                      as="span"
+                      display="flex"
                       flexShrink={0}
                       color={isActive ? "sidebarItemActiveText" : "sidebarSubtitleColor"}
-                      transition="transform 0.15s ease"
-                    />
+                    >
+                      <GbIcon name={isExpanded ? "chevron-right" : "chevron-left"} size={13} />
+                    </Box>
                   )}
                 </>
               )}

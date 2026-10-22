@@ -17,13 +17,13 @@ import {
   Box,
   Flex,
   Heading,
-  Icon,
   Input,
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { ArrowRight, Plus, ExternalLink, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+import { Icon as GbIcon } from "@/components/ui/Icon";
 
 import { useMemo } from "react";
 
@@ -83,7 +83,7 @@ function SectionHeader({ title, action }: { title: string; action: string }) {
         _hover={{ textDecoration: "underline" }}
       >
         {action}
-        <Icon as={ArrowRight} boxSize={3} />
+        <GbIcon name="arrow-right" size={12} />
       </Flex>
     </Flex>
   );
@@ -153,16 +153,18 @@ export default function Home() {
           {languageGB.home.greeting}
         </Heading>
         <Box position="relative" w="100%" maxW="480px">
-          <Icon
-            as={Search}
-            boxSize={4}
+          <Box
+            as="span"
+            display="flex"
             position="absolute"
             left="14px"
             top="50%"
             transform="translateY(-50%)"
             color="cardTextSecondary"
             pointerEvents="none"
-          />
+          >
+            <GbIcon name="search" size="md" />
+          </Box>
           <Input
             placeholder={languageGB.home.searchPlaceholder}
             readOnly
@@ -192,7 +194,6 @@ export default function Home() {
           const description = languageGB.home.moduleDescriptions[module.id];
           if (!description) return null;
           const moduleLabel = languageGB.sidebar.navigation[module.id] ?? module.label;
-          const ModuleIcon = module.icon;
           return (
             <Flex
               key={module.id}
@@ -220,7 +221,7 @@ export default function Home() {
                 color="sidebarItemActiveText"
                 flexShrink={0}
               >
-                <Icon as={ModuleIcon} boxSize={5} />
+                <GbIcon name={module.icon} size="lg" />
               </Flex>
               <Text fontSize="sm" fontWeight="semibold" color="cardTextPrimary" lineClamp="1">
                 {moduleLabel}
@@ -268,7 +269,7 @@ export default function Home() {
                   {item.module}
                 </Text>
               </Box>
-              <Icon as={ExternalLink} boxSize={3} color="cardTextSecondary" />
+              <Box as="span" display="flex" color="cardTextSecondary"><GbIcon name="external-link" size={12} /></Box>
             </Flex>
           ))}
         </Box>
@@ -333,7 +334,7 @@ export default function Home() {
               cursor="pointer"
               onClick={() => navigate(FARMS_PATH)}
             >
-              <Icon as={Plus} boxSize={3.5} />
+              <GbIcon name="add" size={14} />
               {languageGB.home.panels.farms.addButton}
             </Flex>
           </Flex>
@@ -387,7 +388,7 @@ export default function Home() {
                 >
                   {languageGB.sidebar.navigation[fav.id] ?? fav.label}
                 </Text>
-                <Icon as={ArrowRight} boxSize={3} color="cardTextSecondary" flexShrink={0} />
+                <Box as="span" display="flex" color="cardTextSecondary" flexShrink={0}><GbIcon name="arrow-right" size={12} /></Box>
               </Flex>
             );
           })}

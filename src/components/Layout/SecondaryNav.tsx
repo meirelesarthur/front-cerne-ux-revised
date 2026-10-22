@@ -8,8 +8,9 @@
 // derivado comparando `item.path` com `location.pathname`.
 
 import { useState } from "react";
-import { Box, Flex, Icon, Text } from "@chakra-ui/react";
-import { ChevronLeft, ChevronRight, Circle, Star } from "lucide-react";
+import { Box, Flex, Text } from "@chakra-ui/react";
+
+import { Icon as GbIcon } from "@/components/ui/Icon";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { Tooltip } from "@/components/ui/tooltip";
@@ -61,7 +62,6 @@ function isItemActive(item: NavSubItem, activePath: string): boolean {
 
 function NavHeader({ module }: { module: NavModule }) {
   const { languageGB } = useLanguage();
-  const ModuleIcon = module.icon;
   const label = languageGB.sidebar.navigation[module.id] ?? module.label;
   return (
     // Sem header verde (Ajustes Globais): fundo neutro do próprio painel,
@@ -73,7 +73,9 @@ function NavHeader({ module }: { module: NavModule }) {
       gap={2}
       px={3}
     >
-      <Icon as={ModuleIcon} boxSize={4} color="sidebarTitleColor" flexShrink={0} />
+      <Box as="span" display="flex" color="sidebarTitleColor" flexShrink={0}>
+        <GbIcon name={module.icon} size={16} />
+      </Box>
       <Text fontSize="md" fontWeight="bold" color="sidebarTitleColor" letterSpacing="-0.1px">
         {label}
       </Text>
@@ -134,13 +136,14 @@ function NavItemButton({
       >
         <Flex align="center" gap={2} minW={0}>
           {item.icon && (
-            <Icon
-              as={item.icon}
-              boxSize={3.5}
+            <Box
+              as="span"
+              display="flex"
               flexShrink={0}
               color={active && !hasChildren ? "sidebarItemActiveText" : "sidebarSubtitleColor"}
-              aria-hidden="true"
-            />
+            >
+              <GbIcon name={item.icon} size={14} />
+            </Box>
           )}
           <Text as="span" textAlign="left" lineClamp="1">
             {itemLabel}
@@ -150,17 +153,16 @@ function NavItemButton({
           {/* Favoritar (GAP-BE-023): só itens-folha; visível ao passar o mouse
               ou quando já favoritado. span clicável (não <button> aninhado). */}
           {!hasChildren && (
-            <Icon
-              as={Star}
+            <Box
+              as="span"
               role="button"
               aria-label={
                 favorited
                   ? languageGB.defaltStrings.removeFavorite
                   : languageGB.defaltStrings.addFavorite
               }
-              boxSize={3}
+              display="flex"
               color={favorited ? "#f0b429" : "sidebarSubtitleColor"}
-              fill={favorited ? "#f0b429" : "none"}
               opacity={favorited ? 1 : 0}
               _groupHover={{ opacity: 1 }}
               _hover={{ transform: "scale(1.2)" }}
@@ -170,19 +172,23 @@ function NavItemButton({
                 e.preventDefault();
                 toggleFavorite(item.path);
               }}
-            />
+            >
+              <GbIcon name="star" size={12} filled={favorited} />
+            </Box>
           )}
           {hasChildren && (
             // Chevron padronizado (Ajustes Globais): fechado `>` (rotate 0) /
             // aberto `v` (rotate 90deg) — ícone único que rotaciona.
-            <Icon
-              as={ChevronRight}
-              boxSize={2.5}
+            <Box
+              as="span"
+              display="flex"
               flexShrink={0}
               color="sidebarSubtitleColor"
               transform={expanded ? "rotate(90deg)" : "rotate(0deg)"}
               transition="transform 0.15s ease"
-            />
+            >
+              <GbIcon name="chevron-right" size={10} />
+            </Box>
           )}
         </Flex>
       </Flex>
@@ -214,13 +220,14 @@ function NavItemButton({
                 transition="background-color 0.12s ease, color 0.12s ease"
               >
                 {child.icon && (
-                  <Icon
-                    as={child.icon}
-                    boxSize={3.5}
+                  <Box
+                    as="span"
+                    display="flex"
                     flexShrink={0}
                     color={childActive ? "sidebarItemActiveText" : "sidebarSubtitleColor"}
-                    aria-hidden="true"
-                  />
+                  >
+                    <GbIcon name={child.icon} size={13} />
+                  </Box>
                 )}
                 <Text as="span" textAlign="left" lineClamp="1">
                   {childLabel}
@@ -274,13 +281,15 @@ function NavGroupSection({
         </Text>
         {/* Chevron padronizado (Ajustes Globais): fechado `>` (rotate 0) /
             aberto `v` (rotate 90deg) — ícone único que rotaciona. */}
-        <Icon
-          as={ChevronRight}
-          boxSize={2.5}
+        <Box
+          as="span"
+          display="flex"
           flexShrink={0}
           transform={open ? "rotate(90deg)" : "rotate(0deg)"}
           transition="transform 0.15s ease"
-        />
+        >
+          <GbIcon name="chevron-right" size={11} />
+        </Box>
       </Flex>
 
       {open && (
@@ -348,7 +357,7 @@ function CollapsedIconList({
               }}
               transition="background-color 0.12s ease, color 0.12s ease"
             >
-              <Icon as={item.icon ?? Circle} boxSize={4} aria-hidden="true" />
+              <GbIcon name={item.icon ?? "circle"} size={16} />
             </Flex>
           </Tooltip>
         );
@@ -475,7 +484,7 @@ export function SecondaryNav({ module }: SecondaryNavProps) {
             _hover={{ bg: "sidebarItemHoverBG", color: "sidebarTextHover" }}
             transition="background-color 0.12s ease, color 0.12s ease"
           >
-            <Icon as={collapsed ? ChevronRight : ChevronLeft} boxSize={3.5} />
+            <GbIcon name={collapsed ? "chevron-right" : "chevron-left"} size={14} />
           </Flex>
         </Tooltip>
       </Flex>

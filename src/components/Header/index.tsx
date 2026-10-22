@@ -18,22 +18,15 @@ import {
   Box,
   Flex,
   HStack,
-  Icon,
   IconButton,
   Text,
 } from "@chakra-ui/react";
-import {
-  FiAlertTriangle,
-  FiBell,
-  FiMenu,
-  FiMessageSquare,
-  FiSidebar,
-} from "react-icons/fi";
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 import { AccountMenu } from "@/components/Header/AccountMenu";
 import { BreadcrumbTrail } from "@/components/ui/BreadcrumbTrail";
+import { Icon as GbIcon } from "@/components/ui/Icon";
 import { ErrorLogPanel } from "@/components/ErrorLogPanel";
 import { FarmSwitcher } from "@/components/FarmSwitcher";
 import { HeaderSearch } from "@/components/HeaderSearch";
@@ -107,7 +100,7 @@ export function Header({
               title={languageGB.common.navRail.toggleSidebar}
               borderRadius="lg"
             >
-              <Icon as={FiSidebar} boxSize={5} color="topBarIconColor" />
+              <Box as="span" display="flex" color="topBarIconColor"><GbIcon name="sidebar-collapse" size="lg" /></Box>
             </IconButton>
           )}
 
@@ -135,11 +128,9 @@ export function Header({
                   borderRadius="lg"
                   position="relative"
                 >
-                  <Icon
-                    as={FiAlertTriangle}
-                    boxSize={5}
-                    color={errorCount > 0 ? "red.400" : "topBarIconColor"}
-                  />
+                  <Box as="span" display="flex" color={errorCount > 0 ? "red.400" : "topBarIconColor"}>
+                    <GbIcon name="warning" size="lg" />
+                  </Box>
                   {errorCount > 0 && (
                     <Badge
                       position="absolute"
@@ -173,7 +164,7 @@ export function Header({
                 borderRadius="lg"
                 position="relative"
               >
-                <Icon as={FiBell} boxSize={5} color="topBarIconColor" />
+                <Box as="span" display="flex" color="topBarIconColor"><GbIcon name="bell" size="lg" /></Box>
               </IconButton>
             }
           />
@@ -194,7 +185,7 @@ export function Header({
                 aria-label={languageGB.common.navRail.talkToAleex}
                 borderRadius="lg"
               >
-                <Icon as={FiMessageSquare} boxSize={5} color="primaryMain" />
+                <Box as="span" display="flex" color="primaryMain"><GbIcon name="message" size="lg" /></Box>
               </IconButton>
             </Tooltip>
           )}
@@ -209,7 +200,7 @@ export function Header({
             borderRadius="lg"
             display={{ base: "flex", md: "none" }}
           >
-            <Icon as={FiMenu} boxSize={5} color="topBarIconColor" />
+            <Box as="span" display="flex" color="topBarIconColor"><GbIcon name="menu" size="lg" /></Box>
           </IconButton>
         </HStack>
       </Flex>

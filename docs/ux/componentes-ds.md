@@ -22,6 +22,10 @@ Convenções do porte:
 | Breadcrumb | `ui/BreadcrumbTrail.tsx` (novo) | **portado** | Topbar (`Header`) | separador "/", ancestrais secundários, atual primário; `components/Breadcrumb.tsx` (legado, `string[]`) permanece para as telas antigas |
 | ToggleSwitch | `ui/switch.tsx` | **portado** | 43 arquivos | trilho 42×22, bolinha 18, off neutro200 / on green600, rótulo 13px medium |
 | Badge | `ui/Badge.tsx` (novo) | **portado** | Fazendas (referência) | pílula 4×10, 12px medium, variantes success/danger/warning/neutral/info/purple/cyan por token. **~328 `<Badge colorPalette>` do Chakra em 221 arquivos ainda não migrados** |
+| Icon (HugeIcons) | `ui/Icon.tsx` + `design/icons.ts` (registry do DS) | **portado (novo)** | NavRail, SecondaryNav, Header, Home | papéis (`dashboard`, `cattle`, `wallet`…) em vez de import de biblioteca; traço 1.5; tamanhos xs13/sm15/md17/lg20/xl26. Papel `menu` acrescentado ao registry |
+| Sidebar/NavRail (nível 1) | `Layout/NavRail.tsx` | **portado** | todas as telas | ícones HugeIcons (15px, 16px colapsado), chevrons 13px |
+| SecondaryNav (nível 2) | `Layout/SecondaryNav.tsx` | **portado** | todas as telas | ícones por item/grupo/filho (14/13px), favorito preenchido, chevrons 10-11px |
+| Árvore de navegação | `config/v2/navigationTree.ts` | **convertida** | menu, Home, busca | 407 ícones Lucide → papéis do DS (por `id` do `menuData` do DS; 28 por tabela de fallback) |
 | Button (secondary) | `styles/recipes/button.ts` | parcial | todo o app | borda neutra 1.5px com props separadas (o shorthand `border` descartava a cor); raio 8; `sm` 34px |
 | FormPageHeader (subtítulo) | `Layout/FormContainer.tsx` | parcial | wizards passam `subtitle` | |
 | Input | `styles/recipes/input.ts` | parcial | todo o app | raio 8, glow de foco |
@@ -29,3 +33,6 @@ Convenções do porte:
 
 ## Próximos (ordem sugerida)
 Tag · IconButton · DropdownMenu · Tabs · Tooltip · Avatar · FilterDrawer · DataTable/ListToolbar/PageHeader · EmptyState/Skeleton · TypedConfirmDialog · TreeView · migração em massa dos `<Badge colorPalette>`.
+
+## Ícones — o que ainda usa outras bibliotecas
+`lucide-react` e `react-icons` seguem em ~100 telas fora do shell (EmptyState, QueryErrorState, AccountMenu, Compras/Cotações…). Migrar por tela junto com o lote de padrões de listagem; regra do DS: nenhuma tela importa biblioteca de ícone.
