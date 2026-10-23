@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conciliação OFX — proposta de UX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand-50:#f0fdf4; --brand-100:#dcfce7; --brand-600:#059669; --brand-700:#047857;
+    --n-0:#fff; --n-50:#fafafa; --n-100:#f5f5f5; --n-200:#e5e7eb; --n-300:#d1d5db; --n-400:#9ca3af; --n-500:#6b7280; --n-600:#4b5563; --n-800:#1a1a1a;
+    --ok-bg:#f0fdf4; --ok:#047857; --err-bg:#fee2e2; --err:#b91c1c; --warn-bg:#fffbeb; --warn:#b45309; --info-bg:#eff6ff; --info:#2563eb;
+    --canvas:#efefef; --card:#fff; --text:#1a1a1a; --muted:#6b7280;
+    --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font-family:Outfit,system-ui,sans-serif;font-size:14px;color:var(--text);background:var(--canvas);padding:8px}
+  button{font:inherit;cursor:pointer} input,select{font:inherit}
+  .page{background:var(--card);border-radius:20px;box-shadow:var(--shadow);min-height:calc(100vh - 16px);display:flex;flex-direction:column;overflow:hidden}
+  /* ---------- Cabeçalho ---------- */
+  .head{display:flex;align-items:center;gap:16px;padding:16px 24px 12px}
+  .head h1{margin:0;font-size:18px;font-weight:600}
+  .head .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .grow{flex:1}
+  .progress{display:flex;align-items:center;gap:10px;min-width:220px}
+  .ring{--p:0;width:42px;height:42px;border-radius:50%;background:conic-gradient(var(--brand-600) calc(var(--p)*1%),var(--n-200) 0);display:grid;place-items:center}
+  .ring::after{content:"";width:32px;height:32px;border-radius:50%;background:var(--card)}
+  .ring-wrap{position:relative}.ring-wrap b{position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:600;z-index:1}
+  .progress small{display:block;color:var(--muted);font-size:12px}
+  .btn{height:38px;padding:0 16px;border-radius:8px;border:1.5px solid var(--n-200);background:#fff;color:var(--n-600);font-weight:500;display:inline-flex;align-items:center;gap:8px;transition:background .15s,border-color .15s}
+  .btn:hover{background:var(--n-100)}
+  .btn.primary{background:var(--brand-600);border-color:var(--brand-600);color:#fff;font-weight:600}
+  .btn.primary:hover{background:var(--brand-700);border-color:var(--brand-700)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn.sm{height:30px;padding:0 12px;font-size:13px}
+  .kbd{font-size:11px;border:1px solid var(--n-300);border-bottom-width:2px;border-radius:5px;padding:0 5px;color:var(--n-500);background:#fff}
+  /* ---------- Resumo ---------- */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:0 24px 12px}
+  .stat{background:var(--n-50);border-radius:10px;padding:10px 14px}
+  .stat small{color:var(--muted);font-size:12px}
+  .stat b{display:block;font-size:17px;font-weight:600;margin-top:2px}
+  .stat .hint{font-size:12px;color:var(--muted);margin-top:2px}
+  .stat.diff.ok b{color:var(--ok)} .stat.diff.bad b{color:var(--err)}
+  .in{color:var(--ok)} .out{color:var(--err)}
+  /* ---------- Corpo ---------- */
+  .body{flex:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0;border-top:1px solid var(--n-200);min-height:520px}
+  .left{border-right:1px solid var(--n-200);display:flex;flex-direction:column;min-width:0}
+  .tabs{display:flex;gap:4px;padding:10px 16px 0;border-bottom:1px solid var(--n-200)}
+  .tab{border:0;background:none;padding:10px 12px;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;display:flex;gap:8px;align-items:center}
+  .tab .n{background:var(--n-100);border-radius:99px;padding:0 8px;font-size:12px;color:var(--n-600)}
+  .tab.active{color:var(--brand-700);border-bottom-color:var(--brand-600)}
+  .tab.active .n{background:var(--brand-100);color:var(--brand-700)}
+  .toolbar{display:flex;gap:10px;align-items:center;padding:10px 16px}
+  .search{flex:1;height:36px;border:1.5px solid var(--n-200);border-radius:8px;padding:0 12px;outline:none}
+  .search:focus{border-color:var(--brand-600);box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+  .bulk{display:none;align-items:center;gap:10px;margin:0 16px 8px;padding:8px 12px;background:var(--brand-50);border:1px solid var(--brand-100);border-radius:10px}
+  .bulk.show{display:flex}
+  .list{overflow:auto;flex:1;padding:0 8px 8px}
+  .row{display:grid;grid-template-columns:22px 28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 10px;border-radius:10px;border:1.5px solid transparent;cursor:pointer;transition:background .12s}
+  .row:hover{background:var(--n-50)}
+  .row.sel{background:var(--brand-50);border-color:var(--brand-100)}
+  .row .ico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:14px}
+  .ico.in{background:var(--ok-bg)} .ico.out{background:var(--err-bg)}
+  .row .t{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .d{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;margin-top:2px;flex-wrap:wrap}
+  .row .v{text-align:right;font-weight:600;white-space:nowrap}
+  .chip{display:inline-flex;align-items:center;gap:4px;border-radius:99px;padding:1px 8px;font-size:12px;font-weight:500}
+  .chip.ok{background:var(--ok-bg);color:var(--ok)} .chip.warn{background:var(--warn-bg);color:var(--warn)}
+  .chip.info{background:var(--info-bg);color:var(--info)} .chip.gray{background:var(--n-100);color:var(--n-600)}
+  .quick{opacity:0;transition:opacity .12s}
+  .row:hover .quick,.row.sel .quick{opacity:1}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand-600)}
+  .empty{padding:48px 24px;text-align:center;color:var(--muted)}
+  .empty b{display:block;color:var(--text);font-size:16px;margin-bottom:4px}
+  /* ---------- Painel ---------- */
+  .right{padding:20px 24px;overflow:auto;background:linear-gradient(#fff,#fcfcfc)}
+  .ph{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:14px}
+  .ph .big{font-size:26px;font-weight:700;letter-spacing:-.4px}
+  .ph .memo{font-weight:600;font-size:15px}
+  .ph .meta{color:var(--muted);font-size:13px;margin-top:2px}
+  .seg{display:inline-flex;background:var(--n-100);border-radius:10px;padding:3px;margin-bottom:14px}
+  .seg button{border:0;background:none;padding:7px 14px;border-radius:8px;color:var(--n-600);font-weight:500}
+  .seg button.active{background:#fff;color:var(--text);box-shadow:var(--shadow);font-weight:600}
+  .cand{display:flex;gap:12px;align-items:center;border:1.5px solid var(--n-200);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:border-color .12s,background .12s}
+  .cand:hover{border-color:var(--n-300)}
+  .cand.sel{border-color:var(--brand-600);background:var(--brand-50)}
+  .cand input{margin:0}
+  .cand .main{flex:1;min-width:0}
+  .cand .ttl{font-weight:600} .cand .why{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .meter{width:64px;text-align:right}
+  .meter b{font-size:15px;color:var(--ok)} .meter.mid b{color:var(--warn)}
+  .bar{height:5px;border-radius:9px;background:var(--n-200);margin-top:4px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--brand-600)} .meter.mid .bar i{background:#f59e0b}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:13px;color:var(--n-600);margin-bottom:4px;font-weight:500}
+  .field input,.field select{width:100%;height:38px;border:1.5px solid var(--n-200);border-radius:8px;padding:0 12px;background:#fff;outline:none}
+  .field input:focus,.field select:focus{border-color:var(--brand-600);box-shadow:0 0 0 3px rgba(5,150,105,.12)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .toggle{display:flex;align-items:center;gap:10px;margin:6px 0 12px;color:var(--n-600)}
+  .sw{width:42px;height:22px;border-radius:99px;background:var(--n-200);border:0;padding:2px;position:relative;transition:background .2s}
+  .sw::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow);transition:transform .2s}
+  .sw.on{background:var(--brand-600)} .sw.on::after{transform:translateX(20px)}
+  .split{border:1px dashed var(--n-300);border-radius:12px;padding:12px;margin-bottom:12px;background:var(--n-50)}
+  .split .line{display:grid;grid-template-columns:1.2fr 1fr 110px 28px;gap:8px;margin-bottom:8px;align-items:center}
+  .split .line input,.split .line select{height:34px;border:1.5px solid var(--n-200);border-radius:8px;padding:0 8px;background:#fff;width:100%}
+  .remain{font-size:13px;display:flex;justify-content:space-between;margin-top:6px}
+  .remain.zero b{color:var(--ok)} .remain.nz b{color:var(--err)}
+  .ruleBox{display:flex;gap:10px;align-items:flex-start;background:var(--info-bg);border-radius:10px;padding:10px 12px;margin:4px 0 14px;font-size:13px;color:#1e3a8a}
+  .actions{display:flex;gap:10px;justify-content:flex-end;align-items:center;border-top:1px solid var(--n-200);padding-top:14px;margin-top:6px}
+  .actions .grow small{color:var(--muted)}
+  .hintbar{display:flex;gap:16px;flex-wrap:wrap;padding:8px 24px;border-top:1px solid var(--n-200);color:var(--muted);font-size:12px;background:var(--n-50)}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#1f2937;color:#fff;border-radius:10px;padding:10px 14px;display:flex;gap:14px;align-items:center;opacity:0;pointer-events:none;transition:all .2s;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:9}
+  .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .toast button{background:none;border:0;color:#6ee7b7;font-weight:600}
+  .done{padding:56px 24px;text-align:center}
+  .done .tick{width:56px;height:56px;border-radius:50%;background:var(--brand-100);color:var(--brand-700);display:grid;place-items:center;font-size:28px;margin:0 auto 12px}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  @media (max-width:1000px){.body{grid-template-columns:1fr}.left{border-right:0}.strip{grid-template-columns:repeat(2,1fr)}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="page" id="app"></div>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Desfazer</button></div>
+
+<script>
+/* ===================== Dados de exemplo (fictícios) ===================== */
+const BRL = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const STATEMENT_BALANCE = 48230.15;      // saldo final do extrato
+const SYSTEM_BALANCE_BASE = 62470.54;    // saldo do sistema ANTES de conciliar estas linhas
+
+let tx = [
+  { id:1, date:'01/10', memo:'TED RECEBIDA - CLIENTE TESTE LTDA', amount:5000, status:'pending',
+    cands:[{ id:'CR-1042', title:'Venda de soja — Cliente Teste Ltda', sub:'Título a receber · venc. 01/10 · NF 5521', score:98, why:['Valor igual','Mesmo cliente','Vence na data'] }] },
+  { id:2, date:'03/10', memo:'PAGTO BOLETO - FORNECEDOR TESTE SA', amount:-1250.75, status:'pending',
+    cands:[{ id:'CP-877', title:'Sementes — Fornecedor Teste SA', sub:'Título a pagar · venc. 03/10 · Parcela 2/3', score:97, why:['Valor igual','Mesmo fornecedor','Vence na data'] },
+           { id:'CP-871', title:'Fertilizante — Fornecedor Teste SA', sub:'Título a pagar · venc. 28/09 · Parcela 1/1', score:61, why:['Mesmo fornecedor','Valor ~ (R$ 1.250,00)'] }] },
+  { id:3, date:'05/10', memo:'TARIFA PACOTE DE SERVICOS', amount:-89.90, status:'pending', cands:[],
+    rule:{ name:'Tarifas bancárias', cat:'Despesas bancárias', cc:'Administrativo', person:'Banco do Brasil S.A.' } },
+  { id:4, date:'07/10', memo:'PIX RECEBIDO - COOPERATIVA AGRO VALE', amount:12430, status:'pending',
+    cands:[{ id:'CR-1051+CR-1052', title:'2 títulos somam o valor — Cooperativa Agro Vale', sub:'R$ 8.000,00 (venc. 06/10) + R$ 4.430,00 (venc. 08/10)', score:91, why:['Soma exata','Mesmo cliente','Datas próximas'], multi:true }] },
+  { id:5, date:'08/10', memo:'POSTO IPIRANGA JATAI COMBUSTIVEL', amount:-2310.40, status:'pending', cands:[],
+    rule:{ name:'Combustível — frota', cat:'Combustíveis e lubrificantes', cc:'Frota', person:'Posto Ipiranga Jataí' } },
+  { id:6, date:'09/10', memo:'TRANSF ENVIADA CC 4412-8 POUPANCA', amount:-10000, status:'pending', cands:[],
+    transfer:{ to:'Poupança Aplicação — BB 4412-8' } },
+  { id:7, date:'10/10', memo:'PAGTO BOLETO - AGROVET INSUMOS', amount:-3875.20, status:'pending',
+    cands:[{ id:'CP-902', title:'Vacinas — Agrovet Insumos', sub:'Título a pagar · venc. 10/10', score:74, why:['Mesmo fornecedor','Valor ~ (R$ 3.857,20)','Vence na data'] }] },
+  { id:8, date:'12/10', memo:'DEP DINHEIRO ATM', amount:1500, status:'pending', cands:[] },
+];
+const state = { tab:'review', selected:1, mode:'link', picked:null, search:'', checked:new Set(), split:false, rule:true, history:[] };
+const suggestedReady = t => t.status==='pending' && t.cands.length && t.cands[0].score>=90;
+const noMatch = t => t.status==='pending' && !suggestedReady(t);
+const pending = () => tx.filter(t=>t.status==='pending');
+
+/* ===================== Render ===================== */
+const $ = s => document.querySelector(s);
+function render(){
+  const done = tx.filter(t=>t.status==='done').length, total = tx.length, pct = Math.round(done/total*100);
+  const pend = pending(), pin = pend.filter(t=>t.amount>0).reduce((a,t)=>a+t.amount,0), pout = pend.filter(t=>t.amount<0).reduce((a,t)=>a+t.amount,0);
+  const systemBalance = SYSTEM_BALANCE_BASE; const diff = +(STATEMENT_BALANCE - systemBalance - (pin+pout) * 0).toFixed(2);
+  const pendNet = +(pin+pout).toFixed(2);
+  // diferença = o que falta conciliar (o saldo do sistema muda a cada conciliação criada, simplificado)
+  const diffNow = +(pendNet).toFixed(2);
+
+  $('#app').innerHTML = `
+  <div class="head">
+    <div><h1>Conciliação bancária</h1><div class="sub">Banco do Brasil · Conta Livro Caixa PF · extrato OFX de 01/10 a 12/10/2026</div></div>
+    <div class="grow"></div>
+    <div class="progress"><div class="ring-wrap"><div class="ring" style="--p:${pct}"></div><b>${pct}%</b></div>
+      <div><b>${done} de ${total} conciliadas</b><small>${pend.length ? pend.length+' faltam' : 'tudo conciliado'}</small></div></div>
+    <button class="btn" id="btnClose">Salvar e sair</button>
+    <button class="btn primary" id="btnFinish" ${pend.length?'disabled':''}>Concluir conciliação</button>
+  </div>
+  <div class="strip">
+    <div class="stat"><small>Saldo do extrato</small><b>${BRL(STATEMENT_BALANCE)}</b><div class="hint">em 12/10/2026</div></div>
+    <div class="stat"><small>Entradas a conciliar</small><b class="in">${BRL(pin)}</b><div class="hint">${pend.filter(t=>t.amount>0).length} transações</div></div>
+    <div class="stat"><small>Saídas a conciliar</small><b class="out">${BRL(pout)}</b><div class="hint">${pend.filter(t=>t.amount<0).length} transações</div></div>
+    <div class="stat diff ${pend.length?'bad':'ok'}"><small>Diferença a explicar</small><b>${BRL(Math.abs(diffNow))}</b><div class="hint">${pend.length?'zera quando você conciliar tudo':'extrato = sistema ✓'}</div></div>
+  </div>
+  <div class="body">
+    <section class="left">
+      <div class="tabs">
+        ${tab('review','Para revisar',pend.length)}${tab('ready','Sugestões prontas',pend.filter(suggestedReady).length)}${tab('nomatch','Sem correspondência',pend.filter(noMatch).length)}${tab('done','Conciliadas',done)}
+      </div>
+      <div class="toolbar"><input class="search" id="q" placeholder="Buscar por descrição, valor ou data…  ( / )" value="${state.search}"><button class="btn sm" id="selAll">Selecionar visíveis</button></div>
+      <div class="bulk ${state.checked.size?'show':''}" id="bulk"><b>${state.checked.size} selecionadas</b><span class="grow"></span>
+        <button class="btn sm primary" id="bulkConfirm">Confirmar sugestões (${[...state.checked].filter(id=>suggestedReady(tx.find(t=>t.id===id))).length})</button>
+        <button class="btn sm" id="bulkClear">Limpar</button></div>
+      <div class="list" id="list">${listHTML()}</div>
+    </section>
+    <section class="right" id="panel">${panelHTML()}</section>
+  </div>
+  <div class="hintbar"><span><span class="kbd">J</span> <span class="kbd">K</span> navegar</span><span><span class="kbd">Enter</span> confirmar</span><span><span class="kbd">C</span> criar lançamento</span><span><span class="kbd">V</span> vincular título</span><span><span class="kbd">T</span> transferência</span><span><span class="kbd">Ctrl</span>+<span class="kbd">Z</span> desfazer</span><span><span class="kbd">/</span> buscar</span></div>`;
+  bind();
+}
+const tab=(k,l,n)=>`<button class="tab ${state.tab===k?'active':''}" data-tab="${k}">${l}<span class="n">${n}</span></button>`;
+function visible(){
+  const q = state.search.trim().toLowerCase();
+  return tx.filter(t=>{
+    if(state.tab==='review' && t.status!=='pending') return false;
+    if(state.tab==='ready' && !(t.status==='pending' && suggestedReady(t))) return false;
+    if(state.tab==='nomatch' && !(t.status==='pending' && noMatch(t))) return false;
+    if(state.tab==='done' && t.status!=='done') return false;
+    return !q || (t.memo+' '+t.date+' '+BRL(t.amount)).toLowerCase().includes(q);
+  });
+}
+function chipFor(t){
+  if(t.status==='done') return `<span class="chip ok">✓ ${t.resolved}</span>`;
+  if(suggestedReady(t)) return `<span class="chip ok">Sugestão ${t.cands[0].score}%</span>`;
+  if(t.cands.length) return `<span class="chip warn">Revisar · ${t.cands[0].score}%</span>`;
+  if(t.rule) return `<span class="chip info">Regra: ${t.rule.name}</span>`;
+  if(t.transfer) return `<span class="chip info">Parece transferência</span>`;
+  return `<span class="chip gray">Sem sugestão</span>`;
+}
+function listHTML(){
+  const rows = visible();
+  if(!rows.length) return state.tab==='done'
+    ? `<div class="empty"><b>Nada conciliado ainda</b>As transações confirmadas aparecem aqui, com opção de desfazer.</div>`
+    : (pending().length ? `<div class="empty"><b>Nenhuma transação neste filtro</b>Limpe a busca ou troque de aba.</div>`
+      : `<div class="done"><div class="tick">✓</div><b style="font-size:18px">Extrato totalmente conciliado</b><p class="note">Revise na aba “Conciliadas” e clique em <b>Concluir conciliação</b>.</p></div>`);
+  return rows.map(t=>`
+    <div class="row ${t.id===state.selected?'sel':''}" data-id="${t.id}">
+      <input type="checkbox" data-chk="${t.id}" ${state.checked.has(t.id)?'checked':''} ${t.status==='done'?'disabled':''} aria-label="Selecionar">
+      <div class="ico ${t.amount>0?'in':'out'}">${t.amount>0?'↗':'↘'}</div>
+      <div style="min-width:0"><div class="t">${t.memo}</div><div class="d"><span>${t.date}/2026</span>${chipFor(t)}</div></div>
+      <div class="v ${t.amount>0?'in':'out'}">${t.amount>0?'+':'−'} ${BRL(Math.abs(t.amount))}
+        ${t.status==='pending' && suggestedReady(t) ? `<div class="quick"><button class="btn sm primary" data-quick="${t.id}">Confirmar</button></div>`:''}
+        ${t.status==='done' ? `<div class="quick"><button class="btn sm" data-undo="${t.id}">Desfazer</button></div>`:''}</div>
+    </div>`).join('');
+}
+function panelHTML(){
+  const t = tx.find(x=>x.id===state.selected);
+  if(!t) return `<div class="empty"><b>Selecione uma transação</b>Escolha uma linha à esquerda para conciliar. Dica: use <span class="kbd">J</span>/<span class="kbd">K</span>.</div>`;
+  const head = `<div class="ph"><div><div class="memo">${t.memo}</div><div class="meta">${t.date}/2026 · ${t.amount>0?'Entrada':'Saída'} · Banco do Brasil</div></div>
+    <div class="big ${t.amount>0?'in':'out'}">${t.amount>0?'+':'−'} ${BRL(Math.abs(t.amount))}</div></div>`;
+  if(t.status==='done') return head+`<div class="cand sel" style="cursor:default"><div class="main"><div class="ttl">✓ Conciliada</div><div class="meta" style="color:var(--muted)">${t.resolved}</div></div><button class="btn sm" data-undo="${t.id}">Desfazer</button></div>`;
+  const modes = [['link','Vincular a título'],['create','Criar lançamento'],['transfer','Transferência']];
+  return head + `<div class="seg" role="tablist">${modes.map(([k,l])=>`<button data-mode="${k}" class="${state.mode===k?'active':''}">${l}</button>`).join('')}</div>` + (state.mode==='link'?linkHTML(t):state.mode==='create'?createHTML(t):transferHTML(t));
+}
+function linkHTML(t){
+  const label = t.amount>0 ? 'títulos a receber' : 'títulos a pagar';
+  const c = t.cands.length ? t.cands.map((c,i)=>`
+    <label class="cand ${state.picked===c.id?'sel':''}" data-cand="${c.id}">
+      <input type="radio" name="cand" ${state.picked===c.id?'checked':''}>
+      <div class="main"><div class="ttl">${c.title}</div><div class="meta" style="color:var(--muted);font-size:13px">${c.sub}</div>
+        <div class="why">${c.why.map(w=>`<span class="chip ${w.includes('~')?'warn':'ok'}">${w.includes('~')?'≈':'✓'} ${w}</span>`).join('')}</div></div>
+      <div class="meter ${c.score<90?'mid':''}"><b>${c.score}%</b><div class="bar"><i style="width:${c.score}%"></i></div></div>
+    </label>`).join('')
+    : `<div class="empty" style="padding:24px 8px"><b>Nenhum título compatível</b>Busque outro ${label.slice(0,-1)} ou crie um lançamento novo.</div>`;
+  return `<div class="field"><input id="findTitle" placeholder="Buscar outro título por cliente, fornecedor, NF ou valor…"></div>${c}
+    <div class="note">Se o pagamento quitou vários títulos, marque todos — a soma precisa fechar com o valor do extrato.</div>
+    <div class="actions"><div class="grow"><small>${state.picked?'1 vínculo selecionado':'Selecione um título para continuar'}</small></div>
+      <button class="btn" data-mode="create">Criar lançamento em vez disso</button>
+      <button class="btn primary" id="confirmLink" ${state.picked?'':'disabled'}>Confirmar vínculo <span class="kbd" style="color:#fff;border-color:rgba(255,255,255,.5);background:transparent">Enter</span></button></div>`;
+}
+function createHTML(t){
+  const r = t.rule || {}; const person = t.amount>0 ? 'Cliente' : 'Fornecedor';
+  const lines = state.split ? [{c:r.cat||'',v:Math.abs(t.amount)/2},{c:'',v:Math.abs(t.amount)/2}] : [];
+  const sum = lines.reduce((a,l)=>a+l.v,0);
+  return `
+  ${t.rule?`<div class="ruleBox"><span>✨</span><div><b>Pré-preenchido pela regra “${r.name}”.</b><br>Você aplicou esta classificação em transações parecidas. Ajuste se precisar.</div></div>`:''}
+  <div class="grid2">
+    <div class="field"><label>${person}</label><input value="${r.person||''}" placeholder="Buscar ${person.toLowerCase()}…"></div>
+    <div class="field"><label>Categoria *</label><input value="${r.cat||''}" placeholder="Buscar categoria…"></div>
+  </div>
+  <div class="grid2">
+    <div class="field"><label>Centro de custo *</label><input value="${r.cc||''}" placeholder="Buscar centro de custo…"></div>
+    <div class="field"><label>Fazenda</label><input value="Gusmão Farms"></div>
+  </div>
+  <div class="field"><label>Descrição</label><input value="${t.memo}"></div>
+  <div class="toggle"><button class="sw ${state.split?'on':''}" id="swSplit" aria-label="Dividir em várias categorias"></button><span>Dividir entre várias categorias / centros de custo (rateio)</span></div>
+  ${state.split?`<div class="split">${lines.map(l=>`<div class="line"><input placeholder="Categoria" value="${l.c}"><input placeholder="Centro de custo"><input value="${BRL(l.v)}"><span style="color:var(--n-400)">✕</span></div>`).join('')}
+    <button class="btn sm">+ Adicionar linha</button>
+    <div class="remain ${sum===Math.abs(t.amount)?'zero':'nz'}"><span>Total rateado ${BRL(sum)} de ${BRL(Math.abs(t.amount))}</span><b>${sum===Math.abs(t.amount)?'✓ fechou':'faltam '+BRL(Math.abs(t.amount)-sum)}</b></div></div>`:''}
+  <details style="margin-bottom:10px;color:var(--n-600)"><summary style="cursor:pointer">Mais opções (juros, documento, dedutível)</summary>
+    <div class="grid2" style="margin-top:10px"><div class="field"><label>Juros R$</label><input placeholder="R$ 0,00"></div><div class="field"><label>Documento</label><input></div></div></details>
+  <label class="toggle" style="cursor:pointer"><input type="checkbox" id="chkRule" ${state.rule?'checked':''}> <span>Lembrar para transações parecidas com “${t.memo.split(' - ')[0].slice(0,24)}…” (criar regra)</span></label>
+  <div class="actions"><div class="grow"><small>Data, valor e tipo vêm do banco e não mudam.</small></div>
+    <button class="btn" data-mode="link">Voltar</button><button class="btn primary" id="confirmCreate">Criar e conciliar <span class="kbd" style="color:#fff;border-color:rgba(255,255,255,.5);background:transparent">Enter</span></button></div>`;
+}
+function transferHTML(t){
+  const to = t.transfer?.to || '';
+  return `${t.transfer?`<div class="ruleBox"><span>🔁</span><div><b>Parece uma transferência entre suas contas.</b><br>Há uma entrada de ${BRL(Math.abs(t.amount))} em 09/10 na conta de destino — ela será conciliada junto.</div></div>`:''}
+  <div class="field"><label>${t.amount>0?'Conta de origem':'Conta de destino'}</label><select><option>${to||'Selecione a conta…'}</option><option>Conta Movimento — Sicredi 8841-2</option><option>Caixa da fazenda</option></select></div>
+  <div class="field"><label>Observação</label><input value="${t.memo}"></div>
+  <div class="actions"><div class="grow"><small>Não entra em DRE nem em fluxo de caixa consolidado.</small></div><button class="btn primary" id="confirmTransfer">Conciliar transferência <span class="kbd" style="color:#fff;border-color:rgba(255,255,255,.5);background:transparent">Enter</span></button></div>`;
+}
+
+/* ===================== Ações ===================== */
+function resolve(id, text){
+  const t = tx.find(x=>x.id===id); if(!t||t.status==='done') return;
+  state.history.push({id, prev:{status:t.status}}); t.status='done'; t.resolved=text; state.checked.delete(id);
+  toast(`“${t.memo.slice(0,28)}…” conciliada`, ()=>undo(id));
+  const next = pending().find(x=>x.id>id) || pending()[0];
+  if(state.tab!=='done') state.selected = next ? next.id : null;
+  state.mode = next ? defaultMode(next) : 'link'; state.picked = next && next.cands[0] ? next.cands[0].id : null; render();
+}
+function undo(id){ const t=tx.find(x=>x.id===id); if(!t) return; t.status='pending'; delete t.resolved; state.selected=id; state.mode=defaultMode(t); state.picked=t.cands[0]?.id||null; hideToast(); render(); }
+const defaultMode = t => t.cands.length ? 'link' : (t.transfer ? 'transfer' : 'create');
+function select(id){ const t=tx.find(x=>x.id===id); state.selected=id; state.mode=t.status==='pending'?defaultMode(t):'link'; state.picked=t.cands?.[0]?.id||null; state.split=false; render(); }
+let toastTimer; function toast(msg, onUndo){ $('#toastMsg').textContent=msg; const b=$('#toastUndo'); b.onclick=onUndo; $('#toast').classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(hideToast,6000); }
+function hideToast(){ $('#toast').classList.remove('show'); }
+
+function bind(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ state.tab=b.dataset.tab; const v=visible(); if(v.length && !v.find(x=>x.id===state.selected)) select(v[0].id); else render(); });
+  document.querySelectorAll('.row').forEach(r=>r.onclick=e=>{ if(e.target.closest('[data-quick],[data-undo],[data-chk]')) return; select(+r.dataset.id); });
+  document.querySelectorAll('[data-chk]').forEach(c=>c.onchange=()=>{ const id=+c.dataset.chk; c.checked?state.checked.add(id):state.checked.delete(id); render(); });
+  document.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>{ const t=tx.find(x=>x.id===+b.dataset.quick); resolve(t.id,'Vinculada a '+t.cands[0].id); });
+  document.querySelectorAll('[data-undo]').forEach(b=>b.onclick=()=>undo(+b.dataset.undo));
+  document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ state.mode=b.dataset.mode; render(); });
+  document.querySelectorAll('[data-cand]').forEach(l=>l.onclick=e=>{ e.preventDefault(); state.picked=l.dataset.cand; render(); });
+  const q=$('#q'); q.oninput=()=>{ state.search=q.value; $('#list').innerHTML=listHTML(); bindRows(); };
+  $('#selAll').onclick=()=>{ visible().filter(t=>t.status==='pending').forEach(t=>state.checked.add(t.id)); render(); };
+  $('#bulkClear').onclick=()=>{ state.checked.clear(); render(); };
+  $('#bulkConfirm').onclick=()=>{ const ids=[...state.checked].filter(id=>suggestedReady(tx.find(t=>t.id===id))); ids.forEach(id=>{const t=tx.find(x=>x.id===id); t.status='done'; t.resolved='Vinculada a '+t.cands[0].id;}); state.checked.clear(); const nx=pending()[0]; state.selected=nx?nx.id:null; if(nx){state.mode=defaultMode(nx); state.picked=nx.cands[0]?.id||null;} toast(`${ids.length} transações conciliadas em lote`, ()=>{ ids.forEach(id=>{const t=tx.find(x=>x.id===id); t.status='pending'; delete t.resolved;}); hideToast(); render(); }); render(); };
+  const cl=$('#confirmLink'); if(cl) cl.onclick=()=>resolve(state.selected,'Vinculada a '+state.picked);
+  const cc=$('#confirmCreate'); if(cc) cc.onclick=()=>resolve(state.selected,'Lançamento criado'+(state.rule?' · regra salva':''));
+  const ct=$('#confirmTransfer'); if(ct) ct.onclick=()=>resolve(state.selected,'Transferência conciliada');
+  const sw=$('#swSplit'); if(sw) sw.onclick=()=>{ state.split=!state.split; render(); };
+  const ru=$('#chkRule'); if(ru) ru.onchange=()=>{ state.rule=ru.checked; };
+  $('#btnClose').onclick=()=>toast('Progresso salvo — você pode continuar depois.', ()=>hideToast());
+  $('#btnFinish').onclick=()=>toast('Conciliação concluída e registrada na trilha de auditoria.', ()=>hideToast());
+}
+function bindRows(){ document.querySelectorAll('.row').forEach(r=>r.onclick=e=>{ if(e.target.closest('[data-quick],[data-undo],[data-chk]')) return; select(+r.dataset.id); }); }
+
+document.addEventListener('keydown',e=>{
+  const typing = /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+  if(e.key==='/' && !typing){ e.preventDefault(); $('#q').focus(); return; }
+  if(e.key==='z' && (e.ctrlKey||e.metaKey) && state.history.length){ e.preventDefault(); undo(state.history.pop().id); return; }
+  if(typing) return;
+  const v=visible(); const i=v.findIndex(x=>x.id===state.selected);
+  if(e.key==='j'&&v.length) select(v[Math.min(v.length-1,i+1)].id);
+  if(e.key==='k'&&v.length) select(v[Math.max(0,i-1)].id);
+  if(e.key==='c'){ state.mode='create'; render(); } if(e.key==='v'){ state.mode='link'; render(); } if(e.key==='t'){ state.mode='transfer'; render(); }
+  if(e.key==='Enter'){ const b=$('#confirmLink:not([disabled])')||$('#confirmCreate')||$('#confirmTransfer'); if(b) b.click(); }
+});
+state.picked = tx[0].cands[0].id; render();
+</script>
+</body>
+</html>
