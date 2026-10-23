@@ -27,6 +27,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 
+import logoFull from "@/assets/Logo.svg";
+import logoFullWhite from "@/assets/Logo-white.svg";
 import logoMin from "@/assets/logo-min.svg";
 import logoMinWhite from "@/assets/logo-min-white.svg";
 import { Icon as GbIcon } from "@/components/ui/Icon";
@@ -131,7 +133,8 @@ function NavRailContent({
         flexShrink={0}
       >
         <Image
-          src={isDark ? logoMinWhite : logoMin}
+          // DS: logo horizontal completo (CERNE) com a sidebar aberta; só o "C" quando colapsada.
+          src={collapsed ? (isDark ? logoMinWhite : logoMin) : (isDark ? logoFullWhite : logoFull)}
           alt="GB Cerne"
           h="28px"
           w="auto"

@@ -60,28 +60,6 @@ function isItemActive(item: NavSubItem, activePath: string): boolean {
   return !!item.children?.some((c) => activePath === c.path);
 }
 
-function NavHeader({ module }: { module: NavModule }) {
-  const { languageGB } = useLanguage();
-  const label = languageGB.sidebar.navigation[module.id] ?? module.label;
-  return (
-    // Sem header verde (Ajustes Globais): fundo neutro do próprio painel,
-    // ícone/rótulo em cor neutra de título.
-    <Flex
-      h="44px"
-      flexShrink={0}
-      align="center"
-      gap={2}
-      px={3}
-    >
-      <Box as="span" display="flex" color="sidebarTitleColor" flexShrink={0}>
-        <GbIcon name={module.icon} size={16} />
-      </Box>
-      <Text fontSize="md" fontWeight="bold" color="sidebarTitleColor" letterSpacing="-0.1px">
-        {label}
-      </Text>
-    </Flex>
-  );
-}
 
 function NavItemButton({
   item,
@@ -264,7 +242,7 @@ function NavGroupSection({
         w="100%"
         align="center"
         gap={1.5}
-        fontSize="12px"
+        fontSize="11px" // DS: t.font.size['2xs'] nos rótulos de grupo
         fontWeight="medium"
         color="sidebarSubtitleColor"
         letterSpacing="0.5px"
@@ -276,7 +254,7 @@ function NavGroupSection({
         _hover={{ bg: "sidebarItemHoverBG" }}
         transition="background-color 0.1s ease"
       >
-        <Text as="span" flex="1" textAlign="left">
+        <Text as="span" flex="1" textAlign="left" fontSize="inherit" letterSpacing="inherit">
           {groupLabel}
         </Text>
         {/* Chevron padronizado (Ajustes Globais): fechado `>` (rotate 0) /
@@ -415,8 +393,6 @@ export function SecondaryNav({ module }: SecondaryNavProps) {
       flexShrink={0}
       transition="width 0.2s ease, min-width 0.2s ease"
     >
-      {!collapsed && <NavHeader module={module} />}
-
       <Box
         className="nav-scroll"
         flex="1"
