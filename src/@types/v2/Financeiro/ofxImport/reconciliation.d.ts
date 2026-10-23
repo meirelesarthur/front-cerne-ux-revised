@@ -73,6 +73,46 @@ export interface OfxReconciliationItem {
    *  `matched_movement_uuid` preenchido = casado mas AINDA NÃO aplicado
    *  (aparece como tal até o usuário disparar "Aplicar Conciliação"). */
   reconciled: boolean;
+  /**
+   * FASE 3 (proposta de UX da conciliação) — candidatos ORDENADOS por `score` desc. OPCIONAL: o
+   * backend atual não envia; sem o campo a tela cai no comportamento anterior (confirmar todas
+   * as linhas já casadas). Contrato sugerido ao backend em `docs/ux/funcionalidades/conciliacao-ofx.md`.
+   */
+  candidates?: OfxReconciliationCandidate[];
+}
+
+// ============================================
+// CANDIDATOS (FASE 3) — título(s)/movimento(s) que podem explicar uma transação do extrato.
+// ============================================
+
+export interface OfxReconciliationReason {
+  /** Texto curto já pronto para exibir (ex.: "Valor igual", "Mesmo fornecedor"). */
+  label: string;
+  /** `true` = critério atendido (✓); `false` = parcial/aproximado (≈). */
+  matched: boolean;
+}
+
+export interface OfxReconciliationCandidate {
+  /** Identificador do candidato (movimento ou título; "A+B" para soma de vários). */
+  id: string;
+  title: string;
+  subtitle: string;
+  /** 0–100. ≥90 = alta confiança; 60–89 = média; <60 = baixa. */
+  score: number;
+  reasons: OfxReconciliationReason[];
+  /** `true` quando o candidato é a SOMA de 2+ títulos que fecha o valor. */
+  multi?: boolean;
+}
+
+/** Escolha do usuário para uma linha — corpo de `POST …/reconciliation/confirm`. */
+export interface OfxReconciliationConfirmPick {
+  fit_id: string;
+  candidate_id: string;
+}
+
+export interface OfxReconciliationConfirmResult extends OfxReconciliationResult {
+  /** Linhas confirmadas agora, com o movimento resultante (base do Desfazer). */
+  confirmed: { fit_id: string; matched_movement_uuid: string }[];
 }
 
 // ============================================

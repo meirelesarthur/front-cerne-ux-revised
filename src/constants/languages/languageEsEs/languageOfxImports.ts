@@ -98,6 +98,27 @@ export const languageOfxImports: ModuleOfxImports = {
       backToHub: 'Volver',
       loadError: 'No fue posible cargar la conciliación bancaria.',
       workspace: {
+        matching: {
+          chipReview: 'Revisar',
+          reviewTitle: 'Sugerencia por revisar',
+          reviewBody: 'Encontramos títulos parecidos, pero con menos certeza. Verifique antes de confirmar.',
+          modeMatch: 'Sugerencias',
+          modeSearch: 'Buscar título',
+          confirmLink: 'Confirmar vínculo',
+          pick: 'Elija el título correcto para vincular a esta transacción.',
+          high: 'Alta confianza',
+          medium: 'Media confianza',
+          low: 'Baja confianza',
+          selected: 'seleccionadas',
+          confirmSelected: 'Confirmar seleccionadas',
+          confirmHigh: 'Confirmar todas con alta confianza',
+          clear: 'Limpiar',
+          selectVisible: 'Seleccionar visibles',
+          selectRow: 'Seleccionar transacción',
+          done: 'conciliadas',
+          partial: 'Algunas filas no pudieron conciliarse.',
+          noneEligible: 'Ninguna de las seleccionadas tiene sugerencia para confirmar.',
+        },
         panel: {
           modes: {
             link: 'Vincular a título',

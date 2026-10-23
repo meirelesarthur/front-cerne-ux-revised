@@ -28,7 +28,11 @@
 import api from '@/services/api';
 
 import type { Response } from '@/@types/response-api';
-import type { OfxReconciliationResult } from '@/@types/v2/Financeiro/ofxImport/reconciliation';
+import type {
+  OfxReconciliationConfirmPick,
+  OfxReconciliationConfirmResult,
+  OfxReconciliationResult,
+} from '@/@types/v2/Financeiro/ofxImport/reconciliation';
 
 // GET — preview puro, nunca dispara mutação. Chamador NUNCA faz polling
 // (DoD da Tarefa) — só refetch explícito após uma ação do usuário (criar
@@ -54,4 +58,17 @@ async function applyOfxReconciliation(
   return data;
 }
 
-export { applyOfxReconciliation, getOfxReconciliationPreview };
+// FASE 3 — confirma por linha/lote o candidato escolhido (`POST …/reconciliation/confirm`).
+// Não existe no backend atual: a tela só o chama quando o preview traz `candidates`.
+async function confirmOfxReconciliation(
+  ofxImportUuid: string,
+  picks: OfxReconciliationConfirmPick[]
+): Promise<Response<OfxReconciliationConfirmResult>> {
+  const { data } = await api.V2.post<Response<OfxReconciliationConfirmResult>>(
+    `/ofx-imports/${ofxImportUuid}/reconciliation/confirm`,
+    { items: picks }
+  );
+  return data;
+}
+
+export { applyOfxReconciliation, confirmOfxReconciliation, getOfxReconciliationPreview };

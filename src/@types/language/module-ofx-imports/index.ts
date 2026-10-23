@@ -102,6 +102,27 @@ export interface ModuleOfxImports {
       backToHub: string;
       loadError: string;
       workspace: {
+        matching: {
+          chipReview: string;
+          reviewTitle: string;
+          reviewBody: string;
+          modeMatch: string;
+          modeSearch: string;
+          confirmLink: string;
+          pick: string;
+          high: string;
+          medium: string;
+          low: string;
+          selected: string;
+          confirmSelected: string;
+          confirmHigh: string;
+          clear: string;
+          selectVisible: string;
+          selectRow: string;
+          done: string;
+          partial: string;
+          noneEligible: string;
+        };
         panel: {
           modes: {
             link: string;

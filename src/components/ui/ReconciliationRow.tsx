@@ -26,6 +26,10 @@ export interface ReconciliationRowProps {
   onSelect: () => void;
   /** Ação rápida (aparece no hover/seleção). */
   action?: ReactNode;
+  /** Seleção em lote: presente = mostra a caixa de marcar. */
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+  checkLabel?: string;
 }
 
 export function ReconciliationRow({
@@ -38,6 +42,9 @@ export function ReconciliationRow({
   selected = false,
   onSelect,
   action,
+  checked = false,
+  onCheckedChange,
+  checkLabel,
 }: ReconciliationRowProps) {
   const isIn = direction === 'in';
   return (
@@ -66,6 +73,16 @@ export function ReconciliationRow({
       _hover={{ bg: selected ? 'green.50' : 'semanticNeutral.100' }}
       css={{ '&:hover .row-action, &[data-selected] .row-action': { opacity: 1 } }}
     >
+      {onCheckedChange && (
+        <input
+          type="checkbox"
+          checked={checked}
+          aria-label={checkLabel ?? title}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => onCheckedChange(e.target.checked)}
+          style={{ accentColor: 'var(--chakra-colors-green-600)', width: 16, height: 16, flexShrink: 0, cursor: 'pointer' }}
+        />
+      )}
       <Flex
         align="center"
         justify="center"

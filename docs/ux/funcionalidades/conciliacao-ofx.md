@@ -129,6 +129,28 @@ Tempo por linha conciliada · % de linhas conciliadas com 1 clique · taxa de su
 
 ## Registro de edições
 
+### UX-conciliacao-003 · Fase 3 · Candidatos com score e motivos, confirmação por linha e em lote — 2026-10-23
+- **Status:** implementada no front (validada no navegador contra o **backend simulado** da API local de dev) · **Impacto Dev:** **exige backend** (contrato abaixo); sem ele a tela cai no comportamento da fase 2
+- **O que mudou:** cada transação pode trazer `candidates[]` com `score` (0–100) e `reasons[]` (✓ atendido / ≈ aproximado). O estado da linha passa a depender da confiança: **≥ 90% = Sugestão pronta**, **< 90% = Revisar · N%**, sem candidato = Sem sugestão. O painel ganha a aba **Sugestões** (cartões com motivos e medidor de confiança por faixa: alta ≥ 90, média 60–89, baixa < 60), seleção por rádio e **Confirmar vínculo**.
+- **Confirmação por linha** (botão *Confirmar* na linha ou no painel) e **em lote**: *Confirmar todas com alta confiança (N)* na aba Sugestões e *Confirmar selecionadas* (caixas de seleção + barra de ações; linhas sem sugestão são ignoradas com aviso). Todas com **Desfazer** (toast, 9 s) sobre o `matched_movement_uuid` devolvido.
+- **Compatível com o backend atual:** sem `candidates`, a linha casada continua sendo "sugestão pronta (100%)" e o Confirmar cai no fluxo legado (aplica todas, com diálogo).
+- **Componentes novos (kit):** `ConfidenceMeter`, `MatchCandidateCard`, `BulkActionBar` (porte do DS); `ReconciliationRow` ganhou seleção (`checked/onCheckedChange`).
+- **i18n:** `reconciliation.workspace.matching` (PT-BR/EN-US/ES-ES). Os textos dos *motivos* vêm prontos do backend (`reasons[].label`).
+- **Pendente (fases 4–5):** regras ("lembrar para parecidas"), auto-confirmar por regra validada, atalhos `Enter`/`C`/`V`, auditoria visível, contrapartida de transferência.
+
+#### Contrato proposto ao backend (fase 3)
+`GET /ofx-imports/{uuid}/reconciliation` — cada item ganha (opcional):
+```json
+"candidates": [{
+  "id": "CP-877", "title": "Sementes — Fornecedor Teste SA", "subtitle": "Título a pagar · venc. 03/10 · Parcela 2/3",
+  "score": 97, "multi": false,
+  "reasons": [{ "label": "Valor igual", "matched": true }, { "label": "Valor ≈ R$ 1.250,00", "matched": false }]
+}]
+```
+(ordenados por `score` desc; `id` pode ser `"A+B"` quando 2+ títulos somam o valor.)
+
+`POST /ofx-imports/{uuid}/reconciliation/confirm` — corpo `{ "items": [{ "fit_id": "F001", "candidate_id": "CR-1042" }] }`; resposta = o mesmo `OfxReconciliationResult` + `"confirmed": [{ "fit_id", "matched_movement_uuid" }]` (linhas efetivamente conciliadas — base do Desfazer). Linhas inválidas/já conciliadas são ignoradas, não falham o lote. Sugestão de pontuação: valor (peso maior), parte (cliente/fornecedor), data de vencimento, soma de títulos; limiar de "pronta" configurável (default 90).
+
 ### UX-conciliacao-002 · Fase 2 · Painel inline (Vincular / Criar / Transferência), rateio ao vivo e Desfazer — 2026-10-23
 - **Status:** implementada (validada no navegador) · **Impacto Dev:** só front; **mudança em componente compartilhado** (`MovementAllocationEditor`, também usado em Mov. Caixa/Bancário)
 - **O que mudou:** os modais *Novo Movimento* e *Baixa de título* viraram **painel inline** ao lado da lista, com seletor `Vincular a título · Criar lançamento · Transferência`. A lógica/validação é a mesma dos modais (mesmos formulários, variante `panel` via `FormSurface`); **Transferência** abre o mesmo formulário com Tp. Categoria = T. Sugestão pronta: *Confirmar sugestões* ou *Vincular a outro título*.

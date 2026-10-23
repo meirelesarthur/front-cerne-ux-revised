@@ -27,6 +27,9 @@ import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { FormContainer } from '@/components/Layout/FormContainer';
 import { Badge } from '@/components/ui/Badge';
 import { Icon } from '@/components/ui/Icon';
+import { BulkActionBar } from '@/components/ui/BulkActionBar';
+import { HIGH_CONFIDENCE } from '@/components/ui/ConfidenceMeter';
+import { MatchCandidateCard } from '@/components/ui/MatchCandidateCard';
 import { QueueTabs } from '@/components/ui/QueueTabs';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { ReconciliationDetailPanel } from '@/components/ui/ReconciliationDetailPanel';
@@ -46,6 +49,7 @@ import { queryKey } from '@/constants/query-key';
 import { getOfxImport } from '@/services/v2/Financeiro/OfxImports/ofx-import-service';
 import {
   applyOfxReconciliation,
+  confirmOfxReconciliation,
   getOfxReconciliationPreview,
 } from '@/services/v2/Financeiro/OfxImports/ofx-reconciliation-service';
 import { unreconcileMovement } from '@/services/v2/Movements/movement-service';
@@ -66,19 +70,34 @@ function formatCurrencyBRL(value: number): string {
   return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-type ItemState = 'ready' | 'noMatch' | 'reconciled';
+// `review` = há candidatos, mas com confiança abaixo do limiar (precisa de olho humano).
+type ItemState = 'ready' | 'review' | 'noMatch' | 'reconciled';
 type TabKey = 'review' | 'ready' | 'noMatch' | 'reconciled';
 
+const hasCandidates = (item: OfxReconciliationItem) => (item.candidates?.length ?? 0) > 0;
+
+/** Melhor pontuação da linha: candidato do backend (fase 3) ou 100 se já veio casada (legado). */
+const topScore = (item: OfxReconciliationItem): number | null =>
+  item.candidates?.[0]?.score ?? (item.matched_movement_uuid ? 100 : null);
+
 /** Estado de uma linha a partir do que o backend entrega (ver `OfxReconciliationItem`). */
-const stateOf = (item: OfxReconciliationItem): ItemState =>
-  item.reconciled ? 'reconciled' : item.matched_movement_uuid ? 'ready' : 'noMatch';
+const stateOf = (item: OfxReconciliationItem): ItemState => {
+  if (item.reconciled) return 'reconciled';
+  const score = topScore(item);
+  if (score === null) return 'noMatch';
+  return score >= HIGH_CONFIDENCE ? 'ready' : 'review';
+};
 
 const belongsToTab = (state: ItemState, tab: TabKey) =>
   tab === 'review' ? state !== 'reconciled' : tab === state;
 
-/** Modo do painel: `overview` (sugestão pronta) ou um dos 3 caminhos de conciliação inline. */
-type PanelMode = 'overview' | 'link' | 'create' | 'transfer';
-const defaultModeFor = (state: ItemState): PanelMode => (state === 'ready' ? 'overview' : 'create');
+/**
+ * Modo do painel: `match` (candidatos com score), `overview` (sugestão legada, só confirmar tudo)
+ * ou um dos 3 caminhos de conciliação inline.
+ */
+type PanelMode = 'match' | 'overview' | 'link' | 'create' | 'transfer';
+const defaultModeFor = (item: OfxReconciliationItem): PanelMode =>
+  hasCandidates(item) ? 'match' : stateOf(item) === 'ready' ? 'overview' : 'create';
 
 export default function OfxReconciliationTab() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -95,6 +114,9 @@ export default function OfxReconciliationTab() {
   const [search, setSearch] = useState('');
   const [mode, setMode] = useState<PanelMode>('create');
   const lastApplied = useRef<string[]>([]);
+  // Seleção em lote (fit_id) e candidato escolhido por linha (default = o de maior score).
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [pickedCandidate, setPickedCandidate] = useState<Record<string, string>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [movementToUnreconcile, setMovementToUnreconcile] = useState<{
     uuid: string;
@@ -141,7 +163,7 @@ export default function OfxReconciliationTab() {
     for (const i of items) {
       const s = stateOf(i);
       if (s !== 'reconciled') c.review += 1;
-      c[s] += 1;
+      if (s !== 'review') c[s] += 1;
     }
     return c;
   }, [items]);
@@ -185,8 +207,21 @@ export default function OfxReconciliationTab() {
 
   // Ao trocar de transação, o painel volta ao modo padrão do estado dela.
   useEffect(() => {
-    if (selectedState) setMode(defaultModeFor(selectedState));
+    if (selected) setMode(defaultModeFor(selected));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId, selectedState]);
+
+  /** Candidato escolhido na linha (o do usuário ou o de maior score). */
+  const chosenCandidateId = (item: OfxReconciliationItem) =>
+    pickedCandidate[item.fit_id] ?? item.candidates?.[0]?.id ?? null;
+
+  const toggleChecked = (fitId: string, value: boolean) =>
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (value) next.add(fitId);
+      else next.delete(fitId);
+      return next;
+    });
 
   function navigate(delta: -1 | 1) {
     if (visibleItems.length === 0) return;
@@ -205,6 +240,44 @@ export default function OfxReconciliationTab() {
     }
     refetchReconciliation();
   }
+
+  // ---- FASE 3: confirmação POR LINHA/LOTE do candidato escolhido ----
+  const confirmMutation = useMutation({
+    mutationFn: (picks: { fit_id: string; candidate_id: string }[]) => confirmOfxReconciliation(uuid!, picks),
+    onSuccess: (response, picks) => {
+      const confirmed = response.data.confirmed ?? [];
+      setChecked(new Set());
+      toaster.success({
+        title: text.actions.apply,
+        description: `${confirmed.length} ${ws.matching.done}`,
+        duration: 9000,
+        action: { label: ws.panel.undo, onClick: () => undoApplied(confirmed.map((c) => c.matched_movement_uuid)) },
+      });
+      if (confirmed.length < picks.length) {
+        toaster.create({ type: 'warning', title: text.actions.apply, description: ws.matching.partial });
+      }
+      refetchReconciliation();
+    },
+    onError: (error) => {
+      toaster.error({ title: text.actions.apply, description: extractApiErrorMessage(error) ?? text.actions.applyError });
+    },
+  });
+
+  /** Confirma as linhas informadas com o candidato escolhido; ignora as sem candidato. */
+  function confirmItems(target: OfxReconciliationItem[]) {
+    const picks = target
+      .filter((i) => !i.reconciled)
+      .map((i) => ({ fit_id: i.fit_id, candidate_id: chosenCandidateId(i) }))
+      .filter((p): p is { fit_id: string; candidate_id: string } => !!p.candidate_id);
+    if (picks.length === 0) {
+      toaster.create({ type: 'info', title: text.actions.apply, description: ws.matching.noneEligible });
+      return;
+    }
+    confirmMutation.mutate(picks);
+  }
+
+  const readyWithCandidates = items.filter((i) => stateOf(i) === 'ready' && hasCandidates(i));
+  const readyLegacy = items.filter((i) => stateOf(i) === 'ready' && !hasCandidates(i));
 
   function requestConfirm() {
     lastApplied.current = items
@@ -256,7 +329,11 @@ export default function OfxReconciliationTab() {
   const stateChip = (item: OfxReconciliationItem) => {
     const s = stateOf(item);
     if (s === 'reconciled') return <Badge variant="success" label={ws.chips.reconciled} />;
-    if (s === 'ready') return <Badge variant="info" label={ws.chips.ready} />;
+    const score = topScore(item);
+    if (s === 'ready') {
+      return <Badge variant="info" label={hasCandidates(item) ? `${ws.chips.ready} · ${score}%` : ws.chips.ready} />;
+    }
+    if (s === 'review') return <Badge variant="warning" label={`${ws.matching.chipReview} · ${score}%`} />;
     return <Badge variant="neutral" label={ws.chips.noMatch} />;
   };
   const classificationBadge = (item: OfxReconciliationItem) =>
@@ -304,9 +381,18 @@ export default function OfxReconciliationTab() {
             extra={classificationBadge(item)}
             selected={item.fit_id === selectedId}
             onSelect={() => setSelectedId(item.fit_id)}
+            checked={checked.has(item.fit_id)}
+            onCheckedChange={canEdit && s !== 'reconciled' ? (v) => toggleChecked(item.fit_id, v) : undefined}
+            checkLabel={ws.matching.selectRow}
             action={
               canEdit && s === 'ready' ? (
-                <Button title={ws.detail.confirmOne} size="sm" onClick={requestConfirm} />
+                <Button
+                  title={ws.detail.confirmOne}
+                  size="sm"
+                  // Com candidatos: confirma ESTA linha (backend por linha); sem: fluxo legado (confirma todas).
+                  onClick={hasCandidates(item) ? () => confirmItems([item]) : requestConfirm}
+                  loading={confirmMutation.isPending}
+                />
               ) : undefined
             }
           />
@@ -317,11 +403,14 @@ export default function OfxReconciliationTab() {
   // ---- Detalhe ----
   // Formulários INLINE (mesmos formulários dos antigos modais, em variante `panel`): o
   // usuário decide ao lado da lista, sem perder o contexto.
-  const backToDefault = () => selectedState && setMode(defaultModeFor(selectedState));
+  const backToDefault = () => selected && setMode(defaultModeFor(selected));
   const formProps = { isOpen: true, variant: 'panel' as const, onClose: backToDefault, onSuccess: refetchReconciliation };
 
+  // Com candidatos, "Sugestões" vira a 1ª aba e a busca manual passa a se chamar "Buscar título".
+  const selectedHasCandidates = !!selected && hasCandidates(selected);
   const modeOptions = [
-    { key: 'link' as const, label: ws.panel.modes.link },
+    ...(selectedHasCandidates ? [{ key: 'match' as const, label: ws.matching.modeMatch }] : []),
+    { key: 'link' as const, label: selectedHasCandidates ? ws.matching.modeSearch : ws.panel.modes.link },
     { key: 'create' as const, label: ws.panel.modes.create },
     { key: 'transfer' as const, label: ws.panel.modes.transfer },
   ];
@@ -336,7 +425,9 @@ export default function OfxReconciliationTab() {
       status={
         selectedState === 'ready'
           ? { tone: 'info', title: ws.detail.readyTitle, body: ws.detail.readyBody }
-          : selectedState === 'reconciled'
+          : selectedState === 'review'
+            ? { tone: 'neutral', title: ws.matching.reviewTitle, body: ws.matching.reviewBody }
+            : selectedState === 'reconciled'
             ? { tone: 'success', title: ws.detail.reconciledTitle, body: ws.detail.reconciledBody }
             : { tone: 'neutral', title: ws.detail.noMatchTitle, body: ws.detail.noMatchBody }
       }
@@ -350,6 +441,13 @@ export default function OfxReconciliationTab() {
               setMovementToUnreconcile({ uuid: selected.matched_movement_uuid, label: selected.memo })
             }
           />
+        ) : canEdit && mode === 'match' ? (
+          <Button
+            title={ws.matching.confirmLink}
+            onClick={() => confirmItems([selected])}
+            loading={confirmMutation.isPending}
+            disabled={!chosenCandidateId(selected)}
+          />
         ) : canEdit && selectedState === 'ready' && mode === 'overview' ? (
           <>
             <Button title={ws.panel.linkOther} variant="secondary" onClick={() => setMode('link')} />
@@ -361,11 +459,32 @@ export default function OfxReconciliationTab() {
       {canEdit && selectedState !== 'reconciled' && mode !== 'overview' && (
         <Box>
           <Flex align="center" justify="space-between" gap={3} mb={4} wrap="wrap">
-            <SegmentedControl options={modeOptions} value={mode} onChange={setMode} ariaLabel={ws.panel.modes.link} />
-            {selectedState === 'ready' && (
+            <SegmentedControl options={modeOptions} value={mode as (typeof modeOptions)[number]['key']} onChange={setMode} ariaLabel={ws.panel.modes.link} />
+            {selectedState === 'ready' && !selectedHasCandidates && (
               <Button title={ws.panel.back} variant="ghost" size="sm" onClick={() => setMode('overview')} />
             )}
           </Flex>
+
+          {mode === 'match' && selected.candidates && (
+            <Box>
+              <Text fontSize="base" color="fg.muted" mb={3}>
+                {ws.matching.pick}
+              </Text>
+              {selected.candidates.map((candidate) => (
+                <MatchCandidateCard
+                  key={candidate.id}
+                  name={`candidate-${selected.fit_id}`}
+                  title={candidate.title}
+                  subtitle={candidate.subtitle}
+                  score={candidate.score}
+                  reasons={candidate.reasons}
+                  selected={chosenCandidateId(selected) === candidate.id}
+                  onSelect={() => setPickedCandidate((prev) => ({ ...prev, [selected.fit_id]: candidate.id }))}
+                  meterLabels={{ high: ws.matching.high, medium: ws.matching.medium, low: ws.matching.low }}
+                />
+              ))}
+            </Box>
+          )}
 
           {mode === 'link' &&
             (selected.type === 'E' ? (
@@ -480,23 +599,57 @@ export default function OfxReconciliationTab() {
                   />
                 }
                 toolbar={
-                  <Flex align="center" gap={2} px={4} py={3}>
-                    <Input
-                      ref={searchRef}
-                      placeholder={`${text.search.placeholder} ( / )`}
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      size="sm"
-                      flex="1"
-                    />
-                    {canEdit && tab === 'ready' && counts.ready > 0 && (
-                      <Button
-                        title={`${ws.detail.confirmAction} (${counts.ready})`}
+                  <>
+                    <Flex align="center" gap={2} px={4} py={3}>
+                      <Input
+                        ref={searchRef}
+                        placeholder={`${text.search.placeholder} ( / )`}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                         size="sm"
-                        onClick={requestConfirm}
+                        flex="1"
                       />
+                      {canEdit && visibleItems.some((i) => !i.reconciled) && (
+                        <Button
+                          title={ws.matching.selectVisible}
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setChecked(new Set(visibleItems.filter((i) => !i.reconciled).map((i) => i.fit_id)))}
+                        />
+                      )}
+                      {canEdit && tab === 'ready' && readyWithCandidates.length > 0 && (
+                        <Button
+                          title={`${ws.matching.confirmHigh} (${readyWithCandidates.length})`}
+                          size="sm"
+                          onClick={() => confirmItems(readyWithCandidates)}
+                          loading={confirmMutation.isPending}
+                        />
+                      )}
+                      {canEdit && tab === 'ready' && readyLegacy.length > 0 && (
+                        <Button
+                          title={`${ws.detail.confirmAction} (${readyLegacy.length})`}
+                          size="sm"
+                          onClick={requestConfirm}
+                        />
+                      )}
+                    </Flex>
+                    {checked.size > 0 && (
+                      <BulkActionBar label={`${checked.size} ${ws.matching.selected}`}>
+                        <Button
+                          title={ws.matching.confirmSelected}
+                          size="sm"
+                          onClick={() => confirmItems(items.filter((i) => checked.has(i.fit_id) && hasCandidates(i)))}
+                          loading={confirmMutation.isPending}
+                        />
+                        <Button
+                          title={ws.matching.clear}
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setChecked(new Set())}
+                        />
+                      </BulkActionBar>
                     )}
-                  </Flex>
+                  </>
                 }
                 list={list}
                 detail={detail}

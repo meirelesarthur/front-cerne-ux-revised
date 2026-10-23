@@ -98,6 +98,27 @@ export const languageOfxImports: ModuleOfxImports = {
       backToHub: 'Back',
       loadError: 'Could not load the bank reconciliation.',
       workspace: {
+        matching: {
+          chipReview: 'Review',
+          reviewTitle: 'Suggestion to review',
+          reviewBody: 'We found similar titles, but with less certainty. Check before confirming.',
+          modeMatch: 'Suggestions',
+          modeSearch: 'Search title',
+          confirmLink: 'Confirm link',
+          pick: 'Pick the right title to link to this transaction.',
+          high: 'High confidence',
+          medium: 'Medium confidence',
+          low: 'Low confidence',
+          selected: 'selected',
+          confirmSelected: 'Confirm selected',
+          confirmHigh: 'Confirm all high-confidence',
+          clear: 'Clear',
+          selectVisible: 'Select visible',
+          selectRow: 'Select transaction',
+          done: 'reconciled',
+          partial: 'Some rows could not be reconciled.',
+          noneEligible: 'None of the selected rows has a suggestion to confirm.',
+        },
         panel: {
           modes: {
             link: 'Link to title',
