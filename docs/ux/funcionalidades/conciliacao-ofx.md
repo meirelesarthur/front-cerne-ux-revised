@@ -128,4 +128,12 @@ Tempo por linha conciliada · % de linhas conciliadas com 1 clique · taxa de su
 4. A diferença exibida considera o saldo contábil do sistema (precisa de endpoint) ou só o líquido dos pendentes (como no protótipo)?
 
 ## Registro de edições
-_Nenhuma implementação ainda — esta proposta aguarda aprovação._
+### UX-conciliacao-001 · Fase 1 · Casca mestre–detalhe, abas, resumo em R$ e Confirmar — 2026-10-23
+- **Status:** implementada (validada no navegador com dados de dev) · **Impacto Dev:** só front; sem mudança de contrato
+- **O que mudou:** a lista plana de cartões virou workspace: resumo (entradas/saídas a conciliar e já conciliado em R$ + anel de progresso), abas *Para revisar · Sugestões prontas · Sem correspondência · Conciliadas* com contagem, lista com selo de estado e painel de detalhe (situação + ações). Busca, `J/K` e `/` funcionam. Sugestões prontas têm **Confirmar** na linha e **Confirmar sugestões (N)** na aba.
+- **Limitação do backend (importante):** o `POST …/reconciliation` aplica **todas** as linhas casadas; não há confirmação por linha. Por isso "Confirmar" abre um diálogo que explica isso e o botão fala em *sugestões* (plural). Pedido ao backend: confirmar por `fit_id`/lote (fase 3).
+- **Mantido da tela antiga:** modais de vincular título e criar movimento (fase 2 troca por painel), banner de aplicações em lote, Desconciliar, permissões.
+- **Componentes novos (kit):** `ui/ReconciliationWorkspace`, `ReconciliationSummary`, `ReconciliationRow`, `ReconciliationDetailPanel`, `QueueTabs`, `ProgressRing`. `FormContainer` ganhou a prop `fullBleed`.
+- **i18n:** novo bloco `ofxImports.ofxImport.reconciliation.workspace` (PT-BR/EN-US/ES-ES).
+- **Como validar:** subir a API local (`scripts/dev-db`) e abrir `/financeiro/ofx/f0000020-0000-4000-8000-000000000001/conciliacao` (dados sintéticos com estado em memória; reiniciar a API reseta).
+- **Pendente (fases 2–5):** painel com abas Vincular/Criar/Transferência, candidatos com score, regras, desfazer em toast, lote por limiar, auditoria.

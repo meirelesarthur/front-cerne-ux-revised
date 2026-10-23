@@ -23,6 +23,7 @@ import { peopleRoutes } from './resources/people.mjs';
 import { catalogRoutes } from './resources/catalog.mjs';
 import { financeRoutes } from './resources/finance.mjs';
 import { productRoutes } from './resources/products.mjs';
+import { ofxRoutes } from './resources/ofx.mjs';
 
 const PORT = Number(process.env.DEV_API_PORT ?? 8080);
 const ALLOWED_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -33,6 +34,7 @@ const routes = [
   ...catalogRoutes,
   ...financeRoutes,
   ...productRoutes,
+  ...ofxRoutes,
 ];
 
 function cors(req, res) {

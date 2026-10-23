@@ -101,6 +101,49 @@ export interface ModuleOfxImports {
       pageTitlePrefix: string;
       backToHub: string;
       loadError: string;
+      workspace: {
+        summary: {
+          entries: string;
+          exits: string;
+          reconciled: string;
+          progress: string;
+          transactions: string;
+          ofReconciled: string;
+        };
+        tabs: {
+          review: string;
+          ready: string;
+          noMatch: string;
+          reconciled: string;
+        };
+        chips: {
+          ready: string;
+          noMatch: string;
+          reconciled: string;
+        };
+        kinds: {
+          entry: string;
+          exit: string;
+        };
+        detail: {
+          emptyTitle: string;
+          emptyBody: string;
+          readyTitle: string;
+          readyBody: string;
+          noMatchTitle: string;
+          noMatchBody: string;
+          reconciledTitle: string;
+          reconciledBody: string;
+          confirmOne: string;
+          confirmAction: string;
+          confirmDialogTitle: string;
+          confirmDialogDescription: string;
+          emptyTab: string;
+          emptyTabHint: string;
+          allDoneTitle: string;
+          allDoneHint: string;
+        };
+      };
       cards: {
         total: string;
         matched: string;

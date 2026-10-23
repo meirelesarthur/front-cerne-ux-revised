@@ -26,6 +26,9 @@ Convenções do porte:
 | Sidebar/NavRail (nível 1) | `Layout/NavRail.tsx` | **portado** | todas as telas | ícones HugeIcons (15px, 16px colapsado), chevrons 13px |
 | SecondaryNav (nível 2) | `Layout/SecondaryNav.tsx` | **portado** | todas as telas | ícones por item/grupo/filho (14/13px), favorito preenchido, chevrons 10-11px |
 | Árvore de navegação | `config/v2/navigationTree.ts` | **convertida** | menu, Home, busca | 407 ícones Lucide → papéis do DS (por `id` do `menuData` do DS; 28 por tabela de fallback) |
+| ReconciliationWorkspace / Summary / Row / DetailPanel | `ui/Reconciliation*.tsx` (novos) | **evolução do DS** | Conciliação OFX | mestre–detalhe com resumo em R$, linha com ação rápida e painel de situação; o `ReconciliationWorkspace` do DS era só 2 colunas |
+| QueueTabs | `ui/QueueTabs.tsx` (novo) | novo | Conciliação OFX | abas de fila com contador |
+| ProgressRing | `ui/ProgressRing.tsx` (novo) | novo | Conciliação OFX | anel 0–100 em CSS |
 | Button (secondary) | `styles/recipes/button.ts` | parcial | todo o app | borda neutra 1.5px com props separadas (o shorthand `border` descartava a cor); raio 8; `sm` 34px |
 | FormPageHeader (subtítulo) | `Layout/FormContainer.tsx` | parcial | wizards passam `subtitle` | |
 | Input | `styles/recipes/input.ts` | parcial | todo o app | raio 8, glow de foco |

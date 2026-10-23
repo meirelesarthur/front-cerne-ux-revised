@@ -1,39 +1,36 @@
 // src/pages/Financeiro/OfxImport/Reconciliation/OfxReconciliationTab.tsx
 // -----------------------------------------------------------------------------
-// Workspace de CONCILIAÇÃO BANCÁRIA da Importação OFX (F-114,
-// 97-Esteiras/064, TASK-064-OFX-FE-02). Rota
-// `/financeiro/ofx/:uuid/conciliacao` (guardada `import_ofx_edit`, ação
-// "Conciliar" de SURF-013 já navega para cá desde a TASK-064-OFX-FE-01).
+// Workspace de CONCILIAÇÃO BANCÁRIA da Importação OFX. Rota
+// `/financeiro/ofx/:uuid/conciliacao` (guardada `import_ofx_edit`).
 //
-// Referência UX: `GB.Cerne.UX/src/components/ui/ReconciliationWorkspace.tsx`
-// + `OfxImportPage.tsx` (commit âncora `24bd91603a6ee4e19b58fa5efe2221835c83e306`)
-// — duas colunas conceituais (transação bancária × movimento casado)
-// ADAPTADAS para uma lista única de cards (`Box`/`Flex` do Chakra v3,
-// arquitetura-ofx-frontend.md §2) com status por linha, mais fiel ao
-// `ReconciliationsList` real do legado (uma tabela, não duas colunas soltas)
-// — o protótipo não cobria cards de totalização/filtro/lote/writeoff
-// (EXTENSAO_ADITIVA, §5 da arquitetura), reproduzidos aqui com os
-// componentes reais do catálogo `GB.Cerne.FrontEnd` (`Button`, `Badge`,
-// `Input`, `Actions`), nunca importados do `ux_root`.
+// FASE 1 da proposta `docs/ux/funcionalidades/conciliacao-ofx.md`: casca mestre–detalhe
+// (fila à esquerda, painel à direita), abas por estado, resumo em R$ e ação rápida
+// "Confirmar" nas sugestões prontas — tudo COMPOSTO por componentes do kit
+// (`ReconciliationWorkspace/Summary/Row/DetailPanel`, `QueueTabs`, `Badge`). Esta página só
+// carrega dados, deriva estados e liga as ações; os modais atuais (vincular título,
+// criar movimento) seguem como estão até a fase 2 (painel com abas, sem modal).
 //
-// DoD: `GET` (preview) NUNCA dispara mutação — só é chamado no mount e após
-// uma ação explícita do usuário (nunca polling); `POST` (aplicar) invalida
-// a MESMA query; cascatas dos modais preservadas 1:1 (ver cada modal
-// dedicado); soma do rateio validada antes do submit (Yup do
-// `movement-schema.ts`, reusado); banner de lote só quando
-// `pending_investments` não vazio; "Desconciliar" só em itens `reconciled`.
+// Contrato do backend preservado: `GET` (preview) não muta; `POST` aplica TODAS as linhas já
+// casadas (o servidor ainda não confirma uma linha só — por isso o "Confirmar" pede
+// confirmação explícita e fala em "sugestões", no plural); "Desconciliar" só em `reconciled`.
 // -----------------------------------------------------------------------------
 
-import { ElementType, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Input, SimpleGrid, Skeleton, Text } from '@chakra-ui/react';
+import { Box, Flex, Input, Skeleton, Text } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { FiGitMerge, FiPlus, FiSearch, FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { FormContainer } from '@/components/Layout/FormContainer';
+import { Badge } from '@/components/ui/Badge';
+import { Icon } from '@/components/ui/Icon';
+import { QueueTabs } from '@/components/ui/QueueTabs';
+import { ReconciliationDetailPanel } from '@/components/ui/ReconciliationDetailPanel';
+import { ReconciliationRow } from '@/components/ui/ReconciliationRow';
+import { ReconciliationSummary } from '@/components/ui/ReconciliationSummary';
+import { ReconciliationWorkspace } from '@/components/ui/ReconciliationWorkspace';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -67,6 +64,16 @@ function formatCurrencyBRL(value: number): string {
   return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+type ItemState = 'ready' | 'noMatch' | 'reconciled';
+type TabKey = 'review' | 'ready' | 'noMatch' | 'reconciled';
+
+/** Estado de uma linha a partir do que o backend entrega (ver `OfxReconciliationItem`). */
+const stateOf = (item: OfxReconciliationItem): ItemState =>
+  item.reconciled ? 'reconciled' : item.matched_movement_uuid ? 'ready' : 'noMatch';
+
+const belongsToTab = (state: ItemState, tab: TabKey) =>
+  tab === 'review' ? state !== 'reconciled' : tab === state;
+
 type ActiveModal =
   | { kind: 'new-movement'; item: OfxReconciliationItem }
   | { kind: 'writeoff-expense'; item: OfxReconciliationItem }
@@ -79,17 +86,22 @@ export default function OfxReconciliationTab() {
   const { can } = usePermissions();
   const queryClient = useQueryClient();
   const text = languageGB.ofxImports.ofxImport.reconciliation;
+  const ws = text.workspace;
 
   const canEdit = can('import_ofx_edit');
 
+  const [tab, setTab] = useState<TabKey>('review');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [movementToUnreconcile, setMovementToUnreconcile] = useState<{
     uuid: string;
     label: string;
   } | null>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  // ---- Cabeçalho (código/descrição/conta) — reuso do service da FE-01. ----
+  // ---- Cabeçalho (código/descrição) ----
   const ofxImportQuery = useQuery({
     queryKey: [queryKey.financial.ofxImport, uuid],
     queryFn: () => getOfxImport(uuid!),
@@ -97,7 +109,7 @@ export default function OfxReconciliationTab() {
     select: (response) => response.data as OfxImportDetail,
   });
 
-  // ---- Preview de conciliação — GET puro, SEM polling (DoD). ----
+  // ---- Preview de conciliação — GET puro, SEM polling. ----
   const reconciliationQuery = useQuery({
     queryKey: [queryKey.financial.ofxReconciliation, uuid],
     queryFn: () => getOfxReconciliationPreview(uuid!),
@@ -106,52 +118,82 @@ export default function OfxReconciliationTab() {
     refetchOnWindowFocus: false,
   });
 
-  // UT-000753 (a) — `account` vem AGORA do próprio preview de conciliação
-  // (`data.account`, gate ÚNICO `import_ofx_edit`), não mais de
-  // `ofxImportQuery.data?.account` (`GET /ofx-imports/{uuid}`, gate
-  // SEPARADO `import_ofx_view`, fora do escopo desta correção). Fonte única
-  // para `accountUuid`/`accountLabel` consumidos por `NewMovementModal`/
-  // `BulkInvestmentBanner` abaixo.
   const accountUuid = reconciliationQuery.data?.account?.uuid;
   const accountLabel = reconciliationQuery.data?.account
     ? `${reconciliationQuery.data.account.bank} — ${reconciliationQuery.data.account.description}`
     : '';
-
-  // Conta de investimento vinculada (SURF-063) — UT-000753 (a, etapa b):
-  // `data.account.investment_account` AGORA vem no próprio preview de
-  // conciliação (`{uuid, description} | null`, gate ÚNICO `import_ofx_edit`,
-  // API_UT753 etapa b) — PAROU de depender de `GET /accounts/{uuid}`
-  // (`accounts_view`, nunca afrouxado). Nenhum `useQuery` extra necessário.
   const investmentAccount = reconciliationQuery.data?.account?.investment_account ?? null;
 
   function refetchReconciliation() {
     queryClient.invalidateQueries({ queryKey: [queryKey.financial.ofxReconciliation, uuid] });
   }
 
-  const items = reconciliationQuery.data?.items ?? [];
+  const items = useMemo(() => reconciliationQuery.data?.items ?? [], [reconciliationQuery.data]);
   const pendingInvestments = reconciliationQuery.data?.pending_investments ?? [];
   const totalItems = reconciliationQuery.data?.total_items ?? 0;
   const reconciledCount = reconciliationQuery.data?.reconciled_count ?? 0;
   const progressPercent = reconciliationQuery.data?.progress_percent ?? 0;
-  const pendingCount = totalItems - reconciledCount;
 
-  // SURF-062/Decisão F4 — busca client-side HONESTA: substring simples em
-  // descrição+data formatada, NUNCA um filtro de intervalo/período real
-  // (corrige o defeito legado FLD-11/POSSIVEL_LEGACY_DEFECT, sem replicar).
-  const filteredItems = useMemo(() => {
+  // ---- Derivados: contagens por aba, somas em R$, linhas visíveis ----
+  const counts = useMemo(() => {
+    const c = { review: 0, ready: 0, noMatch: 0, reconciled: 0 };
+    for (const i of items) {
+      const s = stateOf(i);
+      if (s !== 'reconciled') c.review += 1;
+      c[s] += 1;
+    }
+    return c;
+  }, [items]);
+
+  const money = useMemo(() => {
+    const sum = (f: (i: OfxReconciliationItem) => boolean) => items.filter(f).reduce((a, i) => a + i.value, 0);
+    const n = (f: (i: OfxReconciliationItem) => boolean) => items.filter(f).length;
+    return {
+      entries: sum((i) => i.type === 'E' && !i.reconciled),
+      entriesN: n((i) => i.type === 'E' && !i.reconciled),
+      exits: sum((i) => i.type === 'S' && !i.reconciled),
+      exitsN: n((i) => i.type === 'S' && !i.reconciled),
+      done: sum((i) => i.reconciled),
+      doneN: n((i) => i.reconciled),
+    };
+  }, [items]);
+
+  // Busca client-side honesta (substring em descrição + data + valor formatado).
+  const visibleItems = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return items;
     return items.filter((item) => {
-      const haystack = `${item.memo} ${formatDateBR(item.date)}`.toLowerCase();
-      return haystack.includes(term);
+      if (!belongsToTab(stateOf(item), tab)) return false;
+      if (!term) return true;
+      return `${item.memo} ${formatDateBR(item.date)} ${formatCurrencyBRL(item.value)}`
+        .toLowerCase()
+        .includes(term);
     });
-  }, [items, search]);
+  }, [items, tab, search]);
 
-  // ---- Aplicar Conciliação (bulk, POST) ----
+  // Seleção sempre válida: se a linha sumiu da aba, vai para a primeira visível.
+  useEffect(() => {
+    if (visibleItems.length === 0) {
+      if (selectedId !== null) setSelectedId(null);
+      return;
+    }
+    if (!visibleItems.some((i) => i.fit_id === selectedId)) setSelectedId(visibleItems[0].fit_id);
+  }, [visibleItems, selectedId]);
+
+  const selected = items.find((i) => i.fit_id === selectedId) ?? null;
+
+  function navigate(delta: -1 | 1) {
+    if (visibleItems.length === 0) return;
+    const index = visibleItems.findIndex((i) => i.fit_id === selectedId);
+    const next = Math.min(visibleItems.length - 1, Math.max(0, index + delta));
+    setSelectedId(visibleItems[next].fit_id);
+  }
+
+  // ---- Confirmar sugestões (POST aplica TODAS as linhas já casadas) ----
   const applyMutation = useMutation({
     mutationFn: () => applyOfxReconciliation(uuid!),
     onSuccess: () => {
       toaster.success({ title: text.actions.apply, description: text.actions.applySuccess });
+      setConfirmOpen(false);
       refetchReconciliation();
     },
     onError: (error) => {
@@ -159,22 +201,6 @@ export default function OfxReconciliationTab() {
       toaster.error({ title: text.actions.apply, description: message });
     },
   });
-
-  const hasMatchedPendingApply = items.some(
-    (item) => item.matched_movement_uuid && !item.reconciled
-  );
-
-  function handleApply() {
-    if (!hasMatchedPendingApply) {
-      toaster.create({
-        type: 'info',
-        title: text.actions.apply,
-        description: text.actions.applyNothingToApply,
-      });
-      return;
-    }
-    applyMutation.mutate();
-  }
 
   // ---- Desconciliar (PATCH, por item) ----
   const unreconcileMutation = useMutation({
@@ -193,223 +219,225 @@ export default function OfxReconciliationTab() {
     },
   });
 
-  function handleUnreconcileClick(item: OfxReconciliationItem) {
-    if (!item.matched_movement_uuid) return;
-    setMovementToUnreconcile({ uuid: item.matched_movement_uuid, label: item.memo });
-  }
-
-  function handleLinkTitle(item: OfxReconciliationItem) {
-    setActiveModal(
-      item.type === 'E' ? { kind: 'writeoff-income', item } : { kind: 'writeoff-expense', item }
-    );
-  }
-
-  function handleCreateMovement(item: OfxReconciliationItem) {
-    setActiveModal({ kind: 'new-movement', item });
-  }
+  const handleLinkTitle = (item: OfxReconciliationItem) =>
+    setActiveModal(item.type === 'E' ? { kind: 'writeoff-income', item } : { kind: 'writeoff-expense', item });
+  const handleCreateMovement = (item: OfxReconciliationItem) => setActiveModal({ kind: 'new-movement', item });
 
   const isLoading = checkLoadingStatus([ofxImportQuery as any, reconciliationQuery as any]);
 
+  // ---- Selo de estado por linha (Badge do kit) ----
+  const stateChip = (item: OfxReconciliationItem) => {
+    const s = stateOf(item);
+    if (s === 'reconciled') return <Badge variant="success" label={ws.chips.reconciled} />;
+    if (s === 'ready') return <Badge variant="info" label={ws.chips.ready} />;
+    return <Badge variant="neutral" label={ws.chips.noMatch} />;
+  };
+  const classificationBadge = (item: OfxReconciliationItem) =>
+    item.classification !== 'COMMON' ? (
+      <Badge
+        variant="purple"
+        label={item.classification === 'INVESTMENT' ? text.classification.investment : text.classification.redemption}
+      />
+    ) : undefined;
+
+  // ---- Lista ----
+  const list =
+    visibleItems.length === 0 ? (
+      <Box py={12} px={6} textAlign="center">
+        {counts.review === 0 && tab === 'review' ? (
+          <>
+            <Flex justify="center" color="green.600" mb={2}>
+              <Icon name="check-circle" size={26} />
+            </Flex>
+            <Text fontWeight="semibold">{ws.detail.allDoneTitle}</Text>
+            <Text fontSize="base" color="fg.muted">
+              {ws.detail.allDoneHint}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text fontWeight="semibold">{ws.detail.emptyTab}</Text>
+            <Text fontSize="base" color="fg.muted">
+              {ws.detail.emptyTabHint}
+            </Text>
+          </>
+        )}
+      </Box>
+    ) : (
+      visibleItems.map((item) => {
+        const s = stateOf(item);
+        return (
+          <ReconciliationRow
+            key={item.fit_id}
+            direction={item.type === 'E' ? 'in' : 'out'}
+            title={item.memo}
+            date={formatDateBR(item.date)}
+            amount={`${item.type === 'E' ? '+' : '−'} ${formatCurrencyBRL(item.value)}`}
+            chip={stateChip(item)}
+            extra={classificationBadge(item)}
+            selected={item.fit_id === selectedId}
+            onSelect={() => setSelectedId(item.fit_id)}
+            action={
+              canEdit && s === 'ready' ? (
+                <Button title={ws.detail.confirmOne} size="sm" onClick={() => setConfirmOpen(true)} />
+              ) : undefined
+            }
+          />
+        );
+      })
+    );
+
+  // ---- Detalhe ----
+  const detail = selected ? (
+    <ReconciliationDetailPanel
+      title={selected.memo}
+      meta={`${formatDateBR(selected.date)} · ${selected.type === 'E' ? ws.kinds.entry : ws.kinds.exit} · ${accountLabel}`}
+      amount={`${selected.type === 'E' ? '+' : '−'} ${formatCurrencyBRL(selected.value)}`}
+      direction={selected.type === 'E' ? 'in' : 'out'}
+      badges={classificationBadge(selected)}
+      status={
+        stateOf(selected) === 'ready'
+          ? { tone: 'info', title: ws.detail.readyTitle, body: ws.detail.readyBody }
+          : stateOf(selected) === 'reconciled'
+            ? { tone: 'success', title: ws.detail.reconciledTitle, body: ws.detail.reconciledBody }
+            : { tone: 'neutral', title: ws.detail.noMatchTitle, body: ws.detail.noMatchBody }
+      }
+    >
+      {canEdit && stateOf(selected) === 'reconciled' && (
+        <Button
+          title={text.actions.unreconcile}
+          variant="secondary"
+          onClick={() =>
+            selected.matched_movement_uuid &&
+            setMovementToUnreconcile({ uuid: selected.matched_movement_uuid, label: selected.memo })
+          }
+        />
+      )}
+      {canEdit && stateOf(selected) === 'ready' && (
+        <>
+          <Button title={text.actions.linkTitle} variant="secondary" onClick={() => handleLinkTitle(selected)} />
+          <Button title={ws.detail.confirmAction} onClick={() => setConfirmOpen(true)} />
+        </>
+      )}
+      {canEdit && stateOf(selected) === 'noMatch' && (
+        <>
+          <Button title={text.actions.linkTitle} variant="secondary" onClick={() => handleLinkTitle(selected)} />
+          <Button title={text.actions.createMovement} onClick={() => handleCreateMovement(selected)} />
+        </>
+      )}
+    </ReconciliationDetailPanel>
+  ) : (
+    <Box py={16} px={6} textAlign="center">
+      <Text fontWeight="semibold">{ws.detail.emptyTitle}</Text>
+      <Text fontSize="base" color="fg.muted">
+        {ws.detail.emptyBody}
+      </Text>
+    </Box>
+  );
+
+  const pendingTotal = counts.review;
+
   return (
     <FormContainer
+      fullBleed
       title={
         ofxImportQuery.data
           ? `${text.pageTitlePrefix} — ${ofxImportQuery.data.code}`
           : text.pageTitlePrefix
       }
       subtitle={ofxImportQuery.data?.description}
-      headerActions={
-        canEdit ? (
-          <Button
-            title={text.actions.apply}
-            icon={FiGitMerge as ElementType}
-            onClick={handleApply}
-            loading={applyMutation.isPending}
-            disabled={isLoading}
-          />
-        ) : undefined
-      }
     >
-      <Skeleton loading={isLoading} borderRadius="md">
+      <Skeleton loading={isLoading} borderRadius="md" height="100%">
         {reconciliationQuery.isError ? (
-          <Text fontSize="sm" color="fg.error">
+          <Text fontSize="sm" color="fg.error" p={6}>
             {text.loadError}
           </Text>
         ) : (
-          // Respiro externo do conjunto (cards + filtro + lista) alinhado ao
-          // padrão de telas de detalhe irmãs sob `FormContainer` sem footer
-          // (ex.: `RomaneioDetalhe`, `ServiceOrderDetalhe`) — o branch sem
-          // footer do `FormContainer` entrega os filhos crus, sem padding
-          // próprio, então cada tela de detalhe replica este wrapper.
-          <Box px={{ base: 4, md: 10 }} pb={8}>
-            {/* SURF-061 — cards de totalização. */}
-            <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} mb={6}>
-              <Box bg="bg.muted" borderRadius="lg" p={4}>
-                <Text fontSize="xs" color="fg.muted">
-                  {text.cards.total}
-                </Text>
-                <Text fontSize="2xl" fontWeight="bold">
-                  {totalItems}
-                </Text>
-              </Box>
-              <Box bg="bg.muted" borderRadius="lg" p={4}>
-                <Text fontSize="xs" color="fg.muted">
-                  {text.cards.matched}
-                </Text>
-                <Text fontSize="2xl" fontWeight="bold" color="green.500">
-                  {reconciledCount}
-                </Text>
-              </Box>
-              <Box bg="bg.muted" borderRadius="lg" p={4}>
-                <Text fontSize="xs" color="fg.muted">
-                  {text.cards.pending}
-                </Text>
-                <Text fontSize="2xl" fontWeight="bold" color="orange.500">
-                  {pendingCount}
-                </Text>
-              </Box>
-              <Box bg="bg.muted" borderRadius="lg" p={4}>
-                <Text fontSize="xs" color="fg.muted">
-                  {text.cards.progress}
-                </Text>
-                <Text fontSize="2xl" fontWeight="bold">
-                  {progressPercent}%
-                </Text>
-              </Box>
-            </SimpleGrid>
-
-            {/* SURF-063 — banner de lote de investimentos (só quando houver
-                itens pendentes de aplicação/resgate). */}
-            <BulkInvestmentBanner
-              pendingInvestments={pendingInvestments}
-              accountUuid={accountUuid ?? ''}
-              accountLabel={accountLabel}
-              investmentAccountUuid={investmentAccount?.uuid ?? null}
-              investmentAccountLabel={investmentAccount?.description ?? null}
-              onSuccess={refetchReconciliation}
-            />
-
-            {/* SURF-062 — busca client-side honesta (Decisão F4). */}
-            <Flex align="center" gap={2} mb={4}>
-              <Icon as={FiSearch} color="fg.muted" />
-              <Input
-                placeholder={text.search.placeholder}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                size="sm"
-                maxW="360px"
+          <Flex direction="column" height="100%" minH={0}>
+            {/* SURF-063 — banner de lote de investimentos (só com itens pendentes). */}
+            <Box px={5}>
+              <BulkInvestmentBanner
+                pendingInvestments={pendingInvestments}
+                accountUuid={accountUuid ?? ''}
+                accountLabel={accountLabel}
+                investmentAccountUuid={investmentAccount?.uuid ?? null}
+                investmentAccountLabel={investmentAccount?.description ?? null}
+                onSuccess={refetchReconciliation}
               />
-            </Flex>
+            </Box>
 
-            {/* SURF-064 — tabela transações × movimentos (adaptada para
-                lista de cards, ver cabeçalho do arquivo). */}
-            {filteredItems.length === 0 ? (
-              <Box py={10} textAlign="center">
-                <Text fontSize="sm" color="fg.muted">
-                  {text.emptyState.title}
-                </Text>
-                <Text fontSize="xs" color="fg.muted">
-                  {text.emptyState.description}
-                </Text>
-              </Box>
-            ) : (
-              <Flex direction="column" gap={3}>
-                {filteredItems.map((item) => {
-                  const isReconciled = item.reconciled;
-                  const isMatchedPending = !!item.matched_movement_uuid && !item.reconciled;
-                  const isPending = !item.matched_movement_uuid;
-
-                  return (
-                    <Flex
-                      key={item.fit_id}
-                      align="center"
-                      gap={4}
-                      p={4}
-                      border="1px solid"
-                      borderColor="border.subtle"
-                      borderRadius="lg"
-                      wrap="wrap"
-                    >
-                      <Icon
-                        as={item.type === 'E' ? FiTrendingUp : FiTrendingDown}
-                        color={item.type === 'E' ? 'green.500' : 'red.500'}
-                        boxSize={5}
+            <Box flex="1" minH={0}>
+              <ReconciliationWorkspace
+                onNavigate={navigate}
+                searchInputRef={searchRef}
+                summary={
+                  <ReconciliationSummary
+                    stats={[
+                      {
+                        label: ws.summary.entries,
+                        value: formatCurrencyBRL(money.entries),
+                        hint: `${money.entriesN} ${ws.summary.transactions}`,
+                        tone: 'in',
+                      },
+                      {
+                        label: ws.summary.exits,
+                        value: formatCurrencyBRL(money.exits),
+                        hint: `${money.exitsN} ${ws.summary.transactions}`,
+                        tone: 'out',
+                      },
+                      {
+                        label: ws.summary.reconciled,
+                        value: formatCurrencyBRL(money.done),
+                        hint: `${money.doneN} ${ws.summary.transactions}`,
+                      },
+                    ]}
+                    progress={{
+                      value: progressPercent,
+                      title: `${reconciledCount} / ${totalItems} ${ws.summary.ofReconciled}`,
+                      subtitle: pendingTotal > 0 ? `${pendingTotal} ${ws.summary.transactions}` : undefined,
+                    }}
+                  />
+                }
+                tabs={
+                  <QueueTabs<TabKey>
+                    value={tab}
+                    onChange={setTab}
+                    tabs={[
+                      { key: 'review', label: ws.tabs.review, count: counts.review },
+                      { key: 'ready', label: ws.tabs.ready, count: counts.ready },
+                      { key: 'noMatch', label: ws.tabs.noMatch, count: counts.noMatch },
+                      { key: 'reconciled', label: ws.tabs.reconciled, count: counts.reconciled },
+                    ]}
+                  />
+                }
+                toolbar={
+                  <Flex align="center" gap={2} px={4} py={3}>
+                    <Input
+                      ref={searchRef}
+                      placeholder={`${text.search.placeholder} ( / )`}
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      size="sm"
+                      flex="1"
+                    />
+                    {canEdit && tab === 'ready' && counts.ready > 0 && (
+                      <Button
+                        title={`${ws.detail.confirmAction} (${counts.ready})`}
+                        size="sm"
+                        onClick={() => setConfirmOpen(true)}
                       />
-
-                      <Box flex="1" minW="220px">
-                        <Text fontSize="sm" fontWeight="medium" lineClamp="1">
-                          {item.memo}
-                        </Text>
-                        <Flex align="center" gap={2}>
-                          <Text fontSize="xs" color="fg.muted">
-                            {formatDateBR(item.date)}
-                          </Text>
-                          {item.classification !== 'COMMON' && (
-                            <Badge size="sm" colorPalette="purple" variant="subtle">
-                              {item.classification === 'INVESTMENT'
-                                ? text.classification.investment
-                                : text.classification.redemption}
-                            </Badge>
-                          )}
-                        </Flex>
-                      </Box>
-
-                      <Text
-                        fontSize="sm"
-                        fontWeight="semibold"
-                        color={item.type === 'E' ? 'green.600' : 'red.600'}
-                        minW="120px"
-                        textAlign="right"
-                      >
-                        {item.type === 'E' ? '+' : '-'} {formatCurrencyBRL(item.value)}
-                      </Text>
-
-                      <Badge
-                        colorPalette={isReconciled ? 'green' : isMatchedPending ? 'blue' : 'orange'}
-                        variant="subtle"
-                      >
-                        {isReconciled
-                          ? text.status.reconciled
-                          : isMatchedPending
-                            ? text.status.matchedPendingApply
-                            : text.status.pending}
-                      </Badge>
-
-                      {canEdit && isReconciled && (
-                        <Button
-                          title={text.actions.unreconcile}
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleUnreconcileClick(item)}
-                        />
-                      )}
-
-                      {canEdit && isPending && (
-                        <Flex gap={2}>
-                          <Button
-                            title={text.actions.linkTitle}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleLinkTitle(item)}
-                          />
-                          <Button
-                            title={text.actions.createMovement}
-                            icon={FiPlus as ElementType}
-                            size="sm"
-                            onClick={() => handleCreateMovement(item)}
-                          />
-                        </Flex>
-                      )}
-                    </Flex>
-                  );
-                })}
-              </Flex>
-            )}
-          </Box>
+                    )}
+                  </Flex>
+                }
+                list={list}
+                detail={detail}
+              />
+            </Box>
+          </Flex>
         )}
       </Skeleton>
 
-      {/* SURF-066 — Modal de novo movimento. */}
+      {/* SURF-066 — Modal de novo movimento (fase 2 troca por painel). */}
       <NewMovementModal
         isOpen={activeModal?.kind === 'new-movement'}
         onClose={() => setActiveModal(null)}
@@ -435,6 +463,20 @@ export default function OfxReconciliationTab() {
         onSuccess={refetchReconciliation}
       />
 
+      {/* Confirmar sugestões prontas (aplica todas — limitação do backend atual). */}
+      <DeleteConfirmDialog
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={() => applyMutation.mutate()}
+        isLoading={applyMutation.isPending}
+        title={ws.detail.confirmDialogTitle}
+        description={ws.detail.confirmDialogDescription}
+        hideQuestionMark
+        warningText=""
+        tone="info"
+        confirmButtonText={`${ws.detail.confirmAction} (${counts.ready})`}
+      />
+
       {/* SURF-069 — Confirmação de desconciliar. */}
       <DeleteConfirmDialog
         isOpen={!!movementToUnreconcile}
@@ -447,7 +489,6 @@ export default function OfxReconciliationTab() {
         description={text.actions.unreconcileConfirmDescription}
         hideQuestionMark
         tone="warning"
-        colorPalette="orange"
         confirmButtonText={text.actions.unreconcile}
       />
     </FormContainer>

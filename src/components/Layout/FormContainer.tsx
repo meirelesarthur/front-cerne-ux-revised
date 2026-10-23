@@ -30,6 +30,12 @@ interface FormContainerProps {
    * header fixo → corpo com scroll → footer fixo full-width. Ausente = fluxo atual.
    */
   footer?: ReactNode;
+  /**
+   * Corpo sem padding nem scroll próprios, ocupando a altura útil (casca `PageCard fullHeight`).
+   * Para telas que montam o próprio layout interno (ex.: workspace de conciliação).
+   * Opt-in — ausente = fluxo atual.
+   */
+  fullBleed?: boolean;
 }
 
 export const FormContainer: React.FC<FormContainerProps> = ({
@@ -45,16 +51,18 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   isWidthFull = false,
   headerActions,
   footer,
+  fullBleed = false,
 }) => {
   const navigate = useNavigate();
   const hasFooter = !!footer;
+  const isFull = hasFooter || fullBleed;
   const PAD = 5;
 
   const header = (
     // Header estilo listagem (Ajustes Globais): sem linha separadora, título
     // maior + texto de apoio pequeno (subtítulo opcional) e botão X no extremo
     // oposto. Sem subtítulo mapeado, o espaço não é ocupado e o form sobe.
-    <Box px={PAD} py={3} mb={hasFooter ? 0 : subtitle ? 6 : 4} flexShrink={0}>
+    <Box px={PAD} py={3} mb={isFull ? 0 : subtitle ? 6 : 4} flexShrink={0}>
       <Flex alignItems="center" justifyContent="space-between" gap={4}>
         <Box minW={0}>
           <Heading size="lg" fontWeight="600" color="fg.default" lineClamp="1">
@@ -85,20 +93,25 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   );
 
   return (
-    <Box width="full" p="2" height={hasFooter ? '100%' : undefined}>
+    <Box width="full" p="2" height={isFull ? '100%' : undefined}>
       <Box
         width="full"
         mx="auto"
         maxWidth={isWidthFull ? 'full' : maxWidth}
-        height={hasFooter ? '100%' : undefined}
+        height={isFull ? '100%' : undefined}
       >
-        <PageCard fullHeight={hasFooter}>
+        <PageCard fullHeight={isFull}>
           {header}
-          {hasFooter ? (
+          {isFull ? (
             <>
               {/* Body com scroll SÓ aqui (header e footer ficam fixos). Barra
                   sutil overlay (`ScrollArea`, Chakra 3.37): fininha, aparece no
                   hover/scroll e NÃO ocupa espaço (fica sobre o conteúdo). */}
+              {fullBleed ? (
+                <Box flex="1" minH={0} width="full">
+                  {children}
+                </Box>
+              ) : (
               <ScrollArea.Root flex="1" minH={0} width="full" type="hover">
                 <ScrollArea.Viewport>
                   <ScrollArea.Content px={PAD} pt={PAD} pb={PAD}>
@@ -109,6 +122,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
                   <ScrollArea.Thumb />
                 </ScrollArea.Scrollbar>
               </ScrollArea.Root>
+              )}
+              {hasFooter && (
               <Box
                 flexShrink={0}
                 borderTop="1px solid"
@@ -122,6 +137,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
               >
                 {footer}
               </Box>
+              )}
             </>
           ) : (
             <>
