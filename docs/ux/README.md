@@ -23,6 +23,23 @@ Com `VITE_DEV_MOCKS=true` (só `.env` local, só em modo dev), um adapter do axi
 - Para simular uma tela nova: crie `handlers/<recurso>.ts` (lista `MockRoute[]`) e some
   em `src/mocks/dev-api/index.ts`. Copie o contrato do `*-service.ts` da tela.
 
+### Dados REAIS locais (API de dev + PostgreSQL do dump)
+
+Para telas com volume e dados de verdade, o dump é restaurado num PostgreSQL local e uma
+API de dev (somente leitura) serve o contrato do front. **Nada disso vai para o git.**
+
+| Peça | Onde | Como |
+|------|------|------|
+| PostgreSQL 17 portátil | `C:\Users\Arthur\devdb\pg` (dados em `devdb\data`, porta **54329**, user `postgres`, senha `devpass`, banco `gbcerne`) | `devdb\pg\pgsql\bin\pg_ctl.exe -D devdb\data -l devdb\pg.log start` |
+| API local de dev | `scripts/dev-db/server.mjs` (Node + `pg`) | `cd scripts/dev-db && npm install` (1ª vez) → `node scripts/dev-db/server.mjs` → http://localhost:8080/api/v1 |
+| Front | `.env`: `VITE_API_PHP_BACK_URL=http://localhost:8080/api/v1`, `VITE_DEV_AUTH_BYPASS=true`, `VITE_DEV_MOCKS=false` | login de dev continua local (qualquer e-mail/senha) |
+
+- Escopo: um contratante (`DEV_TENANT_ID`, default 5 — o de mais fazendas). Trocar: `DEV_TENANT_ID=519 node scripts/dev-db/server.mjs`.
+- Recursos servidos hoje: fazendas, pessoas, bancos, estados, cidades, centros de custo, plano de contas, produtos, armazéns, embalagens. O restante cai no fallback (lista vazia).
+- O dump é o schema **legado** (sem UUID): a API gera UUIDs determinísticos e reversíveis (`scripts/dev-db/lib/http.mjs`). Escritas não persistem (o banco fica intacto).
+- Novo recurso: crie `scripts/dev-db/resources/<recurso>.mjs` (lista de rotas) e registre em `server.mjs`; o contrato sai do `*-service.ts` e dos tipos em `src/@types/v2/`.
+- Mocks axios (`VITE_DEV_MOCKS=true`) continuam existindo para trabalhar **sem** Postgres.
+
 **Dump do banco (`init_db.sql`, PostgreSQL, schema legado `gbcerne`)** — é uma base real
 (pessoas, fornecedores, financeiro). Regras: (1) não commitar dado pessoal; (2) só
 catálogos de referência são extraídos, via

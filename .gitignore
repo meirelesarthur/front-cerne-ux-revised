@@ -64,3 +64,6 @@ systen-history
 docs/ux/assets/*.tmp
 # UX: a regra "Docs" acima casa "docs" no Windows (case-insensitive); reincluir docs/ux
 !/docs/
+
+# API local de dev (scripts/dev-db): deps proprias, nunca versionar
+scripts/dev-db/node_modules

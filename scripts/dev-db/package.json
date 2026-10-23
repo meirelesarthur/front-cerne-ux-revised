@@ -1,0 +1,7 @@
+{
+  "name": "gb-cerne-dev-db",
+  "private": true,
+  "type": "module",
+  "description": "API local de dev (somente leitura do dump) — NAO e producao",
+  "dependencies": { "pg": "^8.13.0" }
+}
