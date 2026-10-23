@@ -9,6 +9,9 @@ import { Fragment } from 'react';
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 
+// `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
+const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
+
 export interface BreadcrumbTrailItem {
   label: string;
   onClick?: () => void;
@@ -36,7 +39,7 @@ export function BreadcrumbTrail({ items, label = 'Trilha de navegação' }: Brea
             {interactive ? (
               <Box
                 as="button"
-                type="button"
+                {...BUTTON_ATTRS}
                 onClick={item.onClick}
                 color="topBarTextSecondary"
                 whiteSpace="nowrap"

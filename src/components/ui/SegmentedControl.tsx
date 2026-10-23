@@ -4,6 +4,9 @@
 
 import { Flex } from '@chakra-ui/react';
 
+// `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
+const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
+
 export interface SegmentedOption<K extends string = string> {
   key: K;
   label: string;
@@ -41,7 +44,7 @@ export function SegmentedControl<K extends string = string>({
             as="button"
             key={option.key}
             role="tab"
-            type="button"
+            {...BUTTON_ATTRS}
             aria-selected={active}
             onClick={() => onChange(option.key)}
             px="14px"

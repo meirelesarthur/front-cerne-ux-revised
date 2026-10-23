@@ -4,6 +4,9 @@
 
 import { Box, Flex } from '@chakra-ui/react';
 
+// `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
+const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
+
 export interface QueueTab<K extends string = string> {
   key: K;
   label: string;
@@ -27,7 +30,7 @@ export function QueueTabs<K extends string = string>({ tabs, value, onChange, ar
             as="button"
             key={tab.key}
             role="tab"
-            type="button"
+            {...BUTTON_ATTRS}
             aria-selected={active}
             onClick={() => onChange(tab.key)}
             align="center"

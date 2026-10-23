@@ -16,6 +16,9 @@ import rangeOfNumbers from "@/utils/rangeOfNumbers";
 
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
+// `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
+const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
+
 const PAGE_BUTTON_SIZE = "34px"; // DS: t.size.pageBtn
 
 interface PageButtonProps {
@@ -32,9 +35,9 @@ function PageButton({ label, onClick, isActive = false, isDisabled = false, aria
   return (
     <Center
       as="button"
-      type="button"
+      {...BUTTON_ATTRS}
       onClick={isDisabled || isActive ? undefined : onClick}
-      disabled={isDisabled}
+      aria-disabled={isDisabled || undefined}
       aria-label={ariaLabel ?? `Página ${label}`}
       aria-current={isActive ? "page" : undefined}
       boxSize={PAGE_BUTTON_SIZE}
