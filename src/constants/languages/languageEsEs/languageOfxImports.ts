@@ -98,6 +98,25 @@ export const languageOfxImports: ModuleOfxImports = {
       backToHub: 'Volver',
       loadError: 'No fue posible cargar la conciliación bancaria.',
       workspace: {
+        panel: {
+          modes: {
+            link: 'Vincular a título',
+            create: 'Crear asiento',
+            transfer: 'Transferencia',
+          },
+          linkOther: 'Vincular a otro título',
+          back: 'Volver',
+          undo: 'Deshacer',
+          confirmedToast: 'sugerencias conciliadas',
+          undoneToast: 'Conciliaciones deshechas.',
+          undoError: 'No se pudo deshacer.',
+          allocation: {
+            allocated: 'Prorrateado',
+            remaining: 'Faltan',
+            over: 'Excede',
+            balanced: 'Cuadrado',
+          },
+        },
         summary: {
           entries: 'Entradas por conciliar',
           exits: 'Salidas por conciliar',

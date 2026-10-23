@@ -27,7 +27,7 @@ import { Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 
 import { Button } from '@/components/Button';
-import { CustomDialog } from '@/components/CustomDialog';
+import { FormSurface, type FormSurfaceVariant } from '@/components/ui/FormSurface';
 import { DateInput } from '@/components/DateInput';
 import { Field } from '@/components/Form/Field';
 import { SelectAsyncPaginate } from '@/components/Form/SelectAsyncPaginate';
@@ -57,6 +57,8 @@ function findProviderParams(search: string | { search: string }) {
 export interface WriteoffExpenseModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** `panel` = formulário inline no painel de conciliação (sem modal). Default: `dialog`. */
+  variant?: FormSurfaceVariant;
   item: OfxReconciliationItem | null;
   onSuccess: () => void;
 }
@@ -64,6 +66,7 @@ export interface WriteoffExpenseModalProps {
 export function WriteoffExpenseModal({
   isOpen,
   onClose,
+  variant = 'dialog',
   item,
   onSuccess,
 }: WriteoffExpenseModalProps) {
@@ -134,7 +137,8 @@ export function WriteoffExpenseModal({
 
   return (
     <>
-      <CustomDialog
+      <FormSurface
+        variant={variant}
         isOpen={isOpen && step === 'pick'}
         onClose={onClose}
         title={text.expenseTitle}
@@ -179,7 +183,7 @@ export function WriteoffExpenseModal({
             isLoading={titlesQuery.isFetching}
           />
         )}
-      </CustomDialog>
+      </FormSurface>
 
       <WriteOffBatchModal
         isOpen={isOpen && step === 'batch'}

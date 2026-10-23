@@ -28,8 +28,10 @@ export interface ReconciliationDetailPanelProps {
   status: { tone: DetailTone; title: string; body: string };
   /** Selos (ex.: classificação). */
   badges?: ReactNode;
-  /** Ações (botões). */
+  /** Conteúdo abaixo da situação (ex.: seletor de modo + formulário inline). Largura total. */
   children?: ReactNode;
+  /** Ações (botões) no rodapé do painel. */
+  actions?: ReactNode;
 }
 
 export function ReconciliationDetailPanel({
@@ -40,6 +42,7 @@ export function ReconciliationDetailPanel({
   status,
   badges,
   children,
+  actions,
 }: ReconciliationDetailPanelProps) {
   const tone = toneStyle[status.tone];
   return (
@@ -79,9 +82,11 @@ export function ReconciliationDetailPanel({
         </Box>
       </Flex>
 
-      {children && (
+      {children}
+
+      {actions && (
         <Flex gap="8px" wrap="wrap" justify="flex-end" borderTopWidth="1px" borderColor="border.muted" pt={4}>
-          {children}
+          {actions}
         </Flex>
       )}
     </Box>

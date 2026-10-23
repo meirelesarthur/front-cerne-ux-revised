@@ -138,6 +138,9 @@ export interface ModuleMovements {
         sectionTitle: string;
         sectionHint: string;
         sumLabel: string;
+        remainingLabel: string;
+        overLabel: string;
+        balancedLabel: string;
         sumHint: string;
         emptyTitle: string;
         addRowLabel: string;

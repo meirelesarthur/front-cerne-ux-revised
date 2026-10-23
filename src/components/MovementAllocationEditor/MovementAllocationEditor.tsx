@@ -48,7 +48,7 @@
 
 import { ElementType, useCallback, useMemo, useState } from 'react';
 
-import { Alert, Badge, Box, Flex, Icon, Text } from '@chakra-ui/react';
+import { Alert, Box, Flex, Icon, Text } from '@chakra-ui/react';
 import {
   Control,
   Controller,
@@ -58,7 +58,10 @@ import {
   UseFieldArrayRemove,
   useWatch,
 } from 'react-hook-form';
-import { FiPlus, FiPrinter, FiTrash2 } from 'react-icons/fi';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
+
+import { Icon as GbIcon } from '@/components/ui/Icon';
+import { RemainingBalance } from '@/components/ui/RemainingBalance';
 
 import { Button } from '@/components/Button';
 import { MoneyInput } from '@/components/Form/MoneyInput';
@@ -206,7 +209,6 @@ export function MovementAllocationEditor<
   );
   const categoryCacheUniqs = useMemo(() => [categoryFilterKey], [categoryFilterKey]);
   const text = languageGB.movements.movement.form.allocations;
-  const headerValueLabel = languageGB.movements.movement.allocation.headerValueLabel;
 
   // TASK-MV-FE-07 (addendum §8) — 3 ícones de impressão no header do card de
   // Rateio. `reportsText` = textos PRÓPRIOS deste bloco (tooltip dos botões +
@@ -353,8 +355,6 @@ export function MovementAllocationEditor<
     (sum, item) => sum + (Number(item?.value) || 0),
     0
   );
-  const difference = totalAllocated - headerValue;
-  const isBalanced = Math.abs(difference) < 0.01;
 
   function handleAdd() {
     append({
@@ -391,7 +391,7 @@ export function MovementAllocationEditor<
               loading={isPrintingCategoryReport}
               onClick={handlePrintCategoryReport}
             >
-              <Icon as={FiPrinter} />
+              <GbIcon name="tag" size={15} />
             </IconButtonTable>
           )}
           {can('plan-accounts_view') && (
@@ -402,7 +402,7 @@ export function MovementAllocationEditor<
               loading={isPrintingPlanAccountReport}
               onClick={handlePrintPlanAccountReport}
             >
-              <Icon as={FiPrinter} />
+              <GbIcon name="book" size={15} />
             </IconButtonTable>
           )}
           <IconButtonTable
@@ -412,36 +412,25 @@ export function MovementAllocationEditor<
             loading={isPrintingAllocationReport}
             onClick={handlePrintAllocationReport}
           >
-            <Icon as={FiPrinter} />
+            <GbIcon name="list" size={15} />
           </IconButtonTable>
         </Flex>
 
-        <Flex align="center" gap={2} wrap="wrap">
-          <Text fontSize="sm" color="fg.muted">
-            {headerValueLabel}:
-          </Text>
-          <Badge colorPalette="gray" variant="outline">
-            {formatCurrencyBRL(headerValue)}
-          </Badge>
-          <Text fontSize="sm" color="fg.muted">
-            {text.sumLabel}:
-          </Text>
-          <Badge colorPalette={isBalanced ? 'green' : 'orange'} variant="subtle">
-            {formatCurrencyBRL(totalAllocated)}
-          </Badge>
-        </Flex>
+        {/* Saldo ao vivo (kit): rateado de total · faltam/passou/fechou. */}
+        <RemainingBalance
+          total={headerValue}
+          allocated={totalAllocated}
+          format={formatCurrencyBRL}
+          labels={{
+            allocated: text.sumLabel,
+            remaining: text.remainingLabel,
+            over: text.overLabel,
+            balanced: text.balancedLabel,
+          }}
+        />
       </Flex>
 
-      {!isBalanced && (
-        <Alert.Root status="warning" borderRadius="md" mb={4}>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>{text.sumHint}</Alert.Title>
-            <Alert.Description>{formatCurrencyBRL(difference)}</Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
-      )}
-
+      {/* O saldo (faltam/passou/fechou) é mostrado ao vivo pelo `RemainingBalance` no cabeçalho. */}
       {/* TASK-MV-FE-08 (Ajuste 2) — `arrayError` já era lido mas só era
           renderizado quando `fields.length === 0` (`.min(1)`). Precisa
           aparecer também com linhas presentes — é o caso do bug relatado

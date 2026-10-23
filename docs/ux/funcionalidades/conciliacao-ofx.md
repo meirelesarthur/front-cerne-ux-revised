@@ -128,6 +128,16 @@ Tempo por linha conciliada · % de linhas conciliadas com 1 clique · taxa de su
 4. A diferença exibida considera o saldo contábil do sistema (precisa de endpoint) ou só o líquido dos pendentes (como no protótipo)?
 
 ## Registro de edições
+
+### UX-conciliacao-002 · Fase 2 · Painel inline (Vincular / Criar / Transferência), rateio ao vivo e Desfazer — 2026-10-23
+- **Status:** implementada (validada no navegador) · **Impacto Dev:** só front; **mudança em componente compartilhado** (`MovementAllocationEditor`, também usado em Mov. Caixa/Bancário)
+- **O que mudou:** os modais *Novo Movimento* e *Baixa de título* viraram **painel inline** ao lado da lista, com seletor `Vincular a título · Criar lançamento · Transferência`. A lógica/validação é a mesma dos modais (mesmos formulários, variante `panel` via `FormSurface`); **Transferência** abre o mesmo formulário com Tp. Categoria = T. Sugestão pronta: *Confirmar sugestões* ou *Vincular a outro título*.
+- **Rateio ao vivo:** `RemainingBalance` mostra `Rateado R$ X / R$ Y` e **Faltam / Passou / Fechou** a cada edição; o alerta antigo ("a soma diverge… −R$ 39,90") foi removido. Os 3 botões de impressão idênticos ganharam ícones distintos (categoria, plano de contas, rateio).
+- **Desfazer:** *Confirmar sugestões* mostra toast com **Desfazer** (9 s), que desconcilia os movimentos recém-aplicados. Para vínculo/criação ainda não há desfazer em toast (hoje: aba Conciliadas → Desconciliar).
+- **Componentes novos (kit):** `FormSurface` (modal ou painel), `SegmentedControl`, `RemainingBalance`. `ReconciliationDetailPanel` ganhou `actions` separado de `children`.
+- **Mantido em diálogo:** a baixa em lote final (`WriteOffBatchModal`, compartilhado com Contas a Pagar/Receber) e o cadastro rápido de cliente/fornecedor.
+- **i18n:** `reconciliation.workspace.panel` e `movements…allocations.{remaining,over,balanced}Label` (PT-BR/EN-US/ES-ES).
+- **Pendente (fases 3–5):** candidatos com score, regras, desfazer de vínculo/criação, lote por limiar.
 ### UX-conciliacao-001 · Fase 1 · Casca mestre–detalhe, abas, resumo em R$ e Confirmar — 2026-10-23
 - **Status:** implementada (validada no navegador com dados de dev) · **Impacto Dev:** só front; sem mudança de contrato
 - **O que mudou:** a lista plana de cartões virou workspace: resumo (entradas/saídas a conciliar e já conciliado em R$ + anel de progresso), abas *Para revisar · Sugestões prontas · Sem correspondência · Conciliadas* com contagem, lista com selo de estado e painel de detalhe (situação + ações). Busca, `J/K` e `/` funcionam. Sugestões prontas têm **Confirmar** na linha e **Confirmar sugestões (N)** na aba.

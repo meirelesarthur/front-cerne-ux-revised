@@ -42,7 +42,6 @@ import { FiEdit, FiPlus } from 'react-icons/fi';
 import { useApplySavedProvider } from '@/pages/CadastrosBase/Fornecedores/useApplySavedProvider';
 
 import { Button } from '@/components/Button';
-import { CustomDialog } from '@/components/CustomDialog';
 import { Form } from '@/components/Form';
 import { Input } from '@/components/Form/Input';
 import { InputReadOnly } from '@/components/Form/InputReadOnly';
@@ -52,6 +51,7 @@ import { SelectAsyncPaginate } from '@/components/Form/SelectAsyncPaginate';
 import { SelectCombobox } from '@/components/Form/SelectCombobox';
 import { Textarea } from '@/components/Form/Textarea';
 import { MovementAllocationEditor } from '@/components/MovementAllocationEditor/MovementAllocationEditor';
+import { FormSurface, type FormSurfaceVariant } from '@/components/ui/FormSurface';
 import { Switch } from '@/components/ui/switch';
 import { toaster } from '@/components/ui/toaster';
 
@@ -122,6 +122,10 @@ export interface NewMovementModalProps {
   accountUuid: string;
   accountLabel: string;
   onSuccess: () => void;
+  /** `panel` = formulário inline no painel de conciliação (sem modal). Default: `dialog`. */
+  variant?: FormSurfaceVariant;
+  /** Tp. Categoria inicial (ex.: `T` na aba Transferência). Default: derivado do tipo da transação. */
+  initialTypeCategory?: MovementTypeCategoryCode;
 }
 
 export function NewMovementModal({
@@ -131,6 +135,8 @@ export function NewMovementModal({
   accountUuid,
   accountLabel,
   onSuccess,
+  variant = 'dialog',
+  initialTypeCategory,
 }: NewMovementModalProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.ofxImports.ofxImport.reconciliation.newMovementModal;
@@ -146,6 +152,8 @@ export function NewMovementModal({
       accountLabel={accountLabel}
       onClose={onClose}
       onSuccess={onSuccess}
+      variant={variant}
+      initialTypeCategory={initialTypeCategory}
     />
   );
 }
@@ -158,6 +166,8 @@ interface NewMovementModalBodyProps {
   accountLabel: string;
   onClose: () => void;
   onSuccess: () => void;
+  variant: FormSurfaceVariant;
+  initialTypeCategory?: MovementTypeCategoryCode;
 }
 
 // Tem o `useForm`/mutação — renderiza o próprio `CustomDialog` para que o
@@ -173,6 +183,8 @@ function NewMovementModalBody({
   accountLabel,
   onClose,
   onSuccess,
+  variant,
+  initialTypeCategory,
 }: NewMovementModalBodyProps) {
   const { languageGB } = useLanguage();
   const applySavedProvider = useApplySavedProvider();
@@ -189,6 +201,9 @@ function NewMovementModalBody({
   // internamente por `isIncome`.
   const participantModalDisclosure = useDisclosure();
   const [participantOptionsCacheKey, setParticipantOptionsCacheKey] = useState(0);
+
+  // Painel inline é estreito (~450px): no máx. 2 colunas; no modal mantém o grid original.
+  const cols = (n: number) => (variant === 'panel' ? { base: 1, sm: Math.min(n, 2) } : { base: 1, md: n });
 
   const accountOption: Option<string> = { label: accountLabel, value: accountUuid };
   // FLD-26 — autofill do `note` truncado a 40 chars (mesmo limite do
@@ -215,7 +230,7 @@ function NewMovementModalBody({
       type: movementTypeOptions.getOption(item.type, languageGB),
       // Autofill legado (INT-02): isIncome ? 'E' : 'S' — mesmo valor de
       // `type` como ponto de partida, o usuário pode trocar para T/F.
-      type_category: movementTypeCategoryOptions.getOption(item.type, languageGB),
+      type_category: movementTypeCategoryOptions.getOption(initialTypeCategory ?? item.type, languageGB),
       account_uuid: accountOption,
       destination_account_uuid: null,
       farm_uuid: null,
@@ -402,7 +417,8 @@ function NewMovementModalBody({
 
   return (
     <>
-      <CustomDialog
+      <FormSurface
+        variant={variant}
         isOpen={isOpen}
         onClose={onClose}
         title={title}
@@ -432,7 +448,7 @@ function NewMovementModalBody({
             {text.hint}
           </Text>
 
-          <SimpleGrid columns={{ base: 1, md: 4 }} gap={4}>
+          <SimpleGrid columns={cols(4)} gap={4}>
             <InputReadOnly
               label={movementText.form.fields.date}
               value={new Date(`${item.date}T00:00:00`).toLocaleDateString('pt-BR')}
@@ -451,7 +467,7 @@ function NewMovementModalBody({
             />
           </SimpleGrid>
 
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={4}>
+          <SimpleGrid columns={cols(3)} gap={4} mt={4}>
             <Controller
               name="type_category"
               control={control}
@@ -543,7 +559,7 @@ function NewMovementModalBody({
             />
           </SimpleGrid>
 
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mt={4}>
+          <SimpleGrid columns={cols(2)} gap={4} mt={4}>
             <Controller
               name="client_uuid"
               control={control}
@@ -660,7 +676,7 @@ function NewMovementModalBody({
             />
           </SimpleGrid>
 
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mt={4}>
+          <SimpleGrid columns={cols(2)} gap={4} mt={4}>
             <Controller
               name="interest"
               control={control}
@@ -738,7 +754,7 @@ function NewMovementModalBody({
             />
           </Box>
         </Form>
-      </CustomDialog>
+      </FormSurface>
 
       {/* TASK-065-OFX-FE-02 — modal ÚNICO de criar/editar Cliente/Fornecedor
           (ramifica internamente por `isIncome`). `participantUuid` lido

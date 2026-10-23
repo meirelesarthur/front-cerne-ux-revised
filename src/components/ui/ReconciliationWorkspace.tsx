@@ -59,8 +59,8 @@ export function ReconciliationWorkspace({
       <Flex flex="1" minH={0} borderTopWidth="1px" borderColor="border.muted" direction={{ base: 'column', lg: 'row' }}>
         <Flex
           direction="column"
-          minW={0}
-          flex={{ base: 'none', lg: '1.05' }}
+          flex={{ base: 'none', lg: '0 0 44%' }}
+          minW={{ lg: '440px' }}
           borderRightWidth={{ base: 0, lg: '1px' }}
           borderColor="border.muted"
           minH={{ base: '320px', lg: 0 }}
@@ -71,7 +71,7 @@ export function ReconciliationWorkspace({
             {list}
           </Box>
         </Flex>
-        <Box flex={{ base: 'none', lg: '1' }} minW={0} minH={0} overflowY="auto">
+        <Box flex={{ base: 'none', lg: '1' }} minW={{ lg: '400px' }} minH={0} overflowY="auto">
           {detail}
         </Box>
       </Flex>

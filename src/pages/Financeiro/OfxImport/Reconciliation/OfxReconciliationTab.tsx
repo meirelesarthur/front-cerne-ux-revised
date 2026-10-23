@@ -7,8 +7,11 @@
 // (fila à esquerda, painel à direita), abas por estado, resumo em R$ e ação rápida
 // "Confirmar" nas sugestões prontas — tudo COMPOSTO por componentes do kit
 // (`ReconciliationWorkspace/Summary/Row/DetailPanel`, `QueueTabs`, `Badge`). Esta página só
-// carrega dados, deriva estados e liga as ações; os modais atuais (vincular título,
-// criar movimento) seguem como estão até a fase 2 (painel com abas, sem modal).
+// carrega dados, deriva estados e liga as ações; (fase 1: os modais (vincular título,
+// criar movimento) agora são o painel INLINE (FASE 2): abas Vincular · Criar lançamento ·
+// Transferência, com os MESMOS formulários dos antigos modais em variante `panel`
+// (`FormSurface`); o saldo do rateio é ao vivo (`RemainingBalance`) e confirmar sugestões
+// tem Desfazer. Só a baixa em lote final (`WriteOffBatchModal`, compartilhada) segue em diálogo.
 //
 // Contrato do backend preservado: `GET` (preview) não muta; `POST` aplica TODAS as linhas já
 // casadas (o servidor ainda não confirma uma linha só — por isso o "Confirmar" pede
@@ -27,6 +30,7 @@ import { FormContainer } from '@/components/Layout/FormContainer';
 import { Badge } from '@/components/ui/Badge';
 import { Icon } from '@/components/ui/Icon';
 import { QueueTabs } from '@/components/ui/QueueTabs';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { ReconciliationDetailPanel } from '@/components/ui/ReconciliationDetailPanel';
 import { ReconciliationRow } from '@/components/ui/ReconciliationRow';
 import { ReconciliationSummary } from '@/components/ui/ReconciliationSummary';
@@ -74,11 +78,9 @@ const stateOf = (item: OfxReconciliationItem): ItemState =>
 const belongsToTab = (state: ItemState, tab: TabKey) =>
   tab === 'review' ? state !== 'reconciled' : tab === state;
 
-type ActiveModal =
-  | { kind: 'new-movement'; item: OfxReconciliationItem }
-  | { kind: 'writeoff-expense'; item: OfxReconciliationItem }
-  | { kind: 'writeoff-income'; item: OfxReconciliationItem }
-  | null;
+/** Modo do painel: `overview` (sugestão pronta) ou um dos 3 caminhos de conciliação inline. */
+type PanelMode = 'overview' | 'link' | 'create' | 'transfer';
+const defaultModeFor = (state: ItemState): PanelMode => (state === 'ready' ? 'overview' : 'create');
 
 export default function OfxReconciliationTab() {
   const { uuid } = useParams<{ uuid: string }>();
@@ -93,7 +95,8 @@ export default function OfxReconciliationTab() {
   const [tab, setTab] = useState<TabKey>('review');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [activeModal, setActiveModal] = useState<ActiveModal>(null);
+  const [mode, setMode] = useState<PanelMode>('create');
+  const lastApplied = useRef<string[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [movementToUnreconcile, setMovementToUnreconcile] = useState<{
     uuid: string;
@@ -180,6 +183,12 @@ export default function OfxReconciliationTab() {
   }, [visibleItems, selectedId]);
 
   const selected = items.find((i) => i.fit_id === selectedId) ?? null;
+  const selectedState: ItemState | null = selected ? stateOf(selected) : null;
+
+  // Ao trocar de transação, o painel volta ao modo padrão do estado dela.
+  useEffect(() => {
+    if (selectedState) setMode(defaultModeFor(selectedState));
+  }, [selectedId, selectedState]);
 
   function navigate(delta: -1 | 1) {
     if (visibleItems.length === 0) return;
@@ -188,11 +197,35 @@ export default function OfxReconciliationTab() {
     setSelectedId(visibleItems[next].fit_id);
   }
 
+  // ---- Desfazer: desconcilia os movimentos que acabaram de ser aplicados ----
+  async function undoApplied(movementUuids: string[]) {
+    try {
+      await Promise.all(movementUuids.map((id) => unreconcileMovement(id)));
+      toaster.success({ title: text.actions.apply, description: ws.panel.undoneToast });
+    } catch (error) {
+      toaster.error({ title: ws.panel.undo, description: extractApiErrorMessage(error) ?? ws.panel.undoError });
+    }
+    refetchReconciliation();
+  }
+
+  function requestConfirm() {
+    lastApplied.current = items
+      .filter((i) => stateOf(i) === 'ready' && i.matched_movement_uuid)
+      .map((i) => i.matched_movement_uuid as string);
+    setConfirmOpen(true);
+  }
+
   // ---- Confirmar sugestões (POST aplica TODAS as linhas já casadas) ----
   const applyMutation = useMutation({
     mutationFn: () => applyOfxReconciliation(uuid!),
     onSuccess: () => {
-      toaster.success({ title: text.actions.apply, description: text.actions.applySuccess });
+      const applied = lastApplied.current;
+      toaster.success({
+        title: text.actions.apply,
+        description: `${applied.length} ${ws.panel.confirmedToast}`,
+        duration: 9000,
+        action: { label: ws.panel.undo, onClick: () => undoApplied(applied) },
+      });
       setConfirmOpen(false);
       refetchReconciliation();
     },
@@ -218,10 +251,6 @@ export default function OfxReconciliationTab() {
       toaster.error({ title: text.actions.unreconcile, description: message });
     },
   });
-
-  const handleLinkTitle = (item: OfxReconciliationItem) =>
-    setActiveModal(item.type === 'E' ? { kind: 'writeoff-income', item } : { kind: 'writeoff-expense', item });
-  const handleCreateMovement = (item: OfxReconciliationItem) => setActiveModal({ kind: 'new-movement', item });
 
   const isLoading = checkLoadingStatus([ofxImportQuery as any, reconciliationQuery as any]);
 
@@ -279,7 +308,7 @@ export default function OfxReconciliationTab() {
             onSelect={() => setSelectedId(item.fit_id)}
             action={
               canEdit && s === 'ready' ? (
-                <Button title={ws.detail.confirmOne} size="sm" onClick={() => setConfirmOpen(true)} />
+                <Button title={ws.detail.confirmOne} size="sm" onClick={requestConfirm} />
               ) : undefined
             }
           />
@@ -288,6 +317,17 @@ export default function OfxReconciliationTab() {
     );
 
   // ---- Detalhe ----
+  // Formulários INLINE (mesmos formulários dos antigos modais, em variante `panel`): o
+  // usuário decide ao lado da lista, sem perder o contexto.
+  const backToDefault = () => selectedState && setMode(defaultModeFor(selectedState));
+  const formProps = { isOpen: true, variant: 'panel' as const, onClose: backToDefault, onSuccess: refetchReconciliation };
+
+  const modeOptions = [
+    { key: 'link' as const, label: ws.panel.modes.link },
+    { key: 'create' as const, label: ws.panel.modes.create },
+    { key: 'transfer' as const, label: ws.panel.modes.transfer },
+  ];
+
   const detail = selected ? (
     <ReconciliationDetailPanel
       title={selected.memo}
@@ -296,34 +336,65 @@ export default function OfxReconciliationTab() {
       direction={selected.type === 'E' ? 'in' : 'out'}
       badges={classificationBadge(selected)}
       status={
-        stateOf(selected) === 'ready'
+        selectedState === 'ready'
           ? { tone: 'info', title: ws.detail.readyTitle, body: ws.detail.readyBody }
-          : stateOf(selected) === 'reconciled'
+          : selectedState === 'reconciled'
             ? { tone: 'success', title: ws.detail.reconciledTitle, body: ws.detail.reconciledBody }
             : { tone: 'neutral', title: ws.detail.noMatchTitle, body: ws.detail.noMatchBody }
       }
+      actions={
+        canEdit && selectedState === 'reconciled' ? (
+          <Button
+            title={text.actions.unreconcile}
+            variant="secondary"
+            onClick={() =>
+              selected.matched_movement_uuid &&
+              setMovementToUnreconcile({ uuid: selected.matched_movement_uuid, label: selected.memo })
+            }
+          />
+        ) : canEdit && selectedState === 'ready' && mode === 'overview' ? (
+          <>
+            <Button title={ws.panel.linkOther} variant="secondary" onClick={() => setMode('link')} />
+            <Button title={ws.detail.confirmAction} onClick={requestConfirm} />
+          </>
+        ) : undefined
+      }
     >
-      {canEdit && stateOf(selected) === 'reconciled' && (
-        <Button
-          title={text.actions.unreconcile}
-          variant="secondary"
-          onClick={() =>
-            selected.matched_movement_uuid &&
-            setMovementToUnreconcile({ uuid: selected.matched_movement_uuid, label: selected.memo })
-          }
-        />
-      )}
-      {canEdit && stateOf(selected) === 'ready' && (
-        <>
-          <Button title={text.actions.linkTitle} variant="secondary" onClick={() => handleLinkTitle(selected)} />
-          <Button title={ws.detail.confirmAction} onClick={() => setConfirmOpen(true)} />
-        </>
-      )}
-      {canEdit && stateOf(selected) === 'noMatch' && (
-        <>
-          <Button title={text.actions.linkTitle} variant="secondary" onClick={() => handleLinkTitle(selected)} />
-          <Button title={text.actions.createMovement} onClick={() => handleCreateMovement(selected)} />
-        </>
+      {canEdit && selectedState !== 'reconciled' && mode !== 'overview' && (
+        <Box>
+          <Flex align="center" justify="space-between" gap={3} mb={4} wrap="wrap">
+            <SegmentedControl options={modeOptions} value={mode} onChange={setMode} ariaLabel={ws.panel.modes.link} />
+            {selectedState === 'ready' && (
+              <Button title={ws.panel.back} variant="ghost" size="sm" onClick={() => setMode('overview')} />
+            )}
+          </Flex>
+
+          {mode === 'link' &&
+            (selected.type === 'E' ? (
+              <WriteoffIncomeModal {...formProps} item={selected} />
+            ) : (
+              <WriteoffExpenseModal {...formProps} item={selected} />
+            ))}
+          {mode === 'create' && (
+            <NewMovementModal
+              key={`${selected.fit_id}-create`}
+              {...formProps}
+              item={selected}
+              accountUuid={accountUuid ?? ''}
+              accountLabel={accountLabel}
+            />
+          )}
+          {mode === 'transfer' && (
+            <NewMovementModal
+              key={`${selected.fit_id}-transfer`}
+              {...formProps}
+              item={selected}
+              accountUuid={accountUuid ?? ''}
+              accountLabel={accountLabel}
+              initialTypeCategory="T"
+            />
+          )}
+        </Box>
       )}
     </ReconciliationDetailPanel>
   ) : (
@@ -424,7 +495,7 @@ export default function OfxReconciliationTab() {
                       <Button
                         title={`${ws.detail.confirmAction} (${counts.ready})`}
                         size="sm"
-                        onClick={() => setConfirmOpen(true)}
+                        onClick={requestConfirm}
                       />
                     )}
                   </Flex>
@@ -436,32 +507,6 @@ export default function OfxReconciliationTab() {
           </Flex>
         )}
       </Skeleton>
-
-      {/* SURF-066 — Modal de novo movimento (fase 2 troca por painel). */}
-      <NewMovementModal
-        isOpen={activeModal?.kind === 'new-movement'}
-        onClose={() => setActiveModal(null)}
-        item={activeModal?.kind === 'new-movement' ? activeModal.item : null}
-        accountUuid={accountUuid ?? ''}
-        accountLabel={accountLabel}
-        onSuccess={refetchReconciliation}
-      />
-
-      {/* SURF-067 — Modal writeoff despesa (transação tipo S). */}
-      <WriteoffExpenseModal
-        isOpen={activeModal?.kind === 'writeoff-expense'}
-        onClose={() => setActiveModal(null)}
-        item={activeModal?.kind === 'writeoff-expense' ? activeModal.item : null}
-        onSuccess={refetchReconciliation}
-      />
-
-      {/* SURF-068 — Modal writeoff receita (transação tipo E). */}
-      <WriteoffIncomeModal
-        isOpen={activeModal?.kind === 'writeoff-income'}
-        onClose={() => setActiveModal(null)}
-        item={activeModal?.kind === 'writeoff-income' ? activeModal.item : null}
-        onSuccess={refetchReconciliation}
-      />
 
       {/* Confirmar sugestões prontas (aplica todas — limitação do backend atual). */}
       <DeleteConfirmDialog

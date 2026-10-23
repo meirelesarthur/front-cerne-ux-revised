@@ -102,6 +102,25 @@ export interface ModuleOfxImports {
       backToHub: string;
       loadError: string;
       workspace: {
+        panel: {
+          modes: {
+            link: string;
+            create: string;
+            transfer: string;
+          };
+          linkOther: string;
+          back: string;
+          undo: string;
+          confirmedToast: string;
+          undoneToast: string;
+          undoError: string;
+          allocation: {
+            allocated: string;
+            remaining: string;
+            over: string;
+            balanced: string;
+          };
+        };
         summary: {
           entries: string;
           exits: string;

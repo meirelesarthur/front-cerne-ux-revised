@@ -29,6 +29,9 @@ Convenções do porte:
 | ReconciliationWorkspace / Summary / Row / DetailPanel | `ui/Reconciliation*.tsx` (novos) | **evolução do DS** | Conciliação OFX | mestre–detalhe com resumo em R$, linha com ação rápida e painel de situação; o `ReconciliationWorkspace` do DS era só 2 colunas |
 | QueueTabs | `ui/QueueTabs.tsx` (novo) | novo | Conciliação OFX | abas de fila com contador |
 | ProgressRing | `ui/ProgressRing.tsx` (novo) | novo | Conciliação OFX | anel 0–100 em CSS |
+| FormSurface | `ui/FormSurface.tsx` (novo) | novo | 3 formulários da Conciliação | mesmo formulário como modal (`dialog`) ou painel inline (`panel`) |
+| SegmentedControl | `ui/SegmentedControl.tsx` (novo) | novo | Conciliação OFX | 2–4 opções exclusivas |
+| RemainingBalance | `ui/RemainingBalance.tsx` (novo) | novo | `MovementAllocationEditor` (todas as telas com rateio) | saldo ao vivo: faltam/passou/fechou |
 | Button (secondary) | `styles/recipes/button.ts` | parcial | todo o app | borda neutra 1.5px com props separadas (o shorthand `border` descartava a cor); raio 8; `sm` 34px |
 | FormPageHeader (subtítulo) | `Layout/FormContainer.tsx` | parcial | wizards passam `subtitle` | |
 | Input | `styles/recipes/input.ts` | parcial | todo o app | raio 8, glow de foco |

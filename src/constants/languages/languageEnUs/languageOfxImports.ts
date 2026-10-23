@@ -98,6 +98,25 @@ export const languageOfxImports: ModuleOfxImports = {
       backToHub: 'Back',
       loadError: 'Could not load the bank reconciliation.',
       workspace: {
+        panel: {
+          modes: {
+            link: 'Link to title',
+            create: 'Create entry',
+            transfer: 'Transfer',
+          },
+          linkOther: 'Link to another title',
+          back: 'Back',
+          undo: 'Undo',
+          confirmedToast: 'suggestions reconciled',
+          undoneToast: 'Reconciliations undone.',
+          undoError: 'Could not undo.',
+          allocation: {
+            allocated: 'Allocated',
+            remaining: 'Remaining',
+            over: 'Over by',
+            balanced: 'Balanced',
+          },
+        },
         summary: {
           entries: 'Entries to reconcile',
           exits: 'Exits to reconcile',
