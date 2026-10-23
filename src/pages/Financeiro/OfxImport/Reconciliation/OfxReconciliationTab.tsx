@@ -3,15 +3,13 @@
 // Workspace de CONCILIAÇÃO BANCÁRIA da Importação OFX. Rota
 // `/financeiro/ofx/:uuid/conciliacao` (guardada `import_ofx_edit`).
 //
-// FASE 1 da proposta `docs/ux/funcionalidades/conciliacao-ofx.md`: casca mestre–detalhe
-// (fila à esquerda, painel à direita), abas por estado, resumo em R$ e ação rápida
-// "Confirmar" nas sugestões prontas — tudo COMPOSTO por componentes do kit
-// (`ReconciliationWorkspace/Summary/Row/DetailPanel`, `QueueTabs`, `Badge`). Esta página só
-// carrega dados, deriva estados e liga as ações; (fase 1: os modais (vincular título,
-// criar movimento) agora são o painel INLINE (FASE 2): abas Vincular · Criar lançamento ·
-// Transferência, com os MESMOS formulários dos antigos modais em variante `panel`
-// (`FormSurface`); o saldo do rateio é ao vivo (`RemainingBalance`) e confirmar sugestões
-// tem Desfazer. Só a baixa em lote final (`WriteOffBatchModal`, compartilhada) segue em diálogo.
+// FASES 1–2 da proposta `docs/ux/funcionalidades/conciliacao-ofx.md`: casca mestre–detalhe (fila à
+// esquerda, painel à direita), abas por estado, resumo em R$, ação rápida "Confirmar" com
+// Desfazer e painel INLINE com abas Vincular · Criar lançamento · Transferência — os MESMOS
+// formulários dos antigos modais, em variante `panel` (`FormSurface`), com saldo de rateio ao
+// vivo (`RemainingBalance`). Tudo COMPOSTO por componentes do kit; esta página só carrega
+// dados, deriva estados e liga as ações. Só a baixa em lote final (`WriteOffBatchModal`,
+// compartilhada) segue em diálogo.
 //
 // Contrato do backend preservado: `GET` (preview) não muta; `POST` aplica TODAS as linhas já
 // casadas (o servidor ainda não confirma uma linha só — por isso o "Confirmar" pede
