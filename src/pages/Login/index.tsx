@@ -17,68 +17,14 @@ import { FaGoogle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useContextSelector } from 'use-context-selector';
 import { useSplashStore } from '@/stores/splashStore';
+import logoWhite from '@/assets/Logo-white.svg';
+import { LOGIN_SLIDES, LOGIN_STATS } from './slides';
 
 type PendingCreds = { email: string; password: string };
 
-// ─── Vídeos institucionais (CDN público Cloudflare R2 — mesmo acervo do
-// protótipo CERNE em localhost:2020). Trocam de fundo a cada slide,
-// sincronizados com a troca de texto. ─────────────────────────────────────────
-const CDN = 'https://pub-0f1e695318f140f895ccdb13696c1c62.r2.dev';
-const vid0 = `${CDN}/agricultura.mp4`;
-const vid1 = `${CDN}/apicultura.mp4`;
-const vid2 = `${CDN}/avicultura.mp4`;
-const vid3 = `${CDN}/ovicultura.mp4`;
-const vid4 = `${CDN}/Psicultura.mp4`;
-
-// ─── Carrossel institucional — copy idêntica ao Login.tsx do protótipo CERNE ──
-const SLIDES = [
-  {
-    src: vid0,
-    eyebrow: 'Gestão rural inteligente',
-    h1a: 'Sua fazenda,',
-    h1em: 'gerenciada',
-    h1b: 'com precisão.',
-    desc: 'Do campo ao escritório, controle produção, custos, colheita e equipes em uma plataforma pensada para o agronegócio brasileiro.',
-  },
-  {
-    src: vid1,
-    eyebrow: 'Apicultura de precisão',
-    h1a: 'Produção de mel',
-    h1em: 'monitorada',
-    h1b: 'em tempo real.',
-    desc: 'Gerencie colmeias, floradas e extração com rastreabilidade completa do campo até a embalagem.',
-  },
-  {
-    src: vid2,
-    eyebrow: 'Avicultura integrada',
-    h1a: 'Lotes e aves',
-    h1em: 'controlados',
-    h1b: 'sem esforço.',
-    desc: 'Ciclos de produção, conversão alimentar e sanidade animal integrados em um único painel.',
-  },
-  {
-    src: vid3,
-    eyebrow: 'Ovinocultura moderna',
-    h1a: 'Rebanho',
-    h1em: 'acompanhado',
-    h1b: 'do nascimento ao abate.',
-    desc: 'Rastreie cada animal, controle peso, vacinação e genealogia com registros precisos e auditáveis.',
-  },
-  {
-    src: vid4,
-    eyebrow: 'Piscicultura eficiente',
-    h1a: 'Tanques e safras',
-    h1em: 'gerenciados',
-    h1b: 'com inteligência.',
-    desc: 'Controle qualidade da água, biometria e despesca com análises automáticas e alertas em tempo real.',
-  },
-];
-
-const STATS = [
-  { value: '2.400+', label: 'Fazendas ativas' },
-  { value: 'R$ 4,2B', label: 'Em produção gerenciada' },
-  { value: '99,7%', label: 'Uptime SLA garantido' },
-];
+// Carrossel (vídeos + copy) e números: fonte única em ./slides (design system).
+const SLIDES = LOGIN_SLIDES;
+const STATS = LOGIN_STATS;
 
 const LS_EMAIL = 'gbcerne_email';
 const LS_REMEMBER = 'gbcerne_remember';
@@ -155,7 +101,7 @@ export function Login() {
         goTo(next);
         return prev;
       });
-    }, 5000);
+    }, 8000);
     return () => clearInterval(timerRef.current);
   }, [goTo]);
 
@@ -198,16 +144,6 @@ export function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     void doLogin();
-  };
-
-  // SSO mockado: aciona o mesmo fluxo de login com um usuário fake de demonstração.
-  const handleSso = () => {
-    if (isLoading) return;
-    const ssoEmail = email || 'demo@gbcerne.com';
-    const ssoPassword = password || 'sso-demo';
-    setEmail((prev) => prev || ssoEmail);
-    setPassword((prev) => prev || ssoPassword);
-    void runLoginFlow({ email: ssoEmail, password: ssoPassword });
   };
 
   const runLoginFlow = async (creds: PendingCreds) => {
@@ -306,29 +242,10 @@ export function Login() {
           <circle cx="480" cy="160" r="42" stroke="rgba(34,197,94,0.06)" strokeWidth="1" fill="none" />
         </ChakraSvg>
 
-        {/* Logo — escudo do protótipo CERNE + texto "GB CERNE" (marca do app) */}
-        <Flex align="center" gap="12px" position="relative" zIndex={1}>
-          <Flex
-            w="40px"
-            h="40px"
-            borderRadius="10px"
-            align="center"
-            justify="center"
-            flexShrink={0}
-            bgGradient="to-br"
-            gradientFrom="#22c55e"
-            gradientTo="#047857"
-            boxShadow="0 4px 20px rgba(5,150,105,.32)"
-          >
-            <ChakraSvg w="22px" h="22px" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-              <path d="M12 3L4 8v8l8 5 8-5V8L12 3z" fill="rgba(255,255,255,.9)" />
-              <path d="M12 8v8M8 10l4-2 4 2" stroke="rgba(20,83,45,.6)" strokeWidth="1.5" strokeLinecap="round" />
-            </ChakraSvg>
-          </Flex>
-          <Text fontSize="20px" fontWeight="bold" letterSpacing="0.14em">
-            GB CERNE
-          </Text>
-        </Flex>
+        {/* Logo oficial (horizontal, versão branca) */}
+        <Box position="relative" zIndex={1}>
+          <img src={logoWhite} alt="GB Cerne" style={{ height: 40, width: "auto" }} />
+        </Box>
 
         {/* Copy do slide */}
         <Box
@@ -355,9 +272,10 @@ export function Login() {
           <Text fontSize="44px" fontWeight="extrabold" lineHeight="1.1">
             {slide.h1a}
             <br />
-            <Text as="em" fontStyle="normal" color="#4ade80">
+            <Text as="em" fontSize="inherit" fontWeight="inherit" lineHeight="inherit" fontStyle="normal" color="#4ade80">
               {slide.h1em}
-            </Text>{' '}
+            </Text>
+            <br />
             {slide.h1b}
           </Text>
           <Text
@@ -689,7 +607,7 @@ export function Login() {
             <Box flex={1} h="1px" bg={isDark ? 'rgba(255,255,255,0.14)' : 'gray.200'} />
           </Flex>
 
-          {/* SSO (mockado — aciona o mesmo fluxo de login). Só Google, como no protótipo. */}
+          {/* SSO Google desabilitado até a integração OAuth existir (como no DS). */}
           <Button
             type="button"
             w="100%"
@@ -703,8 +621,8 @@ export function Login() {
             fontSize="14px"
             fontWeight="medium"
             _hover={{ bg: isDark ? 'rgba(255,255,255,0.06)' : 'gray.50' }}
-            onClick={handleSso}
-            disabled={isLoading}
+            disabled
+            title="Em breve"
           >
             <Icon as={FaGoogle} boxSize="16px" mr="8px" color="#EA4335" />
             Entrar com Google
@@ -753,7 +671,7 @@ export function Login() {
             color={isDark ? 'rgba(255,255,255,0.45)' : 'gray.400'}
           >
             Ao acessar, você concorda com os Termos de Uso e a Política de
-            Privacidade do GB Cerne.
+            Privacidade do CERNE.
           </Text>
         </Box>
       </Flex>
