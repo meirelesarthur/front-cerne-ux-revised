@@ -118,6 +118,7 @@ import { languageEquipments } from './languageEquipments';
 import { languageEventos } from './languageEventos';
 import { languageEvolutions } from './languageEvolutions';
 import { languageExamples } from './languageExamples';
+import { languageSubscription } from './languageSubscription';
 import { languageFarmTransfers } from './languageFarmTransfers';
 import { languageFazendas } from './languageFazendas';
 import { languageFechamentoSemana } from './languageFechamentoSemana';
@@ -292,6 +293,9 @@ export const languagePtBr: Pick<LanguagesDate, 'BR'> = {
     },
     examples: {
       ...languageExamples,
+    },
+    subscription: {
+      ...languageSubscription,
     },
     roles: {
       ...languageRoles,

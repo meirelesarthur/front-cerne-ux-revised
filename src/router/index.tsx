@@ -87,6 +87,9 @@ const SitePublicoPage = lazy(() => import('@/pages/Public/Site'));
 // árvore de Configurações — mantido como está (TASK-FE-2704, divergência do
 // gatilho original reportada e não revertida sem pedido de produto novo).
 const PlanosList = lazy(() => import('@/pages/Planos'));
+// Contratar/alterar plano (simulador de assinatura) — qualquer usuário autenticado; a permissão
+// definitiva (ex.: `subscription_manage`) depende do backend.
+const ContratacaoPlano = lazy(() => import('@/pages/Planos/Contratacao'));
 const CreateOrUpdatePlanRole = lazy(() => import('@/pages/Planos/CreateOrUpdatePlanRole'));
 const DetalhePlanRole = lazy(() => import('@/pages/Planos/DetalhePlanRole'));
 
@@ -11610,6 +11613,8 @@ export function AppRoutes() {
             <RequirePermission permission="plan_view">{lazyRoute(PlanosList)}</RequirePermission>
           }
         />
+        {/* `/planos/contratar` ANTES de `/planos/:uuid` (senão vira uuid). */}
+        <Route path="/planos/contratar" element={lazyRoute(ContratacaoPlano)} />
         <Route
           path="/planos/create"
           element={

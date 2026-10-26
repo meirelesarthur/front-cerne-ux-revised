@@ -34,6 +34,7 @@ import { ModuleEquipments } from './module-equipments';
 import { ModuleEvents } from './module-events';
 import { ModuleEvolutions } from './module-evolutions';
 import { ModuleExamples } from './module-examples';
+import { ModuleSubscription } from './module-subscription';
 import { ModuleFarmTransfers } from './module-farm-transfers';
 import { ModuleFarms } from './module-farms';
 import { ModuleFechamentoSemana } from './module-fechamento-semana';
@@ -315,6 +316,8 @@ export interface LanguageDate {
   common: ModuleCommon;
   /** Camada de exemplos de referência (src/_examples/) — ver README lá */
   examples: ModuleExamples;
+  /** Página "Contratar ou alterar plano" (simulador de assinatura) */
+  subscription: ModuleSubscription;
   /** Módulo de Perfis (Roles RBAC — Cadastros Base) */
   roles: ModuleRoles;
   /** Módulo de Centros de Custo (Cadastros Base) */

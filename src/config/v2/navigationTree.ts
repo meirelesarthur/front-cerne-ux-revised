@@ -1157,6 +1157,14 @@ export const menuModules: NavModule[] = [
         path: '/planos',
         icon: 'gem',
       },
+      // Contratar/alterar plano (simulador de assinatura). Sem regra em navigationPermissions:
+      // visível a qualquer usuário autenticado (a permissão definitiva depende do backend).
+      {
+        id: 'cfg-contratar',
+        label: 'Contratar plano',
+        path: '/planos/contratar',
+        icon: 'crown',
+      },
     ],
   },
   {
