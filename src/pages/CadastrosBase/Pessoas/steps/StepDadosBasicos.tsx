@@ -15,24 +15,32 @@
 // em `CreateOrUpdatePessoa.tsx::fillForm` (GAP-FE-120 fechado).
 // -----------------------------------------------------------------------------
 
-import { Box, SimpleGrid } from '@chakra-ui/react';
+import { Box, GridItem, SimpleGrid, Text } from '@chakra-ui/react';
 import { Controller, useWatch, type UseFormSetValue, type UseFormWatch } from 'react-hook-form';
 
 import { Input } from '@/components/Form/Input';
 import { MaskedInput } from '@/components/Form/MaskedInput';
-import { Switch } from '@/components/ui/switch';
+import type { IconName } from '@/components/ui/Icon';
+import { ToggleCard } from '@/components/ui/ToggleCard';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
-import { columnsForm } from '@/constants/coluns-form';
-
 import { getPersonByNif } from '@/services/v2/People/person-service';
 
-import { SectionLabel, StepHeading, type StepProps } from './parts';
+import { StepHeading, type StepProps } from './parts';
 
 import { docTypeOfNif, isValidNif } from '../nif';
 import { ROLE_ORDER, type PessoaFormValues } from '../pessoa.types';
+
+// Ícone de cada papel — registry do DS (`design/icons.ts`).
+const ROLE_ICON: Record<(typeof ROLE_ORDER)[number], IconName> = {
+  proprietary: 'crown',
+  employee: 'briefcase',
+  provider: 'truck',
+  client: 'cart',
+  user: 'key',
+};
 
 interface Props extends StepProps {
   watch: UseFormWatch<PessoaFormValues>;
@@ -99,13 +107,10 @@ export function StepDadosBasicos({
     <Box>
       <StepHeading title={text.steps.basico} subtitle={text.form.basico.subtitle} />
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
-        {/* `MaskedInput kind="cpfCnpj"` resolve internamente CPF↔CNPJ pela
-            quantidade de dígitos digitados — substitui a heurística manual
-            anterior (`maskDocTypeOfNif`/`nifBeforeMaskedStateChange` +
-            `InputMask`/`react-input-mask`), sem bug de comprimento fixo.
-            `Controller` (CONTROLADO) preservado — em edição, `reset(filled)`
-            (`CreateOrUpdatePessoa.tsx`) precisa refletir `value` no campo. */}
+      {/* Layout do DS: grade de 4 colunas — CPF/CNPJ · Telefone · E-mail (2) / Nome (2) · Apelido (2) */}
+      <SimpleGrid columns={{ base: 1, md: 4 }} gap={4} mb={6}>
+        {/* `MaskedInput kind="cpfCnpj"` resolve CPF↔CNPJ pela quantidade de dígitos; `Controller`
+            (CONTROLADO) preservado — em edição, `reset(filled)` precisa refletir `value` no campo. */}
         <Controller
           name="nif"
           control={control}
@@ -126,38 +131,6 @@ export function StepDadosBasicos({
             />
           )}
         />
-        <Input
-          label={text.form.basico.email}
-          type="email"
-          {...register('email')}
-          error={errors.email?.message}
-          isRequired={
-            !!watch('user.enabled') || !!watch('client.enabled') || !!watch('proprietary.enabled')
-          }
-          disabled={disabled}
-        />
-      </SimpleGrid>
-
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
-        <Input
-          label={isPJ ? text.form.basico.namePj : text.form.basico.nameFisica}
-          maxLength={120}
-          {...register('name')}
-          error={errors.name?.message}
-          isRequired
-          disabled={disabled}
-        />
-        <Input
-          label={isPJ ? text.form.basico.nicknamePj : text.form.basico.nicknameFisica}
-          maxLength={60}
-          {...register('nickname')}
-          error={errors.nickname?.message}
-          isRequired
-          disabled={disabled}
-        />
-      </SimpleGrid>
-
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={8}>
         <MaskedInput
           kind="phone"
           label={text.form.basico.phone}
@@ -165,42 +138,67 @@ export function StepDadosBasicos({
           error={errors.phone?.message}
           disabled={disabled}
         />
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Input
+            label={text.form.basico.email}
+            type="email"
+            {...register('email')}
+            error={errors.email?.message}
+            isRequired={
+              !!watch('user.enabled') || !!watch('client.enabled') || !!watch('proprietary.enabled')
+            }
+            disabled={disabled}
+          />
+        </GridItem>
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Input
+            label={isPJ ? text.form.basico.namePj : text.form.basico.nameFisica}
+            maxLength={120}
+            {...register('name')}
+            error={errors.name?.message}
+            isRequired
+            disabled={disabled}
+          />
+        </GridItem>
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Input
+            label={isPJ ? text.form.basico.nicknamePj : text.form.basico.nicknameFisica}
+            maxLength={60}
+            {...register('nickname')}
+            error={errors.nickname?.message}
+            isRequired
+            disabled={disabled}
+          />
+        </GridItem>
       </SimpleGrid>
 
-      <SectionLabel>{text.form.basico.rolesLabel}</SectionLabel>
-      <Box display="flex" flexDirection="column" gap={3}>
+      {/* Papéis: cartões de seleção (DS `ToggleSection variant="card"`), até 4 por linha */}
+      <Text fontSize="sm" fontWeight="medium" color="gray.900">
+        {text.form.basico.rolesLabel}
+      </Text>
+      <Text fontSize="sm" color="fg.muted" mt="4px" mb={3}>
+        {text.form.basico.rolesHint}
+      </Text>
+      <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} gap={3}>
         {ROLE_ORDER.map((role) => (
           <Controller
             key={role}
             name={`${role}.enabled` as const}
             control={control}
             render={({ field: { value, onChange } }) => (
-              <Box
-                display="flex"
-                alignItems="center"
-                gap={3}
-                px={4}
-                py={3}
-                borderRadius="md"
-                border="1px solid"
-                borderColor="border.subtle"
-                bg="bg.subtle"
-              >
-                <Switch
-                  checked={!!value}
-                  onCheckedChange={(details: { checked: boolean }) => onChange(details.checked)}
-                  disabled={disabled}
-                >
-                  {roles[role]}
-                </Switch>
-              </Box>
+              <ToggleCard
+                title={roles[role]}
+                description={hints[role]}
+                icon={ROLE_ICON[role]}
+                active={!!value}
+                onToggle={onChange}
+                disabled={disabled}
+                activeHint={text.form.basico.roleAdded.replace('{role}', roles[role])}
+              />
             )}
           />
         ))}
-      </Box>
-      <Box fontSize="xs" color="fg.muted" mt={2}>
-        {ROLE_ORDER.map((role) => hints[role]).join(' ')}
-      </Box>
+      </SimpleGrid>
     </Box>
   );
 }

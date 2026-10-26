@@ -86,6 +86,7 @@ export const languagePeople: ModulePeople = {
         rolesLabel: 'Papéis desta pessoa',
         rolesHint:
           'Ative os papéis aplicáveis — cada um adiciona uma etapa de configuração a seguir.',
+        roleAdded: 'Etapa "{role}" adicionada — configure a seguir.',
         nifFoundWarning:
           'Pessoa já cadastrada — dados carregados. Salvar irá ATUALIZAR o registro existente.',
       },

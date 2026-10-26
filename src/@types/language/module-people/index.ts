@@ -77,6 +77,7 @@ export interface ModulePeople {
         phone: string;
         rolesLabel: string;
         rolesHint: string;
+        roleAdded: string;
         nifFoundWarning: string;
       };
 

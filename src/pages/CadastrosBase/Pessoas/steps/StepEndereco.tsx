@@ -34,10 +34,11 @@ export function StepEndereco({ control, register, errors, disabled }: StepProps)
   const text = languageGB.people.person;
 
   return (
-    <Box>
+    // DS: conteúdo centralizado, largura máxima 760px, espaçamento 16px.
+    <Box maxW="760px" mx="auto">
       <StepHeading title={text.steps.endereco} subtitle={text.form.endereco.subtitle} />
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <MaskedInput
           kind="cep"
           label={text.form.endereco.zipCode}
@@ -68,7 +69,7 @@ export function StepEndereco({ control, register, errors, disabled }: StepProps)
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.oneColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.oneColumns} gap={4} mb={4}>
         <Input
           label={text.form.endereco.address}
           {...register('address')}
@@ -78,7 +79,7 @@ export function StepEndereco({ control, register, errors, disabled }: StepProps)
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4}>
         <Input
           label={text.form.endereco.number}
           maxLength={10}

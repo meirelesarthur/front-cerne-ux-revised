@@ -171,3 +171,13 @@ Novo `ui/ListToolbar` (busca inline + botão Filtros na mesma linha, como o DS) 
 
 ### Onda 5 — CRUDs complexos
 Não iniciada além do que já herdam das ondas 2–4 (título, tabela, filtros, menu de ações, Cancelar). Próximo passo proposto: comparar Fazendas (wizard) com o DS tela a tela — `FormSection`, steps, resumo — antes de mexer, porque cada um tem fluxo próprio.
+
+### Onda 5 — Pessoas (2026-10-26)
+Comparado com `cerne/src/pages/cadastros/pessoas` (wizard de 2 etapas fixas + 1 etapa por papel ativado).
+| Item | Situação | O que mudou |
+|---|---|---|
+| Títulos e subtítulos das etapas | já alinhados | idênticos ao DS (Dados Básicos, Endereço, Cliente…) |
+| Dados Básicos — grade | feito | 4 colunas: CPF/CNPJ · Telefone · E-mail (2) / Nome (2) · Apelido (2) — antes 2 colunas com Telefone sozinho no fim |
+| Dados Básicos — papéis | feito | lista de interruptores → **cartões de seleção** (`ui/ToggleCard`, DS `ToggleSection variant="card"`): ícone do papel, descrição, caixa de marcar e dica "Etapa X adicionada" (chave `form.basico.roleAdded`, PT/EN/ES). Reutiliza `roleHints`/`rolesHint` que já existiam |
+| Endereço | feito | conteúdo centralizado, máx. 760px, espaçamento 16px |
+| Etapas de papel (Proprietário, Funcionário, Fornecedor, Cliente, Usuário) | **não comparadas** | cada uma tem blocos próprios (bancários, filiais, inscrições); ficam para a próxima passada |

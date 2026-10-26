@@ -85,6 +85,7 @@ export const languagePeople: ModulePeople = {
         phone: 'Phone',
         rolesLabel: 'Roles for this person',
         rolesHint: 'Enable the applicable roles — each one adds a configuration step below.',
+        roleAdded: '"{role}" step added — configure it next.',
         nifFoundWarning:
           'Person already registered — data loaded. Saving will UPDATE the existing record.',
       },
