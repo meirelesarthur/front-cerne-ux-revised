@@ -1,8 +1,8 @@
 // src/pages/Planos/Contratacao/pricing.ts
 // Regra de preço da contratação — funções PURAS (sem React), cobertas por `pricing.test.ts`.
-// Porte fiel da lógica do simulador do artifact "Cerne Planos e Precificação".
+// Porte fiel da lógica do simulador do documento "Precificação do GB Cerne".
 
-import { CATALOG, type Catalog, type CatalogModule, type PlanTier } from './catalog';
+import { CATALOG, type Catalog, type CatalogModule, type PlanTier, type SizeUnit } from './catalog';
 
 export const RANK: Record<PlanTier | 'Nenhum', number> = { Pro: 0, Deluxe: 1, Enterprise: 2, Nenhum: 9 };
 
@@ -11,10 +11,21 @@ export interface Selection {
   users: number;
   /** Chaves dos módulos marcados pelo usuário. */
   modules: ReadonlySet<string>;
+  unit: SizeUnit;
+  /** Tamanho da fazenda na medida escolhida. */
+  size: number;
+  /** Chave do serviço GB Consult (`none` = sem serviço). */
+  consult: string;
 }
+
+export type QuoteInput = Pick<Selection, 'users' | 'modules' | 'unit' | 'size'>;
 
 export interface Quote {
   tier: PlanTier;
+  /** Faixa de tamanho, de 0 a 4 (faixa 1 a 5). */
+  band: number;
+  /** Faixa 5: o preço é ponto de partida para proposta. */
+  openRange: boolean;
   base: number;
   /** Acessos acima do incluído no plano. */
   extraSeats: number;
@@ -24,10 +35,39 @@ export interface Quote {
   /** Módulos marcados que já vêm incluídos neste plano. */
   includedModules: CatalogModule[];
   modulesTotal: number;
-  /** R$/mês. */
+  /** R$/mês do software. */
   month: number;
   /** `false` quando algum módulo marcado não existe neste plano (nem avulso). */
   valid: boolean;
+}
+
+/** Faixa de tamanho (0 a 4): primeira cujo limite comporta o tamanho; acima do último = faixa 5. */
+export function bandIndex(unit: SizeUnit, size: number, catalog: Catalog = CATALOG): number {
+  const limits = catalog.sizeUnits[unit].limits;
+  let i = 0;
+  while (i < 4 && size > limits[i]) i++;
+  return i;
+}
+
+/** Pontos da régua: 0, os 4 limites e o máximo — 5 trechos iguais, um por faixa. */
+const stops = (unit: SizeUnit, catalog: Catalog) => [0, ...catalog.sizeUnits[unit].limits, catalog.sizeUnits[unit].max];
+
+/** Tamanho → posição na régua (0 a 500, 100 por faixa). */
+export function sizeToPosition(unit: SizeUnit, size: number, catalog: Catalog = CATALOG): number {
+  const s = stops(unit, catalog);
+  for (let i = 0; i < 5; i++) {
+    if (size <= s[i + 1]) return i * 100 + ((size - s[i]) / (s[i + 1] - s[i])) * 100;
+  }
+  return 500;
+}
+
+/** Posição na régua → tamanho (arredondado em passos de 10/50/100). */
+export function positionToSize(unit: SizeUnit, position: number, catalog: Catalog = CATALOG): number {
+  const s = stops(unit, catalog);
+  const i = Math.min(4, Math.floor(position / 100));
+  const v = s[i] + ((position - i * 100) / 100) * (s[i + 1] - s[i]);
+  const step = v < 1000 ? 10 : v < 5000 ? 50 : 100;
+  return Math.max(1, Math.round(v / step) * step);
 }
 
 /** Plano mínimo em que um módulo pode ser usado (avulso → qualquer um; senão, o que o inclui). */
@@ -36,7 +76,8 @@ export const minTierFor = (m: CatalogModule): PlanTier =>
 
 export const isIncluded = (tier: PlanTier, m: CatalogModule) => RANK[tier] >= RANK[m.includedIn];
 
-export function quote(tier: PlanTier, sel: Pick<Selection, 'users' | 'modules'>, catalog: Catalog = CATALOG): Quote {
+export function quote(tier: PlanTier, sel: QuoteInput, catalog: Catalog = CATALOG): Quote {
+  const band = bandIndex(sel.unit, sel.size, catalog);
   const extraSeats = Math.max(0, sel.users - catalog.seatsIncluded[tier]);
   const seatsTotal = extraSeats * catalog.extraSeatPrice[tier];
   const addedModules: CatalogModule[] = [];
@@ -51,9 +92,11 @@ export function quote(tier: PlanTier, sel: Pick<Selection, 'users' | 'modules'>,
   }
 
   const modulesTotal = addedModules.reduce((sum, m) => sum + (m.price ?? 0), 0);
-  const base = catalog.basePrice[tier];
+  const base = catalog.bandPrice[tier][band];
   return {
     tier,
+    band,
+    openRange: band === 4,
     base,
     extraSeats,
     seatsTotal,
@@ -70,6 +113,10 @@ export const annualMonthly = (month: number, catalog: Catalog = CATALOG) =>
   Math.round(((month * catalog.annualBilledMonths) / 12) * 100) / 100;
 
 export const annualTotal = (month: number, catalog: Catalog = CATALOG) => month * catalog.annualBilledMonths;
+
+/** Valor mensal do serviço GB Consult escolhido (0 = sem serviço). */
+export const consultPrice = (key: string, catalog: Catalog = CATALOG) =>
+  catalog.consult.find((c) => c.key === key)?.price ?? 0;
 
 /**
  * Aplica a escolha de um módulo: se ele só existe em plano acima do atual, devolve o plano
@@ -112,7 +159,7 @@ export function pruneUnavailable(
 }
 
 /** Cotações dos 3 planos e o mais barato entre os que atendem. */
-export function compareTiers(sel: Pick<Selection, 'users' | 'modules'>, catalog: Catalog = CATALOG) {
+export function compareTiers(sel: QuoteInput, catalog: Catalog = CATALOG) {
   const quotes = catalog.tiers.map((t) => quote(t, sel, catalog));
   const valid = quotes.filter((q) => q.valid);
   const cheapest = valid.reduce((a, b) => (b.month < a.month ? b : a), valid[0]);

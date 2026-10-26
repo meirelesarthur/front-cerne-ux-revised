@@ -1,31 +1,35 @@
 // src/pages/Planos/Contratacao/index.tsx
 // -----------------------------------------------------------------------------
 // Página "Contratar ou alterar plano" (rota `/planos/contratar`) — configurador no modelo do
-// simulador da Eveo: ETAPAS à esquerda (1 Plano e acessos · 2 Módulos adicionais) e RESUMO
-// escuro fixo à direita com o total, a comparação entre planos e as ações.
+// simulador do documento de precificação: ETAPAS à esquerda (1 Fazenda e plano · 2 Módulos e
+// serviços) e RESUMO escuro fixo à direita com o total, a comparação entre planos e as ações.
+// A visão "Resumo dos planos" mostra a escada de planos, o preço por faixa, os limites de IA e a
+// matriz de módulos (mesma fonte de dados do simulador).
 //
-// Dados REAIS do catálogo comercial: `catalog.ts` (artifact "Cerne Planos e Precificação"),
-// regra de preço em `pricing.ts` (pura e testada). A página só COMPÕE componentes do kit
-// (`StepIndicator`, `PlanOptionCard`, `QuantityStepper`, `CheckOptionRow`, `SummaryPanel`,
-// `PlanCompareStrip`…) e liga estado + regra.
+// Dados REAIS do catálogo comercial: `catalog.ts` (documento "Precificação do GB Cerne"), regra de
+// preço em `pricing.ts` (pura e testada). A página só COMPÕE componentes do kit e liga estado + regra.
 //
 // PENDENTE de backend (placeholders marcados): assinatura atual do contratante
 // (`CURRENT_SUBSCRIPTION`), catálogo via API e envio da solicitação ao comercial.
 // -----------------------------------------------------------------------------
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
-import { Alert, Box, Flex, Grid, Text } from '@chakra-ui/react';
+import { Alert, Box, Flex, Grid, Input, Text } from '@chakra-ui/react';
 
 import { Button } from '@/components/Button';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { FormContainer } from '@/components/Layout/FormContainer';
+import { BandSlider } from '@/components/ui/BandSlider';
 import { CheckOptionRow } from '@/components/ui/CheckOptionRow';
-import { Icon } from '@/components/ui/Icon';
+import { ChoiceCardGroup } from '@/components/ui/ChoiceCardGroup';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import { PlanCompareStrip } from '@/components/ui/PlanCompareStrip';
 import { PlanOptionCard } from '@/components/ui/PlanOptionCard';
+import { PlanTierCard } from '@/components/ui/PlanTierCard';
 import { QuantityStepper } from '@/components/ui/QuantityStepper';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { SimpleTable, type SimpleTableRow } from '@/components/ui/SimpleTable';
 import { StepIndicator } from '@/components/ui/StepIndicator';
 import {
   SummaryGroup,
@@ -38,21 +42,26 @@ import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
-import { CATALOG, PLAN_DESCRIPTION, type PlanTier } from './catalog';
+import { CATALOG, PLAN_DESCRIPTION, PLAN_HIGHLIGHTS, type PlanTier, type SizeUnit } from './catalog';
 import {
   annualMonthly,
   annualTotal,
+  bandIndex,
   compareTiers,
+  consultPrice,
   formatBRL,
   isIncluded,
+  positionToSize,
   pruneUnavailable,
   quote,
   RANK,
+  sizeToPosition,
   toggleModule,
   type Selection,
 } from './pricing';
 
 type StepKey = 'plan' | 'modules';
+type ViewKey = 'simulate' | 'plans';
 type Billing = 'monthly' | 'annual';
 
 /**
@@ -61,21 +70,27 @@ type Billing = 'monthly' | 'annual';
  */
 const CURRENT_SUBSCRIPTION: Selection | null = {
   plan: 'Pro',
-  users: 3,
+  users: 5,
   modules: new Set<string>(),
+  unit: 'cab',
+  size: 1200,
+  consult: 'none',
 };
 
 const fill = (template: string, vars: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ''));
 
+const n0 = (v: number) => Math.round(v).toLocaleString('pt-BR');
+
 export default function ContratacaoPlano() {
   const { languageGB } = useLanguage();
   const text = languageGB.subscription;
 
+  const [view, setView] = useState<ViewKey>('simulate');
   const [step, setStep] = useState<StepKey>('plan');
   const [billing, setBilling] = useState<Billing>('monthly');
   const [selection, setSelection] = useState<Selection>(
-    CURRENT_SUBSCRIPTION ?? { plan: 'Pro', users: 5, modules: new Set<string>() }
+    CURRENT_SUBSCRIPTION ?? { plan: 'Pro', users: 5, modules: new Set<string>(), unit: 'cab', size: 1200, consult: 'none' }
   );
   const [note, setNote] = useState('');
   const [requestOpen, setRequestOpen] = useState(false);
@@ -87,13 +102,30 @@ export default function ContratacaoPlano() {
   };
 
   // ---- Derivados ----
+  const unitInfo = CATALOG.sizeUnits[selection.unit];
+  const band = bandIndex(selection.unit, selection.size);
+  const open = band === 4;
   const current = quote(selection.plan, selection);
   const { quotes, cheapest } = useMemo(() => compareTiers(selection), [selection]);
   const annual = billing === 'annual';
   const monthShown = annual ? annualMonthly(current.month) : current.month;
+  const consultMonth = consultPrice(selection.consult);
+  const consultOption = CATALOG.consult.find((c) => c.key === selection.consult)!;
   const includedModules = CATALOG.modules.filter((m) => isIncluded(selection.plan, m));
   const currentQuote = CURRENT_SUBSCRIPTION ? quote(CURRENT_SUBSCRIPTION.plan, CURRENT_SUBSCRIPTION) : null;
   const deltaVsCurrent = currentQuote ? current.month - currentQuote.month : null;
+  const seatsIncluded = CATALOG.seatsIncluded[selection.plan];
+  const seatsLabel = (tier: PlanTier) =>
+    CATALOG.seatsIncluded[tier] === Infinity
+      ? text.plan.accessesUnlimited
+      : fill(text.plan.accessesIncluded, { n: CATALOG.seatsIncluded[tier] });
+
+  const bandText = (i: number, unit: SizeUnit = selection.unit) => {
+    const info = CATALOG.sizeUnits[unit];
+    return i < 4
+      ? fill(text.size.bandUpTo, { n: i + 1, lim: n0(info.limits[i]), word: info.word })
+      : fill(text.size.bandAbove, { lim: n0(info.limits[3]), word: info.word });
+  };
 
   // Sugestão: plano mais barato que atende a mesma configuração
   const suggestion =
@@ -102,7 +134,9 @@ export default function ContratacaoPlano() {
           RANK[cheapest.tier] > RANK[selection.plan] ? text.messages.upgradeCheaper : text.messages.otherCheaper,
           { plan: cheapest.tier, v: formatBRL(current.month - cheapest.month) }
         )
-      : '';
+      : !note && open
+        ? text.messages.band5
+        : '';
 
   // ---- Ações ----
   function choosePlan(plan: PlanTier) {
@@ -125,11 +159,19 @@ export default function ContratacaoPlano() {
     );
   }
 
+  function changeUnit(unit: SizeUnit) {
+    if (unit === selection.unit) return;
+    // mantém a posição na régua (a faixa) ao trocar de medida
+    const position = sizeToPosition(selection.unit, selection.size);
+    setSelection((s) => ({ ...s, unit, size: positionToSize(unit, position) }));
+  }
+
   const summaryText = () =>
     [
       'GB Cerne · proposta',
-      `${text.summary.plan} ${selection.plan}: ${formatBRL(current.base)}${text.plan.perMonth}`,
-      `${text.summary.accesses}: ${selection.users} (${CATALOG.seatsIncluded[selection.plan]} ${text.summary.includedInPlan.toLowerCase()}${
+      `${text.summary.size}: ${n0(selection.size)} ${unitInfo.word} (${bandText(band)})`,
+      `${text.summary.plan} ${selection.plan}: ${formatBRL(current.base)}${open ? '+' : ''}${text.plan.perMonth}`,
+      `${text.summary.accesses}: ${selection.users} (${seatsIncluded === Infinity ? text.plan.accessesUnlimited : `${seatsIncluded} ${text.summary.includedInPlan.toLowerCase()}`}${
         current.extraSeats
           ? `, ${current.extraSeats} ${text.summary.extras.toLowerCase()} × ${formatBRL(CATALOG.extraSeatPrice[selection.plan])} = ${formatBRL(current.seatsTotal)}`
           : ''
@@ -139,9 +181,12 @@ export default function ContratacaoPlano() {
           ? current.addedModules.map((m) => `${m.name} (+${formatBRL(m.price ?? 0)})`).join('; ')
           : text.summary.none
       }`,
-      `Total: ${formatBRL(current.month)}${text.plan.perMonth}${
+      `Software: ${formatBRL(current.month)}${text.plan.perMonth}${
         annual ? ` · ${formatBRL(annualTotal(current.month))} / ano` : ` · ${formatBRL(current.month * 12)} / ano`
       }`,
+      consultMonth
+        ? `${fill(text.consult.summaryName, { name: consultOption.name })}: ${formatBRL(consultMonth)}${text.plan.perMonth} · ${text.summary.totalWithConsult} ${formatBRL((annual ? annualMonthly(current.month) : current.month) + consultMonth)}${text.plan.perMonth}`
+        : `${text.summary.consult}: ${text.consult.none}`,
     ].join('\n');
 
   async function copySummary() {
@@ -164,18 +209,63 @@ export default function ContratacaoPlano() {
       ? text.summary.requestUpgrade
       : text.summary.requestChange;
 
-  // ---- Etapa 1: plano, cobrança e acessos ----
+  // ---- Etapa 1: tamanho, plano, acessos e cobrança ----
+  const limits = unitInfo.limits;
+  const sliderTicks = [0, ...limits, unitInfo.max].map((v, i, arr) => (i === 0 ? '0' : i === arr.length - 1 ? `${n0(v)}+` : n0(v)));
   const planStep = (
     <>
+      <FieldRow icon="map" title={text.size.title} hint={text.size.hint} wide>
+        <Flex align="center" gap="12px" wrap="wrap" mb="6px">
+          <SegmentedControl<SizeUnit>
+            value={selection.unit}
+            onChange={changeUnit}
+            ariaLabel={text.size.unitLabel}
+            options={[
+              { key: 'cab', label: text.size.cab },
+              { key: 'ha', label: text.size.ha },
+            ]}
+          />
+          <Flex align="center" gap="6px">
+            <Input
+              type="number"
+              min={1}
+              max={500000}
+              w="120px"
+              aria-label={text.size.quantity}
+              value={selection.size}
+              onChange={(e) => {
+                const v = Math.max(1, Math.min(500000, Math.round(Number(e.target.value) || 1)));
+                setSelection((s) => ({ ...s, size: v }));
+              }}
+            />
+            <Text fontSize="base" color="fg.muted">
+              {unitInfo.short}
+            </Text>
+          </Flex>
+        </Flex>
+        <BandSlider
+          ariaLabel={fill(text.size.scale, { word: unitInfo.word })}
+          value={sizeToPosition(selection.unit, selection.size)}
+          onChange={(p) => setSelection((s) => ({ ...s, size: positionToSize(s.unit, p) }))}
+          ticks={sliderTicks}
+          bandLabels={[0, 1, 2, 3, 4].map((i) => fill(text.size.band, { n: i + 1 }))}
+          activeBand={band}
+        />
+        <Text fontSize="base" color="fg.muted" mt="4px">
+          <b>{bandText(band)}</b>
+          {open ? text.size.band5Note : ''}
+        </Text>
+      </FieldRow>
+
       <FieldRow icon="blocks" title={text.plan.title} hint={text.plan.hint} wide>
         <Grid role="radiogroup" aria-label={text.plan.title} templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }} gap="8px">
           {CATALOG.tiers.map((tier) => (
             <PlanOptionCard
               key={tier}
               name={tier}
-              price={formatBRL(CATALOG.basePrice[tier])}
+              price={`${formatBRL(CATALOG.bandPrice[tier][band])}${open ? '+' : ''}`}
               priceSuffix={text.plan.perMonth}
-              description={`${fill(text.plan.accessesIncluded, { n: CATALOG.seatsIncluded[tier] })} · ${tagline[tier]}`}
+              description={`${seatsLabel(tier)} · ${tagline[tier]}`}
               accent={CATALOG.accent[tier]}
               selected={selection.plan === tier}
               onSelect={() => choosePlan(tier)}
@@ -185,6 +275,23 @@ export default function ContratacaoPlano() {
         </Grid>
         <Text fontSize="base" color="fg.muted" mt="12px" lineHeight="1.5">
           <b>{selection.plan}:</b> {PLAN_DESCRIPTION[selection.plan]}
+        </Text>
+      </FieldRow>
+
+      <FieldRow icon="users" title={text.accesses.title} hint={text.accesses.hint}>
+        <QuantityStepper
+          value={selection.users}
+          onChange={(users) => setSelection((s) => ({ ...s, users }))}
+          labels={{ decrease: text.accesses.decrease, increase: text.accesses.increase, input: text.accesses.quantity }}
+        />
+        <Text fontSize="base" color="fg.muted" mt="8px">
+          {seatsIncluded === Infinity
+            ? fill(text.accesses.infoUnlimited, { plan: selection.plan })
+            : fill(text.accesses.info, {
+                inc: seatsIncluded,
+                plan: selection.plan,
+                price: formatBRL(CATALOG.extraSeatPrice[selection.plan]),
+              })}
         </Text>
       </FieldRow>
 
@@ -200,28 +307,13 @@ export default function ContratacaoPlano() {
         />
       </FieldRow>
 
-      <FieldRow icon="users" title={text.accesses.title} hint={text.accesses.hint}>
-        <QuantityStepper
-          value={selection.users}
-          onChange={(users) => setSelection((s) => ({ ...s, users }))}
-          labels={{ decrease: text.accesses.decrease, increase: text.accesses.increase, input: text.accesses.quantity }}
-        />
-        <Text fontSize="base" color="fg.muted" mt="8px">
-          {fill(text.accesses.info, {
-            inc: CATALOG.seatsIncluded[selection.plan],
-            plan: selection.plan,
-            price: formatBRL(CATALOG.extraSeatPrice[selection.plan]),
-          })}
-        </Text>
-      </FieldRow>
-
       <Flex justify="flex-end" pt={5}>
         <Button title={text.nav.next} onClick={() => setStep('modules')} />
       </Flex>
     </>
   );
 
-  // ---- Etapa 2: módulos ----
+  // ---- Etapa 2: módulos e GB Consult ----
   const groupLabel = (includedIn: string) =>
     includedIn === 'Deluxe' ? text.modules.groupDeluxe : includedIn === 'Enterprise' ? text.modules.groupEnterprise : text.modules.groupAny;
 
@@ -275,6 +367,32 @@ export default function ContratacaoPlano() {
           </Box>
         ))}
       </Flex>
+
+      <Box mt={6} pt={4} borderTopWidth="1px" borderColor="border.muted">
+        <Flex align="center" gap="8px">
+          <Text fontSize="md" fontWeight="semibold">
+            {text.consult.title}
+          </Text>
+          <Box as="span" px="8px" py="2px" borderRadius="full" bg="semanticNeutral.100" color="fg.muted" fontSize="xs" fontWeight="semibold">
+            {text.consult.optional}
+          </Box>
+        </Flex>
+        <Text fontSize="base" color="fg.muted" mb={3}>
+          {text.consult.hint}
+        </Text>
+        <ChoiceCardGroup
+          ariaLabel={text.consult.title}
+          value={selection.consult}
+          onChange={(consult) => setSelection((s) => ({ ...s, consult }))}
+          options={CATALOG.consult.map((c) => ({
+            key: c.key,
+            title: c.key === 'none' ? text.consult.none : c.name,
+            value: c.price ? `${formatBRL(c.price)}${text.consult.perMonth}` : text.consult.softwareOnly,
+            description: c.description,
+          }))}
+        />
+      </Box>
+
       <Flex justify="flex-start" pt={5}>
         <Button title={text.nav.back} variant="secondary" onClick={() => setStep('plan')} />
       </Flex>
@@ -285,13 +403,20 @@ export default function ContratacaoPlano() {
   const summary = (
     <SummaryPanel title={text.summary.title} icon="receipt">
       <SummaryGroup title={text.summary.plan}>
+        <SummaryRow label={text.summary.size} value={`${n0(selection.size)} ${unitInfo.short}`} />
+        <SummaryRow label={text.summary.band} value={open ? text.summary.bandOpen : String(band + 1)} />
         <SummaryRow label={text.summary.plan} value={selection.plan} />
-        <SummaryRow label={text.summary.baseValue} value={formatBRL(current.base)} />
+        <SummaryRow label={text.summary.baseValue} value={`${formatBRL(current.base)}${open ? '+' : ''}`} />
+        <SummaryRow
+          label={text.summary.ai}
+          value={fill(text.summary.aiValue, { w: CATALOG.ai[selection.plan].perWindow, t: CATALOG.ai[selection.plan].monthlyTokensMi })}
+        />
+        <SummaryNote>{PLAN_DESCRIPTION[selection.plan]}</SummaryNote>
       </SummaryGroup>
 
       <SummaryGroup title={text.summary.accesses}>
         <SummaryRow label={text.summary.contracted} value={String(selection.users)} />
-        <SummaryRow label={text.summary.includedInPlan} value={String(CATALOG.seatsIncluded[selection.plan])} tone="included" />
+        <SummaryRow label={text.summary.includedInPlan} value={seatsIncluded === Infinity ? text.overview.unlimitedShort : String(seatsIncluded)} tone="included" />
         {current.extraSeats > 0 ? (
           <SummaryRow
             label={`${text.summary.extras}: ${current.extraSeats} × ${formatBRL(CATALOG.extraSeatPrice[selection.plan])}`}
@@ -319,15 +444,35 @@ export default function ContratacaoPlano() {
         )}
       </SummaryGroup>
 
+      <SummaryGroup title={text.summary.consult}>
+        {consultMonth ? (
+          <>
+            <SummaryRow label={fill(text.consult.summaryName, { name: consultOption.name })} value={`+ ${formatBRL(consultMonth)}`} tone="added" />
+            <SummaryNote>
+              {consultOption.description}. {text.consult.note}
+            </SummaryNote>
+          </>
+        ) : (
+          <SummaryNote>{text.consult.noneSelected}</SummaryNote>
+        )}
+      </SummaryGroup>
+
       <SummaryTotal
         label={fill(annual ? text.summary.totalAnnual : text.summary.totalMonth, { plan: selection.plan })}
-        value={formatBRL(monthShown)}
+        value={`${formatBRL(monthShown)}${open ? '+' : ''}`}
         hint={
           annual
             ? fill(text.summary.annualInstead, { a: formatBRL(annualTotal(current.month)), b: formatBRL(current.month * 12) })
             : fill(text.summary.perYear, { v: formatBRL(current.month * 12) })
         }
       />
+      {consultMonth > 0 && (
+        <SummaryRow
+          label={fill(text.consult.withService, { name: consultOption.name })}
+          value={`${formatBRL(monthShown + consultMonth)}${open ? '+' : ''}${text.plan.perMonth}`}
+          tone="added"
+        />
+      )}
 
       {deltaVsCurrent !== null && (
         <SummaryRow
@@ -372,34 +517,280 @@ export default function ContratacaoPlano() {
     </SummaryPanel>
   );
 
+  // ---- Visão "Resumo dos planos" ----
+  const ov = text.overview;
+  const priceRange = (tier: PlanTier) => {
+    const p = CATALOG.bandPrice[tier];
+    return fill(tier === 'Enterprise' ? ov.priceRangeOpen : ov.priceRange, { a: n0(p[0]), b: n0(p[4]) });
+  };
+  const chipsFor = (tier: PlanTier) => {
+    const acts = CATALOG.activitiesIncluded[tier];
+    const seats = CATALOG.seatsIncluded[tier];
+    return [
+      acts === 'todas' ? ov.allActivities : fill(acts === 1 ? ov.activities : ov.activitiesPlural, { n: acts }),
+      seats === Infinity ? ov.unlimited : fill(ov.accesses, { n: seats }),
+      ...(CATALOG.extraSeatPrice[tier] ? [fill(ov.extraSeat, { n: CATALOG.extraSeatPrice[tier] })] : []),
+    ];
+  };
+  const addonLinesFor = (tier: PlanTier) =>
+    CATALOG.tiers
+      .filter((t) => RANK[t] > RANK[tier])
+      .map((t) => {
+        const prices = CATALOG.modules.filter((m) => m.includedIn === t && m.price !== null).map((m) => m.price as number);
+        // avulsos "do plano t": inclui os de planos intermediários que também ficam abaixo de t
+        const upTo = CATALOG.modules.filter((m) => RANK[m.includedIn] <= RANK[t] && RANK[m.includedIn] > RANK[tier] && m.price !== null).map((m) => m.price as number);
+        const set = upTo.length ? upTo : prices;
+        return fill(ov.addonLine, { plan: t, a: Math.min(...set), b: Math.max(...set) });
+      });
+
+  const bandRows: SimpleTableRow[] = [0, 1, 2, 3, 4].map((i) => ({
+    key: `band-${i}`,
+    cells: {
+      band: <b>{fill(text.size.band, { n: i + 1 })}</b>,
+      cab: i < 4 ? n0(CATALOG.sizeUnits.cab.limits[i]) : fill(ov.above, { n: n0(CATALOG.sizeUnits.cab.limits[3]) }),
+      ha: i < 4 ? n0(CATALOG.sizeUnits.ha.limits[i]) : fill(ov.above, { n: n0(CATALOG.sizeUnits.ha.limits[3]) }),
+      Pro: n0(CATALOG.bandPrice.Pro[i]),
+      Deluxe: n0(CATALOG.bandPrice.Deluxe[i]),
+      Enterprise: `${n0(CATALOG.bandPrice.Enterprise[i])}${i === 4 ? '+' : ''}`,
+    },
+  }));
+
+  const aiRows: SimpleTableRow[] = [
+    ...CATALOG.tiers.map((t) => ({
+      key: `ai-${t}`,
+      cells: {
+        plan: <PlanChip tier={t} />,
+        window: fill(ov.aiWindowValue, { n: CATALOG.ai[t].perWindow }),
+        monthly: fill(ov.aiTokens, { n: CATALOG.ai[t].monthlyTokensMi }),
+        equals: `~${n0(CATALOG.ai[t].approxMessages)} ${fill(ov.aiMessages, { n: '' }).trim()}`,
+      },
+    })),
+    {
+      key: 'ai-extra',
+      kind: 'total',
+      cells: {
+        plan: ov.aiExtraTitle,
+        window: '—',
+        monthly: ov.aiExtraTokens,
+        equals: `~${n0(650)} ${fill(ov.aiMessages, { n: '' }).trim()}`,
+      },
+    },
+  ];
+
+  const dot = <Box as="span" display="inline-block" boxSize="12px" borderRadius="full" bg="green.600" aria-label={ov.legendIncluded} />;
+  const ring = <Box as="span" display="inline-block" boxSize="12px" borderRadius="full" borderWidth="2px" borderColor="addonText" aria-label={ov.legendAddon} />;
+  const na = <Text as="span" color="fg.muted" aria-label={ov.legendNa}>—</Text>;
+  const matrixCell = (tier: PlanTier, m: (typeof CATALOG.modules)[number]) =>
+    RANK[tier] >= RANK[m.includedIn] ? dot : m.price === null ? na : ring;
+
+  const matrixRows: SimpleTableRow[] = [
+    { key: 'g-base', kind: 'group', label: ov.groupBase },
+    { key: 'base-fin', cells: { module: ov.baseFinance, Pro: dot, Deluxe: dot, Enterprise: dot } },
+    { key: 'base-rep', cells: { module: ov.baseReports, Pro: dot, Deluxe: dot, Enterprise: dot } },
+  ];
+  let lastGroup = '';
+  CATALOG.modules.forEach((m) => {
+    const g = m.includedIn === 'Deluxe' ? ov.groupDeluxe : ov.groupEnterprise;
+    if (g !== lastGroup) {
+      matrixRows.push({ key: `g-${g}`, kind: 'group', label: g });
+      lastGroup = g;
+    }
+    matrixRows.push({
+      key: m.key,
+      cells: {
+        module: (
+          <Flex wrap="wrap" gap="4px 10px" align="center">
+            <span>{m.name}</span>
+            {m.price !== null && (
+              <Box as="span" px="7px" py="2px" borderRadius="full" bg="rgba(138,59,107,0.10)" color="addonText" fontSize="xs" fontWeight="semibold">
+                {fill(ov.addonPrice, { n: m.price })}
+              </Box>
+            )}
+          </Flex>
+        ),
+        Pro: matrixCell('Pro', m),
+        Deluxe: matrixCell('Deluxe', m),
+        Enterprise: matrixCell('Enterprise', m),
+      },
+    });
+  });
+  matrixRows.push(
+    { key: 'g-seats', kind: 'group', label: ov.groupSeats },
+    {
+      key: 'seats',
+      cells: {
+        module: ov.rowSeats,
+        ...Object.fromEntries(CATALOG.tiers.map((t) => [t, CATALOG.seatsIncluded[t] === Infinity ? ov.unlimitedShort : CATALOG.seatsIncluded[t]])),
+      },
+    },
+    {
+      key: 'extra',
+      cells: {
+        module: ov.rowExtra,
+        ...Object.fromEntries(CATALOG.tiers.map((t) => [t, CATALOG.extraSeatPrice[t] ? `+${CATALOG.extraSeatPrice[t]}` : na])),
+      },
+    },
+    {
+      key: 'acts',
+      cells: {
+        module: ov.rowActivities,
+        ...Object.fromEntries(CATALOG.tiers.map((t) => [t, CATALOG.activitiesIncluded[t] === 'todas' ? ov.allShort : CATALOG.activitiesIncluded[t]])),
+      },
+    }
+  );
+
+  const planCol = (tier: PlanTier) => ({ key: tier, header: <PlanChip tier={tier} />, align: 'center' as const });
+
+  const overview = (
+    <Flex direction="column" gap={6}>
+      <Box>
+        <Text fontSize="xl" fontWeight="bold" color="gray.900">
+          {ov.title}
+        </Text>
+        <Text fontSize="base" color="fg.muted" mt="6px" maxW="72ch" lineHeight="1.5">
+          {ov.subtitle}
+        </Text>
+      </Box>
+
+      <Box borderWidth="1.5px" borderStyle="dashed" borderColor="green.600" borderRadius="xl" px={5} py={4} bg="green.50">
+        <Box as="span" px="9px" py="3px" borderRadius="full" bg="green.100" color="green.700" fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.06em">
+          {ov.entryTag}
+        </Box>
+        <Text fontSize="lg" fontWeight="bold" color="green.700" mt="8px">
+          {ov.entryTitle}
+        </Text>
+        <Text fontSize="base" color="fg.muted" mt="4px">
+          {ov.entryBody}
+        </Text>
+      </Box>
+
+      <Grid templateColumns={{ base: '1fr', xl: 'repeat(3, minmax(0, 1fr))' }} gap={3} alignItems="stretch">
+        {CATALOG.tiers.map((tier) => {
+          const hl = PLAN_HIGHLIGHTS[tier];
+          const lines = addonLinesFor(tier);
+          return (
+            <PlanTierCard
+              key={tier}
+              name={tier}
+              tagline={tagline[tier]}
+              accent={CATALOG.accent[tier]}
+              priceRange={priceRange(tier)}
+              priceNote={tier === 'Enterprise' ? ov.priceNoteOpen : text.plan.perMonthRange}
+              chips={chipsFor(tier)}
+              listLabel={hl.inherits ? fill(ov.inheritsList, { plan: hl.inherits }) : ov.baseList}
+              items={hl.items}
+              addonsLabel={lines.length ? ov.addonsAvailable : ov.addonsNone}
+              addonLines={lines.length ? lines : [ov.addonsAll]}
+              addonsAllIncluded={lines.length === 0}
+            />
+          );
+        })}
+      </Grid>
+
+      <Box>
+        <Text fontSize="lg" fontWeight="semibold" mb={2}>
+          {ov.priceTableTitle}
+        </Text>
+        <SimpleTable
+          ariaLabel={ov.priceTableTitle}
+          columns={[
+            { key: 'band', header: ov.colBand },
+            { key: 'cab', header: ov.colCab, align: 'right' },
+            { key: 'ha', header: ov.colHa, align: 'right' },
+            ...CATALOG.tiers.map(planCol).map((c) => ({ ...c, align: 'right' as const })),
+          ]}
+          rows={bandRows}
+        />
+        <Text fontSize="sm" color="fg.muted" mt="6px">
+          {ov.priceTableNote}
+        </Text>
+      </Box>
+
+      <Box>
+        <Text fontSize="lg" fontWeight="semibold" mb={2}>
+          {ov.aiTitle}
+        </Text>
+        <SimpleTable
+          ariaLabel={ov.aiTitle}
+          columns={[
+            { key: 'plan', header: ov.colPlan },
+            { key: 'window', header: ov.colWindow, align: 'right' },
+            { key: 'monthly', header: ov.colMonthly, align: 'right' },
+            { key: 'equals', header: ov.colEquals, align: 'right' },
+          ]}
+          rows={aiRows}
+        />
+        <Text fontSize="sm" color="fg.muted" mt="6px">
+          {fill(ov.aiExtraNote, { n: CATALOG.aiExtraPackPrice })}. {ov.aiNote}
+        </Text>
+      </Box>
+
+      <Box>
+        <Text fontSize="lg" fontWeight="semibold" mb={2}>
+          {ov.matrixTitle}
+        </Text>
+        <Flex wrap="wrap" gap="6px 20px" fontSize="sm" color="fg.muted" mb={2}>
+          <Flex align="center" gap="7px">{dot}{ov.legendIncluded}</Flex>
+          <Flex align="center" gap="7px">{ring}{ov.legendAddon}</Flex>
+          <Flex align="center" gap="7px">{na}{ov.legendNa}</Flex>
+        </Flex>
+        <SimpleTable
+          ariaLabel={ov.matrixTitle}
+          columns={[{ key: 'module', header: ov.colModule }, ...CATALOG.tiers.map(planCol)]}
+          rows={matrixRows}
+        />
+      </Box>
+    </Flex>
+  );
+
   return (
     <FormContainer fullBleed title={text.pageTitle} subtitle={text.pageSubtitle}>
-      <Grid templateColumns={{ base: '1fr', lg: 'minmax(0, 1fr) 360px' }} height="100%" minH={0}>
+      <Grid templateColumns={{ base: '1fr', lg: view === 'simulate' ? 'minmax(0, 1fr) 360px' : 'minmax(0, 1fr)' }} height="100%" minH={0}>
         <Box px={{ base: 4, md: 7 }} py={5} overflowY="auto" minW={0}>
-          <Alert.Root status="info" borderRadius="lg" mb={5}>
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Description>{text.simulationNotice}</Alert.Description>
-            </Alert.Content>
-          </Alert.Root>
-
-          <Box mb={4}>
-            <StepIndicator<StepKey>
-              ariaLabel={text.steps.label}
-              value={step}
-              onChange={setStep}
-              steps={[
-                { key: 'plan', label: text.steps.plan },
-                { key: 'modules', label: text.steps.modules },
+          <Flex justify="space-between" align="center" wrap="wrap" gap="12px" mb={4}>
+            <SegmentedControl<ViewKey>
+              value={view}
+              onChange={setView}
+              ariaLabel={text.view.label}
+              options={[
+                { key: 'simulate', label: text.view.simulate },
+                { key: 'plans', label: text.view.plans },
               ]}
             />
-          </Box>
+          </Flex>
 
-          {step === 'plan' ? planStep : modulesStep}
+          {view === 'plans' ? (
+            overview
+          ) : (
+            <>
+              <Alert.Root status="info" borderRadius="lg" mb={5}>
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{text.simulationNotice}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+
+              <Box mb={4}>
+                <StepIndicator<StepKey>
+                  ariaLabel={text.steps.label}
+                  value={step}
+                  onChange={setStep}
+                  steps={[
+                    { key: 'plan', label: text.steps.plan },
+                    { key: 'modules', label: text.steps.modules },
+                  ]}
+                />
+              </Box>
+
+              {step === 'plan' ? planStep : modulesStep}
+            </>
+          )}
         </Box>
-        <Box overflowY="auto" minH={0}>
-          {summary}
-        </Box>
+        {view === 'simulate' && (
+          <Box overflowY="auto" minH={0}>
+            {summary}
+          </Box>
+        )}
       </Grid>
 
       <DeleteConfirmDialog
@@ -417,6 +808,15 @@ export default function ContratacaoPlano() {
   );
 }
 
+/** Selo com o nome do plano na cor do catálogo. */
+function PlanChip({ tier }: { tier: PlanTier }) {
+  return (
+    <Box as="span" px="9px" py="4px" borderRadius="full" fontSize="xs" fontWeight="semibold" color="white" style={{ background: CATALOG.accent[tier] }}>
+      {tier}
+    </Box>
+  );
+}
+
 /** Linha de configuração: ícone + título/dica à esquerda, controle à direita (ou largura total). */
 function FieldRow({
   icon,
@@ -425,11 +825,11 @@ function FieldRow({
   wide = false,
   children,
 }: {
-  icon: 'blocks' | 'calendar' | 'users';
+  icon: IconName;
   title: string;
   hint: string;
   wide?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <Grid

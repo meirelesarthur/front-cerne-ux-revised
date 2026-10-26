@@ -21,6 +21,8 @@ export interface ModuleSubscription {
     taglinePro: string;
     taglineDeluxe: string;
     taglineEnterprise: string;
+    accessesUnlimited: string;
+    perMonthRange: string;
   };
   billing: {
     title: string;
@@ -35,6 +37,7 @@ export interface ModuleSubscription {
     increase: string;
     quantity: string;
     info: string;
+    infoUnlimited: string;
   };
   modules: {
     title: string;
@@ -77,12 +80,20 @@ export interface ModuleSubscription {
     requestNew: string;
     requestUpgrade: string;
     requestChange: string;
+    size: string;
+    band: string;
+    bandOpen: string;
+    ai: string;
+    aiValue: string;
+    consult: string;
+    totalWithConsult: string;
   };
   messages: {
     moduleRequires: string;
     moduleRemoved: string;
     upgradeCheaper: string;
     otherCheaper: string;
+    band5: string;
   };
   request: {
     title: string;
@@ -90,5 +101,92 @@ export interface ModuleSubscription {
     confirm: string;
     done: string;
     devNotice: string;
+  };
+  view: {
+    label: string;
+    simulate: string;
+    plans: string;
+  };
+  size: {
+    title: string;
+    hint: string;
+    unitLabel: string;
+    cab: string;
+    ha: string;
+    quantity: string;
+    scale: string;
+    band: string;
+    bandUpTo: string;
+    bandAbove: string;
+    band5Note: string;
+  };
+  consult: {
+    title: string;
+    optional: string;
+    hint: string;
+    perMonth: string;
+    softwareOnly: string;
+    none: string;
+    noneSelected: string;
+    note: string;
+    withService: string;
+    summaryName: string;
+  };
+  overview: {
+    title: string;
+    subtitle: string;
+    entryTag: string;
+    entryTitle: string;
+    entryBody: string;
+    priceRange: string;
+    priceRangeOpen: string;
+    priceNoteOpen: string;
+    activities: string;
+    activitiesPlural: string;
+    allActivities: string;
+    accesses: string;
+    unlimited: string;
+    extraSeat: string;
+    baseList: string;
+    inheritsList: string;
+    addonsAvailable: string;
+    addonsNone: string;
+    addonsAll: string;
+    addonLine: string;
+    priceTableTitle: string;
+    colBand: string;
+    colCab: string;
+    colHa: string;
+    above: string;
+    priceTableNote: string;
+    aiTitle: string;
+    colPlan: string;
+    colWindow: string;
+    colMonthly: string;
+    colEquals: string;
+    aiMessages: string;
+    aiWindowValue: string;
+    aiTokens: string;
+    aiExtraTitle: string;
+    aiExtraTokens: string;
+    aiExtraNote: string;
+    aiNote: string;
+    matrixTitle: string;
+    colModule: string;
+    legendIncluded: string;
+    legendAddon: string;
+    legendNa: string;
+    addonPrice: string;
+    groupBase: string;
+    groupDeluxe: string;
+    groupEnterprise: string;
+    groupSeats: string;
+    baseFinance: string;
+    baseReports: string;
+    rowSeats: string;
+    rowExtra: string;
+    rowActivities: string;
+    unlimitedShort: string;
+    allShort: string;
   };
 }
