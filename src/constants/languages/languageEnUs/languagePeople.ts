@@ -177,7 +177,7 @@ export const languagePeople: ModulePeople = {
         finalCustomer: 'Final Customer',
         finalCustomerHint: 'Affects taxation when issuing invoices.',
         taxpayer: 'Taxpayer',
-        taxpayerHint: 'Defines whether the client is a tax (ICMS) payer.',
+        taxpayerHint: 'Defines whether the customer is an ICMS taxpayer (tax impact).',
         country: 'Country',
         idAbroad: 'Foreign ID',
         stateRegistrations: 'State Registrations',

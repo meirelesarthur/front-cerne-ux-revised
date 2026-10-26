@@ -55,6 +55,8 @@ import type { CityListItem } from '@/@types/v2/Cities';
 
 import { SectionLabel, StepHeading, type StepProps } from './parts';
 
+import { RepeaterList } from '@/components/ui/RepeaterList';
+import { StepBody } from '@/components/ui/StepBody';
 const ACCOUNT_TYPE_OPTIONS: Option<string>[] = [
   { value: 'C', label: 'Conta Corrente' },
   { value: 'P', label: 'Conta Poupança' },
@@ -85,10 +87,10 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
   const sellersArray = useFieldArray({ control, name: 'provider.sellers' });
 
   return (
-    <Box>
+    <StepBody>
       <StepHeading title={text.roles.provider} subtitle={p.subtitle} />
 
-      <SimpleGrid columns={columnsForm.threeColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.threeColumns} gap={4} mb={4}>
         <Controller
           name="provider.type"
           control={control}
@@ -134,7 +136,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <MaskedInput
           kind="digits"
           label={p.stateRegistration}
@@ -149,7 +151,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={8}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Input label={p.contact} {...register('provider.contact')} disabled={disabled} />
         <MaskedInput
           kind="phone"
@@ -162,7 +164,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
       <Box fontSize="sm" fontWeight="bold" color="fg.muted" mb={3} textTransform="uppercase">
         {text.form.employee.bank.title}
       </Box>
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="provider.bank"
           control={control}
@@ -197,7 +199,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
           )}
         />
       </SimpleGrid>
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Input
           label={text.form.employee.bank.agency}
           {...register('provider.agency')}
@@ -209,7 +211,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
           disabled={disabled}
         />
       </SimpleGrid>
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={8}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="provider.pix_type"
           control={control}
@@ -233,103 +235,17 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
       </SimpleGrid>
 
       {/* Filiais */}
-      <Box mb={8}>
+      <Box mb={4}>
         <SectionLabel>{p.branches}</SectionLabel>
-        {branchesArray.fields.length === 0 && (
-          <Text fontSize="sm" color="fg.muted" mb={2}>
-            {p.emptyBranches}
-          </Text>
-        )}
-        <Flex direction="column" gap={4}>
-          {branchesArray.fields.map((field, i) => (
-            <Box
-              key={field.id}
-              border="1px solid"
-              borderColor="border.subtle"
-              borderRadius="md"
-              p={4}
-            >
-              <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={3}>
-                <Controller
-                  name={`provider.branches.${i}.nif` as const}
-                  control={control}
-                  render={({ field }) => (
-                    <MaskedInput
-                      kind="cnpj"
-                      label={p.branchNif}
-                      name={field.name}
-                      value={field.value ?? ''}
-                      onChange={field.onChange}
-                      onBlur={field.onBlur}
-                      error={(errors.provider?.branches?.[i] as any)?.nif?.message}
-                      disabled={disabled}
-                    />
-                  )}
-                />
-                <Input
-                  label={p.branchName}
-                  {...register(`provider.branches.${i}.name` as const)}
-                  disabled={disabled}
-                />
-              </SimpleGrid>
-              <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={3}>
-                <MaskedInput
-                  kind="cep"
-                  label={p.branchZipCode}
-                  {...register(`provider.branches.${i}.zip_code` as const)}
-                  disabled={disabled}
-                />
-                <Controller
-                  name={`provider.branches.${i}.city`}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <SelectAsyncPaginate
-                      label={p.branchCity}
-                      name={`provider-branch-city-${i}`}
-                      value={value}
-                      onChange={onChange}
-                      service={listCityOptions}
-                      findParams={(search) => ({ search })}
-                      mapOptions={(item: CityListItem) => ({
-                        label: `${item.title} — ${item.state?.letter ?? ''}`,
-                        value: item.uuid,
-                      })}
-                      isRequired
-                      isDisabled={disabled}
-                      error={(errors.provider?.branches?.[i] as any)?.city?.message}
-                    />
-                  )}
-                />
-              </SimpleGrid>
-              <SimpleGrid columns={columnsForm.oneColumns} gap={4} mb={2}>
-                <Input
-                  label={p.branchAddress}
-                  {...register(`provider.branches.${i}.address` as const)}
-                  error={(errors.provider?.branches?.[i] as any)?.address?.message}
-                  disabled={disabled}
-                />
-              </SimpleGrid>
-              <Flex justify="flex-end">
-                <IconButton
-                  aria-label="Remover filial"
-                  variant="ghost_danger"
-                  size="sm"
-                  disabled={disabled}
-                  onClick={() => branchesArray.remove(i)}
-                >
-                  <Icon as={FiTrash2} />
-                </IconButton>
-              </Flex>
-            </Box>
-          ))}
-        </Flex>
-        <Button
-          title={p.addBranch}
-          icon={FiPlus as ElementType}
-          variant="outline"
-          mt={3}
+        <RepeaterList
+          align="start"
+          count={branchesArray.fields.length}
+          rowKey={(i) => branchesArray.fields[i].id}
+          emptyText={p.emptyBranches}
+          addLabel={p.addBranch}
+          removeLabel="Remover filial"
           disabled={disabled}
-          onClick={() =>
+          onAdd={() =>
             branchesArray.append({
               nif: '',
               name: '',
@@ -339,61 +255,112 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
               address: '',
             })
           }
+          onRemove={(i) => branchesArray.remove(i)}
+          renderRow={(i) => (
+            <Box borderWidth="1px" borderColor="semanticNeutral.200" borderRadius="8px" p={4}>
+              <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={3}>
+                  <Controller
+                    name={`provider.branches.${i}.nif` as const}
+                    control={control}
+                    render={({ field }) => (
+                      <MaskedInput
+                        kind="cnpj"
+                        label={p.branchNif}
+                        name={field.name}
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        error={(errors.provider?.branches?.[i] as any)?.nif?.message}
+                        disabled={disabled}
+                      />
+                    )}
+                  />
+                  <Input
+                    label={p.branchName}
+                    {...register(`provider.branches.${i}.name` as const)}
+                    disabled={disabled}
+                  />
+                </SimpleGrid>
+                <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={3}>
+                  <MaskedInput
+                    kind="cep"
+                    label={p.branchZipCode}
+                    {...register(`provider.branches.${i}.zip_code` as const)}
+                    disabled={disabled}
+                  />
+                  <Controller
+                    name={`provider.branches.${i}.city`}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <SelectAsyncPaginate
+                        label={p.branchCity}
+                        name={`provider-branch-city-${i}`}
+                        value={value}
+                        onChange={onChange}
+                        service={listCityOptions}
+                        findParams={(search) => ({ search })}
+                        mapOptions={(item: CityListItem) => ({
+                          label: `${item.title} — ${item.state?.letter ?? ''}`,
+                          value: item.uuid,
+                        })}
+                        isRequired
+                        isDisabled={disabled}
+                        error={(errors.provider?.branches?.[i] as any)?.city?.message}
+                      />
+                    )}
+                  />
+                </SimpleGrid>
+                <SimpleGrid columns={columnsForm.oneColumns} gap={4} mb={0}>
+                  <Input
+                    label={p.branchAddress}
+                    {...register(`provider.branches.${i}.address` as const)}
+                    error={(errors.provider?.branches?.[i] as any)?.address?.message}
+                    disabled={disabled}
+                  />
+                </SimpleGrid>
+            </Box>
+          )}
         />
       </Box>
 
       {/* Vendedores */}
       <Box>
         <SectionLabel>{p.sellers}</SectionLabel>
-        {sellersArray.fields.length === 0 && (
-          <Text fontSize="sm" color="fg.muted" mb={2}>
-            {p.emptySellers}
-          </Text>
-        )}
-        <Flex direction="column" gap={3}>
-          {sellersArray.fields.map((field, i) => (
-            <Flex key={field.id} gap={3} align="flex-end">
-              <SimpleGrid columns={columnsForm.threeColumns} gap={3} flex={1}>
-                <Input
-                  label={p.sellerName}
-                  {...register(`provider.sellers.${i}.name` as const)}
-                  error={(errors.provider?.sellers?.[i] as any)?.name?.message}
-                  disabled={disabled}
-                />
-                <Input
-                  label={p.sellerEmail}
-                  type="email"
-                  spellCheck={false}
-                  {...register(`provider.sellers.${i}.email` as const)}
-                  disabled={disabled}
-                />
-                <MaskedInput
-                  kind="phone"
-                  label={p.sellerPhone}
-                  {...register(`provider.sellers.${i}.phone` as const)}
-                  disabled={disabled}
-                />
-              </SimpleGrid>
-              <IconButton
-                aria-label="Remover vendedor"
-                variant="ghost_danger"
-                disabled={disabled}
-                onClick={() => sellersArray.remove(i)}
-              >
-                <Icon as={FiTrash2} />
-              </IconButton>
-            </Flex>
-          ))}
-        </Flex>
-        <Button
-          title={p.addSeller}
-          icon={FiPlus as ElementType}
-          variant="outline"
-          mt={3}
+        <RepeaterList
+          align="start"
+          count={sellersArray.fields.length}
+          rowKey={(i) => sellersArray.fields[i].id}
+          emptyText={p.emptySellers}
+          addLabel={p.addSeller}
+          removeLabel="Remover vendedor"
           disabled={disabled}
-          onClick={() => sellersArray.append({ name: '', email: '', phone: '' })}
+          onAdd={() => sellersArray.append({ name: '', email: '', phone: '' })}
+          onRemove={(i) => sellersArray.remove(i)}
+          renderRow={(i) => (
+            <SimpleGrid columns={columnsForm.threeColumns} gap={3}>
+              <Input
+                label={p.sellerName}
+                {...register(`provider.sellers.${i}.name` as const)}
+                error={(errors.provider?.sellers?.[i] as any)?.name?.message}
+                disabled={disabled}
+              />
+              <Input
+                label={p.sellerEmail}
+                type="email"
+                spellCheck={false}
+                {...register(`provider.sellers.${i}.email` as const)}
+                disabled={disabled}
+              />
+              <MaskedInput
+                kind="phone"
+                label={p.sellerPhone}
+                {...register(`provider.sellers.${i}.phone` as const)}
+                disabled={disabled}
+              />
+            </SimpleGrid>
+          )}
         />
       </Box>
-    </Box>
+    </StepBody>
   );
 }

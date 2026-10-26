@@ -78,6 +78,7 @@ import { StepHeading, type StepProps } from './parts';
 
 import type { PessoaFormValues } from '../pessoa.types';
 
+import { StepBody } from '@/components/ui/StepBody';
 const ACCOUNT_TYPE_OPTIONS: Option<string>[] = [
   { value: 'C', label: 'Conta Corrente' },
   { value: 'P', label: 'Conta Poupança' },
@@ -103,10 +104,10 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
   const pixType = watch('employee.pix_type');
 
   return (
-    <Box>
+    <StepBody>
       <StepHeading title={text.roles.employee} subtitle={e.subtitle} />
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Input label={e.office} {...register('employee.office')} disabled={disabled} />
         <Controller
           name="employee.function"
@@ -128,7 +129,7 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.threeColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.threeColumns} gap={4} mb={4}>
         <Controller
           name="employee.center"
           control={control}
@@ -187,7 +188,7 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
         </ChakraField.Root>
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="employee.vl_time_productive"
           control={control}
@@ -216,7 +217,7 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={8}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="employee.base_salary"
           control={control}
@@ -248,7 +249,7 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
       <Box fontSize="sm" fontWeight="bold" color="fg.muted" mb={3} textTransform="uppercase">
         {e.bank.title}
       </Box>
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="employee.bank"
           control={control}
@@ -283,11 +284,11 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
           )}
         />
       </SimpleGrid>
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Input label={e.bank.agency} {...register('employee.agency')} disabled={disabled} />
         <Input label={e.bank.account} {...register('employee.account')} disabled={disabled} />
       </SimpleGrid>
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4}>
         <Controller
           name="employee.pix_type"
           control={control}
@@ -334,6 +335,6 @@ export function StepFuncionario({ control, register, errors, disabled, watch }: 
           />
         )}
       </SimpleGrid>
-    </Box>
+    </StepBody>
   );
 }

@@ -58,6 +58,9 @@ import type { CountryOptionItem } from '@/@types/v2/Countries';
 
 import { SectionLabel, StepHeading, type StepProps } from './parts';
 
+import { RepeaterList } from '@/components/ui/RepeaterList';
+import { StepBody } from '@/components/ui/StepBody';
+import { ToggleRow } from '@/components/ui/ToggleRow';
 export function StepCliente({ control, register, errors, disabled }: StepProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.people.person;
@@ -66,10 +69,10 @@ export function StepCliente({ control, register, errors, disabled }: StepProps) 
   const registrationsArray = useFieldArray({ control, name: 'client.state_registrations' });
 
   return (
-    <Box>
+    <StepBody>
       <StepHeading title={text.roles.client} subtitle={c.subtitle} />
 
-      <SimpleGrid columns={columnsForm.threeColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.threeColumns} gap={4} mb={4}>
         <MaskedInput
           kind="phone"
           label={c.cellphone}
@@ -85,7 +88,7 @@ export function StepCliente({ control, register, errors, disabled }: StepProps) 
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <MaskedInput
           kind="digits"
           label={c.cityRegistration}
@@ -95,60 +98,24 @@ export function StepCliente({ control, register, errors, disabled }: StepProps) 
         <Input label={c.farmName} {...register('client.farm_name')} disabled={disabled} />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="client.final_costumer"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Box
-              display="flex"
-              alignItems="center"
-              gap={3}
-              px={4}
-              py={3}
-              borderRadius="md"
-              border="1px solid"
-              borderColor="border.subtle"
-              bg="bg.subtle"
-            >
-              <Switch
-                checked={!!value}
-                onCheckedChange={(d: { checked: boolean }) => onChange(d.checked)}
-                disabled={disabled}
-              >
-                {c.finalCustomer}
-              </Switch>
-            </Box>
+            <ToggleRow label={c.finalCustomer} hint={c.finalCustomerHint} checked={!!value} onChange={onChange} disabled={disabled} />
           )}
         />
         <Controller
           name="client.taxpayer"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Box
-              display="flex"
-              alignItems="center"
-              gap={3}
-              px={4}
-              py={3}
-              borderRadius="md"
-              border="1px solid"
-              borderColor="border.subtle"
-              bg="bg.subtle"
-            >
-              <Switch
-                checked={!!value}
-                onCheckedChange={(d: { checked: boolean }) => onChange(d.checked)}
-                disabled={disabled}
-              >
-                {c.taxpayer}
-              </Switch>
-            </Box>
+            <ToggleRow label={c.taxpayer} hint={c.taxpayerHint} checked={!!value} onChange={onChange} disabled={disabled} />
           )}
         />
       </SimpleGrid>
 
-      <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+      <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
         <Controller
           name="client.code_country"
           control={control}
@@ -186,42 +153,25 @@ export function StepCliente({ control, register, errors, disabled }: StepProps) 
 
       <Box>
         <SectionLabel>{c.stateRegistrations}</SectionLabel>
-        {registrationsArray.fields.length === 0 && (
-          <Text fontSize="sm" color="fg.muted" mb={2}>
-            {c.emptyStateRegistrations}
-          </Text>
-        )}
-        <Flex direction="column" gap={3}>
-          {registrationsArray.fields.map((field, i) => (
-            <Flex key={field.id} gap={2} align="flex-end">
-              <Box flex={1}>
-                <MaskedInput
-                  kind="digitsOrIsento"
-                  label={`${c.stateRegistrationShort} ${i + 1}`}
-                  disabled={disabled}
-                  {...register(`client.state_registrations.${i}.value` as const)}
-                />
-              </Box>
-              <IconButton
-                aria-label="Remover inscrição"
-                variant="ghost_danger"
-                disabled={disabled}
-                onClick={() => registrationsArray.remove(i)}
-              >
-                <Icon as={FiTrash2} />
-              </IconButton>
-            </Flex>
-          ))}
-        </Flex>
-        <Button
-          title={c.addStateRegistration}
-          icon={FiPlus as ElementType}
-          variant="outline"
-          mt={3}
+        <RepeaterList
+          count={registrationsArray.fields.length}
+          rowKey={(i) => registrationsArray.fields[i].id}
+          emptyText={c.emptyStateRegistrations}
+          addLabel={c.addStateRegistration}
+          removeLabel="Remover inscrição"
           disabled={disabled}
-          onClick={() => registrationsArray.append({ value: '' })}
+          onAdd={() => registrationsArray.append({ value: '' })}
+          onRemove={(i) => registrationsArray.remove(i)}
+          renderRow={(i) => (
+            <MaskedInput
+              kind="digitsOrIsento"
+              label={`${c.stateRegistrationShort} ${i + 1}`}
+              disabled={disabled}
+              {...register(`client.state_registrations.${i}.value` as const)}
+            />
+          )}
         />
       </Box>
-    </Box>
+    </StepBody>
   );
 }

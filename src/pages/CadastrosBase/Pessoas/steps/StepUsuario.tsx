@@ -51,6 +51,7 @@ import { listUserBossOptions } from '@/services/v2/Users/user-service';
 
 import { StepHeading, type StepProps } from './parts';
 
+import { StepBody } from '@/components/ui/StepBody';
 interface Props extends StepProps {
   isEditing: boolean;
 }
@@ -103,15 +104,15 @@ export function StepUsuario({ control, register, errors, disabled, isEditing }: 
     }));
 
   return (
-    <Box>
+    <StepBody>
       <StepHeading title={text.roles.user} subtitle={u.subtitle} />
 
       {isEditing ? (
-        <Box fontSize="sm" color="fg.muted" bg="bg.subtle" borderRadius="md" px={4} py={3} mb={6}>
+        <Box fontSize="sm" color="fg.muted" bg="bg.subtle" borderRadius="md" px={4} py={3} mb={4}>
           {u.editPasswordNotice}
         </Box>
       ) : (
-        <SimpleGrid columns={columnsForm.twoColumns} gap={6} mb={6}>
+        <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
           <Input
             label={u.password}
             type="password"
@@ -146,7 +147,7 @@ export function StepUsuario({ control, register, errors, disabled, isEditing }: 
             border="1px solid"
             borderColor="border.subtle"
             bg="bg.subtle"
-            mb={6}
+            mb={4}
           >
             <Switch
               checked={!!value}
@@ -159,7 +160,7 @@ export function StepUsuario({ control, register, errors, disabled, isEditing }: 
         )}
       />
 
-      <Box mb={6}>
+      <Box mb={4}>
         <Controller
           name="user.role_uuids"
           control={control}
@@ -180,7 +181,7 @@ export function StepUsuario({ control, register, errors, disabled, isEditing }: 
         />
       </Box>
 
-      <Box mb={6}>
+      <Box mb={4}>
         <Controller
           name="user.farm_uuids"
           control={control}
@@ -221,6 +222,6 @@ export function StepUsuario({ control, register, errors, disabled, isEditing }: 
           )}
         />
       </Box>
-    </Box>
+    </StepBody>
   );
 }

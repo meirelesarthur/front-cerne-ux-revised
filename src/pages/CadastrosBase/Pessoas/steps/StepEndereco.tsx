@@ -29,13 +29,13 @@ import type { CityListItem } from '@/@types/v2/Cities';
 
 import { StepHeading, type StepProps } from './parts';
 
+import { StepBody } from '@/components/ui/StepBody';
 export function StepEndereco({ control, register, errors, disabled }: StepProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.people.person;
 
   return (
-    // DS: conteúdo centralizado, largura máxima 760px, espaçamento 16px.
-    <Box maxW="760px" mx="auto">
+    <StepBody>
       <StepHeading title={text.steps.endereco} subtitle={text.form.endereco.subtitle} />
 
       <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={4}>
@@ -97,6 +97,6 @@ export function StepEndereco({ control, register, errors, disabled }: StepProps)
           disabled={disabled}
         />
       </SimpleGrid>
-    </Box>
+    </StepBody>
   );
 }

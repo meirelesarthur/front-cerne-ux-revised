@@ -181,3 +181,13 @@ Comparado com `cerne/src/pages/cadastros/pessoas` (wizard de 2 etapas fixas + 1 
 | Dados Básicos — papéis | feito | lista de interruptores → **cartões de seleção** (`ui/ToggleCard`, DS `ToggleSection variant="card"`): ícone do papel, descrição, caixa de marcar e dica "Etapa X adicionada" (chave `form.basico.roleAdded`, PT/EN/ES). Reutiliza `roleHints`/`rolesHint` que já existiam |
 | Endereço | feito | conteúdo centralizado, máx. 760px, espaçamento 16px |
 | Etapas de papel (Proprietário, Funcionário, Fornecedor, Cliente, Usuário) | **não comparadas** | cada uma tem blocos próprios (bancários, filiais, inscrições); ficam para a próxima passada |
+
+### Onda 5 — Pessoas, etapas de papel (2026-10-26)
+Novos componentes do kit: `ui/StepBody` (conteúdo da etapa centralizado, máx. 760px), `ui/ToggleRow` (interruptor + rótulo + ícone de ajuda com tooltip), `ui/RepeaterList` (lista dinâmica: vazio tracejado, remover à direita da linha, "Adicionar" verde).
+| Etapa | O que mudou |
+|---|---|
+| Cliente | interruptores Consumidor Final / Contribuinte → `ToggleRow` com dica (textos `finalCustomerHint`/`taxpayerHint` que já existiam); inscrições estaduais → `RepeaterList` |
+| Proprietário | inscrições estaduais e fazendas → `RepeaterList` (fazenda + percentual na mesma linha) |
+| Fornecedor | filiais (com moldura) e vendedores → `RepeaterList` |
+| Funcionário, Usuário, Endereço | corpo centralizado (`StepBody`) e espaçamento 16px |
+Verificado no navegador: Fornecedor (corpo em 760px, adicionar/remover filial e vendedor). **Não verificado visualmente:** Cliente (interruptores/inscrições), Funcionário e Usuário — só tipos e estrutura. Os cartões de filial ficam dentro da linha do repetidor (botão remover ao lado), como no DS.

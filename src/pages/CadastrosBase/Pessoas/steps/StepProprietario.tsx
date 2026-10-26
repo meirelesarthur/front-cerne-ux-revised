@@ -40,6 +40,8 @@ import type { Option } from '@/@types/option';
 
 import { SectionLabel, StepHeading, type StepProps } from './parts';
 
+import { RepeaterList } from '@/components/ui/RepeaterList';
+import { StepBody } from '@/components/ui/StepBody';
 export function StepProprietario({ control, register, errors, disabled }: StepProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.people.person;
@@ -57,111 +59,71 @@ export function StepProprietario({ control, register, errors, disabled }: StepPr
   });
 
   return (
-    <Box>
+    <StepBody>
       <StepHeading title={text.roles.proprietary} subtitle={text.form.proprietary.subtitle} />
 
-      <Box mb={8}>
+      <Box mb={4}>
         <SectionLabel>{text.form.proprietary.stateRegistrations}</SectionLabel>
-        {registrationsArray.fields.length === 0 && (
-          <Text fontSize="sm" color="fg.muted" mb={2}>
-            {text.form.proprietary.emptyStateRegistrations}
-          </Text>
-        )}
-        <Flex direction="column" gap={3}>
-          {registrationsArray.fields.map((field, i) => (
-            <Flex key={field.id} gap={2} align="flex-end">
-              <Box flex={1}>
-                <MaskedInput
-                  kind="digits"
-                  label={`${text.form.proprietary.stateRegistrationShort} ${i + 1}`}
-                  disabled={disabled}
-                  {...register(`proprietary.state_registration_numbers.${i}.value` as const)}
-                />
-              </Box>
-              <IconButton
-                aria-label="Remover inscrição"
-                variant="ghost_danger"
-                disabled={disabled}
-                onClick={() => registrationsArray.remove(i)}
-              >
-                <Icon as={FiTrash2} />
-              </IconButton>
-            </Flex>
-          ))}
-        </Flex>
-        <Button
-          title={text.form.proprietary.addStateRegistration}
-          icon={FiPlus as ElementType}
-          variant="outline"
-          mt={3}
+        <RepeaterList
+          count={registrationsArray.fields.length}
+          rowKey={(i) => registrationsArray.fields[i].id}
+          emptyText={text.form.proprietary.emptyStateRegistrations}
+          addLabel={text.form.proprietary.addStateRegistration}
+          removeLabel="Remover inscrição"
           disabled={disabled}
-          onClick={() => registrationsArray.append({ value: '' })}
+          onAdd={() => registrationsArray.append({ value: '' })}
+          onRemove={(i) => registrationsArray.remove(i)}
+          renderRow={(i) => (
+            <MaskedInput
+              kind="digits"
+              label={`${text.form.proprietary.stateRegistrationShort} ${i + 1}`}
+              disabled={disabled}
+              {...register(`proprietary.state_registration_numbers.${i}.value` as const)}
+            />
+          )}
         />
       </Box>
 
       <Box>
         <SectionLabel>{text.form.proprietary.farms}</SectionLabel>
-        {farmsArray.fields.length === 0 && (
-          <Text fontSize="sm" color="fg.muted" mb={2}>
-            {text.form.proprietary.emptyFarms}
-          </Text>
-        )}
-        <Flex direction="column" gap={4}>
-          {farmsArray.fields.map((field, i) => (
-            <Box
-              key={field.id}
-              border="1px solid"
-              borderColor="border.subtle"
-              borderRadius="md"
-              p={4}
-            >
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} mb={2}>
-                <Controller
-                  name={`proprietary.farms.${i}.farm`}
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Select
-                      label={text.form.proprietary.farm}
-                      name={`proprietary-farm-${i}`}
-                      value={value}
-                      onChange={onChange}
-                      options={farmOptions}
-                      isDisabled={disabled}
-                      error={(errors.proprietary?.farms?.[i] as any)?.farm?.message}
-                    />
-                  )}
-                />
-                <Input
-                  label={text.form.proprietary.percentage}
-                  inputMode="decimal"
-                  {...register(`proprietary.farms.${i}.percentage` as const)}
-                  disabled={disabled}
-                  error={(errors.proprietary?.farms?.[i] as any)?.percentage?.message}
-                />
-              </SimpleGrid>
-              <Flex justify="flex-end">
-                <IconButton
-                  aria-label="Remover fazenda"
-                  variant="ghost_danger"
-                  size="sm"
-                  disabled={disabled}
-                  onClick={() => farmsArray.remove(i)}
-                >
-                  <Icon as={FiTrash2} />
-                </IconButton>
-              </Flex>
-            </Box>
-          ))}
-        </Flex>
-        <Button
-          title={text.form.proprietary.addFarm}
-          icon={FiPlus as ElementType}
-          variant="outline"
-          mt={3}
+        <RepeaterList
+          align="start"
+          count={farmsArray.fields.length}
+          rowKey={(i) => farmsArray.fields[i].id}
+          emptyText={text.form.proprietary.emptyFarms}
+          addLabel={text.form.proprietary.addFarm}
+          removeLabel="Remover fazenda"
           disabled={disabled}
-          onClick={() => farmsArray.append({ farm: null, percentage: '' })}
+          onAdd={() => farmsArray.append({ farm: null, percentage: '' })}
+          onRemove={(i) => farmsArray.remove(i)}
+          renderRow={(i) => (
+            <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+              <Controller
+                name={`proprietary.farms.${i}.farm`}
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Select
+                    label={text.form.proprietary.farm}
+                    name={`proprietary-farm-${i}`}
+                    value={value}
+                    onChange={onChange}
+                    options={farmOptions}
+                    isDisabled={disabled}
+                    error={(errors.proprietary?.farms?.[i] as any)?.farm?.message}
+                  />
+                )}
+              />
+              <Input
+                label={text.form.proprietary.percentage}
+                inputMode="decimal"
+                {...register(`proprietary.farms.${i}.percentage` as const)}
+                disabled={disabled}
+                error={(errors.proprietary?.farms?.[i] as any)?.percentage?.message}
+              />
+            </SimpleGrid>
+          )}
         />
       </Box>
-    </Box>
+    </StepBody>
   );
 }
