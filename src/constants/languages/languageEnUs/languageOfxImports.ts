@@ -99,6 +99,9 @@ export const languageOfxImports: ModuleOfxImports = {
       loadError: 'Could not load the bank reconciliation.',
       workspace: {
         matching: {
+          filterAll: 'All',
+          filterReady: 'Ready',
+          filterAttention: 'To review',
           chipReview: 'Review',
           reviewTitle: 'Suggestion to review',
           reviewBody: 'We found similar titles, but with less certainty. Check before confirming.',
@@ -147,7 +150,7 @@ export const languageOfxImports: ModuleOfxImports = {
           ofReconciled: 'reconciled',
         },
         tabs: {
-          review: 'To review',
+          review: 'Pending',
           ready: 'Ready suggestions',
           noMatch: 'No match',
           reconciled: 'Reconciled',

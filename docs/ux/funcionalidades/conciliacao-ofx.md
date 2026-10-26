@@ -129,6 +129,12 @@ Tempo por linha conciliada · % de linhas conciliadas com 1 clique · taxa de su
 
 ## Registro de edições
 
+### UX-conciliacao-004 · Ajuste · De 4 abas para 2 abas + filtro leve — 2026-10-26
+- **Pedido:** menos abas (ideal 2, aceito 3). **Status:** implementada e validada no navegador.
+- **O que mudou:** as abas passaram a ser só **Pendentes (n)** e **Conciliadas (n)**. Dentro de Pendentes, um filtro compacto (controle segmentado) separa **Todas · Prontas (≥ 90%) · A revisar** (sugestão < 90% ou sem sugestão). A ação em lote *Confirmar todas com alta confiança* só aparece no filtro **Prontas**. O filtro some na aba Conciliadas.
+- **Por quê:** *Prontas* e *A revisar* são **recortes** do mesmo trabalho (o que falta conciliar), não destinos diferentes — como aba, disputavam espaço e cortavam o texto em telas médias; como filtro, ocupam uma linha curta e o usuário continua na mesma fila.
+- **Componentes:** reuso de `QueueTabs` (agora 2 abas) e `SegmentedControl` (filtro) — nenhum componente novo. i18n: `tabs.review` = "Pendentes"; novas chaves `matching.filterAll/filterReady/filterAttention`.
+
 ### UX-conciliacao-003 · Fase 3 · Candidatos com score e motivos, confirmação por linha e em lote — 2026-10-23
 - **Status:** implementada no front (validada no navegador contra o **backend simulado** da API local de dev) · **Impacto Dev:** **exige backend** (contrato abaixo); sem ele a tela cai no comportamento da fase 2
 - **O que mudou:** cada transação pode trazer `candidates[]` com `score` (0–100) e `reasons[]` (✓ atendido / ≈ aproximado). O estado da linha passa a depender da confiança: **≥ 90% = Sugestão pronta**, **< 90% = Revisar · N%**, sem candidato = Sem sugestão. O painel ganha a aba **Sugestões** (cartões com motivos e medidor de confiança por faixa: alta ≥ 90, média 60–89, baixa < 60), seleção por rádio e **Confirmar vínculo**.

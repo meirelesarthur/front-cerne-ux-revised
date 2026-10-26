@@ -99,6 +99,9 @@ export const languageOfxImports: ModuleOfxImports = {
       loadError: 'No fue posible cargar la conciliación bancaria.',
       workspace: {
         matching: {
+          filterAll: 'Todas',
+          filterReady: 'Listas',
+          filterAttention: 'Por revisar',
           chipReview: 'Revisar',
           reviewTitle: 'Sugerencia por revisar',
           reviewBody: 'Encontramos títulos parecidos, pero con menos certeza. Verifique antes de confirmar.',
@@ -147,7 +150,7 @@ export const languageOfxImports: ModuleOfxImports = {
           ofReconciled: 'conciliadas',
         },
         tabs: {
-          review: 'Por revisar',
+          review: 'Pendientes',
           ready: 'Sugerencias listas',
           noMatch: 'Sin coincidencia',
           reconciled: 'Conciliadas',

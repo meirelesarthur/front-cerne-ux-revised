@@ -103,6 +103,9 @@ export interface ModuleOfxImports {
       loadError: string;
       workspace: {
         matching: {
+          filterAll: string;
+          filterReady: string;
+          filterAttention: string;
           chipReview: string;
           reviewTitle: string;
           reviewBody: string;

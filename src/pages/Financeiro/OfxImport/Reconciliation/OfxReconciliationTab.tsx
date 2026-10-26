@@ -72,7 +72,10 @@ function formatCurrencyBRL(value: number): string {
 
 // `review` = há candidatos, mas com confiança abaixo do limiar (precisa de olho humano).
 type ItemState = 'ready' | 'review' | 'noMatch' | 'reconciled';
-type TabKey = 'review' | 'ready' | 'noMatch' | 'reconciled';
+// 2 abas (Pendentes · Conciliadas); dentro de Pendentes, um filtro leve separa o que já está pronto
+// para confirmar do que precisa de olho humano (sugestão < 90% ou sem sugestão).
+type TabKey = 'review' | 'reconciled';
+type FilterKey = 'all' | 'ready' | 'attention';
 
 const hasCandidates = (item: OfxReconciliationItem) => (item.candidates?.length ?? 0) > 0;
 
@@ -88,8 +91,13 @@ const stateOf = (item: OfxReconciliationItem): ItemState => {
   return score >= HIGH_CONFIDENCE ? 'ready' : 'review';
 };
 
-const belongsToTab = (state: ItemState, tab: TabKey) =>
-  tab === 'review' ? state !== 'reconciled' : tab === state;
+const belongsToView = (state: ItemState, tab: TabKey, filter: FilterKey) => {
+  if (tab === 'reconciled') return state === 'reconciled';
+  if (state === 'reconciled') return false;
+  if (filter === 'ready') return state === 'ready';
+  if (filter === 'attention') return state !== 'ready';
+  return true;
+};
 
 /**
  * Modo do painel: `match` (candidatos com score), `overview` (sugestão legada, só confirmar tudo)
@@ -110,6 +118,7 @@ export default function OfxReconciliationTab() {
   const canEdit = can('import_ofx_edit');
 
   const [tab, setTab] = useState<TabKey>('review');
+  const [filter, setFilter] = useState<FilterKey>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [mode, setMode] = useState<PanelMode>('create');
@@ -159,11 +168,15 @@ export default function OfxReconciliationTab() {
 
   // ---- Derivados: contagens por aba, somas em R$, linhas visíveis ----
   const counts = useMemo(() => {
-    const c = { review: 0, ready: 0, noMatch: 0, reconciled: 0 };
+    const c = { review: 0, ready: 0, attention: 0, reconciled: 0 };
     for (const i of items) {
       const s = stateOf(i);
-      if (s !== 'reconciled') c.review += 1;
-      if (s !== 'review') c[s] += 1;
+      if (s === 'reconciled') c.reconciled += 1;
+      else {
+        c.review += 1;
+        if (s === 'ready') c.ready += 1;
+        else c.attention += 1;
+      }
     }
     return c;
   }, [items]);
@@ -185,13 +198,13 @@ export default function OfxReconciliationTab() {
   const visibleItems = useMemo(() => {
     const term = search.trim().toLowerCase();
     return items.filter((item) => {
-      if (!belongsToTab(stateOf(item), tab)) return false;
+      if (!belongsToView(stateOf(item), tab, filter)) return false;
       if (!term) return true;
       return `${item.memo} ${formatDateBR(item.date)} ${formatCurrencyBRL(item.value)}`
         .toLowerCase()
         .includes(term);
     });
-  }, [items, tab, search]);
+  }, [items, tab, filter, search]);
 
   // Seleção sempre válida: se a linha sumiu da aba, vai para a primeira visível.
   useEffect(() => {
@@ -592,14 +605,26 @@ export default function OfxReconciliationTab() {
                     onChange={setTab}
                     tabs={[
                       { key: 'review', label: ws.tabs.review, count: counts.review },
-                      { key: 'ready', label: ws.tabs.ready, count: counts.ready },
-                      { key: 'noMatch', label: ws.tabs.noMatch, count: counts.noMatch },
                       { key: 'reconciled', label: ws.tabs.reconciled, count: counts.reconciled },
                     ]}
                   />
                 }
                 toolbar={
                   <>
+                    {tab === 'review' && (
+                      <Box px={4} pt={3}>
+                        <SegmentedControl<FilterKey>
+                          value={filter}
+                          onChange={setFilter}
+                          ariaLabel={ws.tabs.review}
+                          options={[
+                            { key: 'all', label: `${ws.matching.filterAll} · ${counts.review}` },
+                            { key: 'ready', label: `${ws.matching.filterReady} · ${counts.ready}` },
+                            { key: 'attention', label: `${ws.matching.filterAttention} · ${counts.attention}` },
+                          ]}
+                        />
+                      </Box>
+                    )}
                     <Flex align="center" gap={2} px={4} py={3}>
                       <Input
                         ref={searchRef}
@@ -617,7 +642,7 @@ export default function OfxReconciliationTab() {
                           onClick={() => setChecked(new Set(visibleItems.filter((i) => !i.reconciled).map((i) => i.fit_id)))}
                         />
                       )}
-                      {canEdit && tab === 'ready' && readyWithCandidates.length > 0 && (
+                      {canEdit && tab === 'review' && filter === 'ready' && readyWithCandidates.length > 0 && (
                         <Button
                           title={`${ws.matching.confirmHigh} (${readyWithCandidates.length})`}
                           size="sm"
@@ -625,7 +650,7 @@ export default function OfxReconciliationTab() {
                           loading={confirmMutation.isPending}
                         />
                       )}
-                      {canEdit && tab === 'ready' && readyLegacy.length > 0 && (
+                      {canEdit && tab === 'review' && filter === 'ready' && readyLegacy.length > 0 && (
                         <Button
                           title={`${ws.detail.confirmAction} (${readyLegacy.length})`}
                           size="sm"
