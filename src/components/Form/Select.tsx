@@ -55,7 +55,7 @@ export function Select({
   onChange,
   defaultValue,
   multiple = false,
-  borderRadius = 'md',
+  borderRadius = '8px', // DS radius.base
   disablePortal = false,
   loading = false,
   isOptionDisabled,
@@ -152,11 +152,11 @@ export function Select({
               height="38px"
               paddingX="3"
               paddingY="0"
-              fontSize="sm"
+              fontSize="16px"
               color="semantic.neutral.900"
               background="inputBG"
-              border="1px solid"
-              borderColor={error ? 'danger.default' : 'border2'}
+              border="1.5px solid"
+              borderColor={error ? 'danger.default' : 'border1'}
               borderRadius={borderRadius}
               cursor="pointer"
               transition="all 0.2s"
@@ -164,10 +164,10 @@ export function Select({
                 borderColor: error ? 'danger.default' : 'border.muted',
               }}
               _focus={{
-                borderColor: error ? 'danger.default' : 'primary.500',
+                borderColor: error ? 'danger.default' : 'green.600',
                 boxShadow: error
                   ? '0 0 0 1px var(--chakra-colors-danger-default)'
-                  : '0 0 0 1px var(--chakra-colors-primary-500)',
+                  : '0 0 0 3px rgba(5, 150, 105, 0.12)',
                 outline: 'none',
               }}
               _disabled={{
@@ -224,11 +224,11 @@ export function Select({
             <ChakraSelect.Positioner zIndex={9999}>
               {/* @ts-ignore - Chakra UI v3 type issue */}
               <ChakraSelect.Content
-                background="semantic.neutral.200"
-                borderRadius="md"
+                background="cardBG"
+                borderRadius="8px"
                 boxShadow="lg"
                 border="1px solid"
-                borderColor="border2"
+                borderColor="border1"
                 padding="1"
                 maxHeight="300px"
                 overflowY="auto"
@@ -241,11 +241,11 @@ export function Select({
                     disabled
                     display="flex"
                     alignItems="center"
-                    paddingX="2"
-                    paddingY="1.5"
-                    fontSize="sm"
+                    paddingX="14px"
+                    paddingY="9px"
+                    fontSize="14px"
                     color="semantic.neutral.700"
-                    background="inputBG"
+                    background="transparent"
                     borderRadius="sm"
                     opacity={0.5}
                   >
@@ -261,11 +261,11 @@ export function Select({
                       display="flex"
                       alignItems="center"
                       justifyContent="space-between"
-                      paddingX="2"
-                      paddingY="1.5"
-                      fontSize="sm"
+                      paddingX="14px"
+                      paddingY="9px"
+                      fontSize="14px"
                       color="semantic.neutral.700"
-                      background="inputBG"
+                      background="transparent"
                       borderRadius="sm"
                       cursor="pointer"
                       marginBottom="0.5"
@@ -274,17 +274,17 @@ export function Select({
                         marginBottom: 0,
                       }}
                       _hover={{
-                        backgroundColor: 'blue.700',
-                        color: 'white',
+                        backgroundColor: 'semanticNeutral.100',
+                        color: 'semanticNeutral.800',
                       }}
                       _highlighted={{
-                        backgroundColor: 'blue.700',
-                        color: 'white',
+                        backgroundColor: 'semanticNeutral.100',
+                        color: 'semanticNeutral.800',
                       }}
                       _selected={{
-                        backgroundColor: 'blue.900',
-                        color: 'white',
-                        fontWeight: 'medium',
+                        backgroundColor: 'green.50',
+                        color: 'green.700',
+                        fontWeight: 'semibold',
                       }}
                       _disabled={{
                         opacity: 0.4,
@@ -308,11 +308,11 @@ export function Select({
               <ChakraSelect.Positioner zIndex={9999}>
                 {/* @ts-ignore - Chakra UI v3 type issue */}
                 <ChakraSelect.Content
-                  background="semantic.neutral.200"
-                  borderRadius="md"
+                  background="cardBG"
+                  borderRadius="8px"
                   boxShadow="lg"
                   border="1px solid"
-                  borderColor="border2"
+                  borderColor="border1"
                   padding="1"
                   maxHeight="300px"
                   overflowY="auto"
@@ -325,11 +325,11 @@ export function Select({
                       disabled
                       display="flex"
                       alignItems="center"
-                      paddingX="2"
-                      paddingY="1.5"
-                      fontSize="sm"
+                      paddingX="14px"
+                      paddingY="9px"
+                      fontSize="14px"
                       color="semantic.neutral.700"
-                      background="inputBG"
+                      background="transparent"
                       borderRadius="sm"
                       opacity={0.5}
                     >
@@ -345,11 +345,11 @@ export function Select({
                         display="flex"
                         alignItems="center"
                         justifyContent="space-between"
-                        paddingX="2"
-                        paddingY="1.5"
-                        fontSize="sm"
+                        paddingX="14px"
+                        paddingY="9px"
+                        fontSize="14px"
                         color="semantic.neutral.700"
-                        background="inputBG"
+                        background="transparent"
                         borderRadius="sm"
                         cursor="pointer"
                         marginBottom="0.5"
@@ -358,17 +358,17 @@ export function Select({
                           marginBottom: 0,
                         }}
                         _hover={{
-                          backgroundColor: 'blue.700',
-                          color: 'white',
+                          backgroundColor: 'semanticNeutral.100',
+ color: 'semanticNeutral.800',
                         }}
                         _highlighted={{
-                          backgroundColor: 'blue.700',
-                          color: 'white',
+                          backgroundColor: 'semanticNeutral.100',
+ color: 'semanticNeutral.800',
                         }}
                         _selected={{
-                          backgroundColor: 'blue.900',
-                          color: 'white',
-                          fontWeight: 'medium',
+                          backgroundColor: 'green.50',
+ color: 'green.700',
+ fontWeight: 'semibold',
                         }}
                         _disabled={{
                           opacity: 0.4,

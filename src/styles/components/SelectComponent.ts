@@ -8,10 +8,11 @@ export const customStyles = (
   // nenhum Select existente muda.
   valueColor?: string
 ) => ({
-  control: (styles: any, { isDisabled }: any) => ({
+  control: (styles: any, { isDisabled, isFocused }: any) => ({
     ...styles,
     textDecoration: isInactive ? 'line-through' : '',
     minHeight: '38px',
+    boxSizing: 'border-box',
     // Sem `height` fixo: o `control` do react-select é flex e precisa
     // crescer junto com o `valueContainer` quando múltiplas tags (multi-select)
     // quebram para mais de uma linha. Fixar a altura aqui forçava as tags
@@ -19,7 +20,9 @@ export const customStyles = (
     // container crescer (bug reportado na tela de edição de Apartação).
     // `minHeight: 38px` sozinho já preserva a altura mínima de sempre para
     // single-select e multi-select com poucas tags.
-    borderRadius: 'var(--chakra-radii-md)',
+    // DS `FormField`: raio 8, contorno 1.5px, foco verde com glow.
+    borderRadius: '8px',
+    borderWidth: '1.5px',
     color: 'var(--chakra-colors-primitive-texte-color)',
     backgroundColor:
       isReadOnly || isDisabled
@@ -29,34 +32,49 @@ export const customStyles = (
       borderColor: 'var(--chakra-colors-border-2)',
     },
     cursor: isReadOnly || isDisabled ? 'not-allowed' : 'pointer',
-    borderColor: error ? '#E53E3E' : 'var(--chakra-colors-border2)',
-    ...(error && { boxShadow: '0 0 0 1px #e53e3e' }),
+    borderColor: error
+      ? '#E53E3E'
+      : isFocused
+        ? 'var(--chakra-colors-green-600)'
+        : 'var(--chakra-colors-border1)',
+    boxShadow: error
+      ? '0 0 0 1px #e53e3e'
+      : isFocused
+        ? '0 0 0 3px rgba(5, 150, 105, 0.12)'
+        : 'none',
     opacity: 1,
   }),
   option: (styles: any, { isSelected }: any) => ({
     ...styles,
     fontSize: 'var(--chakra-font-sizes-md)',
-    padding: 5,
+    padding: '9px 14px',
     cursor: 'pointer',
-    color: isSelected ? 'var(--chakra-colors-white)' : 'var(--chakra-colors-semantic-neutral-700)',
+    // DS `DropdownRow`: selecionada = verde suave com texto verde; hover = neutro claro.
+    color: isSelected ? 'var(--chakra-colors-green-700)' : 'var(--chakra-colors-semantic-neutral-700)',
+    fontWeight: isSelected ? 600 : 400,
     backgroundColor: isSelected
-      ? 'var(--chakra-colors-green-900)'
-      : 'var(--chakra-colors-input-b-g)',
+      ? 'var(--chakra-colors-green-50)'
+      : 'var(--chakra-colors-card-b-g)',
     ':active': {
       ...styles[':active'],
-      backgroundColor: 'var(--chakra-colors-secondary-ligh)',
-      color: 'var(--chakra-colors-white)',
+      backgroundColor: 'var(--chakra-colors-semantic-neutral-100)',
     },
     ':hover': {
       ...styles[':hover'],
-      backgroundColor: 'var(--chakra-colors-green-700)',
-      color: 'var(--chakra-colors-white)',
+      backgroundColor: isSelected
+        ? 'var(--chakra-colors-green-50)'
+        : 'var(--chakra-colors-semantic-neutral-100)',
+      color: isSelected ? 'var(--chakra-colors-green-700)' : 'var(--chakra-colors-semantic-neutral-800)',
     },
     zIndex: 9997,
   }),
   menu: (styles: any) => ({
     ...styles,
-    backgroundColor: 'var(--chakra-colors-semantic-neutral-200)',
+    backgroundColor: 'var(--chakra-colors-card-b-g)',
+    border: '1px solid var(--chakra-colors-border1)',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.10)',
     zIndex: 9998,
     position: position,
   }),
@@ -71,7 +89,7 @@ export const customStyles = (
   singleValue: (styles: any) => ({
     ...styles,
     color: valueColor ?? 'var(--chakra-colors-primitive-texte-color)',
-    fontSize: 'var(--chakra-font-sizes-md)',
+    fontSize: '16px',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -84,6 +102,8 @@ export const customStyles = (
   // (`multiValue`), que continuam quebrando via `valueContainer.flexWrap`.
   placeholder: (styles: any) => ({
     ...styles,
+    fontSize: '16px',
+    color: 'var(--chakra-colors-placeholder-color)',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -91,6 +111,7 @@ export const customStyles = (
   }),
   input: (styles: any) => ({
     ...styles,
+    fontSize: '16px',
     ...(valueColor && { color: valueColor }),
     paddingBottom: 0,
     paddingTop: 0,
@@ -105,7 +126,8 @@ export const customStyles = (
     // em vez de esticar ou centralizar ao longo de todo o container
     // expandido.
     alignSelf: 'flex-start',
-    minHeight: '38px',
+    // 38px do campo menos os 2 × 1.5px de contorno do control
+    minHeight: '35px',
     padding: 0,
   }),
   indicatorSeparator: (styles: any) => ({
