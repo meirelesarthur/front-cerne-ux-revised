@@ -154,7 +154,7 @@ export function NfeMotivoModal({
             <Dialog.Footer>
               <Button
                 title={cancelLabel}
-                variant="outline"
+                variant="secondary"
                 type="button"
                 onClick={handleClose}
                 disabled={mutation.isPending}

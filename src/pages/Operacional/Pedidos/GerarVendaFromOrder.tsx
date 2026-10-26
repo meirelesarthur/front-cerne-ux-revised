@@ -548,7 +548,7 @@ export default function GerarVendaFromOrder() {
           <>
             <Button
               title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(`/operacional/pedidos/${uuid}/detalhe`)}
             />

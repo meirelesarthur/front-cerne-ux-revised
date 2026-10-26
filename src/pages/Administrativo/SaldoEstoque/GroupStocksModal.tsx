@@ -175,7 +175,7 @@ export function GroupStocksModal({
               <Flex justify="space-between" width="full">
                 <Button
                   title={text.cancelButton}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={onClose}
                   disabled={mutation.isPending}

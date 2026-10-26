@@ -337,7 +337,7 @@ export default function CreateOrUpdateBudgetPlanning() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
           />

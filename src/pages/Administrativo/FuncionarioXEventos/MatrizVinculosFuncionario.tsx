@@ -623,7 +623,7 @@ function MatrizVinculosFuncionarioBody({
         <>
           <Button
             title={text.matrix.cancelButton}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSaving}

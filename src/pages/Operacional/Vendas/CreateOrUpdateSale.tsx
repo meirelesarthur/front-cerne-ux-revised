@@ -285,7 +285,7 @@ export default function CreateOrUpdateSale() {
           <>
             <Button
               title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(SALES_LIST_ROUTE)}
             />

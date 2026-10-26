@@ -381,7 +381,7 @@ export default function CreateOrUpdateAbastecimento() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(ABASTECIMENTOS_LIST_ROUTE)}
           />

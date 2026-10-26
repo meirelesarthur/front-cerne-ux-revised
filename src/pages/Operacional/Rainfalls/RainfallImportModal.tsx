@@ -264,7 +264,7 @@ export function RainfallImportModal({ isOpen, onClose }: RainfallImportModalProp
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

@@ -331,7 +331,7 @@ export function PlanAccountImportModal({ isOpen, onClose }: PlanAccountImportMod
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

@@ -126,7 +126,7 @@ export function ClientFormModal({
         footer={
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={onClose}
           />
@@ -211,7 +211,7 @@ function ClientFormModalDialog({
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={onClose}
             disabled={controller.isSubmitting}

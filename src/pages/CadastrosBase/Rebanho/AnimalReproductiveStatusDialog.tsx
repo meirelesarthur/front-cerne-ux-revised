@@ -253,7 +253,7 @@ export function AnimalReproductiveStatusDialog({
           <Dialog.ActionTrigger asChild>
             <Button
               title={languageGB.defaltStrings.cancel}
-              variant="outline"
+              variant="secondary"
               onClick={onClose}
               disabled={mutation.isPending}
             />

@@ -160,3 +160,14 @@ Novo `ui/ListToolbar` (busca inline + botão Filtros na mesma linha, como o DS) 
 - Dev API: Contas Bancárias, Emissores e Estoques Iniciais seguem sem dados locais (lista vazia) — a busca foi verificada na requisição (`search=`), não no resultado.
 - Chave de texto nova `defaltStrings.searchList` (PT/EN/ES).
 - Falta (próximo passo da onda 4): formulários desses cadastros × DS, e aplicar o mesmo padrão às ~190 listagens restantes (a regra é mecânica, mas cada tela precisa conferir se o filtro tem `search`).
+
+### Onda 4 — formulários (2026-10-26)
+| Item | Situação | O que mudou |
+|---|---|---|
+| Botão "Cancelar" dos formulários | feito | `variant="outline"` (verde, preenche no hover) → `secondary` (contorno neutro, como o DS) em **423 botões / 416 telas** (codemod; tsc sem erros novos) |
+| Título do `FormContainer` | feito | 24px · negrito · `gray.900` (era 15px/600), igual ao `FormPageHeader` do DS |
+| Rodapé dos formulários | já alinhado | Cancelar à esquerda e Salvar à direita (mesmo `space-between` do `PageCard` do DS) |
+| Ícone no botão Salvar, aviso de "alterações não salvas" | **não feito** | o DS mostra ícone `save` e abre diálogo ao sair com campos sujos; no front depende do `ButtonSaveAndNext` e de um guard de navegação (decisão de produto) |
+
+### Onda 5 — CRUDs complexos
+Não iniciada além do que já herdam das ondas 2–4 (título, tabela, filtros, menu de ações, Cancelar). Próximo passo proposto: comparar Fazendas (wizard) com o DS tela a tela — `FormSection`, steps, resumo — antes de mexer, porque cada um tem fluxo próprio.

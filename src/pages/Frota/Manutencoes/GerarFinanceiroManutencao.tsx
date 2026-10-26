@@ -252,7 +252,7 @@ export default function GerarFinanceiroManutencao() {
         <>
           <Button
             title={text.actions.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(detailRoute)}
           />

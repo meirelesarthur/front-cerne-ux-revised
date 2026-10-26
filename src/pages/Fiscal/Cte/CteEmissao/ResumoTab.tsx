@@ -255,7 +255,7 @@ export function ResumoTab({
           <Button
             title={text.actions.cancelarButton}
             icon={FiXCircle as ElementType}
-            variant="outline"
+            variant="secondary"
             colorPalette="red"
             size="sm"
             onClick={onOpenCancelamento}
@@ -285,7 +285,7 @@ export function ResumoTab({
           <Button
             title={text.actions.imprimirCancelamentoButton}
             icon={FiPrinter as ElementType}
-            variant="outline"
+            variant="secondary"
             size="sm"
             loading={isDownloadingCancelamentoImpressao}
             onClick={onImprimirCancelamento}

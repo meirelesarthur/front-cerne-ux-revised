@@ -114,7 +114,7 @@ export function FilterSideBirthNotes({
           />
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             onClick={handleResetFiltersOnClose}
             type="button"
           />

@@ -229,7 +229,7 @@ export function MdfeEmissionPanel({ mdfeDetail }: MdfeEmissionPanelProps) {
               <Button
                 title={text.cancelButton}
                 icon={FiXCircle as ElementType}
-                variant="outline"
+                variant="secondary"
                 colorPalette="red"
                 size="sm"
                 onClick={cancelDisclosure.onOpen}

@@ -91,7 +91,7 @@ export function WarehouseDialog({ isOpen, onClose, warehouseUuid, onSaved }: War
         footer={
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={onClose}
           />
@@ -204,7 +204,7 @@ function WarehouseDialogBody({
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={onClose}
             disabled={isSaving}

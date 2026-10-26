@@ -310,7 +310,7 @@ export default function CreateOrUpdateChargeBillExpense() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(CHARGE_BILL_EXPENSES_LIST_ROUTE)}
           />

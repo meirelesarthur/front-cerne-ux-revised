@@ -264,7 +264,7 @@ export function EquipmentImportModal({ isOpen, onClose }: EquipmentImportModalPr
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

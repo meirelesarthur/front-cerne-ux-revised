@@ -250,7 +250,7 @@ export function FeedlotCorralStatusDialog({
               <Dialog.Footer>
                 <Button
                   title={languageGB.defaltStrings.cancel}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={onClose}
                   disabled={isSubmitting}

@@ -384,7 +384,7 @@ export default function CreateOrUpdateTraceabilityConfig() {
           <>
             <Button
               title={languageGB.defaltStrings.cancel}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(TRACEABILITY_CONFIG_BASE_ROUTE)}
             />

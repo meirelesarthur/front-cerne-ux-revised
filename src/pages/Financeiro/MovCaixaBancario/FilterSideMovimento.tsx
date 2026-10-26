@@ -408,7 +408,7 @@ export function FilterSideMovimento({
           />
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             onClick={onClose}
             type="button"
           />

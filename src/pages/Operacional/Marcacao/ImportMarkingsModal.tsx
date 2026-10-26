@@ -296,7 +296,7 @@ export function ImportMarkingsModal({
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

@@ -104,7 +104,7 @@ export function EquipmentDialog({ isOpen, onClose, equipmentUuid, onSaved }: Equ
         footer={
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={onClose}
           />
@@ -382,7 +382,7 @@ function EquipmentDialogBody({
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={onClose}
             disabled={isSaving}

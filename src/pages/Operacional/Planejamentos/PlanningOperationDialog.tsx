@@ -285,7 +285,7 @@ export function PlanningOperationDialog({
               <Dialog.Footer>
                 <Button
                   title={languageGB.defaltStrings.cancel}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={handleClose}
                   disabled={operationMutation.isPending}

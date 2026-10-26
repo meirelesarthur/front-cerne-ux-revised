@@ -294,7 +294,7 @@ export function BatchImportModal({ isOpen, onClose }: BatchImportModalProps) {
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

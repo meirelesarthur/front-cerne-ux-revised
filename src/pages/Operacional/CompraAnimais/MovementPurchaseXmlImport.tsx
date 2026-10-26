@@ -135,7 +135,7 @@ export function MovementPurchaseXmlImportDialog({
       scrollableBody
       footer={
         <Flex gap={3}>
-          <Button title={languageGB.defaltStrings.cancel} variant="outline" onClick={handleClose} />
+          <Button title={languageGB.defaltStrings.cancel} variant="secondary" onClick={handleClose} />
           <Button title={text.applyButton} onClick={handleApply} disabled={!draft || isImporting} />
         </Flex>
       }

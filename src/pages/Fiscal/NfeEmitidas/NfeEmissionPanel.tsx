@@ -492,7 +492,7 @@ export function NfeEmissionPanel({ nfeDetail }: NfeEmissionPanelProps) {
               <Button
                 title={text.cancelButton}
                 icon={FiXCircle as ElementType}
-                variant="outline"
+                variant="secondary"
                 colorPalette="red"
                 size="sm"
                 onClick={openCancelModal}
@@ -550,7 +550,7 @@ export function NfeEmissionPanel({ nfeDetail }: NfeEmissionPanelProps) {
               <Button
                 title={text.documents.downloadCancellationPdfButton}
                 icon={FiDownload as ElementType}
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 loading={isDownloadingCancellationPdf}
                 onClick={handleDownloadCancellationPdf}

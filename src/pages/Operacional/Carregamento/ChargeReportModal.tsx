@@ -211,7 +211,7 @@ export function ChargeReportModal({
               <Dialog.Footer>
                 <Button
                   title={text.cancelButton}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={onClose}
                   disabled={isDownloading}

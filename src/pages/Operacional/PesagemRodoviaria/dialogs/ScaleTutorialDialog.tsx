@@ -53,7 +53,7 @@ export function ScaleTutorialDialog({ isOpen, onClose, scaleStatus }: ScaleTutor
       onClose={onClose}
       title={text.title}
       footer={
-        <Button title={languageGB.defaltStrings.cancel} variant="outline" onClick={onClose} />
+        <Button title={languageGB.defaltStrings.cancel} variant="secondary" onClick={onClose} />
       }
     >
       <VStack align="flex-start" gap={4}>

@@ -543,7 +543,7 @@ export default function CreateOrUpdateRomaneio() {
         <>
           <Button
             title={isReadOnly ? formText.backButton : languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={guardedBack}
           />

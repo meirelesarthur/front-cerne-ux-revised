@@ -444,7 +444,7 @@ export default function CreateOrUpdateLoteReproducao() {
           <>
             <Button
               title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(-1)}
             />

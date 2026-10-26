@@ -536,7 +536,7 @@ export default function CreateOrUpdateFeedlotCorral() {
             title={
               isFirstStep ? languageGB.defaltStrings.cancel : languageGB.defaltStrings.toGoBack
             }
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={handleBackClick}
             disabled={isSubmittingWizard}

@@ -280,7 +280,7 @@ export default function CreateOrUpdateEstacaoDeMonta() {
           <>
             <Button
               title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(-1)}
             />

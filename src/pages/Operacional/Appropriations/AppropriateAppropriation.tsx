@@ -240,7 +240,7 @@ export default function AppropriateAppropriation() {
         <>
           <Button
             title={screenText.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={mutation.isPending}

@@ -385,7 +385,7 @@ export default function CreateOrUpdateEstoqueInicial() {
         <>
           <Button
             title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-            variant="outline"
+            variant="secondary"
             onClick={() => navigate(-1)}
             type="button"
           />

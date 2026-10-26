@@ -261,7 +261,7 @@ export default function FinishMovementSaleMany() {
         <>
           <Button
             title={finishManyText.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={finishManyMutation.isPending}

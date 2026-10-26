@@ -252,7 +252,7 @@ export default function CreateBaixaEstoque() {
         <>
           <Button
             title={formText.footer.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSubmitting}

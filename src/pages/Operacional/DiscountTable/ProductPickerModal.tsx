@@ -143,7 +143,7 @@ export function ProductPickerModal({
 
             <Dialog.Footer>
               <Dialog.ActionTrigger asChild>
-                <Button title={languageGB.defaltStrings.cancel} variant="outline" />
+                <Button title={languageGB.defaltStrings.cancel} variant="secondary" />
               </Dialog.ActionTrigger>
             </Dialog.Footer>
             {/* @ts-ignore ChakraUI v3 headless dialog */}

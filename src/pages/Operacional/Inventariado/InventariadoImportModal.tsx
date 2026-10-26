@@ -318,7 +318,7 @@ export function InventariadoImportModal({ isOpen, onClose }: InventariadoImportM
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

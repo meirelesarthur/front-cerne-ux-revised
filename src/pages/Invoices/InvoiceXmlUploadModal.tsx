@@ -150,7 +150,7 @@ export function InvoiceXmlUploadModal({ isOpen, onClose, onImported }: InvoiceXm
             <Dialog.Footer>
               <Button
                 title={text.cancelButton}
-                variant="outline"
+                variant="secondary"
                 onClick={handleClose}
                 disabled={isSubmitting}
               />

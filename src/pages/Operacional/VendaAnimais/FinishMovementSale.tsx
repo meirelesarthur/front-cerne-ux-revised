@@ -294,7 +294,7 @@ export default function FinishMovementSale() {
         <>
           <Button
             title={finishText.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={finishMutation.isPending}

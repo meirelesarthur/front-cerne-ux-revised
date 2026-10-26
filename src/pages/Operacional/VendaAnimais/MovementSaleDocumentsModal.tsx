@@ -222,7 +222,7 @@ export function MovementSaleDocumentsModal({
         scrollableBody
         footer={
           <Flex gap={3}>
-            <Button title={languageGB.defaltStrings.cancel} variant="outline" onClick={onClose} />
+            <Button title={languageGB.defaltStrings.cancel} variant="secondary" onClick={onClose} />
             <Button
               title={languageGB.defaltStrings.save}
               onClick={handleSubmit(onSubmit)}

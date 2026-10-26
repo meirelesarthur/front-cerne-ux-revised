@@ -280,7 +280,7 @@ export default function CreateOrUpdateWeaning() {
         <>
           <Button
             title={isViewOnlyRoute ? formText.buttons.back : languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             onClick={() => (isViewOnlyRoute ? navigate(WEANING_LIST_ROUTE) : navigate(-1))}
             type="button"
             disabled={isPersisting}

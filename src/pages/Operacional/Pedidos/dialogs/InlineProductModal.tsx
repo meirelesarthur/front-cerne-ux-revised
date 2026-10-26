@@ -987,7 +987,7 @@ export function InlineProductModal({
             <Dialog.Footer>
               <Button
                 title={languageGB.defaltStrings.cancel}
-                variant="outline"
+                variant="secondary"
                 onClick={handleClose}
                 disabled={isSubmitting}
               />

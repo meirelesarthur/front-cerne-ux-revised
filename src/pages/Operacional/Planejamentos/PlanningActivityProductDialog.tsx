@@ -445,7 +445,7 @@ export function PlanningActivityProductDialog({
               <Dialog.Footer>
                 <Button
                   title={languageGB.defaltStrings.cancel}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={handleClose}
                   disabled={productMutation.isPending}

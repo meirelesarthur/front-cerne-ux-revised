@@ -181,7 +181,7 @@ export default function CreateOrUpdateCompartilhamento() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(SHARINGS_LIST_ROUTE)}
             disabled={isSubmitting}

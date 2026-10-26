@@ -1645,7 +1645,7 @@ export default function CreateOrUpdateExpense() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             onClick={handleCancel}
             type="button"
             disabled={isSubmitting}

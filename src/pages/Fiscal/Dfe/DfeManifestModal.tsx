@@ -210,7 +210,7 @@ export function DfeManifestModal({
             <Dialog.Footer>
               <Button
                 title={text.cancelButton}
-                variant="outline"
+                variant="secondary"
                 type="button"
                 onClick={handleClose}
                 disabled={manifestMutation.isPending}

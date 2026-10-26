@@ -480,7 +480,7 @@ export default function FinishProcessing() {
           <>
             <Button
               title={languageGB.defaltStrings.cancel}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(-1)}
               disabled={finishMutation.isPending}

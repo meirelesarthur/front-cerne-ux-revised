@@ -299,7 +299,7 @@ export function MovementSheetImportModal({ isOpen, onClose }: MovementSheetImpor
                 <>
                   <Button
                     title={importText.cancelButton}
-                    variant="outline"
+                    variant="secondary"
                     onClick={handleClose}
                     disabled={isSubmitting}
                   />

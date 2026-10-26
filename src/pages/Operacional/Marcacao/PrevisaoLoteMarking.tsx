@@ -183,7 +183,7 @@ export default function PrevisaoLoteMarking() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSaving}

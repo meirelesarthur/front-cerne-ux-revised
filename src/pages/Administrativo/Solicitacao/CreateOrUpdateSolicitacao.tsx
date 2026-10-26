@@ -595,7 +595,7 @@ export default function CreateOrUpdateSolicitacao() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSubmitting}
@@ -960,7 +960,7 @@ export default function CreateOrUpdateSolicitacao() {
           <Flex gap={3}>
             <Button
               title={languageGB.defaltStrings.cancel}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={quotationJustificationDisclosure.onClose}
               disabled={quotationJustificationMutation.isPending}

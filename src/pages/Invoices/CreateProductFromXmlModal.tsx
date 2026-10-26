@@ -1053,7 +1053,7 @@ export function CreateProductFromXmlModal({
             <Dialog.Footer>
               <Button
                 title={modalText.cancelButton}
-                variant="outline"
+                variant="secondary"
                 onClick={handleClose}
                 disabled={isSubmitting}
               />

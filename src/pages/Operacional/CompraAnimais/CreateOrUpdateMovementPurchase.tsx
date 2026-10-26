@@ -643,7 +643,7 @@ export default function CreateOrUpdateMovementPurchase() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={guardedBack}
           />

@@ -281,7 +281,7 @@ export default function CreateOrUpdateDocumento() {
         <>
           <Button
             title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
           />

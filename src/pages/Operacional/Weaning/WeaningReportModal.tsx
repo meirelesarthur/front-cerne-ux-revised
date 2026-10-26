@@ -196,7 +196,7 @@ export function WeaningReportModal({ isOpen, onClose, languageGB }: WeaningRepor
               <Dialog.Footer>
                 <Button
                   title={text.cancelButton}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={onClose}
                   disabled={isDownloading}

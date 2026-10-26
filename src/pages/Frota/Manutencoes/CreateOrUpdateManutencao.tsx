@@ -241,7 +241,7 @@ export default function CreateOrUpdateManutencao() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(MANUTENCOES_LIST_ROUTE)}
           />

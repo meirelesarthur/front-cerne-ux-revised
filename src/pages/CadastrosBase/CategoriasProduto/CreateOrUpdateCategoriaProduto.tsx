@@ -233,7 +233,7 @@ export default function CreateOrUpdateCategoriaProduto() {
         <>
           <Button
             title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
           />

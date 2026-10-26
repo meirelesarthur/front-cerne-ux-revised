@@ -337,7 +337,7 @@ export default function CreateOrUpdateEquipe() {
             title={
               isReadOnly ? formText.backButton : languageGB.defaltStrings?.cancel || 'Cancelar'
             }
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={guardedBack}
           />

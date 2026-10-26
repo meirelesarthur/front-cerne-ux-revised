@@ -175,7 +175,7 @@ export default function ConfirmarRecebimentoPage() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(receiptRoutes.list)}
             disabled={isSaving}

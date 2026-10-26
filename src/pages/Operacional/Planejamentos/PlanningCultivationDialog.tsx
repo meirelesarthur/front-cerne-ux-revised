@@ -419,7 +419,7 @@ export function PlanningCultivationDialog({
               <Dialog.Footer>
                 <Button
                   title={languageGB.defaltStrings.cancel}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={handleClose}
                   disabled={cultivationMutation.isPending}

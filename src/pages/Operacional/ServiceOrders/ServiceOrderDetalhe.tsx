@@ -121,7 +121,7 @@ export default function ServiceOrderDetalhe() {
               <Button
                 title={detailText.actions.cancel}
                 icon={FiXCircle as ElementType}
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 onClick={onOpenCancel}
               />

@@ -256,7 +256,7 @@ export default function RatingServiceOrderForm() {
           <>
             <Button
               title={languageGB.defaltStrings.cancel}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => navigate(RATING_SERVICE_ORDERS_LIST_ROUTE)}
             />

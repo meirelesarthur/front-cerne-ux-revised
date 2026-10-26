@@ -304,7 +304,7 @@ export function ImportBudgetPlanningModal({ isOpen, onClose }: ImportBudgetPlann
             <Dialog.Footer>
               <Button
                 title={importText.cancelButton}
-                variant="outline"
+                variant="secondary"
                 onClick={handleClose}
                 disabled={isSubmitting}
               />

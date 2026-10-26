@@ -154,7 +154,7 @@ export default function IntegrationDominioDetalhe() {
           <Button
             title={languageGB.defaltStrings.cancel}
             icon={FiArrowLeft as ElementType}
-            variant="outline"
+            variant="secondary"
             size="sm"
             onClick={() => navigate(INTEGRATION_DOMINIOS_LIST_ROUTE)}
           />

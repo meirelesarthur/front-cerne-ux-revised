@@ -979,7 +979,7 @@ export default function CreateOrUpdateIncome() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={handleCancel}
           />

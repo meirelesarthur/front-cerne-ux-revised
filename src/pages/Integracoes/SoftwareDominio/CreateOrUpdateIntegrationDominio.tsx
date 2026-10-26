@@ -254,7 +254,7 @@ export default function CreateOrUpdateIntegrationDominio() {
         <>
           <Button
             title={formText.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSubmitting}

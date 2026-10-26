@@ -398,7 +398,7 @@ export default function FinishCharge() {
         <FormFooter noPadding>
           <Button
             title={screenText.cancelButton}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSubmitting}

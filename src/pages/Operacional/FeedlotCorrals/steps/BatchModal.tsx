@@ -315,7 +315,7 @@ export function BatchModal({ isOpen, targetUuid, onClose, onSaved }: BatchModalP
             <Dialog.Footer>
               <Button
                 title={text.cancelButton}
-                variant="outline"
+                variant="secondary"
                 type="button"
                 onClick={onClose}
                 disabled={isSubmitting}

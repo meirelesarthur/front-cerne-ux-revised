@@ -135,7 +135,7 @@ export function RevertAppropriationStatusModal({
               <Dialog.Footer>
                 <Button
                   title={text.cancel}
-                  variant="outline"
+                  variant="secondary"
                   type="button"
                   onClick={onClose}
                   disabled={mutation.isPending}

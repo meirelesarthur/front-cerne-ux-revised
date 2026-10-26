@@ -138,7 +138,7 @@ export function ManifestarDesacordoDialog({
             <Dialog.Footer>
               <Button
                 title={text.cancelButton}
-                variant="outline"
+                variant="secondary"
                 type="button"
                 onClick={handleClose}
                 disabled={manifestMutation.isPending}

@@ -359,7 +359,7 @@ export default function CreateOrUpdateBullSeedSeason() {
           <>
             <Button
               title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(-1)}
             />

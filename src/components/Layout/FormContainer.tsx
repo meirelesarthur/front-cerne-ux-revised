@@ -65,11 +65,11 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     <Box px={PAD} py={3} mb={isFull ? 0 : subtitle ? 6 : 4} flexShrink={0}>
       <Flex alignItems="center" justifyContent="space-between" gap={4}>
         <Box minW={0}>
-          <Heading size="lg" fontWeight="600" color="fg.default" lineClamp="1">
+          <Heading as="h1" fontSize="24px" fontWeight="bold" letterSpacing="-0.3px" lineHeight="1.2" color="gray.900" lineClamp="1">
             {title}
           </Heading>
           {subtitle && (
-            <Text fontSize="sm" color="fg.muted" lineClamp="1">
+            <Text fontSize="sm" color="fg.muted" mt="4px" lineClamp="1">
               {subtitle}
             </Text>
           )}

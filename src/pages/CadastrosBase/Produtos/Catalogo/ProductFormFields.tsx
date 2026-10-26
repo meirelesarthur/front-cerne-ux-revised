@@ -96,7 +96,7 @@ export function ProductFormFooter({
       {tabValue === '0' && (
         <Button
           title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-          variant="outline"
+          variant="secondary"
           onClick={onCancel}
           type="button"
         />

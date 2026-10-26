@@ -216,7 +216,7 @@ export default function CreateOrUpdateManutencaoPreventiva() {
         <>
           <Button
             title={languageGB.defaltStrings.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(MANUTENCOES_PREVENTIVAS_LIST_ROUTE)}
           />

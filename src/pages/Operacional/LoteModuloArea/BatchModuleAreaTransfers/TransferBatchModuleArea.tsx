@@ -331,7 +331,7 @@ export default function TransferBatchModuleArea() {
         <>
           <Button
             title={text.form.cancelButton}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={isSubmitting}

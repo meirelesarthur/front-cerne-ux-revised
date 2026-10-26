@@ -242,7 +242,7 @@ export default function CreateCashBook() {
         <>
           <Button
             title={text.form.cancelButton}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
           />

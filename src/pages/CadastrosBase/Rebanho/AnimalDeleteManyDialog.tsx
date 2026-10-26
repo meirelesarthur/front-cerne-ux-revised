@@ -207,7 +207,7 @@ export function AnimalDeleteManyDialog({
           <Dialog.ActionTrigger asChild>
             <Button
               title={languageGB.defaltStrings.cancel}
-              variant="outline"
+              variant="secondary"
               onClick={handleClose}
               disabled={mutation.isPending}
             />

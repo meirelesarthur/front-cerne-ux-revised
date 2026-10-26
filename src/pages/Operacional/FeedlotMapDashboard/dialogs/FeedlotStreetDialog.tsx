@@ -231,7 +231,7 @@ export function FeedlotStreetDialog({
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <Button
                     title={languageGB.defaltStrings.cancel}
-                    variant="outline"
+                    variant="secondary"
                     type="button"
                     onClick={onClose}
                     disabled={isSubmitting}

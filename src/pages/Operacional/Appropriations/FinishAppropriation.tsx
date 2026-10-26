@@ -508,7 +508,7 @@ export default function FinishAppropriation() {
         <>
           <Button
             title={screenText.cancel}
-            variant="outline"
+            variant="secondary"
             type="button"
             onClick={() => navigate(-1)}
             disabled={finishMutation.isPending}

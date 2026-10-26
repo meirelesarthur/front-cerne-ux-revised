@@ -318,7 +318,7 @@ export default function SaleAdvanceIncome() {
           <>
             <Button
               title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-              variant="outline"
+              variant="secondary"
               type="button"
               onClick={() => guardedNavigate(backRoute)}
             />
