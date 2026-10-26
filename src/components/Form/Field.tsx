@@ -55,7 +55,7 @@ export function Field({
       {...rest}
     >
       {label && (
-        <Flex as="label" alignItems="center" h="20px" minH="20px" fontSize="13px" fontWeight="medium" color="gray.900" lineHeight="20px">
+        <Flex as="label" alignItems="center" h="20px" minH="20px" fontSize="13px" fontWeight="medium" color="strongText" lineHeight="20px">
           {label}
           <ChakraField.RequiredIndicator color="feedBack.errorMain" ml="1">
             *

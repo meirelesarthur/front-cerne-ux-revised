@@ -186,6 +186,9 @@ const colors: SemanticTokensColors = {
   cardBorder: { value: '#1c3f2c' }, // border.default
   cardTextPrimary: { value: '#e2f0e8' }, // fg.default
   cardTextSecondary: { value: '#7da893' }, // fg.muted
+  strongText: { value: "#e2f0e8" },
+  selectedBG: { value: "rgba(16, 185, 129, 0.16)" },
+  selectedText: { value: "#4ade80" },
   // Painel de resumo (simulador de planos): bloco de contraste, mesmo valor em qualquer tema
   summaryBg: { value: "#0b2519" },
   summaryAccent: { value: "#10b981" },

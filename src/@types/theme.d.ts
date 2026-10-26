@@ -183,6 +183,9 @@ export interface SemanticTokensColors {
   cardTextPrimary: { value: string };
   cardTextSecondary: { value: string };
   cardShadow: { value: string };
+  strongText: { value: string };
+  selectedBG: { value: string };
+  selectedText: { value: string };
   summaryBg: { value: string };
   summaryAccent: { value: string };
   summaryText: { value: string };

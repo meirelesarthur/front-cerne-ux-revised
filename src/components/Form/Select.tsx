@@ -282,7 +282,7 @@ export function Select({
                         color: 'semanticNeutral.800',
                       }}
                       _selected={{
-                        backgroundColor: 'green.50',
+                        backgroundColor: 'selectedBG',
                         color: 'green.700',
                         fontWeight: 'semibold',
                       }}
@@ -366,7 +366,7 @@ export function Select({
  color: 'semanticNeutral.800',
                         }}
                         _selected={{
-                          backgroundColor: 'green.50',
+                          backgroundColor: 'selectedBG',
  color: 'green.700',
  fontWeight: 'semibold',
                         }}

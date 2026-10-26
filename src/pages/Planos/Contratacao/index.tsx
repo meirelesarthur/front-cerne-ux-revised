@@ -644,7 +644,7 @@ export default function ContratacaoPlano() {
   const overview = (
     <Flex direction="column" gap={6}>
       <Box>
-        <Text fontSize="xl" fontWeight="bold" color="gray.900">
+        <Text fontSize="xl" fontWeight="bold" color="strongText">
           {ov.title}
         </Text>
         <Text fontSize="base" color="fg.muted" mt="6px" maxW="72ch" lineHeight="1.5">
@@ -652,11 +652,11 @@ export default function ContratacaoPlano() {
         </Text>
       </Box>
 
-      <Box borderWidth="1.5px" borderStyle="dashed" borderColor="green.600" borderRadius="xl" px={5} py={4} bg="green.50">
-        <Box as="span" px="9px" py="3px" borderRadius="full" bg="green.100" color="green.700" fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.06em">
+      <Box borderWidth="1.5px" borderStyle="dashed" borderColor="green.600" borderRadius="xl" px={5} py={4} bg="selectedBG">
+        <Box as="span" px="9px" py="3px" borderRadius="full" bg="green.100" color="selectedText" fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.06em">
           {ov.entryTag}
         </Box>
-        <Text fontSize="lg" fontWeight="bold" color="green.700" mt="8px">
+        <Text fontSize="lg" fontWeight="bold" color="selectedText" mt="8px">
           {ov.entryTitle}
         </Text>
         <Text fontSize="base" color="fg.muted" mt="4px">

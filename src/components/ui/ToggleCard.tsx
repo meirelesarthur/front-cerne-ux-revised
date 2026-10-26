@@ -49,7 +49,7 @@ export function ToggleCard({ title, description, icon, active, onToggle, disable
       borderWidth="1.5px"
       borderStyle="solid"
       borderColor={active ? 'green.600' : 'semanticNeutral.200'}
-      bg={active ? 'green.50' : 'cardBG'}
+      bg={active ? 'selectedBG' : 'cardBG'}
       cursor={disabled ? 'not-allowed' : 'pointer'}
       opacity={disabled ? 0.6 : 1}
       transition="border-color 0.2s ease, background 0.2s ease"
@@ -65,7 +65,7 @@ export function ToggleCard({ title, description, icon, active, onToggle, disable
             borderRadius="8px"
             flexShrink={0}
             bg={active ? 'green.100' : 'semanticNeutral.100'}
-            color={active ? 'green.700' : 'fg.muted'}
+            color={active ? 'selectedText' : 'fg.muted'}
           >
             <Icon name={icon} size={16} />
           </Flex>
@@ -89,7 +89,7 @@ export function ToggleCard({ title, description, icon, active, onToggle, disable
       </Flex>
 
       <Box>
-        <Text fontSize="sm" fontWeight="semibold" color={disabled ? 'fg.muted' : 'gray.900'}>
+        <Text fontSize="sm" fontWeight="semibold" color={disabled ? 'fg.muted' : 'strongText'}>
           {title}
         </Text>
         {description && (
@@ -100,7 +100,7 @@ export function ToggleCard({ title, description, icon, active, onToggle, disable
       </Box>
 
       {hint && (
-        <Flex align="center" gap="6px" fontSize="xs" fontWeight="medium" color={active ? 'green.700' : 'fg.muted'}>
+        <Flex align="center" gap="6px" fontSize="xs" fontWeight="medium" color={active ? 'selectedText' : 'fg.muted'}>
           {active && <Icon name="check" size={12} />}
           {hint}
         </Flex>

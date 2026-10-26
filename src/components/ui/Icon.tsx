@@ -41,10 +41,13 @@ export function Icon({
   style,
 }: IconProps) {
   const px = typeof size === 'number' ? size : ICON_SIZES[size];
+  const glyph = icons[name];
+  // Papel desconhecido (ex.: dado legado que ainda manda um componente): não derruba a tela.
+  if (!glyph) return null;
 
   return (
     <HugeiconsIcon
-      icon={icons[name]}
+      icon={glyph}
       size={px}
       color={color}
       strokeWidth={ICON_STROKE}

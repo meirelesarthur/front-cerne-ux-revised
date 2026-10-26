@@ -44,12 +44,12 @@ export function ChoiceCardGroup({ options, value, onChange, ariaLabel }: ChoiceC
             borderWidth="1.5px"
             borderStyle="solid"
             borderColor={selected ? 'green.600' : 'semanticNeutral.200'}
-            bg={selected ? 'green.50' : 'cardBG'}
+            bg={selected ? 'selectedBG' : 'cardBG'}
             transition="border-color 0.15s ease, background 0.15s ease"
-            _hover={{ bg: selected ? 'green.50' : 'semanticNeutral.100' }}
+            _hover={{ bg: selected ? 'selectedBG' : 'semanticNeutral.100' }}
             _focusVisible={{ outline: '2px solid', outlineColor: 'green.600', outlineOffset: '2px' }}
           >
-            <Text fontSize="base" fontWeight="bold" color={selected ? 'green.700' : 'gray.900'}>
+            <Text fontSize="base" fontWeight="bold" color={selected ? 'selectedText' : 'strongText'}>
               {opt.title}
             </Text>
             <Text fontSize="sm" fontWeight="medium" color="fg.muted">

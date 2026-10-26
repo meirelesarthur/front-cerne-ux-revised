@@ -50,10 +50,10 @@ export const customStyles = (
     padding: '9px 14px',
     cursor: 'pointer',
     // DS `DropdownRow`: selecionada = verde suave com texto verde; hover = neutro claro.
-    color: isSelected ? 'var(--chakra-colors-green-700)' : 'var(--chakra-colors-semantic-neutral-700)',
+    color: isSelected ? 'var(--chakra-colors-selected-text)' : 'var(--chakra-colors-semantic-neutral-700)',
     fontWeight: isSelected ? 600 : 400,
     backgroundColor: isSelected
-      ? 'var(--chakra-colors-green-50)'
+      ? 'var(--chakra-colors-selected-b-g)'
       : 'var(--chakra-colors-card-b-g)',
     ':active': {
       ...styles[':active'],
@@ -62,9 +62,9 @@ export const customStyles = (
     ':hover': {
       ...styles[':hover'],
       backgroundColor: isSelected
-        ? 'var(--chakra-colors-green-50)'
+        ? 'var(--chakra-colors-selected-b-g)'
         : 'var(--chakra-colors-semantic-neutral-100)',
-      color: isSelected ? 'var(--chakra-colors-green-700)' : 'var(--chakra-colors-semantic-neutral-800)',
+      color: isSelected ? 'var(--chakra-colors-selected-text)' : 'var(--chakra-colors-semantic-neutral-800)',
     },
     zIndex: 9997,
   }),

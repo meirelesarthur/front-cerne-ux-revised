@@ -45,9 +45,9 @@ export const ButtonFilter = forwardRef<HTMLButtonElement, ButtonProps>(
           borderWidth="1.5px"
           borderStyle="solid"
           borderColor={active ? 'green.600' : 'semanticNeutral.300'}
-          bg={active ? 'green.50' : 'cardBG'}
-          color={active ? 'green.700' : 'fg.muted'}
-          _hover={{ bg: active ? 'green.50' : 'semanticNeutral.100' }}
+          bg={active ? 'selectedBG' : 'cardBG'}
+          color={active ? 'selectedText' : 'fg.muted'}
+          _hover={{ bg: active ? 'selectedBG' : 'semanticNeutral.100' }}
         >
           <Icon name="filter-advanced" size="xs" />
           {isMobile ? '' : label}

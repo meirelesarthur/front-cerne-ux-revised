@@ -186,6 +186,10 @@ const colors: SemanticTokensColors = {
   cardBorder: { value: "{colors.gray.200}" }, // border.default (#e5e7eb)
   cardTextPrimary: { value: "{colors.gray.900}" }, // fg.default (#171717 via text.black)
   cardTextSecondary: { value: "{colors.gray.600}" }, // fg.muted (#404040)
+  // Texto forte (títulos) e estado "selecionado suave" — mudam com o tema
+  strongText: { value: "{colors.gray.900}" },
+  selectedBG: { value: "{colors.green.50}" },
+  selectedText: { value: "{colors.green.700}" },
   // Painel de resumo (simulador de planos): bloco de contraste, mesmo valor em qualquer tema
   summaryBg: { value: "#0b2519" },
   summaryAccent: { value: "#10b981" },

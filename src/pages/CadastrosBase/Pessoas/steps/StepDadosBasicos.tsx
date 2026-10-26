@@ -173,7 +173,7 @@ export function StepDadosBasicos({
       </SimpleGrid>
 
       {/* Papéis: cartões de seleção (DS `ToggleSection variant="card"`), até 4 por linha */}
-      <Text fontSize="sm" fontWeight="medium" color="gray.900">
+      <Text fontSize="sm" fontWeight="medium" color="strongText">
         {text.form.basico.rolesLabel}
       </Text>
       <Text fontSize="sm" color="fg.muted" mt="4px" mb={3}>
