@@ -4,14 +4,13 @@ import {
   Box,
   Flex,
   HStack,
-  Icon,
   IconButton,
   Menu,
   MenuRootProps,
   Portal,
   Text,
 } from '@chakra-ui/react';
-import { BiDotsVerticalRounded } from 'react-icons/bi';
+import { Icon as UiIcon } from './ui/Icon';
 
 import { LanguageDate } from '@/@types/language';
 
@@ -80,17 +79,17 @@ const ActionsItem = memo(
         cursor={disabled ? 'not-allowed' : 'pointer'}
         opacity={disabled ? 0.5 : 1}
         _hover={{ bg: disabled ? undefined : isDanger ? 'feedBack.error' : 'sidebarItemHoverBG' }}
-        px={3}
-        py={2}
+        px="14px"
+        py="9px"
         borderRadius="md"
-        gap={2}
+        gap="8px"
       >
         {icon && (
           <Box color={resolvedColor || 'sidebarTextColor'} flexShrink={0}>
             {icon}
           </Box>
         )}
-        <Text fontSize="sm" color={resolvedColor || 'sidebarTitleColor'}>
+        <Text fontSize="base" color={resolvedColor || 'fg.default'}>
           {children}
         </Text>
       </Menu.Item>
@@ -149,9 +148,9 @@ const ActionsComponent = memo(
     ...rest
   }: ActionsProps) => {
     const sizeStyles = {
-      sm: { minWidth: '20px', width: '20px', height: '20px', fontSize: '20' },
-      md: { minWidth: '24px', width: '24px', height: '24px', fontSize: '24' },
-      lg: { minWidth: '32px', width: '32px', height: '32px', fontSize: '30' },
+      sm: { minWidth: '28px', width: '28px', height: '28px', fontSize: '15' },
+      md: { minWidth: '32px', width: '32px', height: '32px', fontSize: '15' },
+      lg: { minWidth: '36px', width: '36px', height: '36px', fontSize: '17' },
     };
 
     const currentSize = sizeStyles[size];
@@ -174,14 +173,15 @@ const ActionsComponent = memo(
               color="sidebarTextColor"
               backgroundColor={backgroundColorMenu || 'transparent'}
               variant="ghost"
-              border={'none'}
+              border="1px solid transparent"
+              borderRadius="8px"
               minWidth={currentSize.minWidth}
               width={currentSize.width}
               height={currentSize.height}
               onClick={(e) => e.stopPropagation()}
-              _hover={{ bg: 'sidebarItemHoverBG' }}
+              _hover={{ bg: 'semanticNeutral.100', borderColor: 'semanticNeutral.200' }}
             >
-              <Icon as={BiDotsVerticalRounded} fontSize={currentSize.fontSize} />
+              <UiIcon name="more-vertical" size={Number(currentSize.fontSize)} />
             </IconButton>
           </Menu.Trigger>
           <Portal>
@@ -193,7 +193,7 @@ const ActionsComponent = memo(
                 borderRadius="lg"
                 boxShadow="lg"
                 py={1}
-                minW="180px"
+                minW="150px"
                 border="1px solid"
                 borderColor="sidebarBorder"
               >

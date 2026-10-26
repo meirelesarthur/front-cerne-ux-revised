@@ -1,17 +1,15 @@
-import { forwardRef } from "react";
+// src/components/ButtonFilter.tsx
+// Botão "Filtros" das listagens (DS `FilterButton`): borda 1.5px; com filtros ativos vira verde
+// suave e mostra a contagem em pílula. Fonte única — as telas só passam `filtersApplied`.
 
-import {
-  Box,
-  Button as ChakraButton,
-  ButtonProps as ChakraButtonProps,
-  Icon,
-  useMediaQuery,
-} from "@chakra-ui/react";
-import { LuSlidersHorizontal } from "react-icons/lu";
+import { forwardRef } from 'react';
 
-import { useLanguage } from "@/hooks/useLanguage";
+import { Box, Button as ChakraButton, ButtonProps as ChakraButtonProps, useMediaQuery } from '@chakra-ui/react';
 
-import { Tooltip } from "./TooLtip";
+import { useLanguage } from '@/hooks/useLanguage';
+
+import { Icon } from './ui/Icon';
+import { Tooltip } from './TooLtip';
 
 interface ButtonProps extends ChakraButtonProps {
   filtersApplied: number;
@@ -20,48 +18,41 @@ interface ButtonProps extends ChakraButtonProps {
 export const ButtonFilter = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ filtersApplied, ...rest }: ButtonProps, ref) => {
     const { languageGB } = useLanguage();
-    const [isMobile] = useMediaQuery(["(max-width: 850px)"]);
+    const [isMobile] = useMediaQuery(['(max-width: 850px)']);
 
     const appliedCount = filtersApplied ?? 0;
-    const hasFilters = appliedCount > 0;
+    const active = appliedCount > 0;
+    const label = languageGB.defaltStrings.filters;
 
     return (
       <Tooltip
-        label={languageGB.defaltStrings.filters}
+        label={label}
         placement="top"
-        display={isMobile ? "" : "none"}
+        display={isMobile ? '' : 'none'}
         backgroundColor="semanticNeutral.100"
         color="primitiveTexteColor"
       >
         <ChakraButton
           {...rest}
-          color="loginButtonPrimary"
-          _hover={{
-            color: "headerModuleActiveColor",
-          }}
-          variant="ghost"
-          background={"transparent"}
           ref={ref}
-          fontSize="14px"
+          variant="outline"
+          h="34px"
+          px="14px"
+          gap="6px"
+          fontSize="base"
+          fontWeight="medium"
+          borderRadius="8px"
+          borderWidth="1.5px"
+          borderStyle="solid"
+          borderColor={active ? 'green.600' : 'semanticNeutral.300'}
+          bg={active ? 'green.50' : 'cardBG'}
+          color={active ? 'green.700' : 'fg.muted'}
+          _hover={{ bg: active ? 'green.50' : 'semanticNeutral.100' }}
         >
-          <Icon as={LuSlidersHorizontal} fontSize={18} />
-          {isMobile ? "" : languageGB.defaltStrings.filters}
-          {hasFilters && (
-            <Box
-              as="span"
-              display="inline-flex"
-              alignItems="center"
-              justifyContent="center"
-              minW="18px"
-              height="18px"
-              px="1.5"
-              borderRadius="full"
-              bg="loginButtonPrimary"
-              color="white"
-              fontSize="xs"
-              fontWeight="bold"
-              lineHeight="1"
-            >
+          <Icon name="filter-advanced" size="xs" />
+          {isMobile ? '' : label}
+          {active && (
+            <Box as="span" px="6px" borderRadius="full" bg="green.600" color="white" fontSize="2xs" fontWeight="bold" lineHeight="1.5">
               {appliedCount}
             </Box>
           )}
@@ -71,4 +62,4 @@ export const ButtonFilter = forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
-ButtonFilter.displayName = "ButtonFilter";
+ButtonFilter.displayName = 'ButtonFilter';

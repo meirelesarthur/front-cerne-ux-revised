@@ -1,4 +1,6 @@
-import { Badge, CloseButton, Drawer, Flex, Portal, Text } from '@chakra-ui/react';
+import { Box, CloseButton, Drawer, Flex, Portal, Text } from '@chakra-ui/react';
+
+import { Icon } from './ui/Icon';
 
 import { LanguageDate } from '@/@types/language';
 
@@ -55,12 +57,17 @@ export function FilterSide({
           >
             <Drawer.Header borderBottom="1px solid" borderColor="border2">
               <Drawer.Title>
-                <Flex align="center" gap={2}>
-                  <Text as="b">{languageGB.defaltStrings.filters}</Text>
+                <Flex align="center" gap="8px">
+                  <Box color="green.600" display="flex">
+                    <Icon name="filter-advanced" size="sm" />
+                  </Box>
+                  <Text fontSize="md" fontWeight="semibold">
+                    {languageGB.defaltStrings.filters}
+                  </Text>
                   {!!filtersApplied && filtersApplied > 0 && (
-                    <Badge colorPalette="blue" borderRadius="full" variant="solid" size="sm">
+                    <Box as="span" px="6px" borderRadius="full" bg="green.600" color="white" fontSize="xs" fontWeight="bold" lineHeight="1.6">
                       {filtersApplied}
-                    </Badge>
+                    </Box>
                   )}
                 </Flex>
               </Drawer.Title>

@@ -142,3 +142,14 @@ Pendências de validação: tema escuro, formulários (input), modais, telas den
 | Estados loading/vazio/erro | pendente | já existem em `Table` (isLoading/isEmpty/isError); falta padronizar visual |
 
 Login (onda 7) feito antes: ver `funcionalidades/login.md`.
+
+### Onda 3 — continuação (2026-10-26)
+| Item | Situação | O que mudou |
+|---|---|---|
+| `ButtonFilter` (195 telas) | feito | passa a ser o `FilterButton` do DS: 34px, borda 1.5px, verde suave + pílula de contagem quando há filtro; ícone `filter-advanced` do kit |
+| `FilterSide` (350 telas) | feito | cabeçalho do DS: ícone de filtro, título semibold, pílula verde de contagem |
+| `Form.FooterFilter` | corrigido | o 2º botão do rodapé estourava a borda do drawer; os botões agora dividem a largura |
+| `Actions` (menu de ações de linha) | feito | gatilho 28/32/36px com borda no hover e ícone `more-vertical` do kit; itens 13px, padding 9×14, painel mínimo 150px |
+| `ListToolbar` (busca + chips) | **não feito** | o front não tem busca inline: o filtro por texto vive dentro do drawer, por tela. Mudar isso é decisão de produto (busca no servidor), não só visual |
+| `DataTable` completo | **não feito** | só o cabeçalho foi alinhado; ordenação, seleção e linha expansível seguem no `Table` atual |
+| `ConfirmDialog` / estados vazio-erro | fora desta rodada | |

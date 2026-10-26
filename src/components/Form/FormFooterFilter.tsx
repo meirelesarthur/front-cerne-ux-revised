@@ -35,6 +35,8 @@ export const FormFooterFilter = forwardRef<
             key="form-footer-grouped-items-hstack"
             gap="4"
             width="full"
+            // Botões dividem a largura do drawer (antes o 2º estourava a borda direita).
+            css={{ '& > *': { flex: 1, minWidth: 0 } }}
             {...hStackProps}
           >
             {Children.map(childrenArray.slice(1), (child, index) => {
