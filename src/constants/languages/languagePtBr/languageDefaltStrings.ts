@@ -150,6 +150,7 @@ export const languageDefaltStrings: DefaltStrings = {
   startDate: "Data Inicial",
   endDate: "Data Final",
   filters: "Filtros",
+  searchList: "Buscar...",
   emptyData: "Nenhum dado foi encontrado.",
   linePerPage: "Linhas por páginas",
   showing: "Mostrando",

@@ -66,6 +66,9 @@ import { HeaderTable } from './HeaderTable';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function BanksList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -89,6 +92,7 @@ export default function BanksList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange } =
     userPaginatedQuery<BankFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Busca (servidor, code/name, com debounce local) --------------------
   // Estado LOCAL de texto — inicializado a partir do filtro já aplicado
@@ -271,7 +275,13 @@ export default function BanksList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={banksList.isError}

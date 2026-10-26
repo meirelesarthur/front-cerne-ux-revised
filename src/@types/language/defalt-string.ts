@@ -100,6 +100,7 @@ export interface DefaltStrings {
   startDate: string;
   endDate: string;
   filters: string;
+  searchList: string;
   emptyData: string;
   linePerPage: string;
   linePerColumn: string;

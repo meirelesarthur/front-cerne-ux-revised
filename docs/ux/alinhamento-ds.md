@@ -153,3 +153,10 @@ Login (onda 7) feito antes: ver `funcionalidades/login.md`.
 | `ListToolbar` (busca + chips) | **não feito** | o front não tem busca inline: o filtro por texto vive dentro do drawer, por tela. Mudar isso é decisão de produto (busca no servidor), não só visual |
 | `DataTable` completo | **não feito** | só o cabeçalho foi alinhado; ordenação, seleção e linha expansível seguem no `Table` atual |
 | `ConfirmDialog` / estados vazio-erro | fora desta rodada | |
+
+## 7.3 Progresso — onda 4 (cadastros simples, listagens) · 2026-10-26
+Novo `ui/ListToolbar` (busca inline + botão Filtros na mesma linha, como o DS) + hook `useListSearch` (liga a busca ao param `search` que o drawer já enviava; debounce 300 ms, preserva os outros filtros). Aplicado em: **Embalagens, Cidades, Contas Bancárias, Emissores, Estoque Inicial, Bancos (só busca, não tem drawer), Armazéns**. O botão Filtros saiu do `HeaderTable` dessas telas.
+- **Endereçamentos** não recebeu: é lista em árvore sem `userPaginatedQuery`; fica para um ajuste próprio.
+- Dev API: Contas Bancárias, Emissores e Estoques Iniciais seguem sem dados locais (lista vazia) — a busca foi verificada na requisição (`search=`), não no resultado.
+- Chave de texto nova `defaltStrings.searchList` (PT/EN/ES).
+- Falta (próximo passo da onda 4): formulários desses cadastros × DS, e aplicar o mesmo padrão às ~190 listagens restantes (a regra é mecânica, mas cada tela precisa conferir se o filtro tem `search`).

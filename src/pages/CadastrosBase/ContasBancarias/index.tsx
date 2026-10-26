@@ -82,6 +82,9 @@ import { useAccountsList } from './useAccounts';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Formatação monetária pt-BR (nenhum util global de currency existe no fork —
 // Regra F: resolve em poucas linhas sem nova abstração — mesmo tratamento
 // dado por `Embalagens/index.tsx` ao `size`). `value` sempre a STRING crua do
@@ -113,6 +116,7 @@ export default function ContasBancariasList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<AccountFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -390,7 +394,15 @@ export default function ContasBancariasList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           {!hasFarm ? (
             <EmptyState.Root>
               <EmptyState.Content>
