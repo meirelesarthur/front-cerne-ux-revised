@@ -33,7 +33,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, HStack, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, HStack, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiFolder, FiGitBranch, FiPlus, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -65,6 +65,8 @@ import type { GrouperFilterForm, GrouperListItem, GrouperType } from '@/@types/v
 
 import { FilterSideGroupers } from './FilterSideGroupers';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 /** Limite de PROFUNDIDADE para exibir "Criar descendente" — replica a regra de
  *  UI do legado (Doc Bruta §4 "Limite de profundidade exibido na UI"): esconde
@@ -324,14 +326,7 @@ export default function GroupersList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

@@ -61,7 +61,7 @@
 
 import { type ComponentProps, type ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileText, Split } from 'lucide-react';
@@ -139,6 +139,8 @@ import { SeparateAtQuotationDialog } from './SeparateAtQuotationDialog';
 
 import { FilterSideSolicitacao } from '../Solicitacao/FilterSideSolicitacao';
 import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function CotacoesList() {
   const { languageGB } = useLanguage();
@@ -584,14 +586,7 @@ export default function CotacoesList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.inQuotation.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.inQuotation.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.inQuotation.pageTitle} description={text.inQuotation.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — fidelidade ao legado (`request-purchase.

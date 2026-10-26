@@ -27,7 +27,7 @@
 import { useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClipboard, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -65,6 +65,8 @@ import type {
 
 import { FilterSideProtocolSeason } from './FilterSideProtocolSeason';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const PROTOCOL_SEASON_STORAGE_KEY =
   'OperacionalReproducaoProtocoloEstacao' + queryKey.protocolSeasons.protocolSeasonsList;
@@ -276,14 +278,7 @@ export default function ProtocolSeasonsList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

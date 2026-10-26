@@ -25,7 +25,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiBox, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +58,8 @@ import type { FeedlotYardFilterForm, FeedlotYardListItem } from '@/@types/v2/Fee
 import { FilterSideFeedlotYards } from './FilterSideFeedlotYards';
 import { HeaderTable } from './HeaderTable';
 import { useFeedlotYardsList } from './useFeedlotYards';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela — paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
@@ -284,14 +286,7 @@ export default function FeedlotYardList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

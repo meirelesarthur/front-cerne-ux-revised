@@ -17,7 +17,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiAlertTriangle, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +52,8 @@ import type {
 import { FilterSideLossAnimal } from './FilterSideLossAnimal';
 import { HeaderTable } from './HeaderTable';
 import { useLossAnimalsList } from './useLossAnimals';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function LossAnimalList() {
   const { languageGB } = useLanguage();
@@ -244,14 +246,7 @@ export default function LossAnimalList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

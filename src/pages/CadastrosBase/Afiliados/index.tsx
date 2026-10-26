@@ -20,7 +20,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiTrash2, FiUsers } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -54,6 +54,8 @@ import type { PartnerFilterForm, PartnerListItem } from '@/@types/v2/Afiliados';
 import { FilterSideAfiliados } from './FilterSideAfiliados';
 import { HeaderTable } from './HeaderTable';
 import { usePartnersList } from './useAfiliados';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Mascara CPF/CNPJ para exibição na grid (mirror `Pessoas/nif.ts::maskNif`,
 // reimplementado sobre os utils compartilhados `@/utils/cpfCnpj` +
@@ -269,14 +271,7 @@ export default function AfiliadosList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

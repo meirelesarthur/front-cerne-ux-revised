@@ -19,7 +19,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiBell, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +55,8 @@ import {
 import type { SystemUpdateListItem } from '@/@types/v2/BaseRegistrations/systemUpdate';
 
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Sem filtro nesta tela (contrato §1.1) — `filterQuery: []` fixo. Chave de
 // storage desta tela: paginação (`userPaginatedQuery`) e personalização de
@@ -224,14 +226,7 @@ export default function SystemUpdatesList() {
         setColumnVisibility={setColumnVisibility}
       >
         <HeaderGrid header={<HeaderTable languageGB={languageGB} gridSettings={gridSettings} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

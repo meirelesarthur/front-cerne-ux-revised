@@ -54,6 +54,8 @@ import type { CteEstado, CteFilterForm, CteListItem } from '@/@types/v2/Fiscal/c
 import { FilterSideCte } from './FilterSideCte';
 import { HeaderTable } from './HeaderTable';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // AC08/CL08 — visibilidade de UI (o servidor NÃO revalida `estado` no
 // `destroy`, preservado por decisão já documentada no backend).
 const DELETABLE_ESTADOS: CteEstado[] = ['novo', 'rejeitado'];
@@ -263,14 +265,7 @@ export default function CtesList() {
         <HeaderGrid
           header={<HeaderTable onOpenFilter={onOpenFilter} filtersApplied={filtersApplied} />}
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

@@ -37,7 +37,7 @@ import { useMemo, useState } from 'react';
 
 import type { ElementType } from 'react';
 
-import { Box, Flex, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiFileText } from 'react-icons/fi';
@@ -71,6 +71,8 @@ import { FilterSideSanitario } from './FilterSideSanitario';
 import { HeaderTable } from './HeaderTable';
 import { SanitarioActionsMenu } from './SanitarioActionsMenu';
 import { useSanitariosList } from './useSanitarios';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const SANITARIO_LIST_ROUTE = '/operacional/sanitario';
 
@@ -231,14 +233,7 @@ export default function SanitarioList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

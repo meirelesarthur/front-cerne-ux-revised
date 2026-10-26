@@ -22,7 +22,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiDollarSign, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -58,6 +58,8 @@ import type { OpenMovementFilterForm, OpenMovementListItem } from '@/@types/v2/O
 
 import { FilterSideSaldoInicial } from './FilterSideSaldoInicial';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela — paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
@@ -300,14 +302,7 @@ export default function SaldoInicialList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

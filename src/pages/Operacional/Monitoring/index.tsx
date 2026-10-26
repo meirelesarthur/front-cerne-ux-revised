@@ -28,7 +28,7 @@
 
 import { useMemo, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClipboard, FiEye } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -64,6 +64,8 @@ import type {
 import { FilterSideMonitoring } from './FilterSideMonitoring';
 import { HeaderTable } from './HeaderTable';
 import { useMonitoringList } from './useMonitoring';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const MONITORING_STORAGE_KEY = 'OperacionalMonitoring' + queryKey.monitoring.monitorings;
 const SERVICE_ORDERS_DETAIL_ROUTE = '/operacional/lista-os';
@@ -208,14 +210,7 @@ export default function Monitoring() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — SEMPRE visível, os 5 status do domínio (fiel

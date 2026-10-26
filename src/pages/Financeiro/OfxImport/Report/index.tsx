@@ -30,7 +30,7 @@
 
 import { ElementType, useMemo } from 'react';
 
-import { Box, Text, VStack } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCalendar } from 'react-icons/fi';
@@ -48,6 +48,8 @@ import { queryKey } from '@/constants/query-key';
 import { getOfxImportsReport } from '@/services/v2/Financeiro/OfxImports/ofx-import-service';
 
 import type { OfxImportReportItem } from '@/@types/v2/Financeiro/ofxImport/report';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function OfxImportsReport() {
   const { languageGB } = useLanguage();
@@ -92,14 +94,7 @@ export default function OfxImportsReport() {
     <ContainerGrid>
       <TableProvider data={items} columns={defaultColumns} enableMultiRowSelection={false}>
         <HeaderGrid>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

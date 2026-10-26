@@ -27,7 +27,7 @@
 import { useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 
-import { Box, Flex, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiUsers } from 'react-icons/fi';
@@ -62,6 +62,8 @@ import type { TraceabilityConfigListItem } from '@/@types/v2/Rastreabilidade/tra
 
 import { HeaderTable } from './HeaderTable';
 import { TraceabilityConfigActionsMenu } from './TraceabilityConfigActionsMenu';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Seletor de itens por página — mirror `Traceability/index.tsx`. NUNCA 200: o
 // servidor valida `per_page` como `max:100`.
@@ -228,14 +230,7 @@ export default function TraceabilityConfigList() {
         enableMultiRowSelection={false}
       >
         <HeaderGrid header={<HeaderTable languageGB={languageGB} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

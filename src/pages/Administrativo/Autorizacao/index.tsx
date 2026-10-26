@@ -36,7 +36,7 @@
 
 import { useEffect, useMemo, useRef, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileText } from 'lucide-react';
 import { FiEye } from 'react-icons/fi';
@@ -76,6 +76,8 @@ import type {
 import { FilterSideAutorizacao } from './FilterSideAutorizacao';
 
 import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function AutorizacaoList() {
   const { languageGB } = useLanguage();
@@ -283,14 +285,7 @@ export default function AutorizacaoList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — TODOS os 11 valores do enum (default do

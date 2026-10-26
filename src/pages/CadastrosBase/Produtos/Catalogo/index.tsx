@@ -78,6 +78,8 @@ import { FilterSideCatalogo } from './FilterSideCatalogo';
 import { HeaderTable } from './HeaderTable';
 import { useProductsList } from './useProducts';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // Seletor de tamanho de página desta tela — teto real 100 (NÃO 200, ver
 // cabeçalho do arquivo). `Table.tsx` (`pageSizeOptions?`, aditivo) repassa ao
 // `SelectPagination` compartilhado.
@@ -298,14 +300,7 @@ export default function ProdutosCatalogoList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

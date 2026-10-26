@@ -133,6 +133,8 @@ import { DFE_RECEBIDAS_STORAGE_KEY } from './storage';
 
 import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // ACT-05/IG-06/IG-08 — cap de seleção em massa (individual OU lote).
 const MAX_BULK_SELECTION = 20;
 
@@ -685,14 +687,7 @@ export default function DfeRecebidasList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         {selectedUuids.length > 0 && (

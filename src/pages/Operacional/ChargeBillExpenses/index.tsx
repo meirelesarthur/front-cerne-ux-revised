@@ -20,7 +20,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Box, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FiDollarSign } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +51,8 @@ import type { ChargeBillExpenseListItem } from '@/@types/v2/ChargeBillExpense';
 
 import { useChargeBillExpenseColumns } from './columns';
 import { useChargeBillExpensesList } from './useChargeBillExpenses';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const CHARGE_BILL_EXPENSES_LIST_ROUTE = '/operacional/carregamento/contas-a-pagar';
 // Seletor de itens por página — 10/30/50/100, mirror `ChargeBillIncomes`.
@@ -172,14 +174,7 @@ export default function ChargeBillExpensesList() {
             )
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

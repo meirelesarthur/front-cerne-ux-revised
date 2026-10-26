@@ -28,7 +28,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileSignature } from 'lucide-react';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -65,6 +65,8 @@ import { deleteContract, listContracts } from '@/services/v2/Contracts/contract-
 import type { ContractFilterForm, ContractListItem } from '@/@types/v2/Contracts';
 
 import { FilterSideContrato } from './FilterSideContrato';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `amount` já vem NUMBER do `ContractResource` (sempre recalculado
 // server-side, DA-CT-06) — sem cast `Number(...)` de string, diferente de
@@ -370,14 +372,7 @@ export default function ContratoList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.contracts.contract.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.contracts.contract.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.contracts.contract.list.pageTitle} description={languageGB.contracts.contract.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

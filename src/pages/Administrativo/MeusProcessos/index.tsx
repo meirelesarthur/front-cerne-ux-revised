@@ -23,7 +23,7 @@
 
 import { type ComponentProps, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { isAxiosError } from 'axios';
@@ -103,6 +103,8 @@ import {
 import { InformRequestPurchaseStatusDialog } from '../Compras/InformRequestPurchaseStatusDialog';
 import { SeparateRequestPurchaseDialog } from '../Compras/SeparateRequestPurchaseDialog';
 import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function MeusProcessosList() {
   const { languageGB } = useLanguage();
@@ -534,14 +536,7 @@ export default function MeusProcessosList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.myProcesses.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.myProcesses.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.myProcesses.pageTitle} description={text.myProcesses.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={4}>

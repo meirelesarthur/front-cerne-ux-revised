@@ -20,7 +20,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCalendar, FiEye, FiTrash2 } from 'react-icons/fi';
@@ -52,6 +52,8 @@ import type { ClosingWeekListItem } from '@/@types/v2/FechamentoSemana';
 
 import { HeaderTable } from './HeaderTable';
 import { useClosingWeeksList } from './useFechamentoSemana';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Seletor de itens por página — 10/30/50/100, mirror `Carregamento/index.tsx`.
 // NUNCA 200: o servidor valida `per_page` como `max:100`.
@@ -206,14 +208,7 @@ export default function FechamentoSemanaList() {
         enableMultiRowSelection={false}
       >
         <HeaderGrid header={<HeaderTable languageGB={languageGB} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

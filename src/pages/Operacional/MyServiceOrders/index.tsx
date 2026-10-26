@@ -22,7 +22,7 @@
 
 import { useMemo, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClipboard, FiEye, FiPlay } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -53,6 +53,8 @@ import type { MyServiceOrderFilterForm, MyServiceOrderListItem } from '@/@types/
 import { FilterSideMyServiceOrders } from './FilterSideMyServiceOrders';
 import { HeaderTable } from './HeaderTable';
 import { useMyServiceOrdersList } from './useMyServiceOrders';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const MY_SERVICE_ORDERS_STORAGE_KEY =
   'OperacionalMyServiceOrders' + queryKey.myServiceOrders.myServiceOrders;
@@ -211,14 +213,7 @@ export default function MyServiceOrdersList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — SEMPRE visível, os 5 status do domínio (fiel

@@ -73,6 +73,8 @@ import type { DfeReturnCandidate } from '@/@types/v2/Fiscal/dfe';
 
 import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 const DFE_RETURN_LINKING_STORAGE_KEY = 'dfe-return-linking:v2:';
 const SEARCH_DEBOUNCE_MS = 400;
 
@@ -224,14 +226,7 @@ export default function DfeReturnLinking() {
       <HeaderGrid
         header={<Button variant="outline" title={text.backButton} onClick={() => navigate(-1)} />}
       >
-        <VStack align="flex-start" gap={1}>
-          <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-            {text.pageTitle}
-          </Text>
-          <Text fontSize="sm" color="fg.muted">
-            {text.pageSubtitle}
-          </Text>
-        </VStack>
+        <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
       </HeaderGrid>
 
       {isBlockingError ? (

@@ -20,7 +20,7 @@
 import { useMemo } from 'react';
 import type { ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClipboard, FiEye, FiStar } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +55,8 @@ import type {
 import { FilterSideRatingServiceOrders } from './FilterSideRatingServiceOrders';
 import { HeaderTable } from './HeaderTable';
 import { useRatingServiceOrdersList } from './useRatingServiceOrders';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const RATING_SERVICE_ORDERS_STORAGE_KEY =
   'OperacionalRatingServiceOrders' + queryKey.ratingServiceOrders.ratingServiceOrders;
@@ -217,14 +219,7 @@ export default function RatingServiceOrdersList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

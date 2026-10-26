@@ -32,7 +32,7 @@
 
 import { useEffect, useMemo, useState, type ElementType } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileSignature } from 'lucide-react';
 import { FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
@@ -79,6 +79,8 @@ import {
   getSaleContractStatusLegend,
   SALE_CONTRACT_STATUS_BADGE_VARIANT,
 } from './saleContractStatus';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function ContratosVendaList() {
   const { languageGB } = useLanguage();
@@ -418,14 +420,7 @@ export default function ContratosVendaList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.saleContracts.saleContract.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.saleContracts.saleContract.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.saleContracts.saleContract.list.pageTitle} description={languageGB.saleContracts.saleContract.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda global de status — SEMPRE visível (não é tooltip),

@@ -56,6 +56,8 @@ import { FilterSideRainfall } from './FilterSideRainfall';
 import { HeaderTable } from './HeaderTable';
 import { useRainfallsList } from './useRainfalls';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // Chave de storage desta tela — paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
 // (mirror `DEATH_ANIMALS_STORAGE_KEY`), nunca literal cru repetido.
@@ -281,14 +283,7 @@ export default function RainfallList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

@@ -21,7 +21,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiFileText, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -53,6 +53,8 @@ import type { IndexerFilterForm, IndexerListItem } from '@/@types/v2/BaseRegistr
 
 import { FilterSideIndexers } from './FilterSideIndexers';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function IndexersList() {
   const { languageGB } = useLanguage();
@@ -248,14 +250,7 @@ export default function IndexersList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

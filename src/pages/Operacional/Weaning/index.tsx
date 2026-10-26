@@ -25,7 +25,7 @@
 import { useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 
-import { Badge, Box, Flex, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiFileText } from 'react-icons/fi';
@@ -60,6 +60,8 @@ import { FilterSideWeaning } from './FilterSideWeaning';
 import { HeaderTable } from './HeaderTable';
 import { useWeaningsList } from './useWeanings';
 import { WeaningActionsMenu } from './WeaningActionsMenu';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const PAGE_SIZE_OPTIONS = [10, 30, 50, 100];
 
@@ -252,14 +254,7 @@ export default function WeaningsList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

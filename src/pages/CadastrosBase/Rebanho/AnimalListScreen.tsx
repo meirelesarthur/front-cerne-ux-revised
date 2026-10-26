@@ -57,7 +57,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper, type OnChangeFn, type RowSelectionState } from '@tanstack/react-table';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { PiCow } from 'react-icons/pi';
@@ -104,6 +104,8 @@ import { AnimalReproductiveStatusDialog } from './AnimalReproductiveStatusDialog
 import { FilterSideAnimal } from './FilterSideAnimal';
 import { HeaderTable } from './HeaderTable';
 import { useAnimalsList } from './useAnimal';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Resolve a coluna "Identificação" — `GAP-FE-203`: `AnimalResource` já
 // devolve a string CONCATENADA (`identification`, accessor do Model,
@@ -479,14 +481,7 @@ export function AnimalListScreen({
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={pageTitle} description={pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

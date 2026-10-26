@@ -23,7 +23,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import type { ElementType } from 'react';
 import { FiEdit, FiEye, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
@@ -55,6 +55,8 @@ import type { ProductionCycle, ProductionCycleFilterForm } from '@/@types/v2/Pro
 
 import { HeaderTable } from './HeaderTable';
 import { useProductionCyclesList } from './useProductionCycles';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Clique na linha (fora da coluna de ações) navega para o Detalhe — mesmo
 // mecanismo de `RowClickToDetail` de Safra/index.tsx (precisa estar DENTRO do
@@ -253,14 +255,7 @@ export default function CicloProducaoList() {
         <RowClickToDetail />
 
         <HeaderGrid header={<HeaderTable languageGB={languageGB} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

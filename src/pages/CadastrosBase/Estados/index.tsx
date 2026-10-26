@@ -32,7 +32,7 @@
 
 import { ElementType, useMemo } from 'react';
 
-import { Badge, Box, Text, VStack } from '@chakra-ui/react';
+import { Badge, Box, Text } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiMapPin } from 'react-icons/fi';
 
@@ -53,6 +53,8 @@ import { queryKey } from '@/constants/query-key';
 import type { StateListItem } from '@/@types/v2/States';
 
 import { useStatesList } from './useStates';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function EstadosList() {
   const { languageGB } = useLanguage();
@@ -115,14 +117,7 @@ export default function EstadosList() {
         enableMultiRowSelection={false}
       >
         <HeaderGrid>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

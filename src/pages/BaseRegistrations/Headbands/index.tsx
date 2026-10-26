@@ -37,7 +37,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Image, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Image, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiImage, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -69,6 +69,8 @@ import type { HeadbandListItem, HeadbandsFilterForm } from '@/@types/v2/BaseRegi
 import { FilterSideHeadband } from './FilterSideHeadband';
 import { HeaderTable } from './HeaderTable';
 import { useHeadbandsList } from './useHeadbands';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Thumbnail com fallback local (Chakra v3 `Image` não tem prop `fallback`) —
 // mirror `FamilyEquipmentThumbnail` (`BaseRegistrations/FamilyEquipments/
@@ -320,14 +322,7 @@ export default function HeadbandsList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.baseRegistrations.headband.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.baseRegistrations.headband.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.baseRegistrations.headband.list.pageTitle} description={languageGB.baseRegistrations.headband.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

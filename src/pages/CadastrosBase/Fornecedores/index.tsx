@@ -30,7 +30,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiTrash2, FiTruck, FiUserCheck, FiUserX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -66,6 +66,8 @@ import type { ProviderFilterForm, ProviderListItem } from '@/@types/v2/Cadastros
 import { FilterSideFornecedores } from './FilterSideFornecedores';
 import { HeaderTable } from './HeaderTable';
 import { useProviderList } from './useProviders';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Máscara de EXIBIÇÃO de CPF/CNPJ (reuso dos utils globais já existentes —
 // `format-document.ts`/`cpfCnpj.ts`, contrato `## 3` "Reuso obrigatório de
@@ -378,14 +380,7 @@ export default function FornecedoresList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

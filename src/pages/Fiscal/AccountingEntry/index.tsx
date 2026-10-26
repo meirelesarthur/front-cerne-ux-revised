@@ -82,6 +82,8 @@ import type {
 import { FilterSideAccountingEntry } from './FilterSideAccountingEntry';
 import { HeaderTable } from './HeaderTable';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 const ACCOUNTING_ENTRY_STORAGE_KEY =
   'FiscalAccountingEntry' + queryKey.accountingEntries.accountingEntriesList;
 
@@ -290,14 +292,7 @@ export default function AccountingEntryList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

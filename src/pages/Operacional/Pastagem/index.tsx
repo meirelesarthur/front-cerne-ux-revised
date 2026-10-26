@@ -8,7 +8,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { FiPenTool } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,6 +38,8 @@ import type { PastureFilterForm, PastureListItem } from '@/@types/v2/Pastures';
 import { buildPastureColumns } from './columns';
 import { FilterSidePastagem } from './FilterSidePastagem';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const PASTURES_STORAGE_KEY = 'OperacionalPastagem' + queryKey.pastures.pastures;
 
@@ -167,14 +169,7 @@ export default function PastagemList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

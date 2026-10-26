@@ -58,7 +58,7 @@
 
 import { ElementType, useMemo } from 'react';
 
-import { Box, Tabs, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Tabs, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiActivity, FiTool } from 'react-icons/fi';
 
@@ -97,6 +97,8 @@ import {
   useDepreciationEquipmentList,
   useGenerateDepreciation,
 } from './useDepreciacao';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Companheiro display-only do `SelectAsyncPaginate` de `equipment_uuid`
 // (mirror `cbo_uuid_label` de Funcoes) — nunca conta como filtro real na
@@ -441,14 +443,7 @@ export default function DepreciacaoList({ mode = 'both' }: DepreciacaoListProps)
           />
         }
       >
-        <VStack align="flex-start" gap={1}>
-          <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-            {isAnimalOnly ? text.animal.pageTitle : text.equipment.pageTitle}
-          </Text>
-          <Text fontSize="sm" color="fg.muted">
-            {activeSubtitle}
-          </Text>
-        </VStack>
+        <PageHeader title={isAnimalOnly ? text.animal.pageTitle : text.equipment.pageTitle} description={activeSubtitle} />
       </HeaderGrid>
 
       <Box mt={6}>

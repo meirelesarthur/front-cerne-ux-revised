@@ -34,7 +34,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiEye, FiTrash2, FiUsers } from 'react-icons/fi';
@@ -67,6 +67,8 @@ import type { TeamFilterForm, TeamListItem } from '@/@types/v2/Teams';
 import { FilterSideEquipes } from './FilterSideEquipes';
 import { HeaderTable } from './HeaderTable';
 import { useTeamsList } from './useEquipes';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function EquipesList() {
   const { languageGB } = useLanguage();
@@ -283,14 +285,7 @@ export default function EquipesList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

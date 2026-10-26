@@ -13,7 +13,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEye, FiFileText, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +44,8 @@ import { deleteIbptTable, listIbpts } from '@/services/v2/BaseRegistrations/ibpt
 import type { IbptListItem } from '@/@types/v2/BaseRegistrations/ibpt';
 
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Sem filtro nesta tela (contrato de tela §7.1) — `filterQuery: []` fixo.
 // Chave de storage: paginação (`userPaginatedQuery`) e personalização de
@@ -209,14 +211,7 @@ export default function IbptsList() {
         setColumnVisibility={setColumnVisibility}
       >
         <HeaderGrid header={<HeaderTable languageGB={languageGB} gridSettings={gridSettings} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

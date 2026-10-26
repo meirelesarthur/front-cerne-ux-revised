@@ -21,7 +21,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Box, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FiDollarSign } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +52,8 @@ import type { ChargeBillIncomeListItem } from '@/@types/v2/ChargeBillIncome';
 
 import { useChargeBillIncomeColumns } from './columns';
 import { useChargeBillIncomesList } from './useChargeBillIncomes';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const CHARGE_BILL_INCOMES_LIST_ROUTE = '/operacional/carregamento/contas-a-receber';
 // Seletor de itens por página — 10/30/50/100, mirror `FechamentoSemana`/
@@ -170,14 +172,7 @@ export default function ChargeBillIncomesList() {
             )
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

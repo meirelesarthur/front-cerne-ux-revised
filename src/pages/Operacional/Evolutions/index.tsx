@@ -32,7 +32,7 @@
 
 import { useMemo, type ElementType } from 'react';
 
-import { Box, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiFileText } from 'react-icons/fi';
 
@@ -56,6 +56,8 @@ import type { EvolutionFilterRequest, EvolutionListItem } from '@/@types/v2/Evol
 import { FilterSideEvolutions } from './FilterSideEvolutions';
 import { HeaderTable } from './HeaderTable';
 import { useEvolutionsList } from './useEvolutions';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const PAGE_SIZE_OPTIONS = [10];
 
@@ -164,14 +166,7 @@ export default function EvolutionsList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

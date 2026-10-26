@@ -31,7 +31,7 @@
 
 import { ElementType, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Landmark } from 'lucide-react';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -63,6 +63,8 @@ import { deleteBank, listBanks } from '@/services/v2/Banks/bank-service';
 import type { BankFilterForm, BankListItem } from '@/@types/v2/Banks';
 
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function BanksList() {
   const { languageGB } = useLanguage();
@@ -266,14 +268,7 @@ export default function BanksList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

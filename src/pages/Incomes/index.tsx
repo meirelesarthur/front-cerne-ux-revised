@@ -28,7 +28,7 @@
 import type { ElementType } from 'react';
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCheckCircle, FiDollarSign, FiPaperclip } from 'react-icons/fi';
@@ -87,6 +87,8 @@ import {
 } from './income-status';
 import { IncomeActionsMenu } from './IncomeActionsMenu';
 import { useIncomesList } from './useIncomes';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const INCOMES_STORAGE_KEY = 'Incomes' + queryKey.incomes.incomes;
 const INCOMES_LIST_ROUTE = '/financeiro/receber';
@@ -915,14 +917,7 @@ export default function IncomesList() {
             </Flex>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Barra de ação em lote (GAP-FE-036-304) — composição local, sem

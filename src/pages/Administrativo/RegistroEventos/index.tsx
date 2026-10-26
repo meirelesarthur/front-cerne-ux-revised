@@ -18,7 +18,7 @@
 import type { ElementType } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiEye, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -49,6 +49,8 @@ import type { Bonus } from '@/@types/v2/Bonuses';
 
 import { HeaderTable } from './HeaderTable';
 import { useBonusesList } from './useBonuses';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `amount` chega `decimal:2` cru como STRING do `BonusResource` — sempre
 // `Number(...)` antes de formatar (essa é só a coluna de EXIBIÇÃO da grid).
@@ -239,14 +241,7 @@ export default function RegistroEventosList() {
         <RowClickToDetail />
 
         <HeaderGrid header={<HeaderTable languageGB={languageGB} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

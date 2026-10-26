@@ -28,7 +28,7 @@
 
 import { ElementType, useEffect, useMemo, useState } from 'react';
 
-import { Alert, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Alert, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Warehouse } from 'lucide-react';
 import { FiEdit, FiEye, FiLayers, FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -64,6 +64,8 @@ import { useFarmsList } from './useFarms';
 
 import { areaCreateMultipleRoute, areaCreateRoute } from '../Areas/area-routes';
 import { AreasSubList } from '../Areas/AreasSubList';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Tipo de exploração (1..6) → variante do Badge do kit (DS). Ordem estável, sem semântica de negócio.
 const EXPLORATION_VARIANTS: Record<number, BadgeVariant> = {
@@ -342,14 +344,7 @@ export default function FarmsList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {showNoFarmNotice && (

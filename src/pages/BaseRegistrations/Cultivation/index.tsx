@@ -44,6 +44,8 @@ import { FilterSideCultivation } from "./FilterSideCultivation";
 import { HeaderTable } from "./HeaderTable";
 import { useCultivationTree } from "./useCultivation";
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 /** Filtra a árvore por nome (client-side) — mantém a Cultura se ela própria
  *  ou qualquer Variedade filha bater com o termo; nesse caso só as
  *  Variedades que batem permanecem visíveis (ramo "focado" na busca). */
@@ -187,14 +189,7 @@ export default function CultivationList() {
           />
         }
       >
-        <VStack align="flex-start" gap={1}>
-          <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-            {languageGB.cultivation.pageTitle}
-          </Text>
-          <Text fontSize="sm" color="fg.muted">
-            {languageGB.cultivation.pageSubtitle}
-          </Text>
-        </VStack>
+        <PageHeader title={languageGB.cultivation.pageTitle} description={languageGB.cultivation.pageSubtitle} />
       </HeaderGrid>
 
       <Box mt={6}>

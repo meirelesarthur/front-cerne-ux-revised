@@ -28,7 +28,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Repeat } from 'lucide-react';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -62,6 +62,8 @@ import type {
 import { FilterSideEstagioReprodutivo } from './FilterSideEstagioReprodutivo';
 import { HeaderTable } from './HeaderTable';
 import { useCategoryMatricesList } from './useCategoryMatrices';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `specie_label` é display-only (só re-hidrata o nome da Espécie no drawer;
 // NUNCA vai à API — ver comentário espelho em `category-matrix-service.ts`
@@ -253,14 +255,7 @@ export default function EstagioReprodutivoList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

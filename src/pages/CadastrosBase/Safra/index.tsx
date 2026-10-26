@@ -28,7 +28,7 @@
 
 import { ElementType, useEffect, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCalendar, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -60,6 +60,8 @@ import type { Harvest, HarvestFilterForm } from '@/@types/v2/Harvests';
 import { FilterSideSafra } from './FilterSideSafra';
 import { HeaderTable } from './HeaderTable';
 import { useHarvestsList } from './useHarvests';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Observa a seleção de linha da grid — mesmo mecanismo de toggle usado por
 // `Table.tsx` em todo o projeto: clique em qualquer célula fora da coluna de
@@ -273,14 +275,7 @@ export default function SafraList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

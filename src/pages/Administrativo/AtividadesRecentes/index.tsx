@@ -14,7 +14,7 @@
 
 import { ElementType, useMemo } from 'react';
 
-import { Box, Flex, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClock } from 'react-icons/fi';
 
@@ -45,6 +45,8 @@ import { useOpenRecentActivity } from './hooks/useOpenRecentActivity';
 import { OpenRecentActivityAction } from './OpenRecentActivityAction';
 import { RecentActivityStatusCell } from './RecentActivityStatusCell';
 import { useRecentActivitiesList } from './useRecentActivities';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Larguras das colunas (o `td` global limita em 190px; o `style` inline da coluna prevalece).
 const typeColumnStyle = { width: 220, maxWidth: 220 } as const;
@@ -167,14 +169,7 @@ export default function RecentActivitiesList() {
         <HeaderGrid
           header={<HeaderTable onOpenFilter={onOpenFilter} filtersApplied={filtersApplied} />}
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

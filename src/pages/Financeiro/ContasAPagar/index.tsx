@@ -158,6 +158,8 @@ import { ExpenseActionsMenu } from './ExpenseActionsMenu';
 import { FilterSideExpense } from './FilterSideExpense';
 import { useExpensesList } from './useExpenses';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 /** Chave = `uuid` da linha — NUNCA índice (sobrevive a reordenação/paginação),
  *  mirror `Incomes/index.tsx`. */
 type RowSelectionMap = Record<string, boolean>;
@@ -1114,14 +1116,7 @@ export default function ExpensesList() {
             </Flex>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Barra de ação em lote (esteira 036, mirror `Incomes/index.tsx`) —

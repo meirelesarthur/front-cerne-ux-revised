@@ -41,7 +41,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
   FiCornerDownRight,
@@ -82,6 +82,8 @@ import type { PlanAccountFilterForm, PlanAccountListItem } from '@/@types/v2/Pla
 import { FilterSidePlanAccount } from './FilterSidePlanAccount';
 import { HeaderTable } from './HeaderTable';
 import { usePlanAccountsList } from './usePlanAccounts';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `parent_label` é display-only (só re-hidrata o nome da conta-pai no
 // drawer; NUNCA vai à API — ver comentário espelho em
@@ -389,14 +391,7 @@ export default function PlanAccountList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

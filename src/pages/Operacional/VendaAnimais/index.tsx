@@ -25,7 +25,7 @@ import { useMemo, useState } from 'react';
 
 import type { ElementType } from 'react';
 
-import { Badge, Box, Flex, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper, type OnChangeFn, type RowSelectionState } from '@tanstack/react-table';
 import { isAxiosError } from 'axios';
@@ -69,6 +69,8 @@ import { MovementSaleEmitNfeDialog } from './MovementSaleEmitNfeDialog';
 import { isMovementSaleLocked } from './MovementSaleLockBanners';
 import { useMovementSalesList } from './useMovementSales';
 import { VendaAnimaisActionsMenu } from './VendaAnimaisActionsMenu';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const PAGE_SIZE_OPTIONS = [10, 30, 50, 100];
 
@@ -472,14 +474,7 @@ export default function VendaAnimaisList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

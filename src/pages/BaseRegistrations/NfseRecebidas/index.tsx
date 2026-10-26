@@ -90,6 +90,8 @@ import { FilterSideNfseRecebidas } from './FilterSideNfseRecebidas';
 import { HeaderTable } from './HeaderTable';
 import { NFSE_RECEBIDAS_STORAGE_KEY } from './storage';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // Chaves DISPLAY-ONLY do filtro que não contam para a distinção
 // "sem resultados" vs "resultado filtrado" no empty-state — `issuer_uuid` é
 // OBRIGATÓRIO por UX (RN-1), não uma refinação opcional da grid.
@@ -390,14 +392,7 @@ export default function NfseRecebidasList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

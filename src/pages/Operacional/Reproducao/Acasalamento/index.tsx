@@ -30,7 +30,7 @@ import { useMemo, useState } from 'react';
 
 import type { ElementType } from 'react';
 
-import { Box, Flex, HStack, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiHeart } from 'react-icons/fi';
@@ -72,6 +72,8 @@ import { AcasalamentoActionsMenu } from './AcasalamentoActionsMenu';
 import { FilterSideAcasalamento } from './FilterSideAcasalamento';
 import { HeaderTable } from './HeaderTable';
 import { useAcasalamentosList } from './useAcasalamentos';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ACASALAMENTO_LIST_ROUTE = '/operacional/acasalamento';
 
@@ -369,14 +371,7 @@ export default function AcasalamentoList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status abaixo do filtro, como no legado — mesmos

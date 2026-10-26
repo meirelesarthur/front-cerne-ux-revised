@@ -22,7 +22,7 @@
 import type { ComponentProps, ElementType } from 'react';
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
@@ -86,6 +86,8 @@ import {
 import { SortableHeader } from './SortableHeader';
 
 import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function RecebimentosList() {
   const { languageGB } = useLanguage();
@@ -462,14 +464,7 @@ export default function RecebimentosList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — mesmo componente reutilizável já usado em

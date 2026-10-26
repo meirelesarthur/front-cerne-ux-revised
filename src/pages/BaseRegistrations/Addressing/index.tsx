@@ -62,6 +62,8 @@ import { HeaderTable } from "./HeaderTable";
 import { useAddressingTree } from "./useAddressing";
 import { extractInUseItems } from '@/utils/extractApiErrorMessage';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 /** Filtra a árvore por descrição (client-side), RECURSIVAMENTE em qualquer
  *  profundidade (generaliza `filterTreeBySearch` de `Cultivation`, que só
  *  cobre 2 níveis fixos, para os 4 níveis de `Addressing`). Mantém um nó se
@@ -252,14 +254,7 @@ export default function AddressingList() {
           />
         }
       >
-        <VStack align="flex-start" gap={1}>
-          <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-            {languageGB.baseRegistrations.addressing.pageTitle}
-          </Text>
-          <Text fontSize="sm" color="fg.muted">
-            {languageGB.baseRegistrations.addressing.pageSubtitle}
-          </Text>
-        </VStack>
+        <PageHeader title={languageGB.baseRegistrations.addressing.pageTitle} description={languageGB.baseRegistrations.addressing.pageSubtitle} />
       </HeaderGrid>
 
       <Box mt={6}>

@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Stethoscope } from 'lucide-react';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -40,6 +40,8 @@ import type {
 
 import { FilterSideDiagnosisPregnancy } from './FilterSideDiagnosisPregnancy';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function DiagnosisPregnancyList() {
   const { languageGB } = useLanguage();
@@ -220,14 +222,7 @@ export default function DiagnosisPregnancyList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.baseRegistrations.diagnosisPregnancy.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.baseRegistrations.diagnosisPregnancy.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.baseRegistrations.diagnosisPregnancy.list.pageTitle} description={languageGB.baseRegistrations.diagnosisPregnancy.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

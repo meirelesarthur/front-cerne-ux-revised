@@ -47,6 +47,8 @@ import { formatSlaRecordsCount } from './slaStatusDot';
 import { SlaTableRow } from './SlaTableRow';
 import { useSupplyStatusSlaList } from './useSupplyStatusSla';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 export default function SlaList() {
   const { languageGB } = useLanguage();
   const { can, hasFarm } = usePermissions();
@@ -85,14 +87,7 @@ export default function SlaList() {
     return (
       <ContainerGrid>
         <HeaderGrid>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <VStack align="flex-start" gap={2} p={4} mt={6} bg="bg.subtle" borderRadius="md">
@@ -114,14 +109,7 @@ export default function SlaList() {
   return (
     <ContainerGrid>
       <HeaderGrid>
-        <VStack align="flex-start" gap={1}>
-          <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-            {text.list.pageTitle}
-          </Text>
-          <Text fontSize="sm" color="fg.muted">
-            {text.list.pageSubtitle}
-          </Text>
-        </VStack>
+        <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
       </HeaderGrid>
 
       <Box

@@ -36,7 +36,7 @@
 import type { ElementType } from 'react';
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiFileText } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -69,6 +69,8 @@ import type { NfeFilterForm, NfeListItem } from '@/@types/v2/Nfes';
 import { FilterSideNfe } from './FilterSideNfe';
 import { NfeActionsMenu } from './NfeActionsMenu';
 import { useNfesList } from './useNfes';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 function formatCurrencyBRL(value: number): string {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -325,14 +327,7 @@ export default function NfesList() {
             </Flex>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

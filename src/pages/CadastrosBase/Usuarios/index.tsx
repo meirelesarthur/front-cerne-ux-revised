@@ -141,6 +141,8 @@ import { HeaderTable } from './HeaderTable';
 import { UserViewDialog } from './UserViewDialog';
 import { useUsersList } from './useUsuario';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // Companheiro display-only do `SelectAsyncPaginate` de `role_uuid` — nunca
 // conta como filtro real na badge "Filtros(N)" (mesmo padrão de
 // `cbo_uuid_label` em FilterSideFuncoes.tsx).
@@ -610,14 +612,7 @@ export default function UsuariosList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

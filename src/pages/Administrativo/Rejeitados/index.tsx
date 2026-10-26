@@ -26,7 +26,7 @@
 
 import { useMemo } from 'react';
 
-import { Box, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -64,6 +64,8 @@ import {
   type SolicitacaoFilterField,
 } from '../Solicitacao/FilterSideSolicitacao';
 import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Filtros do legado em Rejeitados: busca, Tipo e as duas datas (sem Status).
 const REJECTED_FILTER_FIELDS: SolicitacaoFilterField[] = ['search', 'type', 'date_from', 'date_to'];
@@ -158,14 +160,7 @@ export default function RejeitadosList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.rejected.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.rejected.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.rejected.pageTitle} description={text.rejected.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status (acréscimo do novo, D-01 manter). */}

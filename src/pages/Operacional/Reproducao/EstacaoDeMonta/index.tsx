@@ -21,7 +21,7 @@ import { useMemo, useState } from 'react';
 
 import type { ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEye, FiEdit, FiHeart, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -53,6 +53,8 @@ import type { BreedingSeasonFilterForm, BreedingSeasonListItem } from '@/@types/
 
 import { FilterSideEstacaoDeMonta } from './FilterSideEstacaoDeMonta';
 import { useEstacoesDeMontaList } from './useEstacoesDeMonta';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ESTACAO_DE_MONTA_STORAGE_KEY =
   'OperacionalReproducaoEstacaoDeMonta' + queryKey.breedingSeasons.breedingSeasonsList;
@@ -267,14 +269,7 @@ export default function EstacaoDeMontaList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

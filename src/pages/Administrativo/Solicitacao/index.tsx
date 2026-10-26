@@ -49,7 +49,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileText } from 'lucide-react';
 import { FiClock, FiCornerUpLeft, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
@@ -107,6 +107,8 @@ import type {
 import { FilterSideSolicitacao } from './FilterSideSolicitacao';
 import { HeaderTable } from './HeaderTable';
 import { RequestPurchaseStatusLegend } from './RequestPurchaseStatusLegend';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function SolicitacaoList() {
   const { languageGB } = useLanguage();
@@ -531,14 +533,7 @@ export default function SolicitacaoList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.requestPurchases.requestPurchase.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.requestPurchases.requestPurchase.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.requestPurchases.requestPurchase.list.pageTitle} description={languageGB.requestPurchases.requestPurchase.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — TASK-CQ-FE-16, mesmo componente reutilizável

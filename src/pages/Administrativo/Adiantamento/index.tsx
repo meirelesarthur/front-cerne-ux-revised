@@ -19,7 +19,7 @@
 
 import { useEffect, useMemo, useState, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiEye, FiRefreshCw, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +52,8 @@ import type { Advance, AdvanceFilterForm } from '@/@types/v2/Advances';
 import { FilterSideAdiantamento } from './FilterSideAdiantamento';
 import { HeaderTable } from './HeaderTable';
 import { useAdvancesList } from './useAdvances';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `amount` chega `decimal:2` cru como STRING do `AdvanceResource` — sempre
 // `Number(...)` antes de formatar (nunca `MoneyInput`, essa é só a coluna de
@@ -263,14 +265,7 @@ export default function AdiantamentoList() {
             </>
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

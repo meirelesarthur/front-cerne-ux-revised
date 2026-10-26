@@ -26,7 +26,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClipboard, FiEye, FiFileText, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -61,6 +61,8 @@ import {
 import type { InventoriedListItem } from '@/@types/v2/Inventoried';
 
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Único tamanho de página aceito — mirror da limitação real do backend (ver
 // nota de cabeçalho acima).
@@ -260,14 +262,7 @@ export default function InventariadoList() {
         enableMultiRowSelection={false}
       >
         <HeaderGrid header={<HeaderTable languageGB={languageGB} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

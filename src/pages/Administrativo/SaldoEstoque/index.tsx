@@ -28,7 +28,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Boxes, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -70,6 +70,8 @@ import { HeaderTable } from './HeaderTable';
 import { useConsolidateStocks } from './useConsolidateStocks';
 
 import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `average_cost`/`total` já vêm NUMBER do `StockBalanceResource` — sem cast
 // `Number(...)` de string, mirror `Contrato/index.tsx::formatCurrencyBRL`.
@@ -453,14 +455,7 @@ export default function SaldoEstoqueList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

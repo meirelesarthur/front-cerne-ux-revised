@@ -120,6 +120,8 @@ import type {
 import { FilterSideGerenciamentoAvancado } from './FilterSideGerenciamentoAvancado';
 import { useGerenciamentoAvancadoList } from './useGerenciamentoAvancado';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 const GERENCIAMENTO_AVANCADO_STORAGE_KEY =
   'OperacionalReproducaoGerenciamentoAvancado' +
   queryKey.advancedReproductive.advancedReproductiveList;
@@ -403,14 +405,7 @@ export default function GerenciamentoAvancadoList() {
         <HeaderGrid
           header={<ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />}
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
         <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} mt={6}>

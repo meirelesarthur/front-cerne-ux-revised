@@ -128,3 +128,17 @@ Pendências de validação: tema escuro, formulários (input), modais, telas den
 3. **Estratégia de aplicação:** (a) reimplementar o visual do DS via tema/recipes do Chakra e manter os componentes do front (recomendado, menor risco para o Dev); ou (b) portar os componentes `ui/` do DS (Tailwind/inline) para dentro do front. A (a) evita duas bibliotecas de UI convivendo.
 4. **Mocks:** posso criar uma camada de dados simulados só para dev (MSW ou similar, desligada por padrão, no mesmo espírito do bypass de login) para renderizar as listas. Autoriza?
 5. **Espaçamento (T10):** o `html` com tamanho de fonte variável por viewport é decisão intencional? O DS usa base fixa de 4px.
+
+## 7.2 Progresso — onda 3 (iniciada em 2026-10-26)
+
+| Item | Situação | O que mudou |
+|---|---|---|
+| Cabeçalho de tabela (`Table.tsx`) | feito | 12px · 600 · caixa-alta · espaçamento 0.06em (como o `DataTable` do DS); vale para todas as listagens |
+| Título de página (`PageHeader`) | feito | novo `ui/PageHeader` (24px, `gray.900`, descrição, contador opcional). Codemod trocou o bloco repetido em **169 telas** (168 arquivos) |
+| `ListToolbar` (busca + chips de filtro) | pendente | depende de decidir busca no servidor × cliente por tela |
+| `FilterSide` → `FilterDrawer` | pendente | |
+| `Table` → `DataTable` + `DropdownMenu` de ações | pendente | |
+| `DeleteConfirmDialog` → `ConfirmDialog` | parcial | já alinhado visualmente (UX-dialog) |
+| Estados loading/vazio/erro | pendente | já existem em `Table` (isLoading/isEmpty/isError); falta padronizar visual |
+
+Login (onda 7) feito antes: ver `funcionalidades/login.md`.

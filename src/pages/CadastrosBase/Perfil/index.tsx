@@ -21,8 +21,7 @@ import {
   Icon,
   Text,
   useDisclosure,
-  VStack,
-} from "@chakra-ui/react";
+  } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { FiEdit, FiShield, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +45,8 @@ import { styleColumTable } from "@/utils/style-colum-table";
 import { FilterSidePerfil } from "./FilterSidePerfil";
 import { HeaderTable } from "./HeaderTable";
 import { useRolesList } from "./useRoles";
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function PerfilList() {
   const { languageGB } = useLanguage();
@@ -200,14 +201,7 @@ export default function PerfilList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.roles.role.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.roles.role.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.roles.role.list.pageTitle} description={languageGB.roles.role.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

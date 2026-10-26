@@ -80,6 +80,8 @@ import { FilterSideContasBancarias } from './FilterSideContasBancarias';
 import { HeaderTable } from './HeaderTable';
 import { useAccountsList } from './useAccounts';
 
+import { PageHeader } from '@/components/ui/PageHeader';
+
 // Formatação monetária pt-BR (nenhum util global de currency existe no fork —
 // Regra F: resolve em poucas linhas sem nova abstração — mesmo tratamento
 // dado por `Embalagens/index.tsx` ao `size`). `value` sempre a STRING crua do
@@ -385,14 +387,7 @@ export default function ContasBancariasList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

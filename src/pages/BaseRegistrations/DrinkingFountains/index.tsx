@@ -20,7 +20,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Droplet } from 'lucide-react';
 import { FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
@@ -59,6 +59,8 @@ import type {
 
 import { FilterSideDrinkingFountains } from './FilterSideDrinkingFountains';
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela — paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
@@ -309,14 +311,7 @@ export default function DrinkingFountainsList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {languageGB.baseRegistrations.drinkingFountain.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {languageGB.baseRegistrations.drinkingFountain.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={languageGB.baseRegistrations.drinkingFountain.list.pageTitle} description={languageGB.baseRegistrations.drinkingFountain.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

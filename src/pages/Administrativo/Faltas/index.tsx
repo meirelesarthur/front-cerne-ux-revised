@@ -25,7 +25,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCalendar, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -56,6 +56,8 @@ import type { AbsenceFilterForm, AbsenceListItem } from '@/@types/v2/Absences';
 import { FilterSideFaltas } from './FilterSideFaltas';
 import { HeaderTable } from './HeaderTable';
 import { useAbsencesList } from './useAbsences';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // `amount` chega `decimal:2` cru como STRING do `AbsenceResource` — sempre
 // `Number(...)` antes de formatar (mesma nota de `Adiantamento/index.tsx`).
@@ -261,14 +263,7 @@ export default function AbsencesList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

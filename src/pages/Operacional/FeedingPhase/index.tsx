@@ -15,7 +15,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { FiCalendar } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,6 +49,8 @@ import type { FeedingPhaseFilterForm, FeedingPhaseListItem } from '@/@types/v2/F
 import { useFeedingPhaseColumns } from './feeding-phase-columns';
 import { FilterSideFeedingPhase } from './FilterSideFeedingPhase';
 import { HeaderFeedingPhaseTable } from './HeaderFeedingPhaseTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela. Paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão para
@@ -198,14 +200,7 @@ export default function FeedingPhaseList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

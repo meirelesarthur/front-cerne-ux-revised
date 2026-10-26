@@ -52,7 +52,7 @@
 import { useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCopy, FiEdit, FiFileText, FiPrinter, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -90,6 +90,8 @@ import type { PlanningListItem } from '@/@types/v2/Operacional/planning';
 
 import { HeaderTable } from './HeaderTable';
 import { getPlanningStatusBadgeColor } from './planningStatus';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const PLANNINGS_STORAGE_KEY = 'OperacionalPlanejamentos' + queryKey.plannings.plannings;
 const PLANNINGS_ROUTE = '/operacional/planejamentos';
@@ -353,14 +355,7 @@ export default function PlanejamentosList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda estática de cores de status — SEMPRE visível (Leitura do

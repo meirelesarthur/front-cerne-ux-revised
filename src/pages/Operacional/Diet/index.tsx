@@ -14,7 +14,7 @@
 
 import { useMemo, useState, type ElementType } from 'react';
 
-import { Box, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { FiClipboard } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,6 +45,8 @@ import type { DietFilterForm, DietListItem } from '@/@types/v2/Diets';
 import { useDietColumns } from './diet-columns';
 import { FilterSideDiet } from './FilterSideDiet';
 import { HeaderDietTable } from './HeaderDietTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela. Paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão para
@@ -193,14 +195,7 @@ export default function DietList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

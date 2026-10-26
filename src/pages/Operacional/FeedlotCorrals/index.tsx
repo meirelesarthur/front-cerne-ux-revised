@@ -45,8 +45,7 @@ import {
   SimpleGrid,
   Text,
   useDisclosure,
-  VStack,
-} from '@chakra-ui/react';
+  } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Controller, useForm } from 'react-hook-form';
@@ -104,6 +103,8 @@ import type {
 import { FilterSideFeedlotCorrals } from './FilterSideFeedlotCorrals';
 import { HeaderTable } from './HeaderTable';
 import { useFeedlotCorralsList } from './useFeedlotCorrals';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela — paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
@@ -463,14 +464,7 @@ export default function FeedlotCorralList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

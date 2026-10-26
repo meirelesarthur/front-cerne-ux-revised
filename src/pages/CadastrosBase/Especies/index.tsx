@@ -18,7 +18,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import { PawPrint } from 'lucide-react';
@@ -49,6 +49,8 @@ import type { SpeciesFilterForm, SpeciesListItem } from '@/@types/v2/Species/spe
 import { FilterSideEspecies } from './FilterSideEspecies';
 import { HeaderTable } from './HeaderTable';
 import { useSpeciesList } from './useSpecies';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export default function EspeciesList() {
   const { languageGB } = useLanguage();
@@ -219,14 +221,7 @@ export default function EspeciesList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

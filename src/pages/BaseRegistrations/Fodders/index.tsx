@@ -22,7 +22,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { isAxiosError } from 'axios';
@@ -59,6 +59,8 @@ import { deleteFodder, listFodders } from '@/services/v2/BaseRegistrations/fodde
 import type { FodderListItem } from '@/@types/v2/BaseRegistrations/fodders';
 
 import { HeaderTable } from './HeaderTable';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 // Chave de storage desta tela. Paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
@@ -282,14 +284,7 @@ export default function FoddersList() {
         setColumnVisibility={setColumnVisibility}
       >
         <HeaderGrid header={<HeaderTable languageGB={languageGB} gridSettings={gridSettings} />}>
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         <Box mt={6}>

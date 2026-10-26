@@ -13,7 +13,7 @@
 import { useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 
-import { Box, Flex, Icon, Text, VStack, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiClipboard, FiEdit, FiEye, FiTrash2, FiXCircle } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -52,6 +52,8 @@ import { FilterSideServiceOrders } from './FilterSideServiceOrders';
 import { HeaderTable } from './HeaderTable';
 import { canCancelServiceOrder, getServiceOrderStatusBadgeColor } from './serviceOrderStatus';
 import { useServiceOrdersList } from './useServiceOrders';
+
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const SERVICE_ORDERS_STORAGE_KEY =
   'OperacionalServiceOrders' + queryKey.serviceOrders.serviceOrders;
@@ -308,14 +310,7 @@ export default function ServiceOrdersList() {
             />
           }
         >
-          <VStack align="flex-start" gap={1}>
-            <Text fontSize="2xl" fontWeight="bold" color="brandColorText">
-              {text.list.pageTitle}
-            </Text>
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.pageSubtitle}
-            </Text>
-          </VStack>
+          <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
         {/* Legenda de status — SEMPRE visível, mirror `Appropriations`. */}
