@@ -281,7 +281,7 @@ export function StepDemarcacao({ disabled, loading, getValues, setValue }: StepD
 
   return (
     <Box>
-      <StepHeading title={text.steps.demarcacao} subtitle={text.stepsSubtitle.demarcacao} />
+      <StepHeading title={text.stepsTitle.demarcacao} subtitle={text.stepsSubtitle.demarcacao} />
 
       {/* Toolbar — dica de uso + importação de KML (mirror `Step3Mapa.tsx`) */}
       <Flex align="center" justify="space-between" gap={4} mb={3} wrap="wrap">

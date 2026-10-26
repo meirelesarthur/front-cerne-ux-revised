@@ -11,8 +11,10 @@ export const inputRecipe = {
     height: "38px", // área de input projetada (Ajustes Globais) — não afeta labels
     bg: "inputBG",
     color: "primitiveTexteColor",
-    fontSize: "14px",
-    border: "1px solid", // Adicionado para consistência
+    // DS `FormField`: texto 16px, contorno 1.5px, fundo neutro-50.
+    fontSize: "16px",
+    borderWidth: "1.5px",
+    borderStyle: "solid",
     _placeholder: {
       color: "placeholderColor",
     },
@@ -42,10 +44,13 @@ export const inputRecipe = {
         borderColor: "semanticNeutral.700",
       },
       outline: {
-        borderColor: "border2",
+        borderColor: "border1", // DS border.default (#e5e7eb)
+        // A variante vence a `base`: contorno 1.5px e fundo neutro-50 do DS ficam aqui.
+        bg: "inputBG",
+        borderWidth: "1.5px",
       },
       outline2: {
-        borderColor: "border2",
+        borderColor: "border1",
       },
       outlineGrid: {
         borderColor: "border2",
@@ -53,6 +58,9 @@ export const inputRecipe = {
     },
     size: {
       md: {
+        // `textStyle` da recipe padrão do Chakra (sm = 12px) vence `fontSize`; xl = 16px (DS `font.size.md`).
+        textStyle: "xl",
+        fontSize: "16px",
         borderRadius: "8px", // DS radius.base
       },
     },

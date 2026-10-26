@@ -44,7 +44,7 @@ export function StepEndereco({ control, register, errors, disabled, loading }: S
 
   return (
     <Box>
-      <StepHeading title={text.steps.endereco} subtitle={text.stepsSubtitle.endereco} />
+      <StepHeading title={text.stepsTitle.endereco} subtitle={text.stepsSubtitle.endereco} />
 
       <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={2}>
         <Controller

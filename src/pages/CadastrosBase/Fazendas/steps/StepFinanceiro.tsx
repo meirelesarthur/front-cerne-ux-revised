@@ -38,7 +38,7 @@ export function StepFinanceiro({ control, disabled, loading }: StepProps) {
 
   return (
     <Box>
-      <StepHeading title={text.steps.financeiro} subtitle={text.stepsSubtitle.financeiro} />
+      <StepHeading title={text.stepsTitle.financeiro} subtitle={text.stepsSubtitle.financeiro} />
 
       <SimpleGrid columns={columnsForm.default} gap={4} mb={6}>
         <Controller

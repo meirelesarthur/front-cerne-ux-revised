@@ -76,7 +76,7 @@ const colors: SemanticTokensColors = {
   paginationSelectedColor: { value: "{colors.gray.100}" },
   cardColor: { value: "{colors.green.700}" },
   placeholderColor: { value: "{colors.gray.400}" },
-  inputBG: { value: "{colors.white}" },
+  inputBG: { value: "{colors.gray.50}" }, // DS bg.input
   tabs: {
     textColor: { value: "{colors.gray.700}" },
     textSelectedColor: { value: "{colors.gray.100}" },

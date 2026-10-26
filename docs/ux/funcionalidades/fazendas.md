@@ -18,4 +18,10 @@
 
 ## Registro de edições
 
-_Nenhuma ainda. Use o bloco de `../_TEMPLATE-funcionalidade.md`, mais recente no topo._
+### UX-fazendas-001 · Wizard alinhado ao DS — 2026-10-26
+Comparado com `cerne/src/pages/cadastros/fazendas` (6 etapas iguais: Identificação, Documentação, Endereço, Demarcação, Financeiro, Configurações).
+- **Já estava alinhado** (ondas anteriores): stepper, rodapé "Etapa X de Y" + Voltar/Próximo, título 24px, Cancelar/botões.
+- **Títulos de etapa** passam a ser os do DS ("Identificação da Fazenda", "Documentação Rural", "Endereço", "Demarcação de Área", "Dados Financeiros", "Centros de Custo e Configurações"); o stepper mantém os rótulos curtos. Chave nova `farms.farm.form.stepsTitle` (PT/EN/ES).
+- **Campos (global, vale para todos os formulários):** texto 16px, contorno 1.5px `#e5e7eb`, fundo `#fafafa`, rótulo 13px medium — via recipe `input` e `Field`.
+- **Mantido do front (não existe no DS):** "Nome completo" e "Logo" na Identificação, ID do contratante, upload de imagem.
+- **Pendente:** validar visualmente Demarcação (mapa) e Configurações (centros de custo); seletores (react-select) ainda no estilo antigo; aviso de alterações não salvas.

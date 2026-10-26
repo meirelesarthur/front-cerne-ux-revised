@@ -68,6 +68,14 @@ export const languageFazendas: ModuleFarms = {
         financeiro: 'Financiero',
         configuracoes: 'Configuraciones',
       },
+      stepsTitle: {
+        identificacao: 'Identificación de la Finca',
+        documentacao: 'Documentación Rural',
+        endereco: 'Dirección',
+        demarcacao: 'Demarcación de Área',
+        financeiro: 'Datos Financieros',
+        configuracoes: 'Centros de Costo y Configuraciones',
+      },
       stepsSubtitle: {
         identificacao: 'Indique el nombre, documento y teléfono de contacto de la finca.',
         documentacao:

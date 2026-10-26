@@ -49,7 +49,7 @@ export function StepIdentificacao({
 
   return (
     <Box>
-      <StepHeading title={text.steps.identificacao} subtitle={text.stepsSubtitle.identificacao} />
+      <StepHeading title={text.stepsTitle.identificacao} subtitle={text.stepsSubtitle.identificacao} />
 
       <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={6}>
         <Input

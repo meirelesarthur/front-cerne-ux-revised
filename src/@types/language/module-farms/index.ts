@@ -70,6 +70,15 @@ export interface ModuleFarms {
         financeiro: string;
         configuracoes: string;
       };
+      /** Título do cabeçalho de cada etapa (o stepper usa `steps`, curto). */
+      stepsTitle: {
+        identificacao: string;
+        documentacao: string;
+        endereco: string;
+        demarcacao: string;
+        financeiro: string;
+        configuracoes: string;
+      };
       /** Subtítulo de cada etapa do wizard (TASK-FE-406 — fidelidade ao `StepHeader` do `cerne`). */
       stepsSubtitle: {
         identificacao: string;

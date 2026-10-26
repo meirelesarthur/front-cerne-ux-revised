@@ -36,7 +36,7 @@ export function StepDocumentacao({ control, register, errors, disabled, loading 
 
   return (
     <Box>
-      <StepHeading title={text.steps.documentacao} subtitle={text.stepsSubtitle.documentacao} />
+      <StepHeading title={text.stepsTitle.documentacao} subtitle={text.stepsSubtitle.documentacao} />
 
       <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={6}>
         <Controller

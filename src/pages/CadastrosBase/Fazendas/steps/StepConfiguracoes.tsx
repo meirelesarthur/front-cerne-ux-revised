@@ -68,7 +68,7 @@ export function StepConfiguracoes({
 
   return (
     <Box>
-      <StepHeading title={text.steps.configuracoes} subtitle={text.stepsSubtitle.configuracoes} />
+      <StepHeading title={text.stepsTitle.configuracoes} subtitle={text.stepsSubtitle.configuracoes} />
 
       <SimpleGrid columns={columnsForm.twoColumns} gap={4} mb={6}>
         <Controller
