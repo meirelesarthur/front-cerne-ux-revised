@@ -342,13 +342,13 @@ export default function ContratacaoPlano() {
       )}
 
       {(note || suggestion) && (
-        <Box borderLeftWidth="3px" borderLeftColor="#10b981" bg="rgba(16,185,129,0.14)" color="#d7ece0" borderRadius="0 10px 10px 0" px="12px" py="8px" fontSize="base">
+        <Box borderLeftWidth="3px" borderLeftColor="summaryAccent" bg="rgba(16,185,129,0.14)" color="summaryText" borderRadius="0 10px 10px 0" px="12px" py="8px" fontSize="base">
           {note || suggestion}
         </Box>
       )}
 
       <Flex direction="column" gap="6px">
-        <Text fontSize="sm" color="#7da893">
+        <Text fontSize="sm" color="summaryFaint">
           {text.summary.compare}
         </Text>
         <PlanCompareStrip

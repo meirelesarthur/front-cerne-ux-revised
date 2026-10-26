@@ -186,6 +186,16 @@ const colors: SemanticTokensColors = {
   cardBorder: { value: '#1c3f2c' }, // border.default
   cardTextPrimary: { value: '#e2f0e8' }, // fg.default
   cardTextSecondary: { value: '#7da893' }, // fg.muted
+  // Painel de resumo (simulador de planos): bloco de contraste, mesmo valor em qualquer tema
+  summaryBg: { value: "#0b2519" },
+  summaryAccent: { value: "#10b981" },
+  summaryText: { value: "#e2f0e8" },
+  summaryMuted: { value: "#9fc2b0" },
+  summaryFaint: { value: "#7da893" },
+  summaryIcon: { value: "#6ee7b7" },
+  summaryPositive: { value: "#4ade80" },
+  summaryAdded: { value: "#f0abcf" },
+  addonText: { value: "#8a3b6b" }, // valor avulso/adicional no catálogo de planos
   cardShadow: { value: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)' }, // DS shadow.cardDark
   // Chart colors
   chartGridLine: { value: '{colors.gray.700}' },

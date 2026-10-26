@@ -58,8 +58,7 @@ export function CheckOptionRow({ id, label, description, trailing, checked, lock
         fontWeight="semibold"
         whiteSpace="nowrap"
         // incluído = verde de sucesso; valor avulso = magenta do catálogo (cor de "adicional")
-        color={locked ? 'feedBack.successMain' : undefined}
-        style={locked ? undefined : { color: '#8a3b6b' }}
+        color={locked ? 'feedBack.successMain' : 'addonText'}
       >
         {trailing}
       </Text>

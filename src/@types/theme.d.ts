@@ -183,6 +183,15 @@ export interface SemanticTokensColors {
   cardTextPrimary: { value: string };
   cardTextSecondary: { value: string };
   cardShadow: { value: string };
+  summaryBg: { value: string };
+  summaryAccent: { value: string };
+  summaryText: { value: string };
+  summaryMuted: { value: string };
+  summaryFaint: { value: string };
+  summaryIcon: { value: string };
+  summaryPositive: { value: string };
+  summaryAdded: { value: string };
+  addonText: { value: string };
   // Chart colors
   chartGridLine: { value: string };
   chartAxisText: { value: string };

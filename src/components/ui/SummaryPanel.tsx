@@ -10,9 +10,8 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { Icon, type IconName } from './Icon';
 
-const SURFACE = '#0b2519';
 const BORDER = 'rgba(255,255,255,0.10)';
-const MUTED = '#9fc2b0';
+const MUTED = 'summaryMuted';
 
 export interface SummaryPanelProps {
   title: string;
@@ -28,17 +27,17 @@ export function SummaryPanel({ title, icon = 'receipt', children }: SummaryPanel
       direction="column"
       gap="12px"
       p={5}
-      bg={SURFACE}
-      color="#e2f0e8"
+      bg="summaryBg"
+      color="summaryText"
       borderLeftWidth="3px"
-      borderLeftColor="#10b981"
+      borderLeftColor="summaryAccent"
       minW={0}
       position={{ lg: 'sticky' }}
       top={{ lg: 0 }}
       alignSelf="stretch"
     >
       <Flex align="center" gap="12px" pb="4px">
-        <Flex align="center" justify="center" boxSize="38px" borderRadius="lg" bg="rgba(255,255,255,0.08)" borderWidth="1px" borderColor={BORDER} color="#6ee7b7">
+        <Flex align="center" justify="center" boxSize="38px" borderRadius="lg" bg="rgba(255,255,255,0.08)" borderWidth="1px" borderColor={BORDER} color="summaryIcon">
           <Icon name={icon} size={18} />
         </Flex>
         <Text fontSize="md" fontWeight="semibold" color="white">
@@ -81,7 +80,7 @@ export function SummaryGroup({ title, defaultOpen = true, children }: SummaryGro
 
 export type SummaryTone = 'default' | 'included' | 'added';
 
-const toneColor: Record<SummaryTone, string> = { default: 'white', included: '#4ade80', added: '#f0abcf' };
+const toneColor: Record<SummaryTone, string> = { default: 'white', included: 'summaryPositive', added: 'summaryAdded' };
 
 export function SummaryRow({ label, value, tone = 'default' }: { label: string; value: string; tone?: SummaryTone }) {
   return (
@@ -89,7 +88,7 @@ export function SummaryRow({ label, value, tone = 'default' }: { label: string; 
       <Text as="span" color={MUTED}>
         {label}
       </Text>
-      <Text as="span" fontWeight="semibold" textAlign="right" style={{ color: toneColor[tone] }}>
+      <Text as="span" fontWeight="semibold" textAlign="right" color={toneColor[tone]}>
         {value}
       </Text>
     </Flex>
@@ -98,7 +97,7 @@ export function SummaryRow({ label, value, tone = 'default' }: { label: string; 
 
 export function SummaryNote({ children }: { children: ReactNode }) {
   return (
-    <Text fontSize="sm" color="#7da893" lineHeight="1.45">
+    <Text fontSize="sm" color="summaryFaint" lineHeight="1.45">
       {children}
     </Text>
   );
@@ -107,7 +106,7 @@ export function SummaryNote({ children }: { children: ReactNode }) {
 export function SummaryTotal({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <Flex direction="column" gap="3px" pt="14px" borderTopWidth="1px" borderTopColor="rgba(255,255,255,0.12)">
-      <Text fontSize="sm" color="#7da893">
+      <Text fontSize="sm" color="summaryFaint">
         {label}
       </Text>
       <Text fontSize="38px" fontWeight="bold" lineHeight="1.05" letterSpacing="-0.02em" color="white">

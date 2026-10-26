@@ -53,19 +53,19 @@ export function PlanCompareStrip({ items, onSelect, labels }: PlanCompareStripPr
           cursor={item.value === null ? 'not-allowed' : 'pointer'}
           onClick={() => item.value !== null && onSelect(item.key)}
         >
-          <Text fontSize="sm" color="#9fc2b0">
+          <Text fontSize="sm" color="summaryMuted">
             {item.label}
           </Text>
           <Text fontSize="18px" fontWeight="bold" lineHeight="1.2">
             {item.value ?? '—'}
           </Text>
           {item.value === null ? (
-            <Text fontSize="sm" color="#9fc2b0">
+            <Text fontSize="sm" color="summaryMuted">
               {labels.unavailable}
             </Text>
           ) : (
             item.best && (
-              <Text fontSize="sm" fontWeight="semibold" color="#4ade80">
+              <Text fontSize="sm" fontWeight="semibold" color="summaryPositive">
                 {labels.cheapest}
               </Text>
             )

@@ -186,6 +186,16 @@ const colors: SemanticTokensColors = {
   cardBorder: { value: "{colors.gray.200}" }, // border.default (#e5e7eb)
   cardTextPrimary: { value: "{colors.gray.900}" }, // fg.default (#171717 via text.black)
   cardTextSecondary: { value: "{colors.gray.600}" }, // fg.muted (#404040)
+  // Painel de resumo (simulador de planos): bloco de contraste, mesmo valor em qualquer tema
+  summaryBg: { value: "#0b2519" },
+  summaryAccent: { value: "#10b981" },
+  summaryText: { value: "#e2f0e8" },
+  summaryMuted: { value: "#9fc2b0" },
+  summaryFaint: { value: "#7da893" },
+  summaryIcon: { value: "#6ee7b7" },
+  summaryPositive: { value: "#4ade80" },
+  summaryAdded: { value: "#f0abcf" },
+  addonText: { value: "#8a3b6b" }, // valor avulso/adicional no catálogo de planos
   cardShadow: { value: "0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04)" }, // shadow.card do CERNE
   // Chart colors
   chartGridLine: { value: "{colors.gray.200}" },
