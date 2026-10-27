@@ -6,6 +6,8 @@ import type { ReactNode } from 'react';
 
 import { Box, Flex } from '@chakra-ui/react';
 
+import { useLanguage } from '@/hooks/useLanguage';
+
 import { ButtonFilter } from '../ButtonFilter';
 import { Icon } from './Icon';
 
@@ -22,6 +24,8 @@ export interface ListToolbarProps {
 }
 
 export function ListToolbar({ search, onSearch, searchPlaceholder, onOpenFilter, filtersApplied = 0, actions }: ListToolbarProps) {
+  const { languageGB } = useLanguage();
+  const placeholder = searchPlaceholder ?? languageGB.defaltStrings.searchList;
   return (
     <Flex align="center" gap="10px" wrap="wrap" mt={5} mb={3}>
       <Flex
@@ -43,17 +47,17 @@ export function ListToolbar({ search, onSearch, searchPlaceholder, onOpenFilter,
         </Box>
         <input
           type="search"
-          aria-label={searchPlaceholder ?? 'Buscar'}
-          placeholder={searchPlaceholder ?? 'Buscar...'}
+          aria-label={placeholder}
+          placeholder={placeholder}
           value={search}
           onChange={(e) => onSearch(e.target.value)}
-          style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent', fontSize: 14, color: 'inherit' }}
+          style={{ flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent', fontSize: 'var(--chakra-font-sizes-md)', color: 'inherit' }}
         />
         {search && (
           <Box
             as="button"
             {...({ type: 'button' } as Record<string, string>)}
-            aria-label="Limpar busca"
+            aria-label={languageGB.defaltStrings.clearSearch}
             onClick={() => onSearch('')}
             color="fg.muted"
             display="flex"

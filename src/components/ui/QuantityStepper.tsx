@@ -62,7 +62,7 @@ export function QuantityStepper({
           h="auto"
           py="10px"
           textAlign="center"
-          fontSize="17px"
+          fontSize="figure"
           fontWeight="bold"
           border="none"
           borderRadius={0}

@@ -9,6 +9,8 @@ import { Fragment } from 'react';
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 
+import { useLanguage } from '@/hooks/useLanguage';
+
 // `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
 const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
 
@@ -23,7 +25,9 @@ export interface BreadcrumbTrailProps {
   label?: string;
 }
 
-export function BreadcrumbTrail({ items, label = 'Trilha de navegação' }: BreadcrumbTrailProps) {
+export function BreadcrumbTrail({ items, label }: BreadcrumbTrailProps) {
+  const { languageGB } = useLanguage();
+  const trailLabel = label ?? languageGB.defaltStrings.navigationTrail;
   return (
     <Flex as="nav" aria-label={label} align="center" gap="12px" fontSize="base" minW={0}>
       {items.map((item, i) => {

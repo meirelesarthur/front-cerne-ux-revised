@@ -158,7 +158,7 @@ export function StepCliente({ control, register, errors, disabled }: StepProps) 
           rowKey={(i) => registrationsArray.fields[i].id}
           emptyText={c.emptyStateRegistrations}
           addLabel={c.addStateRegistration}
-          removeLabel="Remover inscrição"
+          removeLabel={text.form.basico.removeStateRegistration}
           disabled={disabled}
           onAdd={() => registrationsArray.append({ value: '' })}
           onRemove={(i) => registrationsArray.remove(i)}

@@ -69,7 +69,7 @@ export function StepProprietario({ control, register, errors, disabled }: StepPr
           rowKey={(i) => registrationsArray.fields[i].id}
           emptyText={text.form.proprietary.emptyStateRegistrations}
           addLabel={text.form.proprietary.addStateRegistration}
-          removeLabel="Remover inscrição"
+          removeLabel={text.form.basico.removeStateRegistration}
           disabled={disabled}
           onAdd={() => registrationsArray.append({ value: '' })}
           onRemove={(i) => registrationsArray.remove(i)}
@@ -92,7 +92,7 @@ export function StepProprietario({ control, register, errors, disabled }: StepPr
           rowKey={(i) => farmsArray.fields[i].id}
           emptyText={text.form.proprietary.emptyFarms}
           addLabel={text.form.proprietary.addFarm}
-          removeLabel="Remover fazenda"
+          removeLabel={text.form.basico.removeFarm}
           disabled={disabled}
           onAdd={() => farmsArray.append({ farm: null, percentage: '' })}
           onRemove={(i) => farmsArray.remove(i)}

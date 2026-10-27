@@ -28,7 +28,7 @@ export function PlanTierCard({ name, tagline, accent, priceRange, priceNote, chi
   return (
     <Flex direction="column" gap="12px" p={5} bg="cardBG" borderWidth="1px" borderColor="semanticNeutral.200" borderTopWidth="6px" borderRadius="xl" boxShadow="cardShadow" minW={0} style={{ borderTopColor: accent }}>
       <Box>
-        <Text fontSize="24px" fontWeight="bold" lineHeight="1" style={{ color: accent }}>
+        <Text fontSize="title" fontWeight="bold" lineHeight="1" style={{ color: accent }}>
           {name}
         </Text>
         <Text fontSize="base" color="fg.muted" mt="4px">
@@ -36,7 +36,7 @@ export function PlanTierCard({ name, tagline, accent, priceRange, priceNote, chi
         </Text>
       </Box>
       <Box>
-        <Text fontSize="22px" fontWeight="bold" lineHeight="1.1" whiteSpace="nowrap">
+        <Text fontSize="2xl" fontWeight="bold" lineHeight="1.1" whiteSpace="nowrap">
           {priceRange}
         </Text>
         <Text fontSize="sm" color="fg.muted" mt="4px">
@@ -70,7 +70,7 @@ export function PlanTierCard({ name, tagline, accent, priceRange, priceNote, chi
         borderWidth="1px"
         borderStyle="dashed"
         borderColor={addonsAllIncluded ? undefined : 'addonText'}
-        bg={addonsAllIncluded ? 'semanticNeutral.100' : 'rgba(138,59,107,0.08)'}
+        bg={addonsAllIncluded ? 'semanticNeutral.100' : 'addonSoftBG'}
         color={addonsAllIncluded ? undefined : 'addonText'}
         fontSize="sm"
         style={addonsAllIncluded ? { borderColor: accent, color: accent } : undefined}

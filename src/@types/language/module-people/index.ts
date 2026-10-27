@@ -77,6 +77,10 @@ export interface ModulePeople {
         phone: string;
         rolesLabel: string;
         rolesHint: string;
+        removeStateRegistration: string;
+        removeFarm: string;
+        removeBranch: string;
+        removeSeller: string;
         roleAdded: string;
         nifFoundWarning: string;
       };

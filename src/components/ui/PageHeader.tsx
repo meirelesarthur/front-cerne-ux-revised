@@ -15,7 +15,7 @@ export function PageHeader({ title, description, count }: PageHeaderProps) {
   return (
     <Box minW={0}>
       <Flex align="center" gap="8px">
-        <Heading as="h1" fontSize="24px" fontWeight="bold" lineHeight="1.2" color="strongText" letterSpacing="-0.4px">
+        <Heading as="h1" fontSize="title" fontWeight="bold" lineHeight="1.2" color="strongText" letterSpacing="-0.4px">
           {title}
         </Heading>
         {count !== undefined && (

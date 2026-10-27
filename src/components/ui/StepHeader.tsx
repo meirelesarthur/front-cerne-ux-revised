@@ -15,7 +15,7 @@ export function StepHeader({ title, subtitle }: StepHeaderProps) {
     <Box textAlign="center" mb="32px">
       <Heading
         as="h2"
-        fontSize="24px"
+        fontSize="title"
         fontWeight="bold"
         color="fg.default"
         letterSpacing="-0.4px"

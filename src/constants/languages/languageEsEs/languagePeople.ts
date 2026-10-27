@@ -86,6 +86,10 @@ export const languagePeople: ModulePeople = {
         rolesLabel: 'Roles de esta persona',
         rolesHint:
           'Active los roles aplicables — cada uno añade una etapa de configuración a continuación.',
+        removeStateRegistration: 'Quitar inscripción',
+        removeFarm: 'Quitar finca',
+        removeBranch: 'Quitar sucursal',
+        removeSeller: 'Quitar vendedor',
         roleAdded: 'Paso "{role}" agregado — configúralo a continuación.',
         nifFoundWarning:
           'Persona ya registrada — datos cargados. Guardar ACTUALIZARÁ el registro existente.',

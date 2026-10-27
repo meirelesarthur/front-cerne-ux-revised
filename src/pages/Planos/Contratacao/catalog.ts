@@ -104,7 +104,8 @@ export const CATALOG: Catalog = {
   seatsIncluded: { Pro: 5, Deluxe: 10, Enterprise: Infinity },
   extraSeatPrice: { Pro: 25, Deluxe: 25, Enterprise: 0 },
   activitiesIncluded: { Pro: 1, Deluxe: 2, Enterprise: 'todas' },
-  accent: { Pro: '#047857', Deluxe: '#9a6408', Enterprise: '#3c4a9e' },
+  // tokens de tema (`planPro`…): a cor de marca no claro e a versão clara no escuro
+  accent: { Pro: 'var(--chakra-colors-plan-pro)', Deluxe: 'var(--chakra-colors-plan-deluxe)', Enterprise: 'var(--chakra-colors-plan-enterprise)' },
   annualBilledMonths: 10,
   aiExtraPackPrice: 29,
   ai: {

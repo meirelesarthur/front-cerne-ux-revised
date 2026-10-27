@@ -98,7 +98,7 @@ export const StepsItem = React.forwardRef<HTMLDivElement, StepsItemProps>(
                       fontSize: "xs",
                       whiteSpace: "nowrap",
                       fontWeight: current ? "600" : "400", // DS: semibold só na etapa atual
-                      color: completed || current ? "green.600" : "fg.muted",
+                      color: completed || current ? "selectedText" : "fg.muted",
                     }}
                   >
                     {title}

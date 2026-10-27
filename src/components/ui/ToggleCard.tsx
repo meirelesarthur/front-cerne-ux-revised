@@ -64,7 +64,7 @@ export function ToggleCard({ title, description, icon, active, onToggle, disable
             boxSize="28px"
             borderRadius="8px"
             flexShrink={0}
-            bg={active ? 'green.100' : 'semanticNeutral.100'}
+            bg={active ? 'selectedChipBG' : 'semanticNeutral.100'}
             color={active ? 'selectedText' : 'fg.muted'}
           >
             <Icon name={icon} size={16} />

@@ -9,6 +9,8 @@ import { useEffect, useRef, type ReactNode } from 'react';
 
 import { Box, Flex } from '@chakra-ui/react';
 
+import { useLanguage } from '@/hooks/useLanguage';
+
 export interface ReconciliationWorkspaceProps {
   /** Faixa de resumo (`ReconciliationSummary`). */
   summary?: ReactNode;
@@ -35,6 +37,7 @@ export function ReconciliationWorkspace({
   onNavigate,
   searchInputRef,
 }: ReconciliationWorkspaceProps) {
+  const { languageGB } = useLanguage();
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,7 +70,7 @@ export function ReconciliationWorkspace({
         >
           {tabs}
           {toolbar}
-          <Box role="listbox" aria-label="Transações" flex="1" minH={0} overflowY="auto" px={2} pb={2}>
+          <Box role="listbox" aria-label={languageGB.defaltStrings.transactionsList} flex="1" minH={0} overflowY="auto" px={2} pb={2}>
             {list}
           </Box>
         </Flex>

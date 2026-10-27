@@ -43,9 +43,9 @@ export function PlanCompareStrip({ items, onSelect, labels }: PlanCompareStripPr
           borderRadius="lg"
           borderWidth="1px"
           borderTopWidth="4px"
-          borderColor="rgba(255,255,255,0.12)"
+          borderColor="summaryLineStrong"
           borderTopColor={item.accent}
-          bg={item.current ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.05)'}
+          bg={item.current ? 'summaryFillActive' : 'summaryFill'}
           color="white"
           aria-current={item.current ? 'true' : undefined}
           {...({ disabled: item.value === null } as Record<string, boolean>)}
@@ -56,7 +56,7 @@ export function PlanCompareStrip({ items, onSelect, labels }: PlanCompareStripPr
           <Text fontSize="sm" color="summaryMuted">
             {item.label}
           </Text>
-          <Text fontSize="18px" fontWeight="bold" lineHeight="1.2">
+          <Text fontSize="figure" fontWeight="bold" lineHeight="1.2">
             {item.value ?? '—'}
           </Text>
           {item.value === null ? (

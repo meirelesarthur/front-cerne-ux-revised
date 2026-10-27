@@ -487,7 +487,7 @@ export default function ContratacaoPlano() {
       )}
 
       {(note || suggestion) && (
-        <Box borderLeftWidth="3px" borderLeftColor="summaryAccent" bg="rgba(16,185,129,0.14)" color="summaryText" borderRadius="0 10px 10px 0" px="12px" py="8px" fontSize="base">
+        <Box borderLeftWidth="3px" borderLeftColor="summaryAccent" bg="summaryNoteBG" color="summaryText" borderRadius="0 10px 10px 0" px="12px" py="8px" fontSize="base">
           {note || suggestion}
         </Box>
       )}
@@ -602,7 +602,7 @@ export default function ContratacaoPlano() {
           <Flex wrap="wrap" gap="4px 10px" align="center">
             <span>{m.name}</span>
             {m.price !== null && (
-              <Box as="span" px="7px" py="2px" borderRadius="full" bg="rgba(138,59,107,0.10)" color="addonText" fontSize="xs" fontWeight="semibold">
+              <Box as="span" px="7px" py="2px" borderRadius="full" bg="addonSoftBG" color="addonText" fontSize="xs" fontWeight="semibold">
                 {fill(ov.addonPrice, { n: m.price })}
               </Box>
             )}
@@ -653,7 +653,7 @@ export default function ContratacaoPlano() {
       </Box>
 
       <Box borderWidth="1.5px" borderStyle="dashed" borderColor="green.600" borderRadius="xl" px={5} py={4} bg="selectedBG">
-        <Box as="span" px="9px" py="3px" borderRadius="full" bg="green.100" color="selectedText" fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.06em">
+        <Box as="span" px="9px" py="3px" borderRadius="full" bg="selectedChipBG" color="selectedText" fontSize="xs" fontWeight="bold" textTransform="uppercase" letterSpacing="0.06em">
           {ov.entryTag}
         </Box>
         <Text fontSize="lg" fontWeight="bold" color="selectedText" mt="8px">
@@ -766,7 +766,7 @@ export default function ContratacaoPlano() {
               <Alert.Root status="info" borderRadius="lg" mb={5}>
                 <Alert.Indicator />
                 <Alert.Content>
-                  <Alert.Description>{text.simulationNotice}</Alert.Description>
+                  <Alert.Description color="strongText">{text.simulationNotice}</Alert.Description>
                 </Alert.Content>
               </Alert.Root>
 
@@ -811,7 +811,7 @@ export default function ContratacaoPlano() {
 /** Selo com o nome do plano na cor do catálogo. */
 function PlanChip({ tier }: { tier: PlanTier }) {
   return (
-    <Box as="span" px="9px" py="4px" borderRadius="full" fontSize="xs" fontWeight="semibold" color="white" style={{ background: CATALOG.accent[tier] }}>
+    <Box as="span" px="9px" py="4px" borderRadius="full" fontSize="xs" fontWeight="semibold" color="onPlan" style={{ background: CATALOG.accent[tier] }}>
       {tier}
     </Box>
   );

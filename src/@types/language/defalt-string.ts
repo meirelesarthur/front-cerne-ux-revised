@@ -101,6 +101,10 @@ export interface DefaltStrings {
   endDate: string;
   filters: string;
   searchList: string;
+  clearSearch: string;
+  removeRow: string;
+  navigationTrail: string;
+  transactionsList: string;
   emptyData: string;
   linePerPage: string;
   linePerColumn: string;

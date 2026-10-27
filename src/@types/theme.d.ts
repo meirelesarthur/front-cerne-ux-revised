@@ -186,6 +186,18 @@ export interface SemanticTokensColors {
   strongText: { value: string };
   selectedBG: { value: string };
   selectedText: { value: string };
+  selectedChipBG: { value: string };
+  planPro: { value: string };
+  planDeluxe: { value: string };
+  planEnterprise: { value: string };
+  onPlan: { value: string };
+  summaryLine: { value: string };
+  summaryLineStrong: { value: string };
+  summaryFill: { value: string };
+  summaryFillMid: { value: string };
+  summaryFillActive: { value: string };
+  summaryNoteBG: { value: string };
+  addonSoftBG: { value: string };
   summaryBg: { value: string };
   summaryAccent: { value: string };
   summaryText: { value: string };

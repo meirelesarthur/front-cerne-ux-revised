@@ -243,7 +243,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
           rowKey={(i) => branchesArray.fields[i].id}
           emptyText={p.emptyBranches}
           addLabel={p.addBranch}
-          removeLabel="Remover filial"
+          removeLabel={text.form.basico.removeBranch}
           disabled={disabled}
           onAdd={() =>
             branchesArray.append({
@@ -332,7 +332,7 @@ export function StepFornecedor({ control, register, errors, disabled }: StepProp
           rowKey={(i) => sellersArray.fields[i].id}
           emptyText={p.emptySellers}
           addLabel={p.addSeller}
-          removeLabel="Remover vendedor"
+          removeLabel={text.form.basico.removeSeller}
           disabled={disabled}
           onAdd={() => sellersArray.append({ name: '', email: '', phone: '' })}
           onRemove={(i) => sellersArray.remove(i)}

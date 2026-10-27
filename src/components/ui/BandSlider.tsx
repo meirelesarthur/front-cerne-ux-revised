@@ -63,7 +63,7 @@ export function BandSlider({ value, onChange, ticks, bandLabels, ariaLabel, acti
             transform="translateX(-50%)"
             fontSize="xs"
             fontWeight={activeBand === i ? 'bold' : 'medium'}
-            color={activeBand === i ? 'green.700' : 'fg.muted'}
+            color={activeBand === i ? 'selectedText' : 'fg.muted'}
             whiteSpace="nowrap"
           >
             {label}

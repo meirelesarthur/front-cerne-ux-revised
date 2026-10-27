@@ -8,6 +8,8 @@ import type { ReactNode } from 'react';
 
 import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
 
+import { useLanguage } from '@/hooks/useLanguage';
+
 import { Icon } from './Icon';
 
 export interface RepeaterListProps {
@@ -35,10 +37,12 @@ export function RepeaterList({
   onRemove,
   addLabel,
   emptyText,
-  removeLabel = 'Remover linha',
+  removeLabel,
   disabled = false,
   align = 'center',
 }: RepeaterListProps) {
+  const { languageGB } = useLanguage();
+  const removeText = removeLabel ?? languageGB.defaltStrings.removeRow;
   return (
     <Flex direction="column" gap="12px">
       {count === 0 && emptyText && (
@@ -55,7 +59,7 @@ export function RepeaterList({
             {renderRow(index)}
           </Box>
           <IconButton
-            aria-label={removeLabel}
+            aria-label={removeText}
             variant="ghost"
             color="feedBack.errorMain"
             flexShrink={0}

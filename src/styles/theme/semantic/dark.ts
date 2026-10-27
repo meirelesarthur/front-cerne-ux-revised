@@ -124,14 +124,15 @@ const colors: SemanticTokensColors = {
     4: { value: '{colors.gray.600}' },
   },
   feedBack: {
-    successMain: { value: '{colors.green.500}' },
+    // Pares de contraste AA no escuro (antes: verde 500 sobre verde 700 = 2,4:1; azul 500 sobre azul 100 = 2,8:1)
+    successMain: { value: '#4ade80' },
     warnMain: { value: '{colors.yellow.900}' },
     errorMain: { value: '{colors.red.800}' },
-    infoMain: { value: '{colors.blue.500}' },
-    success: { value: '{colors.green.700}' },
+    infoMain: { value: '#93c5fd' },
+    success: { value: 'rgba(16, 185, 129, 0.16)' },
     warn: { value: '{colors.yellow.500}' },
     error: { value: '{colors.red.200}' },
-    info: { value: '{colors.blue.100}' },
+    info: { value: 'rgba(59, 130, 246, 0.18)' },
   },
   colorCicle: {
     success: { value: '{colors.green.500}' },
@@ -177,7 +178,7 @@ const colors: SemanticTokensColors = {
   sidebarTextColor: { value: 'rgba(216,237,226,0.55)' }, // nav.text
   sidebarTextHover: { value: '#d8ede2' }, // nav.textActive
   sidebarTitleColor: { value: '#d8ede2' }, // nav.textActive
-  sidebarSubtitleColor: { value: 'rgba(216,237,226,0.45)' }, // nav.textMuted
+  sidebarSubtitleColor: { value: 'rgba(216,237,226,0.65)' }, // nav.textMuted
   sidebarItemHoverBG: { value: 'rgba(255,255,255,0.04)' }, // nav.itemHover
   sidebarItemActiveBG: { value: 'rgba(16, 185, 129, 0.12)' }, // nav.itemActive (realce translúcido verde marca)
   sidebarItemActiveText: { value: '#10b981' }, // accent.default
@@ -189,7 +190,19 @@ const colors: SemanticTokensColors = {
   strongText: { value: "#e2f0e8" },
   selectedBG: { value: "rgba(16, 185, 129, 0.16)" },
   selectedText: { value: "#4ade80" },
+  selectedChipBG: { value: "rgba(16, 185, 129, 0.20)" },
   // Painel de resumo (simulador de planos): bloco de contraste, mesmo valor em qualquer tema
+  planPro: { value: "#4ade80" },
+  planDeluxe: { value: "#e8b55a" },
+  planEnterprise: { value: "#a7b2f5" },
+  onPlan: { value: "#051008" },
+  summaryLine: { value: "rgba(255, 255, 255, 0.10)" },
+  summaryLineStrong: { value: "rgba(255, 255, 255, 0.12)" },
+  summaryFill: { value: "rgba(255, 255, 255, 0.05)" },
+  summaryFillMid: { value: "rgba(255, 255, 255, 0.08)" },
+  summaryFillActive: { value: "rgba(255, 255, 255, 0.14)" },
+  summaryNoteBG: { value: "rgba(16, 185, 129, 0.14)" },
+  addonSoftBG: { value: "rgba(233, 163, 203, 0.14)" },
   summaryBg: { value: "#0b2519" },
   summaryAccent: { value: "#10b981" },
   summaryText: { value: "#e2f0e8" },
@@ -198,7 +211,7 @@ const colors: SemanticTokensColors = {
   summaryIcon: { value: "#6ee7b7" },
   summaryPositive: { value: "#4ade80" },
   summaryAdded: { value: "#f0abcf" },
-  addonText: { value: "#8a3b6b" }, // valor avulso/adicional no catálogo de planos
+  addonText: { value: "#e9a3cb" }, // valor avulso/adicional no catálogo de planos
   cardShadow: { value: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)' }, // DS shadow.cardDark
   // Chart colors
   chartGridLine: { value: '{colors.gray.700}' },

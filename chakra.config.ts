@@ -48,6 +48,9 @@ const rawTheme = {
       '2xl': { value: '22px' },
       '3xl': { value: '26px' },
       '4xl': { value: '32px' },
+      title: { value: '24px' }, // DS: título de página (`PageHeader`/`FormContainer`)
+      figure: { value: '18px' }, // DS: número de destaque pequeno
+      stat: { value: '38px' }, // DS: total em destaque
     },
     fontWeights: {
       normal: { value: '400' },

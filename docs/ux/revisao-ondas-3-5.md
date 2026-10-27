@@ -32,3 +32,25 @@ Ao remover um worktree temporário usado para comparar com a linha de base, o `g
 | 8 | **Planos:** assinatura atual, envio da solicitação e permissão da rota ainda são placeholders | sem efeito real | depende de backend |
 | 9 | **Tema escuro** validado só em Pessoas (contraste de título/rótulos); demais telas e a página de planos não | pode haver outros fixos em claro | varredura do escuro por módulo |
 | 10 | **Transições com o painel do navegador oculto** não avançam: medições de estado selecionado (borda/fundo) feitas por JS nessas condições dão valores intermediários | só afeta a verificação | conferir com o painel visível |
+
+## Atualização — 2026-10-27 · desvios 5, 6 e 9 tratados
+| # | Desvio | Resultado |
+|---|---|---|
+| 5 | `rgba()`/px soltos nos componentes novos (Lei 3) | **Corrigido.** Tokens semânticos `summaryLine/LineStrong/Fill/FillMid/FillActive/NoteBG`, `addonSoftBG` (claro/escuro) e tamanhos de fonte `title` (24), `figure` (18) e `stat` (38) em `chakra.config.ts`. Sem `rgba()` nem `fontSize` em px nos 17 componentes/página de planos auditados |
+| 6 | Textos fixos em PT | **Corrigido.** `ListToolbar` ("Buscar", "Limpar busca"), `RepeaterList` ("Remover linha"), `BreadcrumbTrail` ("Trilha de navegação") e `ReconciliationWorkspace` ("Transações") passam a ler `languageGB.defaltStrings.*`; as 5 etiquetas de remover das etapas de Pessoas viraram `people.person.form.basico.remove*`. PT/EN/ES |
+| 9 | Tema escuro só validado em Pessoas | **Auditado em 20+ telas** (script de contraste WCAG: texto 4,5:1, grande 3:1) — resultado final: **0 achados** |
+
+### Achados do tema escuro e correção
+| Achado | Causa | Correção |
+|---|---|---|
+| Rótulos de grupo do menu 3,7:1 | `sidebarSubtitleColor` a 45% | 65% |
+| Etiqueta de status "Ativo" (Badge de sucesso) 2,4:1 | par verde-500 sobre verde-700 | sucesso = fundo translúcido + `#4ade80`; informação = fundo translúcido + `#93c5fd` (antes 2,8:1) |
+| Rótulo da etapa atual do stepper 4,1:1 | `green.600` fixo | token `selectedText` |
+| Cores dos planos (Enterprise 1,95:1) | hex de marca fixo | tokens `planPro/planDeluxe/planEnterprise` (claro = marca; escuro = versões claras do documento) + `onPlan` para o texto do selo |
+| Valores "+ R$ …" e quadro de avulsos 1,6–2,1:1 | `addonText` igual nos dois temas | escuro `#e9a3cb` |
+| Abas inativas, faixa ativa da régua, aviso do simulador | cinza/verde fixos | `fg.muted`, `selectedText`, `strongText` |
+| Selo "Porta de entrada" e ícone dos cartões de papel | `green.100` fixo | token `selectedChipBG` |
+- Falsos positivos descartados: avatar do cabeçalho (gradiente não entra no cálculo de fundo) e `color(srgb …)` do placeholder do `Select`.
+- Telas auditadas em escuro: Fazendas, Embalagens, Pessoas (lista e formulário com papéis ativos), Produtos (lista e formulário), Centros de Custo, Safras, Bancos, OFX, Autorização, Pedidos, Home, Planos (simulador, etapa 2 com GB Consult e resumo dos planos) e o drawer de filtros.
+- **Não coberto:** contraste de bordas/ícones e estados de foco; Dashboards e Relatórios (fora de escopo); telas com dados que a API local não tem. Verificação é de cor calculada, não visual (o painel do navegador ficou oculto).
+- Unitários: `tsc` 0 erros; 2.143 passam; falham só os 3 já conhecidos do EntradaInsumos e 2–3 testes de NF-e por timeout de 5 s sob carga (passam isolados).

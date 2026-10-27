@@ -10,7 +10,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { Icon, type IconName } from './Icon';
 
-const BORDER = 'rgba(255,255,255,0.10)';
+const BORDER = 'summaryLine';
 const MUTED = 'summaryMuted';
 
 export interface SummaryPanelProps {
@@ -37,7 +37,7 @@ export function SummaryPanel({ title, icon = 'receipt', children }: SummaryPanel
       alignSelf="stretch"
     >
       <Flex align="center" gap="12px" pb="4px">
-        <Flex align="center" justify="center" boxSize="38px" borderRadius="lg" bg="rgba(255,255,255,0.08)" borderWidth="1px" borderColor={BORDER} color="summaryIcon">
+        <Flex align="center" justify="center" boxSize="38px" borderRadius="lg" bg="summaryFillMid" borderWidth="1px" borderColor={BORDER} color="summaryIcon">
           <Icon name={icon} size={18} />
         </Flex>
         <Text fontSize="md" fontWeight="semibold" color="white">
@@ -58,7 +58,7 @@ export interface SummaryGroupProps {
 /** Grupo recolhível (`<details>` nativo: teclado e leitor de tela de graça). */
 export function SummaryGroup({ title, defaultOpen = true, children }: SummaryGroupProps) {
   return (
-    <Box as="details" {...({ open: defaultOpen } as Record<string, boolean>)} bg="rgba(255,255,255,0.05)" borderWidth="1px" borderColor={BORDER} borderRadius="xl" overflow="hidden">
+    <Box as="details" {...({ open: defaultOpen } as Record<string, boolean>)} bg="summaryFill" borderWidth="1px" borderColor={BORDER} borderRadius="xl" overflow="hidden">
       <Box
         as="summary"
         cursor="pointer"
@@ -105,11 +105,11 @@ export function SummaryNote({ children }: { children: ReactNode }) {
 
 export function SummaryTotal({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <Flex direction="column" gap="3px" pt="14px" borderTopWidth="1px" borderTopColor="rgba(255,255,255,0.12)">
+    <Flex direction="column" gap="3px" pt="14px" borderTopWidth="1px" borderTopColor="summaryLineStrong">
       <Text fontSize="sm" color="summaryFaint">
         {label}
       </Text>
-      <Text fontSize="38px" fontWeight="bold" lineHeight="1.05" letterSpacing="-0.02em" color="white">
+      <Text fontSize="stat" fontWeight="bold" lineHeight="1.05" letterSpacing="-0.02em" color="white">
         {value}
       </Text>
       {hint && (
