@@ -67,6 +67,9 @@ import { AreasSubList } from '../Areas/AreasSubList';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Tipo de exploração (1..6) → variante do Badge do kit (DS). Ordem estável, sem semântica de negócio.
 const EXPLORATION_VARIANTS: Record<number, BadgeVariant> = {
   1: 'success',
@@ -122,6 +125,7 @@ export default function FarmsList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<FarmFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) --------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -347,6 +351,14 @@ export default function FarmsList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         {showNoFarmNotice && (
           <Alert.Root status="info" borderRadius="md" mt={4} role="status">
             <Alert.Indicator />
@@ -356,7 +368,7 @@ export default function FarmsList() {
           </Alert.Root>
         )}
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             isError={farmsList.isError}

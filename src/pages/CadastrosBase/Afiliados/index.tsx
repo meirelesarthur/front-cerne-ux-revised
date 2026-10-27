@@ -57,6 +57,9 @@ import { usePartnersList } from './useAfiliados';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Mascara CPF/CNPJ para exibição na grid (mirror `Pessoas/nif.ts::maskNif`,
 // reimplementado sobre os utils compartilhados `@/utils/cpfCnpj` +
 // `@/utils/formatDocument` — sem importar de dentro de `Pessoas/`, mesma
@@ -88,6 +91,7 @@ export default function AfiliadosList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<PartnerFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -274,7 +278,15 @@ export default function AfiliadosList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={partnersList.isError}

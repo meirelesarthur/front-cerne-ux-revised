@@ -72,6 +72,9 @@ import { useEmployeesList } from './useFuncionarios';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Máscara de EXIBIÇÃO de CPF/CNPJ (reuso dos utils globais já existentes —
 // mesmo helper local de `Fornecedores/index.tsx`, nenhum novo utilitário de
 // máscara criado aqui).
@@ -110,6 +113,7 @@ export default function FuncionariosList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<EmployeeFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -401,7 +405,15 @@ export default function FuncionariosList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={employeeList.isError}

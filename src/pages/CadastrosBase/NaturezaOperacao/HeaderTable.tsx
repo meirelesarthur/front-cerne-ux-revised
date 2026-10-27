@@ -15,7 +15,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 
 import { usePermissions } from '@/hooks/usePermissions';
 import { useTable } from '@/hooks/useTable';
@@ -67,7 +66,6 @@ export function HeaderTable({
           languageGB={languageGB}
         />
       )}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
     </>
   );
 }

@@ -63,7 +63,6 @@ import { useNavigate } from 'react-router-dom';
 import { Actions } from '@/components/Action';
 import { Button } from '@/components/Button';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { IconButtonTable } from '@/components/IconButtonTable';
 import { toaster } from '@/components/ui/toaster';
 
@@ -219,7 +218,6 @@ export function HeaderTable({ onOpenFilter, filtersApplied, languageGB }: Header
           languageGB={languageGB}
         />
       )}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
 
       <PlanAccountImportModal isOpen={isImportModalOpen} onClose={onCloseImportModal} />
 

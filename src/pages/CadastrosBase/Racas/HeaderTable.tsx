@@ -14,7 +14,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 
 import { usePermissions } from '@/hooks/usePermissions';
 import { useTable } from '@/hooks/useTable';
@@ -45,7 +44,6 @@ export function HeaderTable({ onOpenFilter, filtersApplied, languageGB }: Header
       {can('breeds_create') && (
         <ButtonAdd onClick={() => navigate(`/cadastros-base/racas/novo`)} languageGB={languageGB} />
       )}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
     </>
   );
 }

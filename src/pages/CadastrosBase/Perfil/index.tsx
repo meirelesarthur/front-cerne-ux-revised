@@ -48,6 +48,9 @@ import { useRolesList } from "./useRoles";
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function PerfilList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -66,6 +69,7 @@ export default function PerfilList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RoleFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const {
@@ -204,7 +208,15 @@ export default function PerfilList() {
           <PageHeader title={languageGB.roles.role.list.pageTitle} description={languageGB.roles.role.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={rolesList.isError}

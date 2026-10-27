@@ -76,6 +76,9 @@ import { useEquipmentsList } from './useEquipments';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Seletor de tamanho de página — teto real 100 (`EquipmentIndexRequest`,
 // contrato de API §7), mesmo hardening de `Produtos/Catalogo/index.tsx`.
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 80, 100];
@@ -126,6 +129,7 @@ export default function InventarioList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<EquipmentFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -349,7 +353,15 @@ export default function InventarioList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           {!hasFarm ? (
             <EmptyState.Root>
               <EmptyState.Content>

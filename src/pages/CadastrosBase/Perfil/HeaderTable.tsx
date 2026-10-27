@@ -47,7 +47,6 @@ export function HeaderTable({
           languageGB={languageGB}
         />
       )}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
     </>
   );
 }

@@ -191,3 +191,9 @@ Novos componentes do kit: `ui/StepBody` (conteúdo da etapa centralizado, máx. 
 | Fornecedor | filiais (com moldura) e vendedores → `RepeaterList` |
 | Funcionário, Usuário, Endereço | corpo centralizado (`StepBody`) e espaçamento 16px |
 Verificado no navegador: Fornecedor (corpo em 760px, adicionar/remover filial e vendedor). **Não verificado visualmente:** Cliente (interruptores/inscrições), Funcionário e Usuário — só tipos e estrutura. Os cartões de filial ficam dentro da linha do repetidor (botão remover ao lado), como no DS.
+
+## 7.4 Busca inline (ListToolbar) — migração em lotes (2026-10-27)
+Lote 1 · **Cadastros Base**: 26 listagens migradas (Afiliados, Atividades, Autorizadores, Batches, Categorias, Categorias de Animais, Categorias de Produto, Centro de Custo, Clientes, Contador, Espécies, Estágio Reprodutivo, Fazendas, Fornecedores, Funcionários, Inventário, Natureza da Operação, Operações, Parâmetros de Animais, Perfil, Pessoas, Plano de Contas, Proprietários, Raças, Safras, Vacinas) + as 7 do piloto = 33.
+- Critério automático (script): tela com `HeaderGrid` + `userPaginatedQuery` + `onOpenFilter`/`filtersApplied` **e** tipo de filtro com `search`. O botão Filtros saiu do `HeaderTable`.
+- **Fora do lote (sem `search` no filtro):** Ciclo de Produção, Depreciação, Saldo Inicial, Usuários — exigem decisão (busca no backend). **Sem `userPaginatedQuery`:** Causa Morte/Perda, Estados, Rebanho.
+- Verificado no navegador: 26/26 abrem com 1 campo de busca e 1 botão Filtros, sem tela de erro; em Pessoas a busca envia `search=` e filtra (1 de 1), o drawer mostra o mesmo termo e "Limpar" esvazia os dois.

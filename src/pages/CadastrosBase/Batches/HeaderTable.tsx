@@ -27,7 +27,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { toaster } from '@/components/ui/toaster';
 
 import { usePermissions } from '@/hooks/usePermissions';
@@ -92,7 +91,6 @@ export function HeaderTable({ onOpenFilter, filtersApplied, languageGB }: Header
         </Actions>
       )}
       {canCreate && <ButtonAdd onClick={() => navigate('/batches/novo')} languageGB={languageGB} />}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
 
       <BatchImportModal isOpen={isImportModalOpen} onClose={onCloseImportModal} />
     </>

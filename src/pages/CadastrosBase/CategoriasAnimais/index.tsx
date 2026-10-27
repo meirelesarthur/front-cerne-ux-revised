@@ -62,6 +62,9 @@ import { useCategoryAnimalsList } from './useCategoryAnimals';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Formata a coluna "Faixa etária" — 3 casos (Contrato §3.4 / Risco #1 da
 // Tarefa): ambos nulos ("—"), só um presente ("a partir de X meses"/"até Y
 // meses"), ambos presentes ("de X a Y meses"). Função pura local, sem
@@ -105,6 +108,7 @@ export default function CategoriasAnimaisList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<CategoryAnimalFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -290,7 +294,15 @@ export default function CategoriasAnimaisList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={isError}

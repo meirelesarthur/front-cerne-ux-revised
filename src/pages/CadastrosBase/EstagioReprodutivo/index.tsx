@@ -65,6 +65,9 @@ import { useCategoryMatricesList } from './useCategoryMatrices';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // `specie_label` é display-only (só re-hidrata o nome da Espécie no drawer;
 // NUNCA vai à API — ver comentário espelho em `category-matrix-service.ts`
 // e em `FilterSideEstagioReprodutivo.tsx`). Contar essa chave junto com
@@ -92,6 +95,7 @@ export default function EstagioReprodutivoList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<CategoryMatrixFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -258,7 +262,15 @@ export default function EstagioReprodutivoList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={categoryMatricesList.isError}
