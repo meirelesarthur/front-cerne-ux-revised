@@ -48,6 +48,9 @@ export const languageProducts: ModuleProducts = {
         stockFinancial: 'Stock y Financiero',
         fiscal: 'Fiscal',
       },
+      stepTitles: { identification: 'Identificación del producto', stockFinancial: 'Stock y financiero', fiscal: 'Datos fiscales' },
+      sections: { essentials: 'Datos esenciales', classification: 'Clasificación' },
+      stepCounter: { label: 'Paso', of: 'de' },
       fields: {
         description: 'Descripción',
         code: 'Código',

@@ -15,7 +15,7 @@
 // legado "+ Criar Produto"); o Modal nunca passa (fica `undefined`).
 // -----------------------------------------------------------------------------
 
-import { EmptyState, GridItem, Icon, SimpleGrid, Tabs, VStack } from '@chakra-ui/react';
+import { Box, EmptyState, GridItem, Icon, SimpleGrid, VStack } from '@chakra-ui/react';
 import { Controller } from 'react-hook-form';
 import { FiBox } from 'react-icons/fi';
 
@@ -26,6 +26,9 @@ import { NumberInput } from '@/components/Form/NumberInput';
 import { Select } from '@/components/Form/Select';
 import { SelectAsyncPaginate } from '@/components/Form/SelectAsyncPaginate';
 import { FormFooter } from '@/components/FormFooter';
+import { FormSection } from '@/components/FormSection';
+import { StepHeader } from '@/components/ui/StepHeader';
+import { Steps, StepsList, StepsRoot } from '@/components/ui/steps';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -186,33 +189,30 @@ export function ProductFormFields({
 
   return (
     <Form onSubmit={(e) => e.preventDefault()} noPadding>
-      {/* @ts-ignore - custom variant */}
-      <Tabs.Root
-        value={tabValue}
-        onValueChange={(details: { value: string }) => setTabValue(details.value as any)}
-        variant="outline"
+      {/* Etapas (DS Stepper): navegação livre entre as 3 etapas, como nas abas anteriores. */}
+      <StepsRoot
+        step={Number(tabValue)}
+        count={3}
+        onStepChange={(details: { step: number }) => setTabValue(String(details.step) as any)}
       >
-        {/* @ts-ignore */}
-        {/* @ts-ignore - Tab List fixa (sticky) no topo do body: abas sempre
-            visíveis; só o conteúdo rola. */}
-        <Tabs.List position="sticky" top="0" zIndex={1} bg="formBG">
-          {/* @ts-ignore */}
-          <Tabs.Trigger value="0">{text.form.tabs.identification}</Tabs.Trigger>
-          {/* @ts-ignore */}
-          <Tabs.Trigger value="1">{text.form.tabs.stockFinancial}</Tabs.Trigger>
-          {/* @ts-ignore */}
-          <Tabs.Trigger value="2">{text.form.tabs.fiscal}</Tabs.Trigger>
-        </Tabs.List>
+        <StepsList>
+          <Steps.Item index={0} title={text.form.tabs.identification} />
+          <Steps.Item index={1} title={text.form.tabs.stockFinancial} />
+          <Steps.Item index={2} title={text.form.tabs.fiscal} />
+        </StepsList>
+      </StepsRoot>
 
-        {/* @ts-ignore */}
-        <Tabs.Content value="0">
+
+        <Box hidden={tabValue !== '0'}>
+          <StepHeader title={text.form.stepTitles.identification} />
           {/* Ordem em `lg` (4 colunas), sem buracos, igual em criar/editar:
               L1: Código | Descrição (2 col.) | Unidade
               L2: 2ª Unidade | Tipo de Fator | Fator | Grupo
               L3: Categoria | Classe | Ativo | É Equipamento
               L4: Controla Lote | NCM (3 col.)
               Os spans só valem a partir de `lg`; abaixo disso é 1 coluna/campo. */}
-          <SimpleGrid columns={columnsForm.default} gap={6} pt={4}>
+          <FormSection title={text.form.sections.essentials} divider={false}>
+          <SimpleGrid columns={columnsForm.default} gap={6}>
             <InputReadOnly
               label={text.form.fields.code}
               helperText={text.form.hints.codeGeneratedByServer}
@@ -329,6 +329,10 @@ export function ProductFormFields({
                 />
               )}
             />
+            </SimpleGrid>
+          </FormSection>
+          <FormSection title={text.form.sections.classification} divider={false}>
+          <SimpleGrid columns={columnsForm.default} gap={6}>
             <Controller
               name="group_uuid"
               control={control}
@@ -494,7 +498,7 @@ export function ProductFormFields({
               )}
             />
 
-            <GridItem colSpan={{ base: 1, lg: 3 }}>
+            <GridItem colSpan={{ base: 1, lg: 2 }}>
               <Controller
                 name="ncm_uuid"
                 control={control}
@@ -532,10 +536,11 @@ export function ProductFormFields({
               />
             </GridItem>
           </SimpleGrid>
-        </Tabs.Content>
+          </FormSection>
+        </Box>
 
-        {/* @ts-ignore */}
-        <Tabs.Content value="1">
+        <Box hidden={tabValue !== '1'}>
+          <StepHeader title={text.form.stepTitles.stockFinancial} />
           <ProdutoEstoqueFinanceiroTab
             control={control}
             errors={errors}
@@ -547,10 +552,10 @@ export function ProductFormFields({
             setPackageUuidsTouched={setPackageUuidsTouched}
             disablePortal={disablePortal}
           />
-        </Tabs.Content>
+        </Box>
 
-        {/* @ts-ignore */}
-        <Tabs.Content value="2">
+        <Box hidden={tabValue !== '2'}>
+          <StepHeader title={text.form.stepTitles.fiscal} />
           <ProdutoFiscalTab
             control={control}
             register={register}
@@ -561,8 +566,8 @@ export function ProductFormFields({
             setValue={setValue}
             disablePortal={disablePortal}
           />
-        </Tabs.Content>
-      </Tabs.Root>
+        </Box>
+      
 
       {/* Modal (`renderFooter` default true) monta o rodapé INLINE; a página
           cheia passa `renderFooter={false}` e usa o footer FIXO do

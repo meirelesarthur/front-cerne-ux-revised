@@ -41,6 +41,9 @@ export interface ModuleProducts {
       title: { create: string; edit: string };
       subtitle: { create: string; edit: string };
       tabs: { identification: string; stockFinancial: string; fiscal: string };
+      stepTitles: { identification: string; stockFinancial: string; fiscal: string };
+      sections: { essentials: string; classification: string };
+      stepCounter: { label: string; of: string };
       /** Campos da Aba 1 (Identificação/Classificação) + Aba 2 (Estoque e
        *  Financeiro, `TASK-FE-504`, aditivo no MESMO objeto — convenção já
        *  usada por este arquivo, sem namespace por aba). */

@@ -29,9 +29,10 @@ import { usePermissions } from '@/hooks/usePermissions';
 
 import { isValidGuid } from '@/utils/guid';
 
-import { ProductFormFields, ProductFormFooter } from './ProductFormFields';
+import { ProductFormFields } from './ProductFormFields';
 import { useProductFormController } from './useProductFormController';
 
+import { StepFooter } from '@/components/ui/StepFooter';
 export default function CreateOrUpdateProduto() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
@@ -80,14 +81,16 @@ export default function CreateOrUpdateProduto() {
     <FormContainer
       title={isEditing ? text.form.title.edit : text.form.title.create}
       footer={
-        <ProductFormFooter
-          tabValue={controller.tabValue}
-          handleNext={controller.handleNext}
-          handleBack={controller.handleBack}
-          isSubmitting={controller.isSubmitting}
-          isLoading={controller.isLoading}
-          canSave={canSave}
-          onCancel={() => navigate(-1)}
+        <StepFooter
+          stepLabel={`${text.form.stepCounter.label} ${Number(controller.tabValue) + 1} ${text.form.stepCounter.of} 3`}
+          backLabel={controller.tabValue === '0' ? languageGB.defaltStrings.cancel : languageGB.defaltStrings.previous}
+          nextLabel={controller.tabValue === '2' ? languageGB.defaltStrings.save : languageGB.defaltStrings.next}
+          onBack={controller.tabValue === '0' ? () => navigate(-1) : controller.handleBack}
+          onNext={controller.handleNext}
+          backDisabled={controller.isSubmitting}
+          nextLoading={controller.isSubmitting}
+          nextDisabled={controller.isSubmitting || controller.isLoading}
+          hideNext={controller.tabValue === '2' && !canSave}
         />
       }
     >
