@@ -197,3 +197,16 @@ Lote 1 · **Cadastros Base**: 26 listagens migradas (Afiliados, Atividades, Auto
 - Critério automático (script): tela com `HeaderGrid` + `userPaginatedQuery` + `onOpenFilter`/`filtersApplied` **e** tipo de filtro com `search`. O botão Filtros saiu do `HeaderTable`.
 - **Fora do lote (sem `search` no filtro):** Ciclo de Produção, Depreciação, Saldo Inicial, Usuários — exigem decisão (busca no backend). **Sem `userPaginatedQuery`:** Causa Morte/Perda, Estados, Rebanho.
 - Verificado no navegador: 26/26 abrem com 1 campo de busca e 1 botão Filtros, sem tela de erro; em Pessoas a busca envia `search=` e filtra (1 de 1), o drawer mostra o mesmo termo e "Limpar" esvazia os dois.
+
+Lote 2 (2026-10-27) · **BaseRegistrations (24) · Administrativo (11) · Operacional (7) · Financeiro (1) · Fiscal (2)** = 45 telas. Total no front: **78 listagens com busca inline** (de 199 com `HeaderGrid`).
+- 9 delas tinham o `ButtonFilter` direto no `index.tsx` (não no `HeaderTable`): o script passou a remover a linha padrão do cabeçalho.
+- **Falso positivo evitado:** Romaneios foi revertida — o tipo `TransferFilterForm` não tem `search` (o `tsc` acusou). O script de varredura casa tipos por nome; conferir sempre com `tsc`.
+- Verificado no navegador: 38 de 44 rotas com 1 busca + 1 botão Filtros e sem tela de erro. As outras 6: **NfseRecebidas e DFe** mostram um 2º botão "Filtros" no estado vazio da tabela (ação já existente do `Table`, redundante agora); **Budget, Compra de Animais, Pedidos e Vendas** não têm `h1` (o título dessas telas não usa o `PageHeader` — o codemod de títulos não pegou o padrão).
+- **Testes:** `tsc` 0 erros. Unitários: os 3 do EntradaInsumos (já falhavam na versão original) + 2 de NF-e que dão **timeout de 5 s** sob carga (passam isolados) — flaky, não relacionados à busca.
+
+### O que falta (não migrado)
+| Grupo | Telas | Motivo |
+|---|---|---|
+| Filtro sem campo `search` | ~57 (Ciclo de Produção, Depreciação, Saldo Inicial, Usuários, 13 em Administrativo, 24 em Operacional, 7 em Financeiro, 5 em Fiscal, 4 em Frota, 2 em Configurações…) | a busca textual depende do backend aceitar `search` nesses endpoints — decisão de produto/API |
+| Sem `userPaginatedQuery` | ~35 (Rebanho, Estados, 13 em BaseRegistrations, 11 em Operacional, 7 em Integrações…) | usam outro mecanismo de listagem (árvore, cards, tabela fixa) — migrar caso a caso |
+| Títulos sem `PageHeader` | Budget, Compra de Animais, Pedidos, Vendas (e possivelmente outras) | padrão de título diferente do codemod |

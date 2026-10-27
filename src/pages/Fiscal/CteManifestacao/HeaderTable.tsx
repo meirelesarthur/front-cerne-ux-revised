@@ -11,7 +11,6 @@ import type { ElementType } from 'react';
 import { FiHelpCircle, FiSearch } from 'react-icons/fi';
 
 import { Button } from '@/components/Button';
-import { ButtonFilter } from '@/components/ButtonFilter';
 
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -38,7 +37,6 @@ export function HeaderTable({ onOpenFilter, filtersApplied, onOpenConsultar }: H
         icon={FiHelpCircle as ElementType}
         onClick={() => window.open(CTE_MANIFESTACAO_HELP_URL, '_blank', 'noopener,noreferrer')}
       />
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
       {can('cte_manifest') && (
         <Button
           title={text.consultarButton}

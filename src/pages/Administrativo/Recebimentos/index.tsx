@@ -39,7 +39,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import { HeaderGrid } from '@/components/HeaderGrid';
@@ -89,6 +88,9 @@ import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatu
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function RecebimentosList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -114,6 +116,7 @@ export default function RecebimentosList() {
     handleResetFilter,
     handleOrderByChange,
   } = userPaginatedQuery<RequestReceiptFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
 
@@ -460,12 +463,19 @@ export default function RecebimentosList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
+
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
 
         {/* Legenda de status — mesmo componente reutilizável já usado em
             `Compras`/`Cotacoes`/`Solicitacao`/`Rejeitados`/`Autorizacao`/

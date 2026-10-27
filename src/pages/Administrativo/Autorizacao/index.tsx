@@ -43,7 +43,6 @@ import { FiEye } from 'react-icons/fi';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import { HeaderGrid } from '@/components/HeaderGrid';
@@ -79,6 +78,9 @@ import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatu
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function AutorizacaoList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -97,6 +99,7 @@ export default function AutorizacaoList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RequestAuthorizationFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
 
@@ -281,12 +284,19 @@ export default function AutorizacaoList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
+
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
 
         {/* Legenda de status — TODOS os 11 valores do enum (default do
             componente), fiel ao legado (CLM-40) mesmo esta fila filtrando só
@@ -296,7 +306,7 @@ export default function AutorizacaoList() {
           <RequestPurchaseStatusLegend />
         </Box>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             isError={autorizacaoList.isError}

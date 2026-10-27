@@ -36,7 +36,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
@@ -67,6 +66,9 @@ import type { ContractFilterForm, ContractListItem } from '@/@types/v2/Contracts
 import { FilterSideContrato } from './FilterSideContrato';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
 
 // `amount` já vem NUMBER do `ContractResource` (sempre recalculado
 // server-side, DA-CT-06) — sem cast `Number(...)` de string, diferente de
@@ -100,6 +102,7 @@ export default function ContratoList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<ContractFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -368,14 +371,21 @@ export default function ContratoList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={languageGB.contracts.contract.list.pageTitle} description={languageGB.contracts.contract.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={contractsList.isError}

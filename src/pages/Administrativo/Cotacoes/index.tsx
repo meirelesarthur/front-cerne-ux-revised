@@ -80,7 +80,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
@@ -142,6 +141,9 @@ import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatu
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function CotacoesList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -182,6 +184,7 @@ export default function CotacoesList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RequestPurchaseFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -582,12 +585,19 @@ export default function CotacoesList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={text.inQuotation.pageTitle} description={text.inQuotation.pageSubtitle} />
         </HeaderGrid>
+
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
 
         {/* Legenda de status — fidelidade ao legado (`request-purchase.
             _legend.blade.php`), acima do grid. TODOS os 11 status do enum. */}
@@ -595,7 +605,7 @@ export default function CotacoesList() {
           <RequestPurchaseStatusLegend />
         </Box>
 
-        <Box mt={6}>
+        <Box>
           {/* SEM CTA de criação (ver cabeçalho do arquivo). */}
           <Table
             isLoading={isLoading}

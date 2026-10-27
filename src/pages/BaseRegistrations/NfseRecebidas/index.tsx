@@ -92,6 +92,9 @@ import { NFSE_RECEBIDAS_STORAGE_KEY } from './storage';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Chaves DISPLAY-ONLY do filtro que não contam para a distinção
 // "sem resultados" vs "resultado filtrado" no empty-state — `issuer_uuid` é
 // OBRIGATÓRIO por UX (RN-1), não uma refinação opcional da grid.
@@ -129,6 +132,7 @@ export default function NfseRecebidasList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<NfseFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -395,7 +399,15 @@ export default function NfseRecebidasList() {
           <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           {!hasIssuer ? (
             // Empty-state DEDICADO — sem `issuer_uuid` no filtro (RN-1),
             // distinto de "sem resultados" (issuer selecionado, grid vazia).

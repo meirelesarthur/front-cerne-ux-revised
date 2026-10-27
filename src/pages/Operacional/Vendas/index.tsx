@@ -70,6 +70,9 @@ import { SaleActionsMenu } from './SaleActionsMenu';
 import { SaleEmitNfeDialog } from './SaleEmitNfeDialog';
 import { useSalesList } from './useSales';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 const SALE_STORAGE_KEY = 'OperacionalVendas' + queryKey.sales.sales;
 
 const DATE_FORMAT = 'yyyy-MM-dd';
@@ -116,6 +119,7 @@ export default function SalesList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<SaleFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -375,6 +379,14 @@ export default function SalesList() {
           </VStack>
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         <Flex gap={5} mt={4} wrap="wrap">
           {statusLegend.map((option) => (
             <Status
@@ -387,7 +399,7 @@ export default function SalesList() {
           ))}
         </Flex>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             pageSizeOptions={PAGE_SIZE_OPTIONS}

@@ -30,7 +30,6 @@ import { FiDownload, FiPlus, FiUpload } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { toaster } from '@/components/ui/toaster';
 
 import { usePermissions } from '@/hooks/usePermissions';
@@ -104,7 +103,6 @@ export function HeaderTable({ onOpenFilter, filtersApplied, languageGB }: Header
           disabled={isExportingReport}
         />
       )}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
 
       <FuncionarioEventoImportModal isOpen={isImportModalOpen} onClose={onCloseImportModal} />
     </>

@@ -68,6 +68,9 @@ import { MovementPurchaseDocumentsModal } from './MovementPurchaseDocumentsModal
 import { isMovementPurchaseLocked } from './MovementPurchaseLockBanners';
 import { useMovementPurchasesList } from './useMovementPurchases';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 const PAGE_SIZE_OPTIONS = [20, 30, 50, 100];
 
 function formatCurrencyBRL(value: number): string {
@@ -94,6 +97,7 @@ export default function CompraAnimaisList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<MovementPurchaseFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
 
@@ -351,7 +355,15 @@ export default function CompraAnimaisList() {
           </VStack>
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             pageSizeOptions={PAGE_SIZE_OPTIONS}

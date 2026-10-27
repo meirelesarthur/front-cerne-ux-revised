@@ -135,6 +135,9 @@ import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // ACT-05/IG-06/IG-08 — cap de seleção em massa (individual OU lote).
 const MAX_BULK_SELECTION = 20;
 
@@ -171,6 +174,7 @@ export default function DfeRecebidasList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<DfeFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
 
@@ -690,6 +694,14 @@ export default function DfeRecebidasList() {
           <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         {selectedUuids.length > 0 && (
           <HStack justify="flex-end" mt={2} mb={-2}>
             <Text fontSize="sm" color="fg.muted">
@@ -704,7 +716,7 @@ export default function DfeRecebidasList() {
           </HStack>
         )}
 
-        <Box mt={6}>
+        <Box>
           {!hasIssuer ? (
             <EmptyState.Root>
               <EmptyState.Content>

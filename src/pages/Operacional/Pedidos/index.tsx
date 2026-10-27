@@ -79,6 +79,9 @@ import { HeaderTable } from './HeaderTable';
 import { OrderActionsMenu } from './OrderActionsMenu';
 import { useOrdersList } from './useOrders';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 const ORDER_STORAGE_KEY = 'OperacionalPedidos' + queryKey.orders.orders;
 
 const DATE_FORMAT = 'yyyy-MM-dd';
@@ -121,6 +124,7 @@ export default function OrdersList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<OrderFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -366,6 +370,14 @@ export default function OrdersList() {
           </VStack>
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         <Flex gap={5} mt={4} wrap="wrap">
           {statusLegend.map((option) => (
             <Status
@@ -378,7 +390,7 @@ export default function OrdersList() {
           ))}
         </Flex>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             isError={ordersList.isError}

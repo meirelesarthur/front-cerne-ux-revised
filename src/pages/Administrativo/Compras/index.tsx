@@ -45,7 +45,6 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import { HeaderGrid } from '@/components/HeaderGrid';
@@ -108,6 +107,9 @@ import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatu
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function ComprasList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -128,6 +130,7 @@ export default function ComprasList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RequestPurchaseFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
 
@@ -562,18 +565,25 @@ export default function ComprasList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={text.inPurchase.pageTitle} description={text.inPurchase.pageSubtitle} />
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         <Box mt={4}>
           <RequestPurchaseStatusLegend />
         </Box>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             getRowHighlight={emergencyRowHighlight}

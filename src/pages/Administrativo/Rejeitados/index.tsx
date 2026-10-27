@@ -30,7 +30,6 @@ import { Box, Text, useDisclosure } from '@chakra-ui/react';
 import { FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import { HeaderGrid } from '@/components/HeaderGrid';
@@ -67,6 +66,9 @@ import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatu
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Filtros do legado em Rejeitados: busca, Tipo e as duas datas (sem Status).
 const REJECTED_FILTER_FIELDS: SolicitacaoFilterField[] = ['search', 'type', 'date_from', 'date_to'];
 
@@ -93,6 +95,7 @@ export default function RejeitadosList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RequestPurchaseFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
 
@@ -156,19 +159,26 @@ export default function RejeitadosList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={text.rejected.pageTitle} description={text.rejected.pageSubtitle} />
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         {/* Legenda de status (acréscimo do novo, D-01 manter). */}
         <Box mt={4}>
           <RequestPurchaseStatusLegend />
         </Box>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             isError={rejectedList.isError}

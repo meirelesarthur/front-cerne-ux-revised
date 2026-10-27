@@ -14,7 +14,6 @@
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import type { GridSettingsFloatingPanelProps } from '@/components/GridSettings/GridSettingsFloatingPanel';
 
@@ -69,7 +68,6 @@ export function HeaderTable({
         gridSettings={gridSettings}
         triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
       />
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
     </>
   );
 }

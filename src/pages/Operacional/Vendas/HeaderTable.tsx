@@ -9,7 +9,6 @@
 import { useNavigate } from 'react-router-dom';
 
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 
 import { usePermissions } from '@/hooks/usePermissions';
 
@@ -30,7 +29,6 @@ export function HeaderTable({ onOpenFilter, filtersApplied, languageGB }: Header
       {can('sales_create') && (
         <ButtonAdd onClick={() => navigate('/operacional/vendas/novo')} languageGB={languageGB} />
       )}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
     </>
   );
 }

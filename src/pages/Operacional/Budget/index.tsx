@@ -73,7 +73,6 @@ import type { ElementType } from 'react';
 
 import { Actions } from '@/components/Action';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
@@ -107,6 +106,9 @@ import type { ListBudgetsParams } from '@/services/v2/Budgets/budget-service';
 import type { BudgetFilterForm, BudgetListItem } from '@/@types/v2/Budgets';
 
 import { FilterSideBudget } from './FilterSideBudget';
+
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
 
 // Mirror `App\Enums\BudgetStatus` (backend, backed `int`) — limite ATÉ O
 // QUAL editar/excluir é permitido, client-side (D08 preservado — o servidor
@@ -162,6 +164,7 @@ export default function BudgetsList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<BudgetFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -457,7 +460,6 @@ export default function BudgetsList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
@@ -467,6 +469,14 @@ export default function BudgetsList() {
             </Text>
           </VStack>
         </HeaderGrid>
+
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
 
         <Flex gap={5} mt={4} wrap="wrap">
           {statusLegend.map((option) => (
@@ -480,7 +490,7 @@ export default function BudgetsList() {
           ))}
         </Flex>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             isError={budgetsList.isError}

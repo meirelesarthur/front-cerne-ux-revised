@@ -110,6 +110,9 @@ import { RequestPurchaseStatusLegend } from './RequestPurchaseStatusLegend';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function SolicitacaoList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -139,6 +142,7 @@ export default function SolicitacaoList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RequestPurchaseFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -536,6 +540,14 @@ export default function SolicitacaoList() {
           <PageHeader title={languageGB.requestPurchases.requestPurchase.list.pageTitle} description={languageGB.requestPurchases.requestPurchase.list.pageSubtitle} />
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
         {/* Legenda de status — TASK-CQ-FE-16, mesmo componente reutilizável
             já usado em `Cotacoes/index.tsx` (`RequestPurchaseStatusLegend`,
             TASK-CQ-FE-15), posição equivalente: acima do grid, abaixo do
@@ -545,7 +557,7 @@ export default function SolicitacaoList() {
           <RequestPurchaseStatusLegend />
         </Box>
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             getRowHighlight={emergencyRowHighlight}

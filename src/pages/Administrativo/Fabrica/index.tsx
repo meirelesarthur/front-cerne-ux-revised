@@ -30,7 +30,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
@@ -69,6 +68,9 @@ import type { FoodFilterForm, FoodListItem, FoodType } from '@/@types/v2/Foods';
 import { FilterSideFabrica } from './FilterSideFabrica';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
 
 // Cor do Badge de Tipo por valor — puramente cosmético/ajustável, mirror
 // `TYPE_BADGE_COLOR` de `Warehouses/index.tsx`.
@@ -119,6 +121,7 @@ export default function FabricaList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<FoodFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -399,14 +402,21 @@ export default function FabricaList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={foodsList.isError}

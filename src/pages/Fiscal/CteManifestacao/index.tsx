@@ -70,6 +70,9 @@ import { ManifestarDesacordoDialog } from './ManifestarDesacordoDialog';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // `App\Enums\CteManifestaTipo`: 0 = Pendente (ação "Manifestar desacordo"
 // visível), 1 = Desacordo/já manifestado (ações DANFE/XML visíveis).
 const TIPO_PENDENTE = 0;
@@ -89,6 +92,7 @@ export default function CteManifestacaoList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<CteManifestacaoFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
   const {
@@ -319,7 +323,15 @@ export default function CteManifestacaoList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           {isEmpty && !manifestacoesList.isError ? (
             <EmptyState.Root>
               <EmptyState.Content>

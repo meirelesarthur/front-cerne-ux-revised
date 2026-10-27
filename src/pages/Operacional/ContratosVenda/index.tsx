@@ -40,7 +40,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Actions } from '@/components/Action';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
@@ -82,6 +81,9 @@ import {
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 export default function ContratosVendaList() {
   const { languageGB } = useLanguage();
   const navigate = useNavigate();
@@ -110,6 +112,7 @@ export default function ContratosVendaList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<SaleContractFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   // ---- Estado de filtro (drawer) ------------------------------------------
   const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
@@ -416,12 +419,19 @@ export default function ContratosVendaList() {
                 gridSettings={gridSettings}
                 triggerLabel={languageGB.defaltStrings.gridSettings.trigger}
               />
-              <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
             </>
           }
         >
           <PageHeader title={languageGB.saleContracts.saleContract.list.pageTitle} description={languageGB.saleContracts.saleContract.list.pageSubtitle} />
         </HeaderGrid>
+
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
 
         {/* Legenda global de status — SEMPRE visível (não é tooltip),
             restaurada pelo rework de fidelidade (`SC-LST-010`, mirror

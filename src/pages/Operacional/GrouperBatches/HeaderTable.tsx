@@ -9,7 +9,6 @@
 
 import { Button } from '@/components/Button';
 import { ButtonAdd } from '@/components/ButtonAdd';
-import { ButtonFilter } from '@/components/ButtonFilter';
 
 import type { LanguageDate } from '@/@types/language';
 
@@ -49,7 +48,6 @@ export function HeaderTable({
         />
       )}
       {canCreate && <ButtonAdd onClick={onOpenNewBatchModal} languageGB={languageGB} />}
-      <ButtonFilter filtersApplied={filtersApplied} onClick={onOpenFilter} />
     </>
   );
 }
