@@ -121,7 +121,7 @@
 
 import { useMemo } from 'react';
 
-import { Box, Heading, SimpleGrid } from '@chakra-ui/react';
+import { Box, SimpleGrid } from '@chakra-ui/react';
 import {
   Control,
   Controller,
@@ -169,6 +169,7 @@ import type { TaxRuleEntityOption } from '@/@types/v2/TaxRules';
 import { useTaxRuleFiscalDefaultsAutofill } from './useProducts';
 import { WRAPPING_SELECT_COMPONENTS } from './WrappingSingleValue';
 
+import { FormSection } from '@/components/FormSection';
 interface ProdutoFiscalTabProps {
   control: Control<ProductFormType>;
   register: UseFormRegister<ProductFormType>;
@@ -427,7 +428,8 @@ export function ProdutoFiscalTab({
           `tax_rule_uuid` só habilita quando `is_fiscal === true` (ver
           `isDisabled` abaixo). MESMO `Controller`/lógica que existia dentro
           do bloco "Fiscal Clássico" — só mudou de posição no JSX. */}
-      <SimpleGrid columns={columnsForm.default} gap={6} mb={6}>
+      <FormSection title={text.form.fiscalGeneral} divider={false}>
+        <SimpleGrid columns={columnsForm.default} gap={6}>
         <Controller
           name="is_fiscal"
           control={control}
@@ -541,13 +543,11 @@ export function ProdutoFiscalTab({
           )}
         />
       </SimpleGrid>
+      </FormSection>
 
       {isFiscalValue && (
         <>
-          <Heading size="sm" fontWeight="600" mb={4}>
-            {text.form.fiscalSections.classic}
-          </Heading>
-          <Box borderWidth="1px" borderColor="border.default" borderRadius="md" p={6} mb={6}>
+          <FormSection title={text.form.fiscalSections.classic} divider={false}>
             <SimpleGrid columns={columnsForm.default} gap={6}>
               {/* `is_fiscal` MIGROU para o `SimpleGrid` de topo (TASK-FE-960,
               antes de `tax_rule_uuid`) — `allow_pointing` passa a ser o
@@ -964,16 +964,13 @@ export function ProdutoFiscalTab({
                 disabled={!canSave}
               />
             </SimpleGrid>
-          </Box>
+          </FormSection>
         </>
       )}
 
       {isFiscalValue && (
         <>
-          <Heading size="sm" fontWeight="600" mb={4}>
-            {text.form.fiscalSections.taxReform}
-          </Heading>
-          <Box borderWidth="1px" borderColor="border.default" borderRadius="md" p={6} mb={6}>
+          <FormSection title={text.form.fiscalSections.taxReform} divider={false}>
             <SimpleGrid columns={columnsForm.default} gap={6}>
               <Input
                 label={text.form.fields.cClassTrib}
@@ -1242,16 +1239,13 @@ export function ProdutoFiscalTab({
                 )}
               />
             </SimpleGrid>
-          </Box>
+          </FormSection>
         </>
       )}
 
       {isFiscalValue && (
         <>
-          <Heading size="sm" fontWeight="600" mb={4}>
-            {text.form.fiscalSections.zfmDonation}
-          </Heading>
-          <Box borderWidth="1px" borderColor="border.default" borderRadius="md" p={6} mb={6}>
+          <FormSection title={text.form.fiscalSections.zfmDonation} divider={false}>
             <SimpleGrid columns={columnsForm.default} gap={6}>
               <Controller
                 name="tp_cred_pres_ibs_zfm"
@@ -1290,7 +1284,7 @@ export function ProdutoFiscalTab({
                 )}
               />
             </SimpleGrid>
-          </Box>
+          </FormSection>
         </>
       )}
     </Box>

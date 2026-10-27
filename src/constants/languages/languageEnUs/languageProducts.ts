@@ -49,6 +49,8 @@ export const languageProducts: ModuleProducts = {
       },
       stepTitles: { identification: 'Product identification', stockFinancial: 'Stock and financial', fiscal: 'Tax data' },
       sections: { essentials: 'Essential data', classification: 'Classification' },
+      stockSections: { stock: 'Stock control', additional: 'Additional information', allocation: 'Financial and storage', production: 'Crop and quality', packages: 'Packaging' },
+      fiscalGeneral: 'Product taxation',
       stepCounter: { label: 'Step', of: 'of' },
       fields: {
         description: 'Description',

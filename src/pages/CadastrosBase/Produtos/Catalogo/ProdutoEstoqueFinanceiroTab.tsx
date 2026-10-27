@@ -108,6 +108,7 @@ import type { WarehouseOption } from '@/@types/v2/Warehouses';
 import { usePackageOptionsList } from './useProducts';
 import { WRAPPING_SELECT_COMPONENTS } from './WrappingSingleValue';
 
+import { FormSection } from '@/components/FormSection';
 // Catálogos "flat" (`/options`, `ApiResponse::success`, sem paginação real —
 // `warehouses`/`addressings`/`measurements`/`cultivations`) — `pageSize`
 // MAIOR que o volume real do catálogo evita que `SelectAsyncPaginate`
@@ -197,7 +198,8 @@ export function ProdutoEstoqueFinanceiroTab({
 
   return (
     <Box pt={4}>
-      <SimpleGrid columns={columnsForm.default} gap={6}>
+      <FormSection title={text.form.stockSections.stock} divider={false}>
+        <SimpleGrid columns={columnsForm.default} gap={6}>
         <Controller
           name="min_stock"
           control={control}
@@ -269,6 +271,7 @@ export function ProdutoEstoqueFinanceiroTab({
           />
         )}
       </SimpleGrid>
+      </FormSection>
 
       {/* `active_principle` — TASK-FE-948 (pedido direto do dev): o trio
           `second_measurement_uuid`/`factor_type`/`factor` que dividia este
@@ -279,7 +282,8 @@ export function ProdutoEstoqueFinanceiroTab({
           unidade de medida. `active_principle` fica sozinho aqui, sem
           alteração de comportamento (Chakra `SimpleGrid` renderiza
           normalmente com 1 item). */}
-      <SimpleGrid columns={columnsForm.default} gap={6} mt={6}>
+      <FormSection title={text.form.stockSections.additional} divider={false}>
+        <SimpleGrid columns={columnsForm.default} gap={6}>
         {/* UT-000781: 50 caracteres não cabem em 1 de 4 colunas num notebook —
             ocupa 2 colunas a partir de `md`. */}
         <GridItem colSpan={{ base: 1, md: 2 }}>
@@ -301,8 +305,10 @@ export function ProdutoEstoqueFinanceiroTab({
           />
         </GridItem>
       </SimpleGrid>
+      </FormSection>
 
-      <SimpleGrid columns={columnsForm.default} gap={6} mt={6}>
+      <FormSection title={text.form.stockSections.allocation} divider={false}>
+        <SimpleGrid columns={columnsForm.default} gap={6}>
         <Controller
           name="financial_category_uuid"
           control={control}
@@ -425,8 +431,10 @@ export function ProdutoEstoqueFinanceiroTab({
           )}
         />
       </SimpleGrid>
+      </FormSection>
 
-      <SimpleGrid columns={columnsForm.default} gap={6} mt={6}>
+      <FormSection title={text.form.stockSections.production} divider={false}>
+        <SimpleGrid columns={columnsForm.default} gap={6}>
         <Controller
           name="cultivation_uuid"
           control={control}
@@ -476,6 +484,7 @@ export function ProdutoEstoqueFinanceiroTab({
           )}
         />
       </SimpleGrid>
+      </FormSection>
 
       {/* Pivot Embalagens (`product_package_uuids`, TASK-BE-506/GAP-BE-230) —
           presence-aware: `packageUuidsTouched` (prop do form-pai) substitui
@@ -483,7 +492,7 @@ export function ProdutoEstoqueFinanceiroTab({
           arquivo). Desabilitado fora do grupo "Produção" — 4ª regra de
           fidelidade (backend detacha tudo se o grupo não for "Produção",
           independente do que for enviado; a UI não luta contra isso). */}
-      <Box mt={6}>
+      <FormSection title={text.form.stockSections.packages} divider={false}>
         <Controller
           name="product_package_uuids"
           control={control}
@@ -517,7 +526,7 @@ export function ProdutoEstoqueFinanceiroTab({
             {text.form.hints.packagesDisabledOutsideProductionGroup}
           </Text>
         )}
-      </Box>
+      </FormSection>
     </Box>
   );
 }
