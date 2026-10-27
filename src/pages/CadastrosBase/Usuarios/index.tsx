@@ -143,6 +143,9 @@ import { useUsersList } from './useUsuario';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
 // Companheiro display-only do `SelectAsyncPaginate` de `role_uuid` — nunca
 // conta como filtro real na badge "Filtros(N)" (mesmo padrão de
 // `cbo_uuid_label` em FilterSideFuncoes.tsx).
@@ -211,6 +214,7 @@ export default function UsuariosList() {
 
   const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<UserFilterForm>(defaultQueryOptions);
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
 
   const queryClient = useQueryClient();
 
@@ -615,7 +619,15 @@ export default function UsuariosList() {
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={6}>
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
+
+        <Box>
           <Table
             isLoading={isLoading}
             isError={usersList.isError}

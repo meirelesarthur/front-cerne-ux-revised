@@ -4,7 +4,7 @@
 **Data do levantamento:** 2026-10-27 · **Gerado por varredura do código do front** (rotas, hooks e serviços) — conferir cada endpoint antes de implementar.
 
 ## O que o front já faz
-Em **78 listagens** a barra de busca no topo da lista envia `?search=<texto>` ao endpoint (debounce de 300 ms, sem mexer nos outros filtros nem na paginação). Isso só foi possível onde o filtro já aceitava `search`. As telas abaixo **não** têm esse parâmetro no filtro do front e, na maioria, o serviço também não o envia — ou seja, hoje não dá para buscar por texto nelas.
+Em **80 listagens** a barra de busca no topo da lista envia `?search=<texto>` ao endpoint (debounce de 300 ms, sem mexer nos outros filtros nem na paginação). Isso só foi possível onde o filtro já aceitava `search`. As telas abaixo **não** têm esse parâmetro no filtro do front e, na maioria, o serviço também não o envia — ou seja, hoje não dá para buscar por texto nelas.
 
 ## Contrato proposto (igual ao das listagens que já funcionam)
 | Item | Regra |
@@ -20,13 +20,12 @@ Em **78 listagens** a barra de busca no topo da lista envia `?search=<texto>` ao
 ## Resumo
 | Grupo | Telas | Ação |
 |---|---:|---|
-| **A · Só o front** (o serviço já envia `search`; falta o campo no tipo do filtro) | 2 | front — não depende do backend (ver abaixo) |
+| **A · Já resolvido no front** (Usuários e Equipes; o levantamento automático as classificou errado) | 2 | feito em 2026-10-27 |
 | **B · Precisa do backend** (endpoint sem `search`) | 60 | adicionar o parâmetro |
 | **C · Fora do padrão** (sem paginação padrão do front) | 28 | avaliar caso a caso (apêndice) |
 
-## A · Só o front (2)
-- **Usuários** (`/cadastros-base/usuarios`) — `GET /users`: o serviço `listUsers` já repassa `search`; falta expô-lo no filtro e migrar a tela.
-- **Equipes** (`/administrativo/equipes`) — `GET /teams`: o serviço `listTeams` já repassa `search`; falta expô-lo no filtro e migrar a tela.
+## A · Resolvido no front (2)
+- **Usuários** (`/cadastros-base/usuarios`) — `GET /users` e **Equipes** (`/administrativo/equipes`) — `GET /teams`: a varredura as marcou como "sem `search`" porque existe um tipo antigo de mesmo nome (`Admin/user`, `Admin/teams`); as telas usam os tipos `Users`/`Teams`, que já têm `search`, e os endpoints já o aceitam. Foram migradas para a busca inline; **nada a fazer no backend**.
 
 ## B · Precisa do backend (60)
 Ordem sugerida: o que o usuário mais busca (cadastros e documentos com código/descrição) antes de relatórios e telas de operação por data.
