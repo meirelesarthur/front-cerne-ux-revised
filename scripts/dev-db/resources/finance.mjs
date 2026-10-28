@@ -99,7 +99,25 @@ function treeRoutes({ path, table, kind, mapper }) {
   ];
 }
 
+// Prévia do código da próxima conta (o backend real gera na criação): raiz → próximo inteiro;
+// com pai → código do pai + "." + próximo sequencial entre os filhos. Só para a tela não mostrar erro.
+const planAccountCodePreview = {
+  method: 'get',
+  pattern: /^\/plan-accounts\/code-preview$/,
+  handler: async ({ query: q }) => {
+    const parentId = q.parent_uuid ? idFrom(q.parent_uuid) : null;
+    if (parentId) {
+      const [parent] = await query('select code from plan_accounts where id = $1', [parentId]);
+      const [{ n }] = await query('select count(*)::int as n from plan_accounts where parent_id = $1', [parentId]);
+      return { body: { code: `${parent?.code ?? '1'}.${n + 1}`, class: 2, class_label: 'Analítico' } };
+    }
+    const [{ n }] = await query('select count(*)::int as n from plan_accounts where parent_id is null and (tenant_id = $1 or tenant_id is null)', [TENANT_ID]);
+    return { body: { code: String(n + 1), class: 1, class_label: 'Sintético' } };
+  },
+};
+
 export const financeRoutes = [
+  planAccountCodePreview,
   ...treeRoutes({ path: 'cost-centers', table: 'cost_centers', kind: KIND.costCenter, mapper: toCostCenter }),
   ...treeRoutes({ path: 'plan-accounts', table: 'plan_accounts', kind: KIND.planAccount, mapper: toPlanAccount }),
 ];

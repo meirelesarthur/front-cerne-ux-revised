@@ -112,6 +112,7 @@ export const languagePlanAccounts: ModulePlanAccounts = {
         edit: 'Atualize os dados da conta contábil.',
         createDescendant: 'A nova conta será vinculada como subconta da conta selecionada.',
       },
+      sectionAccount: 'Dados da conta',
       fields: {
         description: 'Descrição',
         condition: 'Condição',

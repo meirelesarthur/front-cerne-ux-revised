@@ -111,6 +111,7 @@ export const languagePlanAccounts: ModulePlanAccounts = {
         edit: 'Update the ledger account data.',
         createDescendant: 'The new account will be linked as a subaccount of the selected account.',
       },
+      sectionAccount: 'Account data',
       fields: {
         description: 'Description',
         condition: 'Condition',

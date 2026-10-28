@@ -97,6 +97,7 @@ export interface ModulePlanAccounts {
     form: {
       title: { create: string; edit: string; createDescendant: string };
       subtitle: { create: string; edit: string; createDescendant: string };
+      sectionAccount: string;
       fields: {
         description: string;
         condition: string;

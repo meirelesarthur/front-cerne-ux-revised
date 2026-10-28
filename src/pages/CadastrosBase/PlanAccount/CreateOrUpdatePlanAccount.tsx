@@ -44,7 +44,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Badge, Box, Flex, Skeleton, SimpleGrid, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Skeleton, SimpleGrid, Text, GridItem } from '@chakra-ui/react';
 import { isAxiosError } from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -55,8 +55,9 @@ import { Form } from '@/components/Form';
 import { Input } from '@/components/Form/Input';
 import { Select } from '@/components/Form/Select';
 import { SelectAsyncPaginate } from '@/components/Form/SelectAsyncPaginate';
+import { FormSection } from '@/components/FormSection';
 import { FormContainer } from '@/components/Layout/FormContainer';
-import { Switch } from '@/components/ui/switch';
+import { ToggleRow } from '@/components/ui/ToggleRow';
 
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -477,6 +478,7 @@ export default function CreateOrUpdatePlanAccount() {
           </Box>
         )}
 
+        <FormSection title={text.form.sectionAccount} divider={false}>
         {/* Linha 1: Condição | Descrição | Ativo */}
         <SimpleGrid columns={columnsForm.default} gap={6}>
           <Controller
@@ -497,7 +499,9 @@ export default function CreateOrUpdatePlanAccount() {
             )}
           />
 
-          <Input
+          <GridItem colSpan={{ base: 1, md: 2 }}>
+
+            <Input
             label={text.form.fields.description}
             placeholder={text.form.placeholders.description}
             helperText={errors.description?.message ? undefined : `${descriptionLength}/150`}
@@ -506,25 +510,15 @@ export default function CreateOrUpdatePlanAccount() {
             isRequired
             loading={isLoading}
             disabled={!canSave}
-          />
+            />
+
+          </GridItem>
 
           <Controller
             name="is_enabled"
             control={control}
             render={({ field }) => (
-              <Flex align="center" justify="space-between" h="full">
-                <Text fontSize="sm" fontWeight="medium">
-                  {text.form.fields.isEnabled}
-                </Text>
-                {/* @ts-ignore - Chakra UI v3 Switch API */}
-                <Switch
-                  checked={!!field.value}
-                  onCheckedChange={(d: any) => field.onChange(d.checked)}
-                  colorPalette="green"
-                  disabled={!canSave || isLoading}
-                  aria-label={text.form.fields.isEnabled}
-                />
-              </Flex>
+              <ToggleRow label={text.form.fields.isEnabled} checked={!!field.value} onChange={field.onChange} disabled={!canSave || isLoading} />
             )}
           />
         </SimpleGrid>
@@ -587,6 +581,8 @@ export default function CreateOrUpdatePlanAccount() {
             )}
           />
         </Box>
+
+        </FormSection>
 
         {/* Categorias Financeiras — árvore tri-state (TASK-PA-16, Opção C do
             ROTEIRO-05), fiel a `CategoryTreeField.tsx` do UX oficial.
