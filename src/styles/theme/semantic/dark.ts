@@ -383,7 +383,7 @@ const styles = {
       color: "bodyColor",
     },
     html: {
-      fontSize: { base: "87.5%", md: "93.75%", lg: "100%" },
+      fontSize: "100%", // DS: raiz fixa em 16px (antes escalonava 14/15/16px por largura)
     },
     ".chakra-button__icon": { fontSize: "2xl" },
     ".chakra-menu__icon-wrapper": { fontSize: "2xl!important" },
