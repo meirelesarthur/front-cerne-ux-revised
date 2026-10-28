@@ -132,6 +132,7 @@ export function StepIdentificacao({
           removeLabel={text.image.removeLabel}
           errorTypeMessage={text.image.errorType}
           errorSizeMessage={text.image.errorSize}
+          editor={text.image.editor}
         />
       </Box>
     </Box>

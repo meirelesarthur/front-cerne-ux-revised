@@ -46,6 +46,7 @@ import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { FiImage, FiUpload } from 'react-icons/fi';
 
 import { Button } from '@/components/Button';
+import { ImageEditorDialog, type ImageEditorStrings } from '@/components/ui/ImageEditorDialog';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -84,6 +85,12 @@ export interface ImageUploadProps {
   errorSizeMessage?: string;
   /** Placeholder quando a imagem atual falha ao carregar (default: `defaltStrings.noPhoto`). */
   noImageLabel?: string;
+  /**
+   * Textos da modal "Editar imagem" (recorte/escala/rotação). Quando informado, clicar na área de
+   * upload ou em "Trocar" abre a modal em vez do seletor de arquivos do sistema; o resultado
+   * (PNG recortado) passa pela mesma validação de tipo/tamanho.
+   */
+  editor?: ImageEditorStrings;
 }
 
 export function ImageUpload({
@@ -105,6 +112,7 @@ export function ImageUpload({
   errorTypeMessage = 'File type not accepted.',
   errorSizeMessage = 'File exceeds the maximum size.',
   noImageLabel,
+  editor,
 }: ImageUploadProps) {
   const { languageGB } = useLanguage();
   const [imageFailed, setImageFailed] = useState(false);
@@ -113,6 +121,7 @@ export function ImageUpload({
   const [clientError, setClientError] = useState<string | undefined>(undefined);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const errorId = useId();
+  const [editorOpen, setEditorOpen] = useState(false);
 
   // Preview do arquivo novo (objectURL) — revogado em cleanup para não
   // vazar memória (mesma disciplina documentada na dropzone do `cerne`).
@@ -164,7 +173,9 @@ export function ImageUpload({
   }
 
   function openPicker() {
-    if (!disabled) inputRef.current?.click();
+    if (disabled) return;
+    if (editor) setEditorOpen(true);
+    else inputRef.current?.click();
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -290,6 +301,20 @@ export function ImageUpload({
             {dragOver ? dropzoneDraggingTitle : dropzoneTitle}
           </Text>
         </Box>
+      )}
+
+      {editor && (
+        <ImageEditorDialog
+          isOpen={editorOpen}
+          onClose={() => setEditorOpen(false)}
+          initialFile={file}
+          accept={accept}
+          strings={editor}
+          onSave={(edited) => {
+            setEditorOpen(false);
+            validateAndSelect(edited);
+          }}
+        />
       )}
 
       {displayError && (

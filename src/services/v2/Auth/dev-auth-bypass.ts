@@ -22,6 +22,19 @@ export const DEV_AUTH_BYPASS =
 const SESSION_KEY = 'dev-auth-bypass-session';
 const DEV_FARM_UUID = '00000000-0000-4000-8000-000000000001';
 
+// Papéis do usuário de dev: `Administrador` por padrão. Para testar fluxos de outro papel (ex.:
+// `Gestor_Plataf` libera "criar centro de custo de topo" mas esconde "Nova fazenda"), rode no console
+// `localStorage.setItem('dev-auth-roles', 'Administrador,Gestor_Plataf')` e recarregue.
+function devRoles(): string[] {
+  try {
+    const raw = localStorage.getItem('dev-auth-roles');
+    if (raw) return raw.split(',').map((r) => r.trim()).filter(Boolean);
+  } catch {
+    // sem localStorage: usa o padrão
+  }
+  return ['Administrador'];
+}
+
 const devUser = {
   uuid: '00000000-0000-4000-8000-0000000000aa',
   user_id: 0,
@@ -31,8 +44,7 @@ const devUser = {
   photo: null,
   photo_url: null,
   lang: 'pt-BR',
-  // Gestor_Plataf: libera o "criar centro de custo de topo" (DEC-005) no ambiente de dev.
-  roles: ['Administrador', 'Gestor_Plataf'],
+  roles: devRoles(),
   permissions: permissionsCatalog as string[],
   farm_scoped_permissions: [] as string[],
 };

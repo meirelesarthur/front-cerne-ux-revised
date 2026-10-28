@@ -1,3 +1,4 @@
+import type { ImageEditorStrings } from '@/components/ui/ImageEditorDialog';
 // src/@types/language/module-farms/index.ts
 // Interface de tradução do módulo administrativo de FAZENDAS (Farm —
 // Cadastros Base, execução 024). Espelha a convenção de module-cost-centers/
@@ -167,6 +168,7 @@ export interface ModuleFarms {
         removeLabel: string;
         errorType: string;
         errorSize: string;
+        editor: ImageEditorStrings;
       };
       centersField: {
         selectAllLabel: string;

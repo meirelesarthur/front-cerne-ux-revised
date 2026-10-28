@@ -30,3 +30,9 @@ Comparado com `cerne/src/pages/cadastros/fazendas` (6 etapas iguais: Identifica�
 - `Select` (Chakra) e `SelectAsyncPaginate`/react-select (`styles/components/SelectComponent.ts`): altura 38px, raio 8, contorno 1.5px `#e5e7eb`, fundo `#fafafa`, texto 16px, foco verde com glow.
 - Menu: fundo do cartão, raio 8, contorno neutro; opção selecionada em verde suave (texto verde), hover neutro (antes: preenchimento verde/azul escuro); itens 14px com padding 9×14.
 - Verificado no navegador: gatilho do `Select` (Status no filtro) e controle/menu do react-select. **Não verificado:** linhas de opção do react-select (a API local não tem catálogo de unidades de medida → "Sem opções") e o seletor de "Linhas por página" (`SelectPagination`, token próprio, ficou como está).
+
+## Logo da fazenda — modal "Editar imagem" (2026-10-28)
+- Novo kit `components/ui/ImageEditorDialog.tsx`: prévia quadrada do recorte, **escala** (1×–3×), **girar** à esquerda/direita, **Procurar** (outro arquivo), Cancelar/Salvar. Tudo em canvas (sem dependência); ao salvar entrega um PNG 512×512 recortado.
+- `ImageUpload` ganhou a prop opcional `editor` (textos da modal): com ela, clicar na área de upload ou em "Trocar imagem" abre a modal; o PNG passa pela mesma validação de tipo/tamanho (2 MB). Sem a prop nada muda para os outros módulos.
+- Usado na etapa Identificação (`StepIdentificacao`); textos em `image.editor` (PtBr/EnUs/EsEs).
+- Botão "Novo(a)" da lista: some só para o papel `Gestor_Plataf` (regra existente). O usuário de dev voltou a ser `Administrador` (ver README, `dev-auth-roles`).

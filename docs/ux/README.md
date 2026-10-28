@@ -112,7 +112,7 @@ Mapa de divergências e plano em ondas: [alinhamento-ds.md](alinhamento-ds.md).
 - Validado pela UI: criar, editar e erro 422 em Bancos; criar e editar em Plano de Contas; criar em Embalagens (editar/excluir validados na API).
 
 ### Fechamento das pendências (2026-10-28)
-- **Dev bypass:** o usuário de dev agora tem o papel `Gestor_Plataf` (`src/services/v2/Auth/dev-auth-bypass.ts`), liberando "criar centro de custo de topo" na tela.
+- **Dev bypass:** o usuário de dev é `Administrador`; para testar como `Gestor_Plataf` (libera "criar centro de custo de topo", mas esconde "Nova fazenda"): `localStorage.setItem("dev-auth-roles","Administrador,Gestor_Plataf")` e recarregar (`src/services/v2/Auth/dev-auth-bypass.ts`).
 - **Perfil:** não existe tela equivalente no DS; o interruptor "Visível ao usuário" passou a usar `ToggleRow` (com a dica em tooltip). **Embalagens:** já iguala o DS (Descrição, Quantidade, Unidade) — sem divergência.
 - **Safras (422):** as chaves do 422 da API de dev (`description`, `start_date`, `end_date`) batem com os campos do form e o mapeamento por `setError` é o mesmo validado ao vivo em Bancos.
 - **Tema escuro (auditoria programática de contraste em listas e formulários de Cadastros Base):** corrigidas as reticências da paginação (`semanticNeutral.500`) e o foco dos campos — novo token `focusGlow` (claro 12%, escuro 35%) e contorno verde no foco nas variantes `outline`/`outline2` do input (antes a variante sobrescrevia o `_focus`). Selects usam o mesmo token.
