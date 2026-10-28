@@ -35,7 +35,7 @@ API de dev (somente leitura) serve o contrato do front. **Nada disso vai para o 
 | Front | `.env`: `VITE_API_PHP_BACK_URL=http://localhost:8080/api/v1`, `VITE_DEV_AUTH_BYPASS=true`, `VITE_DEV_MOCKS=false` | login de dev continua local (qualquer e-mail/senha) |
 
 - Escopo: um contratante (`DEV_TENANT_ID`, default 5 — o de mais fazendas). Trocar: `DEV_TENANT_ID=519 node scripts/dev-db/server.mjs`.
-- Recursos servidos hoje: fazendas, pessoas, bancos, estados, cidades, centros de custo, plano de contas, produtos, armazéns, embalagens — **somente leitura** — e, **com escrita em memória** (salvar/editar/excluir funcionam até reiniciar a API): importação OFX/conciliação, **safras (com semanas)**, **usuários** e **perfis**. O restante cai no fallback (lista vazia).
+- Recursos servidos hoje: fazendas, pessoas, bancos, estados, cidades, centros de custo, plano de contas, produtos, armazéns, embalagens — **somente leitura** (cidades, estados, centros de custo, produtos, armazéns, fazendas, pessoas) — e, **com escrita em memória** (salvar/editar/excluir funcionam até reiniciar a API): importação OFX/conciliação, **safras (com semanas)**, **usuários**, **perfis**, **bancos**, **plano de contas** e **embalagens**. O restante cai no fallback (lista vazia).
 - O dump é o schema **legado** (sem UUID): a API gera UUIDs determinísticos e reversíveis (`scripts/dev-db/lib/http.mjs`). Escritas não vão ao banco (fica intacto); os recursos com estado em memória voltam ao inicial ao reiniciar a API (`node scripts/dev-db/server.mjs`).
 - Novo recurso: crie `scripts/dev-db/resources/<recurso>.mjs` (lista de rotas) e registre em `server.mjs`; o contrato sai do `*-service.ts` e dos tipos em `src/@types/v2/`.
 - Mocks axios (`VITE_DEV_MOCKS=true`) continuam existindo para trabalhar **sem** Postgres.
@@ -101,3 +101,11 @@ Mapa de divergências e plano em ondas: [alinhamento-ds.md](alinhamento-ds.md).
 - **Safras:** 3 safras com semanas (`GET/POST/PUT/DELETE /harvests`, `/harvests/active`), busca `search`, filtro `is_enabled`, validação 422 (descrição, datas, duplicidade) e upsert de semanas por `number_week`.
 - **Usuários e perfis:** 4 usuários e 4 perfis (`GET/POST/DELETE /users`, atualização por `POST /users/:uuid` com `_method=PUT`, `PATCH /users/:uuid/status`, `/users/boss-options`, `/roles`); aceita `multipart/form-data` (o servidor ganhou um leitor simples de multipart; arquivos viram só o nome). Regras: e-mail único e obrigatório, perfil obrigatório, senha obrigatória na criação. Os usuários de exemplo já vêm com fazendas (a tela exige ao menos uma).
 - Respostas de erro (404/422) usam o envelope do backend (`success:false`, `errors` por campo).
+
+### Bancos, Plano de Contas e Embalagens com escrita simulada (2026-10-28)
+`scripts/dev-db/resources/writes.mjs` — **camada em memória sobre o dump** (o dump segue intacto; criações, edições e exclusões valem até reiniciar a API; ids novos partem de 900001). As rotas são registradas antes das originais e envolvem as leituras (lista/detalhe/opções refletem a camada):
+- **Bancos:** `POST/PUT/DELETE /banks`; 422 para código/nome obrigatórios e código duplicado (a tela mostra o erro no campo).
+- **Plano de Contas:** `POST/PUT/DELETE /plan-accounts`; código gerado como na prévia (`/plan-accounts/code-preview` já considera as contas criadas); edição não muda conta-pai/código; 422 para descrição/condição e conta-pai não sintética; exclusão bloqueada se houver contas filhas.
+- **Embalagens:** o front usa `/product-packages` (a API só tinha `/packages`, então a lista vinha vazia): agora lista/detalhe/opções + `POST/PUT/DELETE` e `/measurements/options` para o seletor de unidade; 422 por campo.
+- **Cidades:** sem escrita — o módulo é só consulta no front (não há serviço de escrita nem tela de formulário).
+- Validado pela UI: criar, editar e erro 422 em Bancos; criar e editar em Plano de Contas; criar em Embalagens (editar/excluir validados na API).

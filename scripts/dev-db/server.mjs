@@ -26,11 +26,14 @@ import { financeRoutes } from './resources/finance.mjs';
 import { productRoutes } from './resources/products.mjs';
 import { ofxRoutes } from './resources/ofx.mjs';
 import { harvestUserRoutes } from './resources/harvests-users.mjs';
+import { writeRoutes } from './resources/writes.mjs';
 
 const PORT = Number(process.env.DEV_API_PORT ?? 8080);
 const ALLOWED_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
 const routes = [
+  // escrita simulada primeiro: envolve as leituras do dump (Bancos, Plano de Contas, Embalagens)
+  ...writeRoutes,
   ...farmRoutes,
   ...peopleRoutes,
   ...catalogRoutes,
