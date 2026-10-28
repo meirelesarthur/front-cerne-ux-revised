@@ -117,7 +117,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Box, Separator, SimpleGrid, Text } from '@chakra-ui/react';
+import { Box, SimpleGrid, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { Controller, useForm } from 'react-hook-form';
@@ -131,8 +131,9 @@ import { ImageUpload } from '@/components/Form/ImageUpload';
 import { Input } from '@/components/Form/Input';
 import { MaskedInput } from '@/components/Form/MaskedInput';
 import { SelectAsyncPaginate } from '@/components/Form/SelectAsyncPaginate';
+import { FormSection } from '@/components/FormSection';
 import { FormContainer } from '@/components/Layout/FormContainer';
-import { Switch } from '@/components/ui/switch';
+import { ToggleRow } from '@/components/ui/ToggleRow';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -520,9 +521,7 @@ export default function CreateOrUpdateUsuario() {
         {/* Bloco "Pessoa" — campos inline, CREATE e EDIT iguais. Ordem do
             legado: nif · name · email (item A, TASK-FE-912 — ÚNICO campo,
             alimenta login E contato) · phone · city · address. */}
-        <Text fontSize="sm" fontWeight="semibold" color="fg.default" mb={3}>
-          {text.form.sectionPerson}
-        </Text>
+        <FormSection title={text.form.sectionPerson} divider={false}>
         <SimpleGrid columns={columnsForm.default} gap={6} mb={6}>
           <Controller
             name="nif"
@@ -614,15 +613,13 @@ export default function CreateOrUpdateUsuario() {
           />
         </SimpleGrid>
 
-        <Separator my={6} borderColor="border2" />
+        </FormSection>
 
         {/* Bloco "Conta" — o Input de e-mail de login SAIU daqui (item A,
             TASK-FE-912): o único `email` da tela agora vive no bloco Pessoa
             acima. Este bloco fica só com senha/confirmação (create) ou o
             aviso (edit). */}
-        <Text fontSize="sm" fontWeight="semibold" color="fg.default" mb={3}>
-          {text.form.sectionAccount}
-        </Text>
+        <FormSection title={text.form.sectionAccount} divider={false}>
 
         {/* Checklist item 3 — bloco de senha OMITIDO (não desabilitado) no
             edit, mirror EXATO de `StepUsuario.tsx`. */}
@@ -658,19 +655,7 @@ export default function CreateOrUpdateUsuario() {
             name="is_active"
             control={control}
             render={({ field }) => (
-              <Box display="flex" alignItems="center" justifyContent="space-between" h="full">
-                <Text fontSize="sm" fontWeight="medium">
-                  {text.form.fields.isActive}
-                </Text>
-                {/* @ts-ignore - Chakra UI v3 Switch API */}
-                <Switch
-                  checked={!!field.value}
-                  onCheckedChange={(d: any) => field.onChange(d.checked)}
-                  colorPalette="green"
-                  disabled={!canSave || isLoading}
-                  aria-label={text.form.fields.isActive}
-                />
-              </Box>
+              <ToggleRow label={text.form.fields.isActive} checked={!!field.value} onChange={field.onChange} disabled={!canSave || isLoading} />
             )}
           />
 
@@ -678,19 +663,7 @@ export default function CreateOrUpdateUsuario() {
             name="is_purchasing_assistant"
             control={control}
             render={({ field }) => (
-              <Box display="flex" alignItems="center" justifyContent="space-between" h="full">
-                <Text fontSize="sm" fontWeight="medium">
-                  {text.form.fields.isPurchasingAssistant}
-                </Text>
-                {/* @ts-ignore - Chakra UI v3 Switch API */}
-                <Switch
-                  checked={!!field.value}
-                  onCheckedChange={(d: any) => field.onChange(d.checked)}
-                  colorPalette="green"
-                  disabled={!canSave || isLoading}
-                  aria-label={text.form.fields.isPurchasingAssistant}
-                />
-              </Box>
+              <ToggleRow label={text.form.fields.isPurchasingAssistant} checked={!!field.value} onChange={field.onChange} disabled={!canSave || isLoading} />
             )}
           />
         </SimpleGrid>
@@ -717,12 +690,10 @@ export default function CreateOrUpdateUsuario() {
           />
         </Box>
 
-        <Separator my={6} borderColor="border2" />
+        </FormSection>
 
         {/* Bloco "Vínculos" — mirror LITERAL de `StepUsuario.tsx`. */}
-        <Text fontSize="sm" fontWeight="semibold" color="fg.default" mb={3}>
-          {text.form.sectionLinks}
-        </Text>
+        <FormSection title={text.form.sectionLinks} subtitle={text.form.sectionLinksHint} divider={false}>
 
         <Box mb={6}>
           <Controller
@@ -799,6 +770,7 @@ export default function CreateOrUpdateUsuario() {
             )}
           />
         </Box>
+        </FormSection>
       </Form>
     </FormContainer>
   );

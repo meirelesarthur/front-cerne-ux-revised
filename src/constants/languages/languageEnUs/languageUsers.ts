@@ -98,9 +98,10 @@ export const languageUsers: ModuleUsers = {
         create: 'Register the person and the access account.',
         edit: 'Update the person and the access account data.',
       },
-      sectionPerson: 'Person',
+      sectionPerson: 'Identification',
       sectionAccount: 'Account',
-      sectionLinks: 'Links',
+      sectionLinks: 'Access',
+      sectionLinksHint: 'Roles and scopes granted to the user.',
       fields: {
         nif: 'Tax ID',
         name: 'Name',
@@ -183,9 +184,9 @@ export const languageUsers: ModuleUsers = {
     },
     viewDialog: {
       title: 'View user',
-      sectionPerson: 'Person',
+      sectionPerson: 'Identification',
       sectionAccount: 'Account',
-      sectionLinks: 'Links',
+      sectionLinks: 'Access',
       fields: {
         nif: 'Tax ID',
         name: 'Name',

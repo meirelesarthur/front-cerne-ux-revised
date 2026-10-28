@@ -101,6 +101,7 @@ export interface ModuleUsers {
       sectionPerson: string;
       sectionAccount: string;
       sectionLinks: string;
+      sectionLinksHint: string;
       /** TASK-FE-900 — reversão E2E: bloco "Pessoa" volta a ser inline
        *  (nif/name/email/phone/city/address), CREATE e EDIT com os MESMOS
        *  campos (nunca mais um picker de Pessoa).

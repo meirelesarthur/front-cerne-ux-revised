@@ -96,9 +96,10 @@ export const languageUsers: ModuleUsers = {
         create: 'Cadastre a pessoa e a conta de acesso ao sistema.',
         edit: 'Atualize os dados da pessoa e da conta de acesso.',
       },
-      sectionPerson: 'Pessoa',
+      sectionPerson: 'Identificação',
       sectionAccount: 'Conta',
-      sectionLinks: 'Vínculos',
+      sectionLinks: 'Acesso',
+      sectionLinksHint: 'Perfis e escopos concedidos ao usuário.',
       fields: {
         nif: 'CPF/CNPJ',
         name: 'Nome',
@@ -181,9 +182,9 @@ export const languageUsers: ModuleUsers = {
     },
     viewDialog: {
       title: 'Visualizar usuário',
-      sectionPerson: 'Pessoa',
+      sectionPerson: 'Identificação',
       sectionAccount: 'Conta',
-      sectionLinks: 'Vínculos',
+      sectionLinks: 'Acesso',
       fields: {
         nif: 'CPF/CNPJ',
         name: 'Nome',

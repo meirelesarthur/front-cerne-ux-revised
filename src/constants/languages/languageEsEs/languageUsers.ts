@@ -97,9 +97,10 @@ export const languageUsers: ModuleUsers = {
         create: 'Registre la persona y la cuenta de acceso.',
         edit: 'Actualice los datos de la persona y de la cuenta de acceso.',
       },
-      sectionPerson: 'Persona',
+      sectionPerson: 'Identificación',
       sectionAccount: 'Cuenta',
-      sectionLinks: 'Vínculos',
+      sectionLinks: 'Acceso',
+      sectionLinksHint: 'Perfiles y alcances concedidos al usuario.',
       fields: {
         nif: 'CPF/CNPJ',
         name: 'Nombre',
@@ -184,9 +185,9 @@ export const languageUsers: ModuleUsers = {
     },
     viewDialog: {
       title: 'Visualizar usuario',
-      sectionPerson: 'Persona',
+      sectionPerson: 'Identificación',
       sectionAccount: 'Cuenta',
-      sectionLinks: 'Vínculos',
+      sectionLinks: 'Acceso',
       fields: {
         nif: 'CPF/CNPJ',
         name: 'Nombre',
