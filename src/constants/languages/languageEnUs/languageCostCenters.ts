@@ -64,6 +64,7 @@ export const languageCostCenters: ModuleCostCenters = {
         edit: 'Update the cost center data.',
         createDescendant: 'Register an analytical cost center linked to the selected parent.',
       },
+      sectionData: 'Cost center data',
       fields: {
         description: 'Description',
         condition: 'Condition',

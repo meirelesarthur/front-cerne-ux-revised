@@ -65,6 +65,7 @@ export const languageCostCenters: ModuleCostCenters = {
         createDescendant:
           'Cadastre um centro de custo analítico vinculado ao antecessor selecionado.',
       },
+      sectionData: 'Dados do centro de custo',
       fields: {
         description: 'Descrição',
         condition: 'Condição',

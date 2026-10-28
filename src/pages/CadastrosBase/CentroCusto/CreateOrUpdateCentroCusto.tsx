@@ -83,6 +83,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/Button';
 import { ButtonSaveAndNext } from '@/components/ButtonSaveAndNext';
 import { Form } from '@/components/Form';
+import { FormSection } from '@/components/FormSection';
 import { Input } from '@/components/Form/Input';
 import { NumberInput } from '@/components/Form/NumberInput';
 import { Select } from '@/components/Form/Select';
@@ -599,6 +600,7 @@ export default function CreateOrUpdateCentroCusto() {
           </Box>
         )}
 
+        <FormSection title={text.form.sectionData} divider={false}>
         {/* Linha 1: Condição | Descrição | Ativo | Apontamento — TASK-FE-CC-08
             sobe a densidade para o preset `columnsForm.fourColumns` (mesmos
             breakpoints de `columnsForm.default` hoje — troca feita pelo NOME
@@ -711,32 +713,6 @@ export default function CreateOrUpdateCentroCusto() {
           />
         </Box>
 
-        {/* Seção condicional de Rateio (TASK-FE-004) — só quando o Tipo
-            acima for 'apportioned'. Sem seção correspondente na Referência UX
-            (mock não modela rateio nenhum — ver cabeçalho do arquivo);
-            adaptação reproduz a linguagem visual já usada NESTE form para
-            blocos agrupados (Box com borda, igual à caixa de Código/Classe e
-            à seção de Categorias Financeiras abaixo). */}
-        {watchedType === 'apportioned' && (
-          <Box mt={6}>
-            <ApportionmentsSection
-              fields={apportionmentFields}
-              control={control}
-              errors={errors}
-              onAdd={() => appendApportionment({ cost_center_uuid: '', percentage: 0 })}
-              onRemove={removeApportionment}
-              onPickOption={handlePickApportionmentOption}
-              optionsCache={apportionmentOptionsCache}
-              listCostCentersForRow={listCostCentersForApportionment}
-              canSave={canSave}
-              isLoading={isLoading}
-              totalPercentage={totalApportionmentPercentage}
-              isSumComplete={isApportionmentSumComplete}
-              text={text}
-            />
-          </Box>
-        )}
-
         {/* Linha 3: Antecessor (full width) */}
         <Box mt={6}>
           <Controller
@@ -770,6 +746,34 @@ export default function CreateOrUpdateCentroCusto() {
             )}
           />
         </Box>
+
+        </FormSection>
+
+        {/* Seção condicional de Rateio (TASK-FE-004) — só quando o Tipo
+            acima for 'apportioned'. Sem seção correspondente na Referência UX
+            (mock não modela rateio nenhum — ver cabeçalho do arquivo);
+            adaptação reproduz a linguagem visual já usada NESTE form para
+            blocos agrupados (Box com borda, igual à caixa de Código/Classe e
+            à seção de Categorias Financeiras abaixo). */}
+        {watchedType === 'apportioned' && (
+          <Box mt={6}>
+            <ApportionmentsSection
+              fields={apportionmentFields}
+              control={control}
+              errors={errors}
+              onAdd={() => appendApportionment({ cost_center_uuid: '', percentage: 0 })}
+              onRemove={removeApportionment}
+              onPickOption={handlePickApportionmentOption}
+              optionsCache={apportionmentOptionsCache}
+              listCostCentersForRow={listCostCentersForApportionment}
+              canSave={canSave}
+              isLoading={isLoading}
+              totalPercentage={totalApportionmentPercentage}
+              isSumComplete={isApportionmentSumComplete}
+              text={text}
+            />
+          </Box>
+        )}
 
         {/* Categorias Financeiras vinculadas — árvore tri-state (TASK-FE-316,
             execução 023, substitui o `CheckboxListField` chapado da

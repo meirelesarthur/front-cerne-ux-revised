@@ -70,6 +70,7 @@ export interface ModuleCostCenters {
     form: {
       title: { create: string; edit: string; createDescendant: string };
       subtitle: { create: string; edit: string; createDescendant: string };
+      sectionData: string;
       fields: {
         description: string;
         condition: string;

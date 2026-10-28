@@ -264,6 +264,142 @@ const planRoutes = [
   },
 ];
 
+// ── Centros de custo ──────────────────────────────────────────────────────────
+const costs = makeStore(KIND.costCenter);
+const CONDITION_COST = { 1: 'Despesa', 2: 'Receita', 3: 'Ambos' };
+const TYPE_COST = { productive: 'Produtivo', apportioned: 'Rateado' };
+
+const costList = origin(financeRoutes, 'get', '^\\/cost-centers$');
+const costDetail = origin(financeRoutes, 'get', '^\\/cost-centers\\/([\\w-]+)$');
+const costOptions = origin(financeRoutes, 'get', '^\\/cost-centers\\/options(?:\\/global)?$');
+
+async function costParentOf(uuid) {
+  if (!uuid) return null;
+  const id = idFrom(uuid);
+  if (costs.created.has(id)) {
+    const c = withPatches(costs, costs.created.get(id));
+    return { id, code: c.code, description: c.description, class: c.class };
+  }
+  const [r] = await query('select id, code, description, class from cost_centers where id = $1', [id]);
+  return r ? { id: r.id, code: r.code, description: r.description, class: Number(r.class) } : null;
+}
+
+async function nextCostCode(parent) {
+  if (parent) {
+    const [{ n }] = await query('select count(*)::int as n from cost_centers where parent_id = $1', [parent.id]);
+    const added = [...costs.created.values()].filter((c) => c.parent?.uuid === uuidFor(KIND.costCenter, parent.id)).length;
+    return `${parent.code}.${n + added + 1}`;
+  }
+  const [{ n }] = await query('select count(*)::int as n from cost_centers where parent_id is null and (tenant_id = $1 or tenant_id is null)', [TENANT_ID]);
+  return String(n + [...costs.created.values()].filter((c) => !c.parent).length + 1);
+}
+
+async function validateCost(b, isCreate) {
+  const errors = {};
+  const d = String(b.description ?? '').trim();
+  if (!d) errors.description = ['A descrição é obrigatória.'];
+  if (d.length > 40) errors.description = ['A descrição deve ter no máximo 40 caracteres.'];
+  if (![1, 2, 3].includes(Number(b.condition))) errors.condition = ['Selecione a condição.'];
+  if (!['productive', 'apportioned'].includes(b.type)) errors.type = ['Selecione o tipo.'];
+  if (b.type === 'apportioned') {
+    const rows = Array.isArray(b.apportionments) ? b.apportionments : [];
+    if (!rows.length) errors.apportionments = ['Informe ao menos um centro de rateio.'];
+    else if (rows.some((r) => !r.cost_center_uuid || !(Number(r.percentage) >= 0))) errors.apportionments = ['Preencha o centro e o percentual de cada linha.'];
+  }
+  if (isCreate && b.parent_uuid) {
+    const p = await costParentOf(b.parent_uuid);
+    if (!p) errors.parent_uuid = ['Antecessor não encontrado.'];
+    else if (p.class !== 1) errors.parent_uuid = ['O antecessor deve ser sintético.'];
+  }
+  return Object.keys(errors).length ? errors : null;
+}
+
+async function apportionmentRows(rows) {
+  const out = [];
+  for (const r of rows ?? []) {
+    const p = await costParentOf(r.cost_center_uuid);
+    out.push({ uuid: r.cost_center_uuid, code: p?.code ?? '', description: p?.description ?? '', percentage: Number(r.percentage) });
+  }
+  return out;
+}
+
+const costFields = async (b) => ({
+  description: String(b.description).trim(),
+  condition: Number(b.condition),
+  condition_label: CONDITION_COST[Number(b.condition)],
+  type: b.type,
+  type_label: TYPE_COST[b.type],
+  is_enabled: b.is_enabled !== false,
+  allow_pointing: !!b.allow_pointing,
+  apportionments: b.type === 'apportioned' ? await apportionmentRows(b.apportionments) : [],
+  categories: (b.category_uuids ?? []).map((uuid) => ({ uuid })),
+  updated_at: NOW(),
+});
+
+const costCreatedMatches = (c, t) => contains(c.description, t) || contains(c.code, t);
+
+const costRoutes = [
+  { method: 'get', pattern: /^\/cost-centers$/, handler: wrapList(costList, costs, costCreatedMatches) },
+  { method: 'get', pattern: /^\/cost-centers\/options(?:\/global)?$/, handler: wrapList(costOptions, costs, costCreatedMatches) },
+  { method: 'get', pattern: /^\/cost-centers\/([\w-]+)$/, handler: wrapDetail(costDetail, costs) },
+  {
+    method: 'post',
+    pattern: /^\/cost-centers$/,
+    handler: async ({ body }) => {
+      const errors = await validateCost(body, true);
+      if (errors) return unprocessable(errors);
+      const parent = await costParentOf(body.parent_uuid);
+      const id = costs.nextId();
+      const cls = parent ? 2 : 1;
+      const item = {
+        uuid: uuidFor(KIND.costCenter, id),
+        code: await nextCostCode(parent),
+        ...(await costFields(body)),
+        class: cls,
+        class_label: CLASS_LABEL[cls],
+        can_edit: true,
+        can_delete: true,
+        can_create_descendant: cls === 1,
+        parent: parent ? { uuid: uuidFor(KIND.costCenter, parent.id), code: parent.code, description: parent.description, is_root: false } : null,
+        created_at: NOW(),
+      };
+      costs.created.set(id, item);
+      return { status: 201, body: item };
+    },
+  },
+  {
+    method: 'put',
+    pattern: /^\/cost-centers\/([\w-]+)$/,
+    handler: async ({ match, body }) => {
+      const id = idFrom(match[1]);
+      if (costs.deleted.has(id)) return notFound();
+      const errors = await validateCost(body, false);
+      if (errors) return unprocessable(errors);
+      const patch = await costFields(body);
+      if (costs.created.has(id)) costs.created.set(id, { ...costs.created.get(id), ...patch });
+      else {
+        const rows = await query('select id from cost_centers where id = $1', [id]);
+        if (!rows[0]) return notFound();
+        costs.patches.set(id, { ...(costs.patches.get(id) ?? {}), ...patch });
+      }
+      return wrapDetail(costDetail, costs)({ match });
+    },
+  },
+  {
+    method: 'delete',
+    pattern: /^\/cost-centers\/([\w-]+)$/,
+    handler: async ({ match }) => {
+      const id = idFrom(match[1]);
+      const [{ n }] = await query('select count(*)::int as n from cost_centers where parent_id = $1', [id]);
+      const kids = [...costs.created.values()].filter((c) => c.parent?.uuid === match[1]).length;
+      if (n + kids > 0) return unprocessable({ uuid: ['Não é possível excluir um centro que possui centros vinculados.'] });
+      if (costs.created.has(id)) costs.created.delete(id);
+      else costs.deleted.add(id);
+      return { status: 204 };
+    },
+  },
+];
+
 // ── Embalagens (+ unidades de medida para o seletor) ───────────────────────────
 const packs = makeStore(KIND.package);
 
@@ -386,4 +522,4 @@ const packRoutes = [
   },
 ];
 
-export const writeRoutes = [...bankRoutes, ...planRoutes, ...packRoutes];
+export const writeRoutes = [...bankRoutes, ...planRoutes, ...costRoutes, ...packRoutes];
