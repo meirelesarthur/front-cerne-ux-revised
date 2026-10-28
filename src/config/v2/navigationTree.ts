@@ -159,75 +159,62 @@ export const menuModules: NavModule[] = [
             icon: 'building',
           },
           { id: 'cad-est-saf', label: 'Safras', path: '/cadastros-base/safras', icon: 'calendar' },
-          // TASK-083: "Produtos" reagrupado em SUBMENU recolhível (rejeição AD
-          // F-173 — "Grupos não encontrada no menu"). As 5 rotas/permissões
-          // dos filhos são inalteradas; só a apresentação no menu muda.
-          // Esteira feature/produtos-submenu-reorg (Variante B, decisão do
-          // dono): Embalagens/Endereçamentos/Armazéns/Estoque Inicial deixam
-          // de ser itens DIRETOS de "Estrutura" e passam a ser children deste
-          // nó, antes da taxonomia (Grupos/Categorias/Classes/Un.Medida), que
-          // permanece depois para não reabrir o gap F-173.
+          // "Produtos" deixou de ser submenu recolhível (pedido do dono): Produtos, Embalagens,
+          // Endereçamentos, Armazéns, Saldo Inicial e a taxonomia (Grupos/Categorias/Classes/Un. de
+          // Medida) são itens diretos de "Estrutura". Rotas e permissões inalteradas.
           {
-            id: 'cad-est-pro',
+            id: 'cad-est-pro-lista',
             label: 'Produtos',
             path: '/cadastros-base/produtos',
             icon: 'package-alt',
-            children: [
-              {
-                id: 'cad-est-pro-lista',
-                label: 'Produtos',
-                path: '/cadastros-base/produtos',
-                icon: 'package-alt',
-              },
-              {
-                id: 'cad-est-emb',
-                label: 'Embalagens',
-                path: '/cadastros-base/embalagens',
-                icon: 'package',
-              },
-              {
-                id: 'cad-est-end',
-                label: 'Endereçamentos',
-                path: '/cadastros-base/enderecos',
-                icon: 'location',
-              },
-              {
-                id: 'cad-est-arm',
-                label: 'Armazéns',
-                path: '/cadastros-base/armazens',
-                icon: 'warehouse',
-              },
-              {
-                id: 'cad-est-sal-ini',
-                label: 'Saldo Inicial',
-                path: '/cadastros-base/estoques-iniciais',
-                icon: 'wallet',
-              },
-              {
-                id: 'cad-est-pro-gru',
-                label: 'Grupos',
-                path: '/cadastros-base/produtos/grupos',
-                icon: 'stock',
-              },
-              {
-                id: 'cad-est-pro-cat',
-                label: 'Categorias',
-                path: '/cadastros-base/produtos/categorias',
-                icon: 'tag',
-              },
-              {
-                id: 'cad-est-pro-cla',
-                label: 'Classes',
-                path: '/cadastros-base/produtos/classes',
-                icon: 'layers',
-              },
-              {
-                id: 'cad-est-med',
-                label: 'Un. de Medida',
-                path: '/cadastros-base/unidade-medida',
-                icon: 'ruler',
-              },
-            ],
+          },
+          {
+            id: 'cad-est-emb',
+            label: 'Embalagens',
+            path: '/cadastros-base/embalagens',
+            icon: 'package',
+          },
+          {
+            id: 'cad-est-end',
+            label: 'Endereçamentos',
+            path: '/cadastros-base/enderecos',
+            icon: 'location',
+          },
+          {
+            id: 'cad-est-arm',
+            label: 'Armazéns',
+            path: '/cadastros-base/armazens',
+            icon: 'warehouse',
+          },
+          {
+            id: 'cad-est-sal-ini',
+            label: 'Saldo Inicial',
+            path: '/cadastros-base/estoques-iniciais',
+            icon: 'wallet',
+          },
+          {
+            id: 'cad-est-pro-gru',
+            label: 'Grupos',
+            path: '/cadastros-base/produtos/grupos',
+            icon: 'stock',
+          },
+          {
+            id: 'cad-est-pro-cat',
+            label: 'Categorias',
+            path: '/cadastros-base/produtos/categorias',
+            icon: 'tag',
+          },
+          {
+            id: 'cad-est-pro-cla',
+            label: 'Classes',
+            path: '/cadastros-base/produtos/classes',
+            icon: 'layers',
+          },
+          {
+            id: 'cad-est-med',
+            label: 'Un. de Medida',
+            path: '/cadastros-base/unidade-medida',
+            icon: 'ruler',
           },
           // TASK-AP-FE-09: item novo "Rateios / Categorias" (Apportionment) —
           // posicionamento confirmado por 2 fontes independentes convergentes
