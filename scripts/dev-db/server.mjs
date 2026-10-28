@@ -10,7 +10,8 @@
 //   reversível (`uuidFor(kind, id)` / `idFrom(uuid)`), só para o front funcionar.
 // - Escopo: um contratante (`DEV_TENANT_ID`, default 5). Rotas sem recurso
 //   registrado devolvem lista vazia (GET) / sucesso genérico (escrita), igual aos
-//   mocks. Escritas NÃO persistem (o banco fica intacto).
+//   mocks. Escritas NÃO persistem no banco (fica intacto); só os recursos COM ESTADO em memória
+//   (OFX, Safras, Usuários) aceitam salvar/editar/excluir até a API reiniciar.
 // - Dados reais vivem só no Postgres local; nada daqui é commitado.
 // -----------------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ import { catalogRoutes } from './resources/catalog.mjs';
 import { financeRoutes } from './resources/finance.mjs';
 import { productRoutes } from './resources/products.mjs';
 import { ofxRoutes } from './resources/ofx.mjs';
+import { harvestUserRoutes } from './resources/harvests-users.mjs';
 
 const PORT = Number(process.env.DEV_API_PORT ?? 8080);
 const ALLOWED_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
@@ -35,6 +37,7 @@ const routes = [
   ...financeRoutes,
   ...productRoutes,
   ...ofxRoutes,
+  ...harvestUserRoutes,
 ];
 
 function cors(req, res) {
@@ -48,11 +51,41 @@ function cors(req, res) {
   }
 }
 
+function parseMultipart(buf, boundary) {
+  const fields = {};
+  const sep = Buffer.from('--' + boundary);
+  let pos = buf.indexOf(sep);
+  while (pos !== -1) {
+    const next = buf.indexOf(sep, pos + sep.length);
+    if (next === -1) break;
+    const part = buf.subarray(pos + sep.length + 2, next - 2); // tira CRLF antes/depois
+    const split = part.indexOf('\r\n\r\n');
+    if (split !== -1) {
+      const head = part.subarray(0, split).toString('utf8');
+      const name = head.match(/name="([^"]*)"/)?.[1];
+      const isFile = /filename="/.test(head);
+      if (name) {
+        const value = isFile ? '[arquivo]' : part.subarray(split + 4).toString('utf8');
+        if (name in fields) fields[name] = [].concat(fields[name], value);
+        else fields[name] = value;
+      }
+    }
+    pos = next;
+  }
+  return fields;
+}
+
 async function readBody(req) {
   const chunks = [];
   for await (const c of req) chunks.push(c);
-  const raw = Buffer.concat(chunks).toString('utf8');
+  const buf = Buffer.concat(chunks);
+  const type = req.headers['content-type'] ?? '';
+  if (type.startsWith('multipart/form-data')) {
+    const boundary = type.match(/boundary=(?:"([^"]+)"|([^;]+))/);
+    return boundary ? parseMultipart(buf, boundary[1] ?? boundary[2]) : {};
+  }
   try {
+    const raw = buf.toString('utf8');
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -85,7 +118,11 @@ const server = http.createServer(async (req, res) => {
       const body = method === 'get' ? {} : await readBody(req);
       const out = await route.handler({ match, query, body, farmId, path });
       const status = out.status ?? 200;
-      send(status, status === 204 ? null : envelope(out.body, out.meta ?? null));
+      if (status >= 400) {
+        send(status, { success: false, message: out.message ?? 'Os dados informados são inválidos.', data: null, errors: out.errors ?? null, meta: null });
+      } else {
+        send(status, status === 204 ? null : envelope(out.body, out.meta ?? null));
+      }
       console.log(`${method.toUpperCase()} ${path} -> ${status}`);
       return;
     }
