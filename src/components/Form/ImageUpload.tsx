@@ -197,8 +197,10 @@ export function ImageUpload({
     onRemove?.();
   }
 
+  const fileSizeLabel = file ? `${(file.size / 1024 / 1024).toFixed(2).replace('.', ',')} MB` : null;
+
   return (
-    <Field label={label} helperText={hint} errorText={displayError} isRequired={isRequired}>
+    <Field label={label} errorText={displayError} isRequired={isRequired}>
       <input
         ref={inputRef}
         type="file"
@@ -210,98 +212,139 @@ export function ImageUpload({
         tabIndex={-1}
       />
 
-      {hasImage ? (
-        <Flex align="center" gap={3}>
-          {imageFailed ? (
-            <Flex
-              role="img"
-              aria-label={noImageLabel ?? languageGB.defaltStrings.noPhoto}
-              direction="column"
-              align="center"
-              justify="center"
-              gap={1}
-              boxSize="16"
-              borderRadius="md"
-              bg="bg.muted"
-              border="1px solid"
-              borderColor="border.subtle"
-            >
-              <Icon as={FiImage} boxSize={5} color="fg.muted" />
-              <Text fontSize="2xs" color="fg.muted" textAlign="center" lineHeight="1.1">
-                {noImageLabel ?? languageGB.defaltStrings.noPhoto}
-              </Text>
-            </Flex>
-          ) : (
-            <Image
-              src={previewSrc ?? undefined}
-              alt={label ?? 'image'}
-              boxSize="16"
-              borderRadius="md"
-              objectFit="cover"
-              border="1px solid"
-              borderColor="border.subtle"
-              onError={() => setImageFailed(true)}
-            />
-          )}
-          <Flex direction="column" gap={2}>
-            <Button
-              title={changeLabel}
-              variant="outline"
-              onClick={openPicker}
-              disabled={disabled}
-            />
-            {onRemove && (
-              <Button
-                title={removeLabel}
-                variant="ghost_danger"
-                onClick={handleRemoveClick}
-                disabled={disabled}
+      {/* Metade da largura em telas largas (campo de logo/foto não precisa de linha inteira). */}
+      <Box w="full" maxW={{ base: 'full', lg: '50%' }}>
+        {hasImage ? (
+          // Visualização (edição de cadastro já existente ou arquivo recém-escolhido)
+          <Flex
+            align="center"
+            gap={4}
+            p={4}
+            borderWidth="1px"
+            borderColor={displayError ? 'fg.error' : 'border.subtle'}
+            borderRadius="xl"
+            bg="bg.subtle"
+            opacity={disabled ? 0.6 : 1}
+          >
+            {imageFailed ? (
+              <Flex
+                role="img"
+                aria-label={noImageLabel ?? languageGB.defaltStrings.noPhoto}
+                direction="column"
+                align="center"
+                justify="center"
+                gap={1}
+                boxSize="24"
+                flexShrink={0}
+                borderRadius="lg"
+                bg="bg.muted"
+                borderWidth="1px"
+                borderColor="border.subtle"
+              >
+                <Icon as={FiImage} boxSize={6} color="fg.muted" />
+                <Text fontSize="2xs" color="fg.muted" textAlign="center" lineHeight="1.1">
+                  {noImageLabel ?? languageGB.defaltStrings.noPhoto}
+                </Text>
+              </Flex>
+            ) : (
+              <Image
+                src={previewSrc ?? undefined}
+                alt={label ?? 'image'}
+                boxSize="24"
+                flexShrink={0}
+                borderRadius="lg"
+                objectFit="cover"
+                bg="bg.muted"
+                borderWidth="1px"
+                borderColor="border.subtle"
+                onError={() => setImageFailed(true)}
               />
             )}
+
+            <Flex direction="column" gap={3} minW={0} flex="1">
+              {(file || hint) && (
+                <Box minW={0}>
+                  {file && (
+                    <Text fontSize="sm" fontWeight="semibold" truncate>
+                      {file.name}
+                    </Text>
+                  )}
+                  <Text fontSize="xs" color="fg.muted">
+                    {fileSizeLabel ?? hint}
+                  </Text>
+                </Box>
+              )}
+              <Flex gap={2} wrap="wrap">
+                <Button title={changeLabel} variant="outline" onClick={openPicker} disabled={disabled} />
+                {onRemove && (
+                  <Button title={removeLabel} variant="ghost_danger" onClick={handleRemoveClick} disabled={disabled} />
+                )}
+              </Flex>
+            </Flex>
           </Flex>
-        </Flex>
-      ) : (
-        <Box
-          role="button"
-          tabIndex={disabled ? -1 : 0}
-          aria-label={label ?? dropzoneTitle}
-          aria-disabled={disabled}
-          aria-describedby={displayError ? errorId : undefined}
-          onClick={openPicker}
-          onKeyDown={(event) => {
-            if (disabled) return;
-            if (event.key === 'Enter' || event.key === ' ') {
+        ) : (
+          // Vazio: área de arrastar e soltar tracejada
+          <Box
+            role="button"
+            tabIndex={disabled ? -1 : 0}
+            aria-label={label ?? dropzoneTitle}
+            aria-disabled={disabled}
+            aria-describedby={displayError ? errorId : undefined}
+            onClick={openPicker}
+            onKeyDown={(event) => {
+              if (disabled) return;
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openPicker();
+              }
+            }}
+            onDragOver={(event) => {
               event.preventDefault();
-              openPicker();
-            }
-          }}
-          onDragOver={(event) => {
-            event.preventDefault();
-            if (!disabled) setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          gap={2}
-          px={4}
-          py={6}
-          border="1.5px dashed"
-          borderColor={displayError ? 'fg.error' : dragOver ? 'brandColorText' : 'border.subtle'}
-          borderRadius="lg"
-          bg={dragOver ? 'bg.muted' : disabled ? 'bg.disabled' : 'bg.subtle'}
-          cursor={disabled ? 'not-allowed' : 'pointer'}
-          opacity={disabled ? 0.6 : 1}
-          transition="border-color 0.2s, background 0.2s"
-        >
-          <Icon as={dragOver ? FiUpload : FiImage} boxSize={6} color="fg.muted" />
-          <Text fontSize="sm" fontWeight="medium" color="fg.default" textAlign="center">
-            {dragOver ? dropzoneDraggingTitle : dropzoneTitle}
-          </Text>
-        </Box>
-      )}
+              if (!disabled) setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            gap={3}
+            px={6}
+            py={8}
+            border="2px dashed"
+            borderColor={displayError ? 'fg.error' : dragOver ? 'brandColorText' : 'semanticNeutral.300'}
+            borderRadius="xl"
+            bg={dragOver ? 'bg.muted' : disabled ? 'bg.disabled' : 'bg.subtle'}
+            cursor={disabled ? 'not-allowed' : 'pointer'}
+            opacity={disabled ? 0.6 : 1}
+            transition="border-color 0.2s, background 0.2s"
+            _hover={disabled ? undefined : { borderColor: 'green.600', bg: 'bg.muted' }}
+          >
+            <Flex
+              align="center"
+              justify="center"
+              boxSize="12"
+              borderRadius="lg"
+              bg="cardBG"
+              borderWidth="1px"
+              borderColor="border.subtle"
+              boxShadow="sm"
+            >
+              <Icon as={dragOver ? FiUpload : FiImage} boxSize={5} color="fg.default" />
+            </Flex>
+            <Box textAlign="center">
+              <Text fontSize="sm" fontWeight="semibold" color="fg.default">
+                {dragOver ? dropzoneDraggingTitle : dropzoneTitle}
+              </Text>
+              {hint && (
+                <Text fontSize="xs" color="fg.muted" mt={1}>
+                  {hint}
+                </Text>
+              )}
+            </Box>
+          </Box>
+        )}
+      </Box>
 
       {editor && (
         <ImageEditorDialog

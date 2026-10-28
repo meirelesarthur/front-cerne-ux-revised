@@ -46,6 +46,7 @@ export function BreadcrumbTrail({ items, label }: BreadcrumbTrailProps) {
                 {...BUTTON_ATTRS}
                 onClick={item.onClick}
                 color="topBarTextSecondary"
+                fontSize="inherit"
                 whiteSpace="nowrap"
                 transition="color 0.15s ease"
                 _hover={{ color: 'green.600' }}
@@ -56,6 +57,7 @@ export function BreadcrumbTrail({ items, label }: BreadcrumbTrailProps) {
               <Text
                 as="span"
                 aria-current={isLast ? 'page' : undefined}
+                fontSize="inherit"
                 color={isLast ? 'topBarTextColor' : 'topBarTextSecondary'}
                 whiteSpace="nowrap"
                 overflow="hidden"

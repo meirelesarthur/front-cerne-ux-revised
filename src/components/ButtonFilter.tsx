@@ -9,6 +9,7 @@ import { Box, Button as ChakraButton, ButtonProps as ChakraButtonProps, useMedia
 import { useLanguage } from '@/hooks/useLanguage';
 
 import { Icon } from './ui/Icon';
+import { LIST_CONTROL_HEIGHT } from './ui/listControl';
 import { Tooltip } from './TooLtip';
 
 interface ButtonProps extends ChakraButtonProps {
@@ -36,7 +37,9 @@ export const ButtonFilter = forwardRef<HTMLButtonElement, ButtonProps>(
           {...rest}
           ref={ref}
           variant="outline"
-          h="34px"
+          h={LIST_CONTROL_HEIGHT}
+          minH={LIST_CONTROL_HEIGHT}
+          boxSizing="border-box"
           px="14px"
           gap="6px"
           fontSize="base"

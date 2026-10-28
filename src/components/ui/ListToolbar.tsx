@@ -9,6 +9,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useLanguage } from '@/hooks/useLanguage';
 
 import { ButtonFilter } from '../ButtonFilter';
+import { LIST_CONTROL_HEIGHT } from './listControl';
 import { Icon } from './Icon';
 
 export interface ListToolbarProps {
@@ -27,11 +28,12 @@ export function ListToolbar({ search, onSearch, searchPlaceholder, onOpenFilter,
   const { languageGB } = useLanguage();
   const placeholder = searchPlaceholder ?? languageGB.defaltStrings.searchList;
   return (
-    <Flex align="center" gap="10px" wrap="wrap" mt={5} mb={3}>
+    <Flex align="stretch" gap="10px" wrap="wrap" mt={5} mb={3}>
       <Flex
         align="center"
         gap="8px"
-        h="34px"
+        h={LIST_CONTROL_HEIGHT}
+        boxSizing="border-box"
         minW="240px"
         px="10px"
         borderRadius="8px"

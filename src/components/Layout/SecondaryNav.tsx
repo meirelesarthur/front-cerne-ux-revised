@@ -98,12 +98,12 @@ function NavItemButton({
         w="100%"
         align="center"
         justify="space-between"
-        h="32px"
+        h="36px"
         pl={1}
         pr={2.5}
         borderRadius="md"
-        fontSize="sm"
-        fontWeight={active && !hasChildren ? "semibold" : "medium"}
+        fontSize="base"
+        fontWeight={active && !hasChildren ? "semibold" : "normal"}
         color={active && !hasChildren ? "sidebarItemActiveText" : "sidebarTextColor"}
         bg={active && !hasChildren ? "sidebarItemActiveBG" : "transparent"}
         _hover={{
@@ -123,7 +123,7 @@ function NavItemButton({
               <GbIcon name={item.icon} size={14} />
             </Box>
           )}
-          <Text as="span" textAlign="left" lineClamp="1">
+          <Text as="span" textAlign="left" lineClamp="1" fontSize="inherit" fontWeight="inherit">
             {itemLabel}
           </Text>
         </Flex>
@@ -183,12 +183,12 @@ function NavItemButton({
                 w="100%"
                 align="center"
                 gap={2}
-                h="30px"
+                h="36px"
                 pl={4}
                 pr={2.5}
                 borderRadius="md"
-                fontSize="sm"
-                fontWeight={childActive ? "semibold" : "medium"}
+                fontSize="base"
+                fontWeight={childActive ? "semibold" : "normal"}
                 color={childActive ? "sidebarItemActiveText" : "sidebarTextColor"}
                 bg={childActive ? "sidebarItemActiveBG" : "transparent"}
                 _hover={{
@@ -207,7 +207,7 @@ function NavItemButton({
                     <GbIcon name={child.icon} size={13} />
                   </Box>
                 )}
-                <Text as="span" textAlign="left" lineClamp="1">
+                <Text as="span" textAlign="left" lineClamp="1" fontSize="inherit" fontWeight="inherit">
                   {childLabel}
                 </Text>
               </Flex>
@@ -254,7 +254,7 @@ function NavGroupSection({
         _hover={{ bg: "sidebarItemHoverBG" }}
         transition="background-color 0.1s ease"
       >
-        <Text as="span" flex="1" textAlign="left" fontSize="inherit" letterSpacing="inherit">
+        <Text as="span" flex="1" textAlign="left" fontSize="inherit" fontWeight="inherit" letterSpacing="inherit">
           {groupLabel}
         </Text>
         {/* Chevron padronizado (Ajustes Globais): fechado `>` (rotate 0) /
@@ -271,9 +271,9 @@ function NavGroupSection({
       </Flex>
 
       {open && (
-        // 2º nível colado à lateral (sem padding-left) e 8px entre cada
-        // funcionalidade (Ajustes Globais).
-        <Flex direction="column" gap={2} pb={2}>
+        // 2º nível colado à lateral (sem padding-left); itens de 36px sem folga entre si — passo de 36px,
+        // igual ao menu do DS (pedido do dono).
+        <Flex direction="column" gap={0} pb={2}>
           {group.items.map((item) => (
             <NavItemButton
               key={item.id}
