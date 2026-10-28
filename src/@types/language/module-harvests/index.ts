@@ -61,6 +61,10 @@ export interface ModuleHarvests {
     form: {
       title: { create: string; edit: string };
       subtitle: { create: string; edit: string };
+      steps: { general: string; weeks: string };
+      stepTitles: { general: string; weeks: string };
+      weeksSubtitle: string;
+      stepCounter: { label: string; of: string };
       fields: {
         description: string;
         startDate: string;

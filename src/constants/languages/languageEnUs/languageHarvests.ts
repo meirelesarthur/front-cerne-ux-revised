@@ -53,6 +53,10 @@ export const languageHarvests: ModuleHarvests = {
         create: 'Register a new harvest to organize the farm agricultural periods.',
         edit: 'Update the harvest data.',
       },
+      steps: { general: "General Data", weeks: "Weeks" },
+      stepTitles: { general: "Harvest general data", weeks: "Weeks Color Code" },
+      weeksSubtitle: "Set the color of each week. This code is shown in calendars, reports and dashboards. Click the weeks to paint them.",
+      stepCounter: { label: "Step", of: "of" },
       fields: {
         description: 'Description',
         startDate: 'Start Date',

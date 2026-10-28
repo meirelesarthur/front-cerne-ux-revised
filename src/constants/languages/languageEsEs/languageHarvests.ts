@@ -55,6 +55,10 @@ export const languageHarvests: ModuleHarvests = {
         create: 'Registre una nueva zafra para organizar los períodos agrícolas de la finca.',
         edit: 'Actualice los datos de la zafra.',
       },
+      steps: { general: "Datos Generales", weeks: "Semanas" },
+      stepTitles: { general: "Datos generales de la cosecha", weeks: "Código Visual de Semanas" },
+      weeksSubtitle: "Defina los colores de cada semana. Este código se mostrará en calendarios, informes y paneles. Haga clic en las semanas para pintarlas.",
+      stepCounter: { label: "Paso", of: "de" },
       fields: {
         description: 'Descripción',
         startDate: 'Fecha de Inicio',

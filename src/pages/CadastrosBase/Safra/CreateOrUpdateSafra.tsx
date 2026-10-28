@@ -47,21 +47,22 @@
 // (nenhuma duplicação, só soma). Ver nota completa no corpo da função.
 // -----------------------------------------------------------------------------
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Box, Flex, Skeleton, SimpleGrid, Text } from '@chakra-ui/react';
+import { Box, Skeleton, SimpleGrid, Text } from '@chakra-ui/react';
 import { isAxiosError } from 'axios';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Button } from '@/components/Button';
-import { ButtonSaveAndNext } from '@/components/ButtonSaveAndNext';
 import { DateInput } from '@/components/DateInput';
 import { Form } from '@/components/Form';
 import { Input } from '@/components/Form/Input';
 import { Select } from '@/components/Form/Select';
 import { FormContainer } from '@/components/Layout/FormContainer';
-import { Switch } from '@/components/ui/switch';
+import { StepFooter } from '@/components/ui/StepFooter';
+import { StepHeader } from '@/components/ui/StepHeader';
+import { Steps, StepsList, StepsRoot } from '@/components/ui/steps';
+import { ToggleRow } from '@/components/ui/ToggleRow';
 
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -111,6 +112,7 @@ export default function CreateOrUpdateSafra() {
     watch,
     setError,
     setFocus,
+    trigger,
     getValues,
     formState: { errors, dirtyFields },
   } = useForm<HarvestFormType>({
@@ -335,32 +337,47 @@ export default function CreateOrUpdateSafra() {
     );
   }
 
+  // Etapas (DS): 0 = Dados Gerais · 1 = Semanas. As duas ficam montadas (a 2ª só oculta) para o
+  // formulário continuar sendo um só e a regeneração de semanas por data seguir como antes.
+  const [step, setStep] = useState<0 | 1>(0);
+  const GENERAL_FIELDS = ['description', 'herd_control', 'start_date', 'end_date', 'first_month', 'second_month'] as const;
+
+  async function goToWeeks() {
+    const ok = await trigger([...GENERAL_FIELDS]);
+    if (ok) setStep(1);
+  }
+
   return (
     <FormContainer
       title={isEditing ? text.form.title.edit : text.form.title.create}
       footer={
-        <>
-          <Button
-            title={languageGB.defaltStrings?.cancel || 'Cancelar'}
-            variant="secondary"
-            type="button"
-            onClick={() => navigate(-1)}
-          />
-          {canSave && (
-            <ButtonSaveAndNext
-              create={!isEditing}
-              dirtyFields={dirtyFields}
-              type="button"
-              onClick={handleSubmit(onSubmit)}
-              languageGB={languageGB}
-              loading={isSubmitting}
-              disabled={isSubmitting || isLoading}
-            />
-          )}
-        </>
+        <StepFooter
+          stepLabel={`${text.form.stepCounter.label} ${step + 1} ${text.form.stepCounter.of} 2`}
+          backLabel={step === 0 ? languageGB.defaltStrings.cancel : languageGB.defaltStrings.previous}
+          nextLabel={step === 0 ? languageGB.defaltStrings.next : languageGB.defaltStrings.save}
+          onBack={step === 0 ? () => navigate(-1) : () => setStep(0)}
+          onNext={step === 0 ? goToWeeks : handleSubmit(onSubmit)}
+          backDisabled={isSubmitting}
+          nextLoading={step === 1 && isSubmitting}
+          nextDisabled={isSubmitting || isLoading}
+          hideNext={step === 1 && !canSave}
+        />
       }
     >
       <Form noPadding onSubmit={handleSubmit(onSubmit)}>
+        <StepsRoot
+          step={step}
+          count={2}
+          onStepChange={(details: { step: number }) => (details.step === 1 ? goToWeeks() : setStep(0))}
+        >
+          <StepsList>
+            <Steps.Item index={0} title={text.form.steps.general} />
+            <Steps.Item index={1} title={text.form.steps.weeks} />
+          </StepsList>
+        </StepsRoot>
+
+        <Box hidden={step !== 0}>
+          <StepHeader title={text.form.stepTitles.general} />
         {/* Linha 1: Controle de Rebanho | Descrição | Ativa | Evolução Automática */}
         <SimpleGrid columns={columnsForm.default} gap={6}>
           <Controller
@@ -396,19 +413,7 @@ export default function CreateOrUpdateSafra() {
             name="is_enabled"
             control={control}
             render={({ field }) => (
-              <Flex align="center" justify="space-between" h="full">
-                <Text fontSize="sm" fontWeight="medium">
-                  {text.form.fields.isEnabled}
-                </Text>
-                {/* @ts-ignore - Chakra UI v3 Switch API */}
-                <Switch
-                  checked={!!field.value}
-                  onCheckedChange={(d: any) => field.onChange(d.checked)}
-                  colorPalette="green"
-                  disabled={!canSave || isLoading}
-                  aria-label={text.form.fields.isEnabled}
-                />
-              </Flex>
+              <ToggleRow label={text.form.fields.isEnabled} checked={!!field.value} onChange={field.onChange} disabled={!canSave || isLoading} />
             )}
           />
 
@@ -416,19 +421,7 @@ export default function CreateOrUpdateSafra() {
             name="auto_evolution"
             control={control}
             render={({ field }) => (
-              <Flex align="center" justify="space-between" h="full">
-                <Text fontSize="sm" fontWeight="medium">
-                  {text.form.fields.autoEvolution}
-                </Text>
-                {/* @ts-ignore - Chakra UI v3 Switch API */}
-                <Switch
-                  checked={!!field.value}
-                  onCheckedChange={(d: any) => field.onChange(d.checked)}
-                  colorPalette="green"
-                  disabled={!canSave || isLoading}
-                  aria-label={text.form.fields.autoEvolution}
-                />
-              </Flex>
+              <ToggleRow label={text.form.fields.autoEvolution} checked={!!field.value} onChange={field.onChange} disabled={!canSave || isLoading} />
             )}
           />
         </SimpleGrid>
@@ -470,39 +463,6 @@ export default function CreateOrUpdateSafra() {
           </SimpleGrid>
         </Box>
 
-        {/* Semanas (TASK-FE-009) — mesmo idioma visual (Box com borda) que a
-            seção de Rateio já estabeleceu em Centro de Custo. Renderizada
-            SEMPRE (não só quando `weekFields.length > 0`): o próprio
-            `WeeksCanvas` cobre o estado vazio ("Nenhuma semana gerada...")
-            com CTA de volta às datas — esconder a caixa inteira até haver
-            semanas tornaria esse estado (exigido pela Tarefa) inatingível
-            nesta tela. `Skeleton` cobre o carregamento em modo edição
-            (aguardando `fillForm`), distinto do estado vazio. */}
-        <Box mt={6}>
-          <Box bg="bg.muted" border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4}>
-            <Skeleton loading={isLoading}>
-              {/* Rede de segurança: só aparece se `generateWeeks` falhar em
-                  produzir ao menos 1 semana com datas já válidas — não
-                  esperado no uso normal (ver `safra-schema.ts`). */}
-              {typeof errors.weeks?.message === 'string' && (
-                <Text fontSize="sm" color="fg.error" mb={3}>
-                  {errors.weeks.message}
-                </Text>
-              )}
-              <WeeksCanvas
-                weeks={weekFields}
-                editable={canSave}
-                onWeekColorChange={handleWeekColorChange}
-                onResetCycle={handleResetColorCycle}
-                onEmptyAction={() => setFocus('start_date')}
-                iniLabel={watchedStartDate || undefined}
-                fimLabel={watchedEndDate || undefined}
-                text={text}
-              />
-            </Skeleton>
-          </Box>
-        </Box>
-
         {/* Linha 3: 1º/2º Semestre inicia em */}
         <Box mt={6}>
           <SimpleGrid columns={columnsForm.twoColumns} gap={6}>
@@ -539,6 +499,44 @@ export default function CreateOrUpdateSafra() {
               )}
             />
           </SimpleGrid>
+        </Box>
+        </Box>
+
+        <Box hidden={step !== 1}>
+          <StepHeader title={text.form.stepTitles.weeks} subtitle={text.form.weeksSubtitle} />
+        {/* Semanas (TASK-FE-009) — mesmo idioma visual (Box com borda) que a
+            seção de Rateio já estabeleceu em Centro de Custo. Renderizada
+            SEMPRE (não só quando `weekFields.length > 0`): o próprio
+            `WeeksCanvas` cobre o estado vazio ("Nenhuma semana gerada...")
+            com CTA de volta às datas — esconder a caixa inteira até haver
+            semanas tornaria esse estado (exigido pela Tarefa) inatingível
+            nesta tela. `Skeleton` cobre o carregamento em modo edição
+            (aguardando `fillForm`), distinto do estado vazio. */}
+        <Box mt={6}>
+          <Box bg="bg.muted" border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4}>
+            <Skeleton loading={isLoading}>
+              {/* Rede de segurança: só aparece se `generateWeeks` falhar em
+                  produzir ao menos 1 semana com datas já válidas — não
+                  esperado no uso normal (ver `safra-schema.ts`). */}
+              {typeof errors.weeks?.message === 'string' && (
+                <Text fontSize="sm" color="fg.error" mb={3}>
+                  {errors.weeks.message}
+                </Text>
+              )}
+              <WeeksCanvas
+                weeks={weekFields}
+                editable={canSave}
+                onWeekColorChange={handleWeekColorChange}
+                onResetCycle={handleResetColorCycle}
+                onEmptyAction={() => setFocus('start_date')}
+                iniLabel={watchedStartDate || undefined}
+                fimLabel={watchedEndDate || undefined}
+                text={text}
+              />
+            </Skeleton>
+          </Box>
+        </Box>
+
         </Box>
       </Form>
     </FormContainer>
