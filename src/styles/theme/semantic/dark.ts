@@ -76,6 +76,7 @@ const colors: SemanticTokensColors = {
   paginationSelectedColor: { value: '{colors.white}' },
   cardColor: { value: '{colors.green.500}' },
   placeholderColor: { value: '{colors.gray.400}' },
+  focusGlow: { value: 'rgba(52, 211, 153, 0.35)' },
   // GBMode: superfície de input verde-escura do cerne (bg.input), não o neutro genérico.
   inputBG: { value: '#132f22' },
   tabs: {

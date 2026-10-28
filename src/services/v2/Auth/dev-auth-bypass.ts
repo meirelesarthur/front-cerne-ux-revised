@@ -31,7 +31,8 @@ const devUser = {
   photo: null,
   photo_url: null,
   lang: 'pt-BR',
-  roles: ['Administrador'],
+  // Gestor_Plataf: libera o "criar centro de custo de topo" (DEC-005) no ambiente de dev.
+  roles: ['Administrador', 'Gestor_Plataf'],
   permissions: permissionsCatalog as string[],
   farm_scoped_permissions: [] as string[],
 };

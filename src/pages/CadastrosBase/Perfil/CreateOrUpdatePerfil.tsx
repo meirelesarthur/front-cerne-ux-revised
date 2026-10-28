@@ -16,7 +16,7 @@
 
 import { useRef, useState } from "react";
 
-import { Box, SimpleGrid, Tabs, Flex, Text } from "@chakra-ui/react";
+import { Box, SimpleGrid, Tabs } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -31,7 +31,7 @@ import { Form } from "@/components/Form";
 import { Input } from "@/components/Form/Input";
 import { Textarea } from "@/components/Form/InputTextArea";
 import { FormContainer } from "@/components/Layout/FormContainer";
-import { Switch } from "@/components/ui/switch";
+import { ToggleRow } from "@/components/ui/ToggleRow";
 import { columnsForm } from "@/constants/coluns-form";
 import { queryKey } from "@/constants/query-key";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -241,23 +241,13 @@ export default function CreateOrUpdatePerfil() {
                   name="is_user_visible"
                   control={control}
                   render={({ field }) => (
-                    <Flex align="center" justify="space-between" maxW="480px">
-                      <Box>
-                        <Text fontSize="sm" fontWeight="medium">
-                          {languageGB.roles.role.form.fields.isUserVisible}
-                        </Text>
-                        <Text fontSize="xs" color="fg.muted">
-                          {languageGB.roles.role.form.hints.isUserVisible}
-                        </Text>
-                      </Box>
-                      {/* @ts-ignore - Chakra UI v3 Switch API */}
-                      <Switch
-                        checked={!!field.value}
-                        onCheckedChange={(d: any) => field.onChange(d.checked)}
-                        colorPalette="green"
-                        disabled={!canSave || isLoading}
-                      />
-                    </Flex>
+                    <ToggleRow
+                      label={languageGB.roles.role.form.fields.isUserVisible}
+                      hint={languageGB.roles.role.form.hints.isUserVisible}
+                      checked={!!field.value}
+                      onChange={field.onChange}
+                      disabled={!canSave || isLoading}
+                    />
                   )}
                 />
               </Box>

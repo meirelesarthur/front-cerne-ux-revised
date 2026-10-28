@@ -167,7 +167,7 @@ export function Select({
                 borderColor: error ? 'danger.default' : 'green.600',
                 boxShadow: error
                   ? '0 0 0 1px var(--chakra-colors-danger-default)'
-                  : '0 0 0 3px rgba(5, 150, 105, 0.12)',
+                  : '0 0 0 3px var(--chakra-colors-focus-glow)',
                 outline: 'none',
               }}
               _disabled={{

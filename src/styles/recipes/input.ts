@@ -23,7 +23,7 @@ export const inputRecipe = {
     },
     _focus: {
       borderColor: "primaryMain",
-      boxShadow: "0 0 0 3px rgba(5, 150, 105, 0.12)", // DS glow.brand
+      boxShadow: "0 0 0 3px {colors.focusGlow}", // DS glow.brand (mais forte no escuro)
     },
     _disabled: {
       bg: "semanticNeutral.200",
@@ -48,9 +48,11 @@ export const inputRecipe = {
         // A variante vence a `base`: contorno 1.5px e fundo neutro-50 do DS ficam aqui.
         bg: "inputBG",
         borderWidth: "1.5px",
+        focusRingColor: "green.600", _focus: { borderColor: "green.600", boxShadow: "0 0 0 3px {colors.focusGlow}" }, // DS: contorno verde no foco (a variante vence o _focus da base)
       },
       outline2: {
         borderColor: "border1",
+        focusRingColor: "green.600", _focus: { borderColor: "green.600", boxShadow: "0 0 0 3px {colors.focusGlow}" }, // DS: contorno verde no foco (a variante vence o _focus da base)
       },
       outlineGrid: {
         borderColor: "border2",

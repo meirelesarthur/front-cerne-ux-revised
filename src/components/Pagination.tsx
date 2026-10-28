@@ -65,7 +65,7 @@ function Ellipsis() {
   return (
     <Center
       width={PAGE_BUTTON_SIZE}
-      color="semanticNeutral.400"
+      color="semanticNeutral.500"
       fontSize="base"
       userSelect="none"
       aria-hidden="true"

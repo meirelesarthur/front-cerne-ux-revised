@@ -40,7 +40,7 @@ export const customStyles = (
     boxShadow: error
       ? '0 0 0 1px #e53e3e'
       : isFocused
-        ? '0 0 0 3px rgba(5, 150, 105, 0.12)'
+        ? '0 0 0 3px var(--chakra-colors-focus-glow)'
         : 'none',
     opacity: 1,
   }),

@@ -74,6 +74,7 @@ export interface SemanticTokensColors {
   paginationSelectedColor: { value: string };
   cardColor: { value: string };
   placeholderColor: { value: string };
+  focusGlow: { value: string };
   inputBG: { value: string };
   tabs: {
     textColor: { value: string };
