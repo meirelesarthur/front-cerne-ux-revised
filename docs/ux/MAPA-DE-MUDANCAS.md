@@ -1,7 +1,7 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `791b822` · 874 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `29e44c5` · 882 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
@@ -15,14 +15,15 @@
 | `src/constants` | 3 | 33 | 0 |
 | `src/pages/Fiscal` | 0 | 34 | 0 |
 | `src/pages/Financeiro` | 0 | 27 | 0 |
-| `docs/ux` | 19 | 0 | 0 |
+| `docs/ux` | 20 | 0 | 0 |
 | `src/@types` | 1 | 13 | 0 |
 | `scripts/dev-db` | 13 | 0 | 0 |
 | `src/pages/Frota` | 0 | 12 | 0 |
 | `src/mocks` | 11 | 0 | 0 |
 | `src/components/(raiz)` | 0 | 8 | 0 |
-| `src/pages/Planos` | 4 | 3 | 0 |
+| `src/pages/Planos` | 5 | 3 | 0 |
 | `src/pages/Configuracoes` | 0 | 6 | 0 |
+| `src/pages/Onboarding` | 6 | 0 | 0 |
 | `src/styles` | 0 | 6 | 0 |
 | `src/pages/Integracoes` | 0 | 5 | 0 |
 | `src/pages/Invoices` | 0 | 5 | 0 |
@@ -106,8 +107,15 @@
 - `src/mocks/dev-api/synthetic.test.ts`
 - `src/mocks/dev-api/synthetic.ts`
 - `src/pages/Login/slides.ts`
+- `src/pages/Onboarding/index.tsx`
+- `src/pages/Onboarding/steps/StepAccount.tsx`
+- `src/pages/Onboarding/steps/StepContractor.tsx`
+- `src/pages/Onboarding/steps/StepDone.tsx`
+- `src/pages/Onboarding/steps/StepPayment.tsx`
+- `src/pages/Onboarding/types.ts`
 - `src/pages/Planos/Contratacao/catalog.ts`
 - `src/pages/Planos/Contratacao/index.tsx`
+- `src/pages/Planos/Contratacao/order.ts`
 - `src/pages/Planos/Contratacao/pricing.test.ts`
 - `src/pages/Planos/Contratacao/pricing.ts`
 - `src/services/v2/Auth/dev-auth-bypass.ts`
@@ -123,7 +131,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `ListToolbar` | `src/components/ui/ListToolbar.tsx` | Barra das listagens (DS `ListToolbar`): busca inline + botão "Filtros" na mesma linha. | 80 |
 | `switch` | `src/components/ui/switch.tsx` |  | 38 |
 | `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 28 |
-| `checkbox` | `src/components/ui/checkbox.tsx` |  | 22 |
+| `checkbox` | `src/components/ui/checkbox.tsx` |  | 23 |
 | `tooltip` | `src/components/ui/tooltip.tsx` |  | 14 |
 | `FormSection` | `src/components/FormSection/index.tsx` | Adaptação Chakra v3 (não cópia) do `FormSection` do design system `cerne` | 10 |
 | `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 9 |
@@ -136,11 +144,13 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `FormSurface` | `src/components/ui/FormSurface.tsx` | Superfície de formulário que pode ser MODAL (`dialog`, o `CustomDialog` de sempre) ou PAINEL | 3 |
 | `PageCard` | `src/components/ui/PageCard.tsx` | Casca visual compartilhada (bg/shadow/radius + overflow hidden), fonte única | 3 |
 | `RepeaterList` | `src/components/ui/RepeaterList.tsx` | Lista dinâmica (adicionar/remover linhas) — DS `RepeaterList`. A moldura (vazio tracejado, | 3 |
+| `SegmentedControl` | `src/components/ui/SegmentedControl.tsx` | Controle segmentado (2–4 opções mutuamente exclusivas, uma sempre ativa). Ex.: Vincular a | 3 |
 | `dialog` | `src/components/ui/dialog.tsx` |  | 3 |
 | `radio` | `src/components/ui/radio.tsx` | Wrapper Chakra UI v3 para Radio/RadioGroup — mirror ESTRUTURAL de | 3 |
 | `Badge` | `src/components/ui/Badge.tsx` | Selo de status/classificação — porte fiel de `Badge.tsx` do design system `cerne`: | 2 |
 | `ImageEditorDialog` | `src/components/ui/ImageEditorDialog.tsx` | Modal "Editar imagem" (referência de UX do pedido): prévia quadrada do recorte, régua de escala, | 2 |
-| `SegmentedControl` | `src/components/ui/SegmentedControl.tsx` | Controle segmentado (2–4 opções mutuamente exclusivas, uma sempre ativa). Ex.: Vincular a | 2 |
+| `StepIndicator` | `src/components/ui/StepIndicator.tsx` | Indicador de etapas de configurador (estilo "simulador"): quadradinho numerado + rótulo, | 2 |
+| `SummaryPanel` | `src/components/ui/SummaryPanel.tsx` | Painel de RESUMO escuro, fixo à direita de um configurador (modelo "simulador"): título com | 2 |
 | `password-input` | `src/components/ui/password-input.tsx` |  | 2 |
 | `BandSlider` | `src/components/ui/BandSlider.tsx` | Régua deslizante dividida em faixas iguais (ex.: faixas de tamanho da fazenda): valores dos | 1 |
 | `BreadcrumbTrail` | `src/components/ui/BreadcrumbTrail.tsx` | Trilha de navegação — porte fiel de `Breadcrumb.tsx` do design system `cerne`: | 1 |
@@ -162,8 +172,6 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `ReconciliationWorkspace` | `src/components/ui/ReconciliationWorkspace.tsx` | Casca mestre–detalhe da conciliação (evolução do `ReconciliationWorkspace` do DS, que | 1 |
 | `RemainingBalance` | `src/components/ui/RemainingBalance.tsx` | Indicador "ao vivo" de saldo de uma divisão (rateio): mostra quanto já foi distribuído do | 1 |
 | `SimpleTable` | `src/components/ui/SimpleTable.tsx` | Tabela de leitura (sem paginação/ordenação): cabeçalho em caixa-alta no padrão do DS, linhas com | 1 |
-| `StepIndicator` | `src/components/ui/StepIndicator.tsx` | Indicador de etapas de configurador (estilo "simulador"): quadradinho numerado + rótulo, | 1 |
-| `SummaryPanel` | `src/components/ui/SummaryPanel.tsx` | Painel de RESUMO escuro, fixo à direita de um configurador (modelo "simulador"): título com | 1 |
 | `ToggleCard` | `src/components/ui/ToggleCard.tsx` | Cartão de seleção (DS `ToggleSection variant="card"`): ícone + caixa de marcar no topo, título e | 1 |
 | `ProgressRing` | `src/components/ui/ProgressRing.tsx` | Anel de progresso (0–100) com o percentual no centro. Puro CSS (conic-gradient): | 0 |
 | `provider` | `src/components/ui/provider.tsx` |  | 0 |
@@ -472,3 +480,5 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - ed8079d fix(build): aumenta heap do Node no tsc e no vite build (OOM no deploy)
 - 6422993 fix(dev): mock sintetico reconhece datas dt_*, evita arrays com null em tipos recursivos e registra rotas sem cobertura
 - 791b822 fix(ui): cabecalhos do configurador com a mesma altura e faixa dos passos em largura total; acessos com regua e quantidade na horizontal; wrangler.jsonc para o deploy
+- 61c349b feat(onboarding): fluxo Criar conta (plano, conta, pagamento simulado, contratante, pronto); passos do configurador nas extremidades
+- 29e44c5 fix(onboarding): PF/PJ deduzido do documento (sem seletor); celular obrigatorio e antes do telefone

@@ -63,6 +63,6 @@ export interface OnboardingDraft {
   contractor: ContractorData;
 }
 
-export const DRAFT_KEY = 'cerne-onboarding-draft';
+export const DRAFT_KEY = 'cerne-onboarding-draft-v2';
 export const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 export const digits = (v: string) => v.replace(/\D/g, '');

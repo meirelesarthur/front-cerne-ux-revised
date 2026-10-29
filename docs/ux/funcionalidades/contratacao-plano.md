@@ -64,3 +64,9 @@ Fonte: documento "Cerne para a Gestão" (artifact atualizado) + print final da U
 - **Aviso de simulação** saiu do alerta no topo e virou nota em largura total no rodapé do cartão (`FormContainer.footer`), perto das ações de contratação.
 - **Régua de tamanho (`BandSlider`):** valores (0 · 500 · 1.500 …) acima da barra, com um traço apontando para ela; nomes das faixas abaixo.
 - **Módulos adicionais:** cada linha tem ícone do sistema (`design/icons`, mapa `MODULE_ICON` na página) em quadrado suave, linha marcada com realce verde e o valor em selo (“+ R$ 79” avulso, “incluído” em verde), em `CheckOptionRow`.
+
+### UX-contratacao-00X · Faixa mista e acessos do documento de preço — 2026-10-29
+- Atividade em 3 opções: Pecuária (cabeças), Agricultura (hectares, fruticultura inclusa) e **Agricultura + pecuária** (faixa mista M1 a M5, ~35% acima; a faixa é a maior entre cabeças e hectares). Tabela mista em `catalog.ts` (`mixedBandPrice`), regra em `pricing.ts` (`bandIndex` com `sizeHa`).
+- Acessos: Pro 5, Deluxe 10, Enterprise 20; extra de R$ 25 em todos os planos (ponto em aberto no documento: mercado e legado não cobram por acesso).
+- Resumo dos planos ganhou a tabela da faixa mista.
+- Onboarding: resumo do pedido mantém total grande e os grupos (Plano, Acessos, Módulos, GB Consult) recolhíveis.

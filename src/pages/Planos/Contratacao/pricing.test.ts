@@ -68,12 +68,26 @@ describe('quote', () => {
     expect(q.extraSeats).toBe(0);
   });
 
-  it('cobra acesso extra: R$ 25 no Pro e no Deluxe, ilimitado no Enterprise', () => {
+  it('cobra acesso extra: R$ 25 em todos os planos (Enterprise inclui 20)', () => {
     expect(quote('Pro', sel('Pro', 7)).month).toBe(349 + 2 * 25);
     expect(quote('Deluxe', sel('Deluxe', 13)).month).toBe(490 + 3 * 25);
-    const ent = quote('Enterprise', sel('Enterprise', 40));
+    const ent = quote('Enterprise', sel('Enterprise', 20));
     expect(ent.extraSeats).toBe(0);
     expect(ent.month).toBe(890);
+    expect(quote('Enterprise', sel('Enterprise', 24)).month).toBe(890 + 4 * 25);
+  });
+
+  it('faixa mista: preço da tabela mista e faixa = a maior entre cabeças e hectares', () => {
+    const mix = (size: number, sizeHa: number): Selection => ({ ...sel('Pro', 5, [], size, 'mix'), sizeHa });
+    expect(bandIndex('mix', 500, undefined, 200)).toBe(0);
+    expect(bandIndex('mix', 500, undefined, 801)).toBe(2);
+    expect(bandIndex('mix', 3001, undefined, 100)).toBe(3);
+    expect(quote('Pro', mix(500, 200)).month).toBe(259);
+    expect(quote('Pro', mix(1200, 400)).month).toBe(469);
+    expect(quote('Deluxe', mix(1200, 400)).month).toBe(659);
+    expect(quote('Enterprise', mix(1200, 400)).month).toBe(1199);
+    expect(quote('Enterprise', mix(20000, 400)).openRange).toBe(true);
+    expect(quote('Enterprise', mix(20000, 400)).month).toBe(3769);
   });
 
   it('módulo avulso soma no Pro e vem incluído no Deluxe', () => {

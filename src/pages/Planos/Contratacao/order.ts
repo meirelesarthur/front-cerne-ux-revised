@@ -14,11 +14,19 @@ export interface OnboardingOrder {
   plan: PlanTier;
   unit: SizeUnit;
   size: number;
+  /** Hectares, só na faixa mista (unit 'mix'). */
+  sizeHa?: number;
   /** Faixa de tamanho (1 a 5). */
   band: number;
   /** Faixa 5: o valor é ponto de partida para proposta. */
   openRange: boolean;
   users: number;
+  /** Valor base do plano na faixa (R$/mês), antes de acessos extras e módulos. */
+  base: number;
+  /** Acessos incluídos no plano, extras contratados e o valor deles (R$/mês). */
+  seatsIncluded: number;
+  extraSeats: number;
+  extraSeatsTotal: number;
   modules: OnboardingOrderModule[];
   consult: { key: string; name: string; price: number } | null;
   billing: 'monthly' | 'annual';

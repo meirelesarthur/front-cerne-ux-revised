@@ -46,7 +46,7 @@ import { toaster } from '@/components/ui/toaster';
 import { useLanguage } from '@/hooks/useLanguage';
 
 import type { OnboardingOrder } from './order';
-import { CATALOG, PLAN_DESCRIPTION, PLAN_HIGHLIGHTS, type PlanTier, type SizeUnit } from './catalog';
+import { CATALOG, PLAN_DESCRIPTION, PLAN_HIGHLIGHTS, type MeasureUnit, type PlanTier, type SizeUnit } from './catalog';
 import {
   annualMonthly,
   annualTotal,
@@ -121,7 +121,7 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
   const [step, setStep] = useState<StepKey>('plan');
   const [billing, setBilling] = useState<Billing>('monthly');
   const [selection, setSelection] = useState<Selection>(
-    CURRENT_SUBSCRIPTION ?? { plan: 'Pro', users: 5, modules: new Set<string>(), unit: 'cab', size: 1200, consult: 'none' }
+    CURRENT_SUBSCRIPTION ?? { plan: 'Pro', users: 5, modules: new Set<string>(), unit: 'cab', size: 1200, sizeHa: 400, consult: 'none' }
   );
   const [note, setNote] = useState('');
   // Módulo que só existe em plano acima e puxou o plano para cima: desmarcá-lo volta ao plano anterior.
@@ -135,8 +135,14 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
   };
 
   // ---- Derivados ----
-  const unitInfo = CATALOG.sizeUnits[selection.unit];
-  const band = bandIndex(selection.unit, selection.size);
+  const mixed = selection.unit === 'mix';
+  const sizeHa = selection.sizeHa ?? 400;
+  // medida da escala simples; na faixa mista as duas escalas são mostradas (cabeças e hectares)
+  const unitInfo = CATALOG.sizeUnits[selection.unit === 'ha' ? 'ha' : 'cab'];
+  const band = bandIndex(selection.unit, selection.size, CATALOG, sizeHa);
+  const sizeShort = mixed
+    ? `${n0(selection.size)} ${CATALOG.sizeUnits.cab.short} · ${n0(sizeHa)} ${CATALOG.sizeUnits.ha.short}`
+    : `${n0(selection.size)} ${unitInfo.short}`;
   const open = band === 4;
   const current = quote(selection.plan, selection);
   const { quotes, cheapest } = useMemo(() => compareTiers(selection), [selection]);
@@ -158,6 +164,7 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
       : fill(text.plan.accessesIncluded, { n: CATALOG.seatsIncluded[tier] });
 
   const bandText = (i: number, unit: SizeUnit = selection.unit) => {
+    if (unit === 'mix') return fill(text.size.bandMixed, { n: i + 1 });
     const info = CATALOG.sizeUnits[unit];
     return i < 4
       ? fill(text.size.bandUpTo, { n: i + 1, lim: n0(info.limits[i]), word: info.word })
@@ -208,15 +215,21 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
 
   function changeUnit(unit: SizeUnit) {
     if (unit === selection.unit) return;
-    // mantém a posição na régua (a faixa) ao trocar de medida
-    const position = sizeToPosition(selection.unit, selection.size);
-    setSelection((s) => ({ ...s, unit, size: positionToSize(unit, position) }));
+    // mantém a posição na régua (a faixa) ao trocar de medida: calcula cabeças e hectares
+    // equivalentes ao tamanho atual e guarda no formato de cada atividade
+    const [cabs, has] =
+      selection.unit === 'ha'
+        ? [positionToSize('cab', sizeToPosition('ha', selection.size)), selection.size]
+        : selection.unit === 'mix'
+          ? [selection.size, sizeHa]
+          : [selection.size, positionToSize('ha', sizeToPosition('cab', selection.size))];
+    setSelection((s) => ({ ...s, unit, size: unit === 'ha' ? has : cabs, sizeHa: has }));
   }
 
   const summaryText = () =>
     [
       'GB Cerne · proposta',
-      `${text.summary.size}: ${n0(selection.size)} ${unitInfo.word} (${bandText(band)})`,
+      `${text.summary.size}: ${mixed ? `${n0(selection.size)} ${CATALOG.sizeUnits.cab.word} + ${n0(sizeHa)} ${CATALOG.sizeUnits.ha.word}` : `${n0(selection.size)} ${unitInfo.word}`} (${bandText(band)})`,
       `${text.summary.plan} ${selection.plan}: ${formatBRL(current.base)}${open ? '+' : ''}${text.plan.perMonth}`,
       `${text.summary.accesses}: ${selection.users} (${seatsIncluded === Infinity ? text.plan.accessesUnlimited : `${seatsIncluded} ${text.summary.includedInPlan.toLowerCase()}`}${
         current.extraSeats
@@ -258,9 +271,14 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
       plan: selection.plan,
       unit: selection.unit,
       size: selection.size,
+      sizeHa: mixed ? sizeHa : undefined,
       band: band + 1,
       openRange: open,
       users: selection.users,
+      base: current.base,
+      seatsIncluded,
+      extraSeats: current.extraSeats,
+      extraSeatsTotal: current.seatsTotal,
       modules: current.addedModules.map((m) => ({ key: m.key, name: m.name, price: m.price ?? 0 })),
       consult: consultMonth > 0 ? { key: consultOption.key, name: consultOption.name, price: consultMonth } : null,
       billing,
@@ -277,8 +295,37 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
       : text.summary.requestChange;
 
   // ---- Etapa 1: tamanho, plano, acessos e cobrança ----
-  const limits = unitInfo.limits;
-  const sliderTicks = [0, ...limits, unitInfo.max].map((v, i, arr) => (i === 0 ? '0' : i === arr.length - 1 ? `${n0(v)}+` : n0(v)));
+  const ticksFor = (m: MeasureUnit) =>
+    [0, ...CATALOG.sizeUnits[m].limits, CATALOG.sizeUnits[m].max].map((v, i, arr) => (i === 0 ? '0' : i === arr.length - 1 ? `${n0(v)}+` : n0(v)));
+  const sizeInput = (m: MeasureUnit, value: number, onValue: (v: number) => void, label: string) => (
+    <Flex align="center" gap="6px">
+      <Input
+        type="number"
+        min={1}
+        max={500000}
+        w="120px"
+        aria-label={label}
+        value={value}
+        onChange={(e) => onValue(Math.max(1, Math.min(500000, Math.round(Number(e.target.value) || 1))))}
+      />
+      <Text fontSize="base" color="fg.muted">
+        {CATALOG.sizeUnits[m].short}
+      </Text>
+    </Flex>
+  );
+  const sizeSlider = (m: MeasureUnit, value: number, onValue: (v: number) => void, active: number, label: string) => (
+    <BandSlider
+      ariaLabel={label}
+      value={sizeToPosition(m, value)}
+      onChange={(p) => onValue(positionToSize(m, p))}
+      ticks={ticksFor(m)}
+      bandLabels={[0, 1, 2, 3, 4].map((i) => fill(text.size.band, { n: i + 1 }))}
+      activeBand={active}
+    />
+  );
+  const setCabs = (v: number) => setSelection((s) => ({ ...s, size: v }));
+  const setHaMix = (v: number) => setSelection((s) => ({ ...s, sizeHa: v }));
+  const setHa = (v: number) => setSelection((s) => ({ ...s, size: v }));
   const planStep = (
     <>
       <FieldRow icon="map" title={text.size.title} hint={text.size.hint} wide>
@@ -290,34 +337,35 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
             options={[
               { key: 'cab', label: text.size.cab },
               { key: 'ha', label: text.size.ha },
+              { key: 'mix', label: text.size.mix },
             ]}
           />
-          <Flex align="center" gap="6px">
-            <Input
-              type="number"
-              min={1}
-              max={500000}
-              w="120px"
-              aria-label={text.size.quantity}
-              value={selection.size}
-              onChange={(e) => {
-                const v = Math.max(1, Math.min(500000, Math.round(Number(e.target.value) || 1)));
-                setSelection((s) => ({ ...s, size: v }));
-              }}
-            />
-            <Text fontSize="base" color="fg.muted">
-              {unitInfo.short}
-            </Text>
-          </Flex>
+          {!mixed && sizeInput(selection.unit === 'ha' ? 'ha' : 'cab', selection.size, selection.unit === 'ha' ? setHa : setCabs, text.size.quantity)}
         </Flex>
-        <BandSlider
-          ariaLabel={fill(text.size.scale, { word: unitInfo.word })}
-          value={sizeToPosition(selection.unit, selection.size)}
-          onChange={(p) => setSelection((s) => ({ ...s, size: positionToSize(s.unit, p) }))}
-          ticks={sliderTicks}
-          bandLabels={[0, 1, 2, 3, 4].map((i) => fill(text.size.band, { n: i + 1 }))}
-          activeBand={band}
-        />
+        {mixed ? (
+          <Flex direction="column" gap="14px">
+            <Box>
+              <Flex align="center" gap="12px" wrap="wrap" mb="4px">
+                <Text fontSize="base" fontWeight="semibold">
+                  {text.size.mixCab}
+                </Text>
+                {sizeInput('cab', selection.size, setCabs, text.size.mixCab)}
+              </Flex>
+              {sizeSlider('cab', selection.size, setCabs, bandIndex('cab', selection.size), text.size.scaleCab)}
+            </Box>
+            <Box>
+              <Flex align="center" gap="12px" wrap="wrap" mb="4px">
+                <Text fontSize="base" fontWeight="semibold">
+                  {text.size.mixHa}
+                </Text>
+                {sizeInput('ha', sizeHa, setHaMix, text.size.mixHa)}
+              </Flex>
+              {sizeSlider('ha', sizeHa, setHaMix, bandIndex('ha', sizeHa), text.size.scaleHa)}
+            </Box>
+          </Flex>
+        ) : (
+          sizeSlider(selection.unit === 'ha' ? 'ha' : 'cab', selection.size, selection.unit === 'ha' ? setHa : setCabs, band, fill(text.size.scale, { word: unitInfo.word }))
+        )}
         <Text fontSize="base" color="fg.muted" mt="4px">
           <b>{bandText(band)}</b>
           {open ? text.size.band5Note : ''}
@@ -470,7 +518,7 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
   const summary = (
     <SummaryPanel title={text.summary.title} icon="receipt">
       <SummaryGroup title={text.summary.plan}>
-        <SummaryRow label={text.summary.size} value={`${n0(selection.size)} ${unitInfo.short}`} />
+        <SummaryRow label={text.summary.size} value={sizeShort} />
         <SummaryRow label={text.summary.band} value={open ? text.summary.bandOpen : String(band + 1)} />
         <SummaryRow label={text.summary.plan} value={selection.plan} />
         <SummaryRow label={text.summary.baseValue} value={`${formatBRL(current.base)}${open ? '+' : ''}`} />
@@ -639,6 +687,20 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
     },
   }));
 
+  const mixedRows: SimpleTableRow[] = [0, 1, 2, 3, 4].map((i) => ({
+    key: `mix-${i}`,
+    cells: {
+      band: <b>M{i + 1}</b>,
+      limit:
+        i < 4
+          ? `${n0(CATALOG.sizeUnits.cab.limits[i])} ${CATALOG.sizeUnits.cab.short} · ${n0(CATALOG.sizeUnits.ha.limits[i])} ${CATALOG.sizeUnits.ha.short}`
+          : fill(ov.above, { n: `${n0(CATALOG.sizeUnits.cab.limits[3])} ${CATALOG.sizeUnits.cab.short} · ${n0(CATALOG.sizeUnits.ha.limits[3])} ${CATALOG.sizeUnits.ha.short}` }),
+      Pro: n0(CATALOG.mixedBandPrice.Pro[i]),
+      Deluxe: n0(CATALOG.mixedBandPrice.Deluxe[i]),
+      Enterprise: `${n0(CATALOG.mixedBandPrice.Enterprise[i])}${i === 4 ? '+' : ''}`,
+    },
+  }));
+
   const dot = <Box as="span" display="inline-block" boxSize="12px" borderRadius="full" bg="green.600" aria-label={ov.legendIncluded} />;
   const ring = <Box as="span" display="inline-block" boxSize="12px" borderRadius="full" borderWidth="2px" borderColor="addonText" aria-label={ov.legendAddon} />;
   const na = <Text as="span" color="fg.muted" aria-label={ov.legendNa}>—</Text>;
@@ -765,6 +827,24 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
         />
         <Text fontSize="sm" color="fg.muted" mt="6px">
           {ov.priceTableNote}
+        </Text>
+      </Box>
+
+      <Box>
+        <Text fontSize="lg" fontWeight="semibold" mb={2}>
+          {ov.mixedTitle}
+        </Text>
+        <SimpleTable
+          ariaLabel={ov.mixedTitle}
+          columns={[
+            { key: 'band', header: ov.colMixBand },
+            { key: 'limit', header: ov.colMix, align: 'right' },
+            ...CATALOG.tiers.map(planCol).map((c) => ({ ...c, align: 'right' as const })),
+          ]}
+          rows={mixedRows}
+        />
+        <Text fontSize="sm" color="fg.muted" mt="6px">
+          {ov.mixedNote}
         </Text>
       </Box>
 

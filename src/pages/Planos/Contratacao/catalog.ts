@@ -13,8 +13,12 @@
 //  - o preço do plano acompanha o TAMANHO da fazenda: 5 faixas, em cabeças ou hectares
 //    (limites do legado); fazenda mista conta pela maior faixa; faixa 5 = ponto de partida
 //    para proposta;
-//  - acessos: Pro 5, Deluxe 10, Enterprise ilimitados; extra de R$ 25 no Pro e no Deluxe,
-//    igual para qualquer perfil (administrativo ou operacional);
+//  - acessos: Pro 5, Deluxe 10, Enterprise 20; extra de R$ 25 em todos os planos, igual para
+//    qualquer perfil (administrativo ou operacional). Ponto em aberto no documento: o mercado e o
+//    legado não cobram por acesso;
+//  - atividade: pecuária (cabeças), agricultura — que inclui a fruticultura — (hectares) ou as duas
+//    juntas (faixa MISTA, ~35% acima da tabela de uma atividade; a faixa é a maior entre cabeças e
+//    hectares);
 //  - módulo avulso tem o mesmo preço em qualquer plano abaixo daquele em que vem incluído;
 //    `price: null` = não é vendido avulso (só existe a partir do plano `includedIn`);
 //  - assistente GIA embutida em todos os planos, em 3 níveis (Suporte, Consulta, Execução), cada
@@ -26,8 +30,11 @@
 
 export type PlanTier = 'Pro' | 'Deluxe' | 'Enterprise';
 
-/** Medida do tamanho da fazenda: cabeças (rebanho) ou hectares (área). */
-export type SizeUnit = 'cab' | 'ha';
+/** Medida de uma escala de tamanho: cabeças (rebanho) ou hectares (área). */
+export type MeasureUnit = 'cab' | 'ha';
+
+/** Atividade/medida da fazenda: pecuária (cab), agricultura com fruticultura (ha) ou mista (as duas). */
+export type SizeUnit = MeasureUnit | 'mix';
 
 /** `Nenhum` = nenhum plano inclui o módulo (só avulso). */
 export type IncludedIn = PlanTier | 'Nenhum';
@@ -103,9 +110,11 @@ export interface GiaModel {
 
 export interface Catalog {
   tiers: PlanTier[];
-  sizeUnits: Record<SizeUnit, SizeUnitInfo>;
+  sizeUnits: Record<MeasureUnit, SizeUnitInfo>;
   /** Preço base (R$/mês) do plano em cada uma das 5 faixas. */
   bandPrice: Record<PlanTier, [number, number, number, number, number]>;
+  /** Preço do plano na faixa mista (M1 a M5): agricultura e pecuária juntas. */
+  mixedBandPrice: Record<PlanTier, [number, number, number, number, number]>;
   /** Acessos incluídos (`Infinity` = ilimitados). */
   seatsIncluded: Record<PlanTier, number>;
   /** Preço do acesso extra (R$/mês). */
@@ -133,8 +142,13 @@ export const CATALOG: Catalog = {
     Deluxe: [290, 490, 790, 1290, 1990],
     Enterprise: [590, 890, 1290, 1890, 2790],
   },
-  seatsIncluded: { Pro: 5, Deluxe: 10, Enterprise: Infinity },
-  extraSeatPrice: { Pro: 25, Deluxe: 25, Enterprise: 0 },
+  mixedBandPrice: {
+    Pro: [259, 469, 790, 1349, 2149],
+    Deluxe: [390, 659, 1069, 1749, 2690],
+    Enterprise: [799, 1199, 1749, 2549, 3769],
+  },
+  seatsIncluded: { Pro: 5, Deluxe: 10, Enterprise: 20 },
+  extraSeatPrice: { Pro: 25, Deluxe: 25, Enterprise: 25 },
   activitiesIncluded: { Pro: 1, Deluxe: 2, Enterprise: 'todas' },
   // tokens de tema (`planPro`…): a cor de marca no claro e a versão clara no escuro
   accent: { Pro: 'var(--chakra-colors-plan-pro)', Deluxe: 'var(--chakra-colors-plan-deluxe)', Enterprise: 'var(--chakra-colors-plan-enterprise)' },

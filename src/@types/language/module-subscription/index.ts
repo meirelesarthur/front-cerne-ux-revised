@@ -113,6 +113,12 @@ export interface ModuleSubscription {
     unitLabel: string;
     cab: string;
     ha: string;
+    mix: string;
+    mixCab: string;
+    mixHa: string;
+    scaleCab: string;
+    scaleHa: string;
+    bandMixed: string;
     quantity: string;
     scale: string;
     band: string;
@@ -297,6 +303,10 @@ export interface ModuleSubscription {
     colHa: string;
     above: string;
     priceTableNote: string;
+    mixedTitle: string;
+    mixedNote: string;
+    colMix: string;
+    colMixBand: string;
     aiTitle: string;
     colPlan: string;
     colWindow: string;

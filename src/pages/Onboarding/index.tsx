@@ -73,17 +73,41 @@ export default function Onboarding() {
     navigate('/login');
   };
 
+  const sm = languageGB.subscription.summary;
+  const unitShort = (u: 'cab' | 'ha') => (u === 'cab' ? 'cab' : 'ha');
+  const sizeText = order
+    ? order.unit === 'mix'
+      ? `${order.size.toLocaleString('pt-BR')} ${unitShort('cab')} · ${(order.sizeHa ?? 0).toLocaleString('pt-BR')} ${unitShort('ha')}`
+      : `${order.size.toLocaleString('pt-BR')} ${unitShort(order.unit)}`
+    : '';
+  // Mesmas informações do resumo do configurador, em grupos recolhíveis; o total fica em destaque no topo.
   const summary = order && (
     <SummaryPanel title={t.payment.orderTitle}>
-      <SummaryGroup title={`${order.plan} · ${order.users}`}>
-        <SummaryRow label={t.payment.recurring} value={order.billing === 'annual' ? t.payment.annual : t.payment.monthly} />
-        {order.modules.map((m) => (
-          <SummaryRow key={m.key} label={m.name} value={formatBRL(m.price)} />
-        ))}
-        {order.consult && <SummaryRow label={order.consult.name} value={formatBRL(order.consult.price)} />}
-      </SummaryGroup>
-      <SummaryTotal label={t.payment.dueNow} value={formatBRL(order.chargeNow)} />
+      <SummaryTotal
+        label={t.payment.dueNow}
+        value={formatBRL(order.chargeNow)}
+        hint={`${t.payment.recurring}: ${order.billing === 'annual' ? t.payment.annual : t.payment.monthly}`}
+      />
       {order.openRange && <SummaryNote>{t.payment.openRange}</SummaryNote>}
+      <SummaryGroup title={sm.plan}>
+        <SummaryRow label={sm.size} value={sizeText} />
+        <SummaryRow label={sm.band} value={order.openRange ? sm.bandOpen : String(order.band)} />
+        <SummaryRow label={sm.plan} value={order.plan} />
+        <SummaryRow label={sm.baseValue} value={`${formatBRL(order.base)}${order.openRange ? '+' : ''}`} />
+      </SummaryGroup>
+      <SummaryGroup title={sm.accesses} defaultOpen={false}>
+        <SummaryRow label={sm.accesses} value={String(order.users)} />
+        <SummaryRow label={sm.includedInPlan} value={String(order.seatsIncluded)} tone="included" />
+        <SummaryRow label={sm.extras} value={order.extraSeats ? `${order.extraSeats} · ${formatBRL(order.extraSeatsTotal)}` : sm.none} />
+      </SummaryGroup>
+      <SummaryGroup title={sm.modules} defaultOpen={false}>
+        {order.modules.length ? order.modules.map((m) => <SummaryRow key={m.key} label={m.name} value={formatBRL(m.price)} tone="added" />) : <SummaryRow label={sm.modules} value={sm.none} />}
+      </SummaryGroup>
+      {order.consult && (
+        <SummaryGroup title={sm.consult} defaultOpen={false}>
+          <SummaryRow label={order.consult.name} value={formatBRL(order.consult.price)} />
+        </SummaryGroup>
+      )}
     </SummaryPanel>
   );
 

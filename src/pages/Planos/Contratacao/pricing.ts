@@ -2,7 +2,7 @@
 // Regra de preço da contratação — funções PURAS (sem React), cobertas por `pricing.test.ts`.
 // Porte fiel da lógica do simulador do documento "Precificação do GB Cerne".
 
-import { CATALOG, type Catalog, type CatalogModule, type PlanTier, type SizeUnit } from './catalog';
+import { CATALOG, type Catalog, type CatalogModule, type MeasureUnit, type PlanTier, type SizeUnit } from './catalog';
 
 export const RANK: Record<PlanTier | 'Nenhum', number> = { Pro: 0, Deluxe: 1, Enterprise: 2, Nenhum: 9 };
 
@@ -12,13 +12,15 @@ export interface Selection {
   /** Chaves dos módulos marcados pelo usuário. */
   modules: ReadonlySet<string>;
   unit: SizeUnit;
-  /** Tamanho da fazenda na medida escolhida. */
+  /** Tamanho da fazenda na medida escolhida (cabeças na faixa mista). */
   size: number;
+  /** Hectares — só na faixa mista (unit 'mix'), onde o tamanho tem duas medidas. */
+  sizeHa?: number;
   /** Chave do serviço GB Consult (`none` = sem serviço). */
   consult: string;
 }
 
-export type QuoteInput = Pick<Selection, 'users' | 'modules' | 'unit' | 'size'>;
+export type QuoteInput = Pick<Selection, 'users' | 'modules' | 'unit' | 'size' | 'sizeHa'>;
 
 export interface Quote {
   tier: PlanTier;
@@ -41,8 +43,12 @@ export interface Quote {
   valid: boolean;
 }
 
-/** Faixa de tamanho (0 a 4): primeira cujo limite comporta o tamanho; acima do último = faixa 5. */
-export function bandIndex(unit: SizeUnit, size: number, catalog: Catalog = CATALOG): number {
+/**
+ * Faixa de tamanho (0 a 4): primeira cujo limite comporta o tamanho; acima do último = faixa 5.
+ * Na faixa mista vale a MAIOR entre a faixa das cabeças (size) e a dos hectares (sizeHa).
+ */
+export function bandIndex(unit: SizeUnit, size: number, catalog: Catalog = CATALOG, sizeHa = 0): number {
+  if (unit === 'mix') return Math.max(bandIndex('cab', size, catalog), bandIndex('ha', sizeHa, catalog));
   const limits = catalog.sizeUnits[unit].limits;
   let i = 0;
   while (i < 4 && size > limits[i]) i++;
@@ -50,10 +56,10 @@ export function bandIndex(unit: SizeUnit, size: number, catalog: Catalog = CATAL
 }
 
 /** Pontos da régua: 0, os 4 limites e o máximo — 5 trechos iguais, um por faixa. */
-const stops = (unit: SizeUnit, catalog: Catalog) => [0, ...catalog.sizeUnits[unit].limits, catalog.sizeUnits[unit].max];
+const stops = (unit: MeasureUnit, catalog: Catalog) => [0, ...catalog.sizeUnits[unit].limits, catalog.sizeUnits[unit].max];
 
 /** Tamanho → posição na régua (0 a 500, 100 por faixa). */
-export function sizeToPosition(unit: SizeUnit, size: number, catalog: Catalog = CATALOG): number {
+export function sizeToPosition(unit: MeasureUnit, size: number, catalog: Catalog = CATALOG): number {
   const s = stops(unit, catalog);
   for (let i = 0; i < 5; i++) {
     if (size <= s[i + 1]) return i * 100 + ((size - s[i]) / (s[i + 1] - s[i])) * 100;
@@ -62,7 +68,7 @@ export function sizeToPosition(unit: SizeUnit, size: number, catalog: Catalog = 
 }
 
 /** Posição na régua → tamanho (arredondado em passos de 10/50/100). */
-export function positionToSize(unit: SizeUnit, position: number, catalog: Catalog = CATALOG): number {
+export function positionToSize(unit: MeasureUnit, position: number, catalog: Catalog = CATALOG): number {
   const s = stops(unit, catalog);
   const i = Math.min(4, Math.floor(position / 100));
   const v = s[i] + ((position - i * 100) / 100) * (s[i + 1] - s[i]);
@@ -77,7 +83,7 @@ export const minTierFor = (m: CatalogModule): PlanTier =>
 export const isIncluded = (tier: PlanTier, m: CatalogModule) => RANK[tier] >= RANK[m.includedIn];
 
 export function quote(tier: PlanTier, sel: QuoteInput, catalog: Catalog = CATALOG): Quote {
-  const band = bandIndex(sel.unit, sel.size, catalog);
+  const band = bandIndex(sel.unit, sel.size, catalog, sel.sizeHa);
   const extraSeats = Math.max(0, sel.users - catalog.seatsIncluded[tier]);
   const seatsTotal = extraSeats * catalog.extraSeatPrice[tier];
   const addedModules: CatalogModule[] = [];
@@ -92,7 +98,7 @@ export function quote(tier: PlanTier, sel: QuoteInput, catalog: Catalog = CATALO
   }
 
   const modulesTotal = addedModules.reduce((sum, m) => sum + (m.price ?? 0), 0);
-  const base = catalog.bandPrice[tier][band];
+  const base = (sel.unit === 'mix' ? catalog.mixedBandPrice : catalog.bandPrice)[tier][band];
   return {
     tier,
     band,
