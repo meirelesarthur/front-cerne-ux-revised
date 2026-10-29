@@ -57,3 +57,10 @@ Fonte: documento "Cerne para a Gestão" (artifact atualizado) + print final da U
 - **Módulos:** + "Planejamento e orçamento" (Deluxe, R$ 79) e "Emissor fiscal adicional" (qualquer plano, R$ 29) — agora 17 itens no catálogo (15 avulsos + Gestão gerencial/Depreciação, que não são vendidos à parte, + emissor). Demais preços conferidos com o documento (sem mudança).
 - **Perfil:** "Fazer upgrade" no menu da conta agora abre `/planos/contratar` (antes só mostrava "Em breve").
 - **Em aberto (decisão de produto):** o texto de 28/10 dizia que a GIA pode ser contratada em níveis acima de qualquer plano (upsell); o documento novo só prevê o pacote extra de mensagens, sem preço de upgrade de nível — por isso não há seletor de upgrade da GIA na contratação.
+
+## Ajustes de estética (2026-10-29)
+- **Sem "entalhe":** removida a faixa grossa colorida no topo dos cartões (plano, comparação do resumo, cartão de plano da visão geral e cartão da GIA). O plano agora é identificado só pelo nome na cor do catálogo; todos os cartões têm contorno uniforme.
+- **Cabeçalho:** o seletor Simulador / Resumo dos planos foi para o extremo direito, junto do botão de fechar (`FormContainer.headerActions`). As etapas (Fazenda e plano · Módulos e serviços) sobem para o topo da página.
+- **Aviso de simulação** saiu do alerta no topo e virou nota em largura total no rodapé do cartão (`FormContainer.footer`), perto das ações de contratação.
+- **Régua de tamanho (`BandSlider`):** valores (0 · 500 · 1.500 …) acima da barra, com um traço apontando para ela; nomes das faixas abaixo.
+- **Módulos adicionais:** cada linha tem ícone do sistema (`design/icons`, mapa `MODULE_ICON` na página) em quadrado suave, linha marcada com realce verde e o valor em selo (“+ R$ 79” avulso, “incluído” em verde), em `CheckOptionRow`.

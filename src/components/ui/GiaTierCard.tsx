@@ -33,11 +33,11 @@ const TONE: Record<GiaCapabilityTone, { bg: string; color: string }> = {
   decide: { bg: 'semanticNeutral.100', color: 'fg.muted' },
 };
 
-export function GiaTierCard({ name, tag, inheritsLabel, accent = 'green.600', metrics, capabilities }: GiaTierCardProps) {
+export function GiaTierCard({ name, tag, inheritsLabel, accent, metrics, capabilities }: GiaTierCardProps) {
   return (
-    <Flex direction="column" gap={4} p={4} h="full" borderWidth="1px" borderColor="border.subtle" borderTopWidth="3px" borderTopColor={accent} borderRadius="xl" bg="cardBG">
+    <Flex direction="column" gap={4} p={4} h="full" borderWidth="1px" borderColor="border.subtle" borderRadius="xl" bg="cardBG">
       <Flex align="center" justify="space-between" gap={2}>
-        <Text fontSize="lg" fontWeight="semibold">
+        <Text fontSize="lg" fontWeight="semibold" style={accent ? { color: accent } : undefined}>
           {name}
         </Text>
         <Box as="span" px="10px" py="2px" borderRadius="full" bg="semanticNeutral.100" color="fg.muted" fontSize="xs" fontWeight="semibold" whiteSpace="nowrap">

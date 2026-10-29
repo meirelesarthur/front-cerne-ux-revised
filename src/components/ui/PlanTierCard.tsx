@@ -26,7 +26,7 @@ export interface PlanTierCardProps {
 
 export function PlanTierCard({ name, tagline, accent, priceRange, priceNote, chips, listLabel, items, addonsLabel, addonLines, addonsAllIncluded = false }: PlanTierCardProps) {
   return (
-    <Flex direction="column" gap="12px" p={5} bg="cardBG" borderWidth="1px" borderColor="semanticNeutral.200" borderTopWidth="6px" borderRadius="xl" boxShadow="cardShadow" minW={0} style={{ borderTopColor: accent }}>
+    <Flex direction="column" gap="12px" p={5} bg="cardBG" borderWidth="1px" borderColor="semanticNeutral.200" borderRadius="xl" boxShadow="cardShadow" minW={0}>
       <Box>
         <Text fontSize="title" fontWeight="bold" lineHeight="1" style={{ color: accent }}>
           {name}

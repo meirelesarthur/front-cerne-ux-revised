@@ -1,6 +1,6 @@
 // src/components/ui/PlanOptionCard.tsx
-// Cartão selecionável de plano (Pro / Deluxe / Enterprise): faixa superior na cor do plano,
-// nome, preço mensal, descrição curta e selo opcional (ex.: "Plano atual"). Uso em grupo de rádio.
+// Cartão selecionável de plano (Pro / Deluxe / Enterprise): nome na cor do plano,
+// preço, preço mensal, descrição curta e selo opcional (ex.: "Plano atual"). Uso em grupo de rádio.
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 
@@ -47,9 +47,7 @@ export function PlanOptionCard({
       py="14px"
       borderRadius="xl"
       borderWidth="1px"
-      borderTopWidth="5px"
       borderColor={selected ? accent : 'semanticNeutral.200'}
-      borderTopColor={accent}
       bg={selected ? 'semanticNeutral.100' : 'cardBG'}
       boxShadow={selected ? `0 0 0 1px ${accent} inset` : 'none'}
       transition="background 0.2s ease, border-color 0.2s ease"

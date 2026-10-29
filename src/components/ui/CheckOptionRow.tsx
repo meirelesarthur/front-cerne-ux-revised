@@ -1,13 +1,17 @@
 // src/components/ui/CheckOptionRow.tsx
-// Linha de opção com caixa de marcar: nome + descrição à esquerda, valor à direita.
+// Linha de opção com caixa de marcar: ícone, nome + descrição e valor em selo à direita.
 // Estado `locked` = já incluído (marcado e travado, valor em verde). Controlado.
 
 import { Box, Flex, Text } from '@chakra-ui/react';
+
+import { Icon, type IconName } from './Icon';
 
 export interface CheckOptionRowProps {
   id: string;
   label: string;
   description?: string;
+  /** Ícone do sistema, em um quadrado suave antes do nome. */
+  icon?: IconName;
   /** Texto à direita (ex.: "+ R$ 79" ou "incluído"). */
   trailing: string;
   checked: boolean;
@@ -16,20 +20,20 @@ export interface CheckOptionRowProps {
   onChange: (checked: boolean) => void;
 }
 
-export function CheckOptionRow({ id, label, description, trailing, checked, locked = false, onChange }: CheckOptionRowProps) {
+export function CheckOptionRow({ id, label, description, icon, trailing, checked, locked = false, onChange }: CheckOptionRowProps) {
   return (
     <Flex
       as="label"
       // `as` não altera os tipos de props do Chakra; `htmlFor` entra por spread.
       {...({ htmlFor: id } as Record<string, string>)}
-      align="flex-start"
+      align="center"
       gap="12px"
       px={4}
-      py="11px"
+      py="12px"
       borderRadius="xl"
       borderWidth="1px"
-      borderColor="semanticNeutral.200"
-      bg={locked ? 'semanticNeutral.100' : 'transparent'}
+      borderColor={checked && !locked ? 'green.600' : 'semanticNeutral.200'}
+      bg={locked ? 'semanticNeutral.100' : checked ? 'selectedBG' : 'transparent'}
       cursor={locked ? 'default' : 'pointer'}
       transition="background 0.15s ease"
       _hover={{ bg: 'semanticNeutral.100' }}
@@ -41,8 +45,13 @@ export function CheckOptionRow({ id, label, description, trailing, checked, lock
         checked={checked}
         disabled={locked}
         onChange={(e) => onChange(e.target.checked)}
-        style={{ marginTop: 3, width: 16, height: 16, accentColor: 'var(--chakra-colors-green-600)' }}
+        style={{ width: 16, height: 16, flexShrink: 0, accentColor: 'var(--chakra-colors-green-600)' }}
       />
+      {icon && (
+        <Flex align="center" justify="center" flexShrink={0} boxSize="40px" borderRadius="lg" bg="cardBG" borderWidth="1px" borderColor="semanticNeutral.200" color={locked ? 'fg.muted' : 'green.600'}>
+          <Icon name={icon} size="lg" />
+        </Flex>
+      )}
       <Box flex="1" minW={0}>
         <Text fontWeight="medium" color={locked ? 'fg.muted' : 'fg.default'}>
           {label}
@@ -53,15 +62,21 @@ export function CheckOptionRow({ id, label, description, trailing, checked, lock
           </Text>
         )}
       </Box>
-      <Text
+      <Box
+        as="span"
+        flexShrink={0}
+        px="10px"
+        py="3px"
+        borderRadius="full"
         fontSize="base"
         fontWeight="semibold"
         whiteSpace="nowrap"
-        // incluído = verde de sucesso; valor avulso = magenta do catálogo (cor de "adicional")
-        color={locked ? 'feedBack.successMain' : 'addonText'}
+        // incluído = verde; valor avulso = magenta do catálogo (cor de "adicional")
+        bg={locked ? 'selectedBG' : 'addonSoftBG'}
+        color={locked ? 'selectedText' : 'addonText'}
       >
         {trailing}
-      </Text>
+      </Box>
     </Flex>
   );
 }

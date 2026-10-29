@@ -15,7 +15,7 @@
 
 import { useMemo, useState, type ReactNode } from 'react';
 
-import { Alert, Box, Flex, Grid, Input, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, Input, Text } from '@chakra-ui/react';
 
 import { Button } from '@/components/Button';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
@@ -74,6 +74,27 @@ type Billing = 'monthly' | 'annual';
  * `null` = contratação nova (sem selo "Plano atual" nem comparação com o atual).
  */
 const CURRENT_SUBSCRIPTION: Selection | null = null;
+
+/** Ícone de cada módulo avulso (papéis de `design/icons.ts`). */
+const MODULE_ICON: Record<string, IconName> = {
+  dre: 'chart-line',
+  ofx: 'bank',
+  cte: 'truck',
+  dom: 'link',
+  orc: 'calculator',
+  rep: 'cattle',
+  fab: 'factory',
+  conf: 'fence',
+  bal: 'scale',
+  car: 'package-check',
+  sup: 'cart',
+  ven: 'shopping-bag',
+  os: 'wrench',
+  pes: 'users',
+  doc: 'document',
+  ras: 'route',
+  emi: 'receipt',
+};
 
 const fill = (template: string, vars: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ''));
@@ -350,6 +371,7 @@ export default function ContratacaoPlano() {
                     id={`module-${m.key}`}
                     label={m.name}
                     description={m.description}
+                    icon={MODULE_ICON[m.key]}
                     checked={included || selection.modules.has(m.key)}
                     locked={included}
                     trailing={
@@ -747,32 +769,37 @@ export default function ContratacaoPlano() {
   );
 
   return (
-    <FormContainer fullBleed title={text.pageTitle} subtitle={text.pageSubtitle}>
+    <FormContainer
+      fullBleed
+      title={text.pageTitle}
+      subtitle={text.pageSubtitle}
+      headerActions={
+        <SegmentedControl<ViewKey>
+          value={view}
+          onChange={setView}
+          ariaLabel={text.view.label}
+          options={[
+            { key: 'simulate', label: text.view.simulate },
+            { key: 'plans', label: text.view.plans },
+          ]}
+        />
+      }
+      footer={
+        view === 'simulate' ? (
+          <Flex align="center" gap="10px" w="full" color="fg.muted" fontSize="base">
+            <Icon name="info" size="sm" />
+            <Text as="span">{text.simulationNotice}</Text>
+          </Flex>
+        ) : undefined
+      }
+    >
       <Grid templateColumns={{ base: '1fr', lg: view === 'simulate' ? 'minmax(0, 1fr) 360px' : 'minmax(0, 1fr)' }} height="100%" minH={0}>
         <Box px={{ base: 4, md: 7 }} py={5} overflowY="auto" minW={0}>
-          <Flex justify="space-between" align="center" wrap="wrap" gap="12px" mb={4}>
-            <SegmentedControl<ViewKey>
-              value={view}
-              onChange={setView}
-              ariaLabel={text.view.label}
-              options={[
-                { key: 'simulate', label: text.view.simulate },
-                { key: 'plans', label: text.view.plans },
-              ]}
-            />
-          </Flex>
 
           {view === 'plans' ? (
             overview
           ) : (
             <>
-              <Alert.Root status="info" borderRadius="lg" mb={5}>
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Description color="strongText">{text.simulationNotice}</Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-
               <Box mb={4}>
                 <StepIndicator<StepKey>
                   ariaLabel={text.steps.label}

@@ -42,9 +42,7 @@ export function PlanCompareStrip({ items, onSelect, labels }: PlanCompareStripPr
           textAlign="left"
           borderRadius="lg"
           borderWidth="1px"
-          borderTopWidth="4px"
           borderColor="summaryLineStrong"
-          borderTopColor={item.accent}
           bg={item.current ? 'summaryFillActive' : 'summaryFill'}
           color="white"
           aria-current={item.current ? 'true' : undefined}
