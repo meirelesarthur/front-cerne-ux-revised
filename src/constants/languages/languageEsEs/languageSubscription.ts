@@ -36,6 +36,8 @@ export const languageSubscription: ModuleSubscription = {
     decrease: "Un acceso menos",
     increase: "Un acceso más",
     quantity: "Cantidad de accesos",
+    included: "{inc} accesos incluidos en {plan}",
+    extra: "Acceso extra: {price}/mes cada uno",
     info: "{inc} accesos incluidos en {plan}; cada acceso extra cuesta {price} por mes.",
     infoUnlimited: "Accesos ilimitados en {plan}.",
   },
@@ -49,7 +51,7 @@ export const languageSubscription: ModuleSubscription = {
     onlyFrom: "en {plan}",
   },
   nav: {
-    next: "Siguiente: módulos y servicios →",
+    next: "Continuar →",
     back: "Volver a plan y accesos",
   },
   summary: {
@@ -174,7 +176,7 @@ export const languageSubscription: ModuleSubscription = {
     plan: {
       heading: "Elija el plan de su finca",
       sub: "Arme la configuración y vea el valor al instante. Crea el acceso y paga en los próximos pasos.",
-      continue: "Continuar a la cuenta →",
+      continue: "Asegurar mi plan →",
     },
     account: {
       title: "Cree su acceso",

@@ -36,6 +36,8 @@ export interface ModuleSubscription {
     decrease: string;
     increase: string;
     quantity: string;
+    included: string;
+    extra: string;
     info: string;
     infoUnlimited: string;
   };

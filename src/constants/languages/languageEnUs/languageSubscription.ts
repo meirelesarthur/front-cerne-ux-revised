@@ -36,6 +36,8 @@ export const languageSubscription: ModuleSubscription = {
     decrease: "One seat less",
     increase: "One seat more",
     quantity: "Number of seats",
+    included: "{inc} seats included in {plan}",
+    extra: "Extra seat: {price}/month each",
     info: "{inc} seats included in {plan}; each extra seat costs {price} per month.",
     infoUnlimited: "Unlimited seats on {plan}.",
   },
@@ -49,7 +51,7 @@ export const languageSubscription: ModuleSubscription = {
     onlyFrom: "in {plan}",
   },
   nav: {
-    next: "Next: modules and services →",
+    next: "Continue →",
     back: "Back to plan and seats",
   },
   summary: {
@@ -174,7 +176,7 @@ export const languageSubscription: ModuleSubscription = {
     plan: {
       heading: "Choose your farm’s plan",
       sub: "Build the setup and see the price instantly. You create the login and pay in the next steps.",
-      continue: "Continue to account →",
+      continue: "Secure my plan →",
     },
     account: {
       title: "Create your access",

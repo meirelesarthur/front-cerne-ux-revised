@@ -13,7 +13,7 @@
 // (`CURRENT_SUBSCRIPTION`), catálogo via API e envio da solicitação ao comercial.
 // -----------------------------------------------------------------------------
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { Box, Flex, Grid, Input, Text } from '@chakra-ui/react';
 
@@ -162,6 +162,11 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
     CATALOG.seatsIncluded[tier] === Infinity
       ? text.plan.accessesUnlimited
       : fill(text.plan.accessesIncluded, { n: CATALOG.seatsIncluded[tier] });
+
+  // o plano inclui um mínimo de acessos: o contratado nunca fica abaixo dele
+  useEffect(() => {
+    if (selection.users < seatsIncluded) setSelection((s) => ({ ...s, users: seatsIncluded }));
+  }, [selection.users, seatsIncluded]);
 
   const bandText = (i: number, unit: SizeUnit = selection.unit) => {
     if (unit === 'mix') return fill(text.size.bandMixed, { n: i + 1 });
@@ -344,14 +349,11 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
         </Flex>
         {mixed ? (
           <Box>
-            <Text fontSize="sm" color="fg.muted" mb="2px">
-              {CATALOG.sizeUnits.cab.word} · {CATALOG.sizeUnits.ha.word}
-            </Text>
             <BandSlider
               ariaLabel={`${text.size.scaleCab} · ${text.size.scaleHa}`}
               value={sizeToPosition('cab', selection.size)}
               onChange={(p) => setSelection((s) => ({ ...s, size: positionToSize('cab', p), sizeHa: positionToSize('ha', p) }))}
-              ticks={ticksFor('cab').map((c, i) => `${c} · ${ticksFor('ha')[i]}`)}
+              ticks={ticksFor('cab').map((c, i) => (i === 0 ? c : `${c} ${CATALOG.sizeUnits.cab.short}\n${ticksFor('ha')[i]} ${CATALOG.sizeUnits.ha.short}`))}
               bandLabels={[0, 1, 2, 3, 4].map((i) => `M${i + 1}`)}
               activeBand={band}
             />
@@ -386,21 +388,18 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
       <FieldRow icon="users" title={text.accesses.title} hint={text.accesses.hint}>
         <QuantityStepper
           value={selection.users}
+          min={seatsIncluded}
+          minLabel={fill(text.accesses.included, { inc: seatsIncluded, plan: selection.plan })}
           onChange={(users) => setSelection((s) => ({ ...s, users }))}
           labels={{ decrease: text.accesses.decrease, increase: text.accesses.increase, input: text.accesses.quantity }}
         />
-        <Text fontSize="base" color="fg.muted" mt="8px">
-          {seatsIncluded === Infinity
-            ? fill(text.accesses.infoUnlimited, { plan: selection.plan })
-            : fill(text.accesses.info, {
-                inc: seatsIncluded,
-                plan: selection.plan,
-                price: formatBRL(CATALOG.extraSeatPrice[selection.plan]),
-              })}
+        <Text fontSize="xs" color="fg.muted" mt="6px">
+          {fill(text.accesses.extra, { price: formatBRL(CATALOG.extraSeatPrice[selection.plan]) })}
         </Text>
       </FieldRow>
 
       <FieldRow icon="calendar" title={text.billing.title} hint={text.billing.hint}>
+        <Flex justify={{ md: 'flex-end' }}>
         <SegmentedControl<Billing>
           value={billing}
           onChange={setBilling}
@@ -410,6 +409,7 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
             { key: 'annual', label: text.billing.annual },
           ]}
         />
+        </Flex>
       </FieldRow>
 
       <Box pt={5}>
@@ -537,47 +537,28 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
         <SummaryNote>{text.summary.seatsNote}</SummaryNote>
       </SummaryGroup>
 
-      <SummaryGroup title={text.summary.modules}>
-        {current.addedModules.length > 0 ? (
-          current.addedModules.map((m) => (
+      {/* Só aparece quando há o que mostrar (economiza espaço no resumo). */}
+      {(current.addedModules.length > 0 || includedModules.length > 0) && (
+        <SummaryGroup title={text.summary.modules}>
+          {current.addedModules.map((m) => (
             <SummaryRow key={m.key} label={m.name} value={`+ ${formatBRL(m.price ?? 0)}`} tone="added" />
-          ))
-        ) : (
-          <SummaryNote>{text.summary.noModules}</SummaryNote>
-        )}
-        {includedModules.length > 0 && (
-          <SummaryNote>
-            {fill(text.summary.alreadyIncluded, { plan: selection.plan })}: {includedModules.map((m) => m.name).join(' · ')}
-          </SummaryNote>
-        )}
-      </SummaryGroup>
-
-      <SummaryGroup title={text.gia.worstTitle}>
-        <SummaryRow label={text.gia.worstWindow} value={fill(text.gia.worstWindowValue, { n: giaWindow, p: selection.users })} />
-        <SummaryRow label={text.gia.typicalCost} value={formatBRL(giaTypical)} />
-        <SummaryRow label={text.gia.worstCost} value={formatBRL(giaWorst)} />
-        <SummaryNote>
-          {fill(text.gia.worstNote, {
-            u: CATALOG.gia.typicalPerDay,
-            pct: Math.round((giaTypical / current.month) * 100),
-            w: CATALOG.gia.worstPerDay,
-            min: formatBRL(giaMin),
-          })}
-        </SummaryNote>
-      </SummaryGroup>
-
-      <SummaryGroup title={text.summary.consult}>
-        {consultMonth ? (
-          <>
-            <SummaryRow label={fill(text.consult.summaryName, { name: consultOption.name })} value={`+ ${formatBRL(consultMonth)}`} tone="added" />
+          ))}
+          {includedModules.length > 0 && (
             <SummaryNote>
-              {consultOption.description}. {text.consult.note}
+              {fill(text.summary.alreadyIncluded, { plan: selection.plan })}: {includedModules.map((m) => m.name).join(' · ')}
             </SummaryNote>
-          </>
-        ) : (
-          <SummaryNote>{text.consult.noneSelected}</SummaryNote>
-        )}
-      </SummaryGroup>
+          )}
+        </SummaryGroup>
+      )}
+
+      {consultMonth > 0 && (
+        <SummaryGroup title={text.summary.consult}>
+          <SummaryRow label={fill(text.consult.summaryName, { name: consultOption.name })} value={`+ ${formatBRL(consultMonth)}`} tone="added" />
+          <SummaryNote>
+            {consultOption.description}. {text.consult.note}
+          </SummaryNote>
+        </SummaryGroup>
+      )}
 
       <SummaryTotal
         label={fill(annual ? text.summary.totalAnnual : text.summary.totalMonth, { plan: selection.plan })}
@@ -614,6 +595,7 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
         </Box>
       )}
 
+      {!onboarding && (
       <Flex direction="column" gap="6px">
         <Text fontSize="sm" color="summaryFaint">
           {text.summary.compare}
@@ -631,13 +613,14 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
           }))}
         />
       </Flex>
+      )}
 
       <Flex direction="column" gap="8px" pt="4px">
         <Button
           title={onboarding ? onboarding.continueLabel : requestLabel}
           onClick={() => (onboarding ? onboarding.onContinue(buildOrder()) : setRequestOpen(true))}
         />
-        <DashedActionButton label={text.summary.copy} onClick={copySummary} />
+        {!onboarding && <DashedActionButton label={text.summary.copy} onClick={copySummary} />}
       </Flex>
     </SummaryPanel>
   );

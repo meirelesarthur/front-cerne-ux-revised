@@ -9,7 +9,7 @@ export interface BandSliderProps {
   /** Posição atual, de 0 a `bandLabels.length × 100`. */
   value: number;
   onChange: (position: number) => void;
-  /** Rótulos dos limites (`bandLabels.length + 1`), ex.: `0 · 500 · 1.500 · … · 20.000+`. */
+  /** Rótulos dos limites (`bandLabels.length + 1`), ex.: `0 · 500 · 1.500 · … · 20.000+`; uma quebra de linha no rótulo vira 2 linhas. */
   ticks: string[];
   /** Nome de cada faixa, no centro do trecho. */
   bandLabels: string[];
@@ -24,10 +24,10 @@ export function BandSlider({ value, onChange, ticks, bandLabels, ariaLabel, acti
   return (
     <Box w="full">
       {/* valores acima da barra, cada um com um pequeno traço apontando para ela */}
-      <Box position="relative" h="26px" aria-hidden="true">
+      <Box position="relative" h={ticks.some((t) => t.includes('\n')) ? '40px' : '26px'} aria-hidden="true">
         {ticks.map((label, i) => (
           <Flex key={i} direction="column" align="center" position="absolute" left={`${(i / bandLabels.length) * 100}%`} transform="translateX(-50%)" bottom={0}>
-            <Text fontSize="xs" color="fg.muted" mb="2px">
+            <Text fontSize="xs" color="fg.muted" mb="2px" whiteSpace="pre-line" textAlign="center" lineHeight="1.25">
               {label}
             </Text>
             <Box w="1px" h="6px" bg="semanticNeutral.300" />

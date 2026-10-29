@@ -2,7 +2,7 @@
 // Seletor de quantidade: régua (opcional) e − [número] + (campo editável) na mesma linha.
 // Controlado; limita ao intervalo [min, max]. Rótulos acessíveis vêm por props (i18n fora).
 
-import { Flex, Input } from '@chakra-ui/react';
+import { Box, Flex, Input, Text } from '@chakra-ui/react';
 
 // `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
 const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
@@ -16,6 +16,8 @@ export interface QuantityStepperProps {
   /** Mostra a régua ao lado (limitada a `sliderMax`). */
   slider?: boolean;
   sliderMax?: number;
+  /** Legenda da extremidade mínima da régua (ex.: "5 incluídos no Pro"): o piso não pode ser reduzido. */
+  minLabel?: string;
 }
 
 export function QuantityStepper({
@@ -26,6 +28,7 @@ export function QuantityStepper({
   labels,
   slider = true,
   sliderMax = 60,
+  minLabel,
 }: QuantityStepperProps) {
   const clamp = (v: number) => Math.max(min, Math.min(max, Math.round(Number(v) || min)));
 
@@ -34,6 +37,7 @@ export function QuantityStepper({
       as="button"
       {...BUTTON_ATTRS}
       aria-label={label}
+      {...({ disabled: (delta < 0 && value <= min) || (delta > 0 && value >= max) } as Record<string, boolean>)}
       onClick={() => onChange(clamp(value + delta))}
       align="center"
       justify="center"
@@ -42,6 +46,7 @@ export function QuantityStepper({
       fontSize="xl"
       fontWeight="semibold"
       _hover={{ bg: 'semanticNeutral.200' }}
+      _disabled={{ opacity: 0.4, cursor: 'not-allowed', _hover: { bg: 'semanticNeutral.100' } }}
     >
       {symbol}
     </Flex>
@@ -51,15 +56,22 @@ export function QuantityStepper({
   return (
     <Flex align="center" gap="14px">
       {slider && (
-        <input
-          type="range"
-          aria-label={labels.input}
-          min={min}
-          max={sliderMax}
-          value={Math.min(sliderMax, value)}
-          onChange={(e) => onChange(clamp(Number(e.target.value)))}
-          style={{ flex: "1 1 80px", minWidth: 80, accentColor: 'var(--chakra-colors-green-600)' }}
-        />
+        <Box flex="1 1 80px" minW="80px">
+          <input
+            type="range"
+            aria-label={labels.input}
+            min={min}
+            max={sliderMax}
+            value={Math.min(sliderMax, value)}
+            onChange={(e) => onChange(clamp(Number(e.target.value)))}
+            style={{ width: '100%', accentColor: 'var(--chakra-colors-green-600)' }}
+          />
+          {minLabel && (
+            <Text fontSize="xs" color="fg.muted" mt="2px">
+              ▲ {minLabel}
+            </Text>
+          )}
+        </Box>
       )}
       <Flex display="inline-flex" flexShrink={0} borderWidth="1px" borderColor="semanticNeutral.200" borderRadius="lg" overflow="hidden" bg="cardBG">
         {stepButton('−', labels.decrease, -1)}

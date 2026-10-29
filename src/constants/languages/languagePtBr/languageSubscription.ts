@@ -36,6 +36,8 @@ export const languageSubscription: ModuleSubscription = {
     decrease: "Menos um acesso",
     increase: "Mais um acesso",
     quantity: "Quantidade de acessos",
+    included: "{inc} acessos incluídos no {plan}",
+    extra: "Acesso extra: {price}/mês cada",
     info: "{inc} acessos incluídos no {plan}; cada acesso extra custa {price} por mês.",
     infoUnlimited: "Acessos ilimitados no {plan}.",
   },
@@ -49,7 +51,7 @@ export const languageSubscription: ModuleSubscription = {
     onlyFrom: "no {plan}",
   },
   nav: {
-    next: "Próximo: módulos e serviços →",
+    next: "Continuar →",
     back: "Voltar para plano e acessos",
   },
   summary: {
@@ -174,7 +176,7 @@ export const languageSubscription: ModuleSubscription = {
     plan: {
       heading: "Escolha o plano da sua fazenda",
       sub: "Monte a configuração e veja o valor na hora. Você cria o acesso e paga nas próximas etapas.",
-      continue: "Continuar para a conta →",
+      continue: "Garantir meu plano →",
     },
     account: {
       title: "Crie seu acesso",
