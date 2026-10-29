@@ -74,11 +74,11 @@ import type {
 
 import { FilterSideAutorizacao } from './FilterSideAutorizacao';
 
-import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
 import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { useListSearch } from '@/hooks/useListSearch';
 
 export default function AutorizacaoList() {
@@ -137,27 +137,20 @@ export default function AutorizacaoList() {
   const defaultColumns = useMemo(
     () => [
       // Bolinha de status do legado (LI01): cor pelo token, nome acessível pelo status.
-      columnHelper.display({
-        id: 'statusDot',
-        header: '',
+      // Situação escrita na linha (tag colorida): substitui a bolinha + a legenda acima do grid.
+      columnHelper.accessor('status_label', {
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            backgroundColor={
-              requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]
-            }
-            role="img"
-            aria-label={row.original.status_label}
-            title={row.original.status_label}
+          <StatusTag
+            label={row.original.status_label}
+            color={requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]}
           />
         ),
         meta: {
-          ...styleColumTable.sm,
-          gridLabel: text.list.table.status,
+          ...styleColumTable.md,
+          gridLabel: languageGB.defaltStrings.statusColumn,
           gridOrder: 'fixed-start',
-          gridDataColumn: false,
         },
       }),
       columnHelper.accessor('code', {
@@ -298,13 +291,6 @@ export default function AutorizacaoList() {
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
 
-        {/* Legenda de status — TODOS os 11 valores do enum (default do
-            componente), fiel ao legado (CLM-40) mesmo esta fila filtrando só
-            3 status (BR-01). Reuso cross-folder, mesmo componente já usado
-            em `Rejeitados`/`Cotacoes`/`Solicitacao`. */}
-        <Box mt={4}>
-          <RequestPurchaseStatusLegend />
-        </Box>
 
         <Box>
           <Table

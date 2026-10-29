@@ -20,7 +20,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { FiEdit, FiEye, FiPieChart, FiTrash2 } from 'react-icons/fi';
 
 import { Actions } from '@/components/Action';
-import { Status } from '@/components/Status';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import formatDate from '@/utils/formatDate';
 import { styleColumTable } from '@/utils/style-colum-table';
@@ -60,7 +60,7 @@ export function buildPastureColumns({
 
   return [
     columnHelper.accessor('status', {
-      header: text.table.status,
+      header: languageGB.defaltStrings.statusColumn,
       enableHiding: false,
       cell: ({ row }) => {
         const status = row.original.status;
@@ -70,9 +70,9 @@ export function buildPastureColumns({
             : status === 'F'
               ? statusLegend.finished
               : statusLegend.appropriated;
-        return <Status text={label} backgroundColor={PASTURE_STATUS_META[status].badgeColor} />;
+        return <StatusTag label={label} color={PASTURE_STATUS_META[status].badgeColor} />;
       },
-      meta: { ...styleColumTable.sm, gridLabel: text.table.status },
+      meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
     }),
     columnHelper.accessor('code', {
       header: text.table.code,

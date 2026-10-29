@@ -30,7 +30,7 @@ import { useMemo, useState } from 'react';
 
 import type { ElementType } from 'react';
 
-import { Box, Flex, HStack, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiHeart } from 'react-icons/fi';
@@ -74,6 +74,7 @@ import { HeaderTable } from './HeaderTable';
 import { useAcasalamentosList } from './useAcasalamentos';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 const ACASALAMENTO_LIST_ROUTE = '/operacional/acasalamento';
 
@@ -230,20 +231,18 @@ export default function AcasalamentoList() {
   const columnHelper = createColumnHelper<BreedingMatingListItem>();
   const defaultColumns = useMemo(
     () => [
-      // Coluna 1 — dot de status, SEM rótulo (contrato de tela §6.1 #1;
-      // legado: "# (dot colorido por iatfStatus/status)"). `status_color`
-      // do envelope NUNCA é lido — token vem de `BREEDING_MATING_STATUS_META`.
+      // Coluna 1 — Situação escrita (StatusTag). `status_color` do envelope
+      // NUNCA é lido — token vem de `BREEDING_MATING_STATUS_META`.
       columnHelper.display({
         id: 'status',
-        header: '',
+        header: languageGB.defaltStrings.statusColumn,
         cell: ({ row }) => (
-          <Box
-            boxSize="2"
-            borderRadius="full"
-            backgroundColor={BREEDING_MATING_STATUS_META[row.original.status.value]?.badgeToken}
+          <StatusTag
+            label={row.original.status.label}
+            color={BREEDING_MATING_STATUS_META[row.original.status.value]?.badgeToken}
           />
         ),
-        meta: styleColumTable.sm,
+        meta: styleColumTable.md,
       }),
       columnHelper.accessor('code', {
         header: text.list.table.code,
@@ -373,31 +372,6 @@ export default function AcasalamentoList() {
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda de status abaixo do filtro, como no legado — mesmos
-            tokens do dot da coluna 1 (contrato de tela §6.1). */}
-        <HStack gap={4} mt={4}>
-          <HStack gap={2}>
-            <Box
-              boxSize="2"
-              borderRadius="full"
-              backgroundColor={BREEDING_MATING_STATUS_META[1].badgeToken}
-            />
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.statusLegend.inProgress}
-            </Text>
-          </HStack>
-          <HStack gap={2}>
-            <Box
-              boxSize="2"
-              borderRadius="full"
-              backgroundColor={BREEDING_MATING_STATUS_META[2].badgeToken}
-            />
-            <Text fontSize="sm" color="fg.muted">
-              {text.list.statusLegend.finished}
-            </Text>
-          </HStack>
-        </HStack>
 
         <Box mt={4}>
           <Table

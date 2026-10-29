@@ -38,7 +38,6 @@ import { formatServiceOrderDate } from '@/pages/Operacional/ServiceOrders/Servic
 import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -50,10 +49,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { checkLoadingStatus } from '@/utils/checkLoadingStatus';
 import { styleColumTable } from '@/utils/style-colum-table';
 
-import {
-  getMonitoringStatusBadgeColor,
-  getMonitoringStatusOptions,
-} from '@/constants/monitoring/serviceOrderStatus';
+import { getMonitoringStatusBadgeColor } from '@/constants/monitoring/serviceOrderStatus';
 import { queryKey } from '@/constants/query-key';
 
 import type {
@@ -66,6 +62,7 @@ import { HeaderTable } from './HeaderTable';
 import { useMonitoringList } from './useMonitoring';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 const MONITORING_STORAGE_KEY = 'OperacionalMonitoring' + queryKey.monitoring.monitorings;
 const SERVICE_ORDERS_DETAIL_ROUTE = '/operacional/lista-os';
@@ -110,15 +107,15 @@ export default function Monitoring() {
     () => [
       columnHelper.accessor((row) => row.status.label, {
         id: 'status',
-        header: text.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Status
-            text={row.original.status.label}
-            backgroundColor={getMonitoringStatusBadgeColor(row.original.status.value)}
+          <StatusTag
+            label={row.original.status.label}
+            color={getMonitoringStatusBadgeColor(row.original.status.value)}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.table.code,
@@ -190,8 +187,6 @@ export default function Monitoring() {
   const items = monitoringList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  const statusLegend = getMonitoringStatusOptions(languageGB);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -212,20 +207,6 @@ export default function Monitoring() {
         >
           <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda de status — SEMPRE visível, os 5 status do domínio (fiel
-            ao legado, CLM-24), mirror `ServiceOrdersList`. */}
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((item) => (
-            <Status
-              key={item.status}
-              text={item.label}
-              backgroundColor={item.badgeColor}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box mt={6}>
           <Table

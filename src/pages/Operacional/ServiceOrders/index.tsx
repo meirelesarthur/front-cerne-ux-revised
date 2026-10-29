@@ -24,7 +24,6 @@ import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -40,7 +39,6 @@ import { checkLoadingStatus } from '@/utils/checkLoadingStatus';
 import { styleColumTable } from '@/utils/style-colum-table';
 
 import { queryKey } from '@/constants/query-key';
-import { getServiceOrderStatusOptions } from '@/constants/serviceOrders/options/service-order-status-options';
 import { SERVICE_ORDER_CANCEL_PERMISSION } from '@/constants/serviceOrders/service-order-cancel-rules';
 
 import { deleteServiceOrder } from '@/services/v2/ServiceOrders/service-order-service';
@@ -54,6 +52,7 @@ import { canCancelServiceOrder, getServiceOrderStatusBadgeColor } from './servic
 import { useServiceOrdersList } from './useServiceOrders';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 const SERVICE_ORDERS_STORAGE_KEY =
   'OperacionalServiceOrders' + queryKey.serviceOrders.serviceOrders;
@@ -154,15 +153,15 @@ export default function ServiceOrdersList() {
     () => [
       columnHelper.accessor((row) => row.status.label, {
         id: 'status',
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Status
-            text={row.original.status.label}
-            backgroundColor={getServiceOrderStatusBadgeColor(row.original.status.value)}
+          <StatusTag
+            label={row.original.status.label}
+            color={getServiceOrderStatusBadgeColor(row.original.status.value)}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.code,
@@ -283,8 +282,6 @@ export default function ServiceOrdersList() {
   const items = serviceOrdersList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  const statusLegend = getServiceOrderStatusOptions(languageGB);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -312,19 +309,6 @@ export default function ServiceOrdersList() {
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda de status — SEMPRE visível, mirror `Appropriations`. */}
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((item) => (
-            <Status
-              key={item.status}
-              text={item.label}
-              backgroundColor={item.badgeColor}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box mt={6}>
           <Table

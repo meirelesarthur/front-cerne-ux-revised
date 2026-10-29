@@ -61,6 +61,7 @@
 // -----------------------------------------------------------------------------
 
 import { useMemo, useState } from 'react';
+import type { ElementType } from 'react';
 
 import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -69,16 +70,15 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { FiEdit, FiEye, FiFileText, FiLink, FiMail, FiTrash2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
-import type { ElementType } from 'react';
-
 import { Actions } from '@/components/Action';
 import { ButtonAdd } from '@/components/ButtonAdd';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { TableProvider } from '@/contexts/TableContext';
 
@@ -87,6 +87,7 @@ import { useCustomGridQuery } from '@/hooks/useCustomGridQuery';
 import { useGridSettings } from '@/hooks/useGridSettings';
 import { useGridStorageScope } from '@/hooks/useGridStorageScope';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useListSearch } from '@/hooks/useListSearch';
 import { userPaginatedQuery } from '@/hooks/usePaginatedQueryStorage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useRequest } from '@/hooks/useRequest';
@@ -97,7 +98,6 @@ import formatDate from '@/utils/formatDate';
 import { styleColumTable } from '@/utils/style-colum-table';
 
 import { budgetStatusColor } from '@/constants/Budgets/budget-status';
-import { budgetStatusOptions } from '@/constants/Budgets/options';
 import { queryKey } from '@/constants/query-key';
 
 import { deleteBudget, listBudgets } from '@/services/v2/Budgets/budget-service';
@@ -106,9 +106,6 @@ import type { ListBudgetsParams } from '@/services/v2/Budgets/budget-service';
 import type { BudgetFilterForm, BudgetListItem } from '@/@types/v2/Budgets';
 
 import { FilterSideBudget } from './FilterSideBudget';
-
-import { ListToolbar } from '@/components/ui/ListToolbar';
-import { useListSearch } from '@/hooks/useListSearch';
 
 // Mirror `App\Enums\BudgetStatus` (backend, backed `int`) — limite ATÉ O
 // QUAL editar/excluir é permitido, client-side (D08 preservado — o servidor
@@ -252,20 +249,17 @@ export default function BudgetsList() {
   const columnHelper = createColumnHelper<BudgetListItem>();
   const defaultColumns = useMemo(
     () => [
-      // LM-01 — dot de status, SEM texto na célula (legenda acima da
-      // tabela carrega o significado das cores, mirror `Planejamentos`).
+      // Situação escrita na própria linha (StatusTag), sem legenda acima da tabela.
       columnHelper.accessor('status', {
-        header: text.list.columns.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            bg={`${budgetStatusColor[row.original.status]}.500`}
-            title={row.original.status_label}
+          <StatusTag
+            label={row.original.status_label}
+            color={`${budgetStatusColor[row.original.status]}.500`}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.columns.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.columns.code,
@@ -429,11 +423,6 @@ export default function BudgetsList() {
   const items = budgetsList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  // Legenda estática de cores de status — SEMPRE visível (LM-01: "sem
-  // cabeçalho, legenda acima da tabela"), mirror `Planejamentos`/
-  // `ServiceOrders`/`Appropriations`.
-  const statusLegend = useMemo(() => budgetStatusOptions.options(languageGB), [languageGB]);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -477,18 +466,6 @@ export default function BudgetsList() {
           onOpenFilter={onOpenFilter}
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
-
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((option) => (
-            <Status
-              key={option.value}
-              text={option.label}
-              backgroundColor={`${budgetStatusColor[option.value]}.500`}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box>
           <Table

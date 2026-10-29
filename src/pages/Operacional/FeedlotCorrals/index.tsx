@@ -105,6 +105,7 @@ import { HeaderTable } from './HeaderTable';
 import { useFeedlotCorralsList } from './useFeedlotCorrals';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 // Chave de storage desta tela — paginação (`userPaginatedQuery`) e
 // personalização de grid (`useGridSettings`) derivam da MESMA expressão
@@ -338,24 +339,16 @@ export default function FeedlotCorralList() {
       // LM-010 — dot color (client, backend não envia cor) + enum description.
       columnHelper.accessor((row) => row.status?.label, {
         id: 'status',
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => {
           const status = row.original.status;
           const colorToken = status?.value ? feedlotCorralStatusColor[status.value] : undefined;
           return (
-            <Flex align="center" gap={2}>
-              <Box
-                boxSize="2.5"
-                borderRadius="full"
-                bg={`${colorToken ?? 'gray'}.500`}
-                flexShrink={0}
-              />
-              <Text fontSize="sm">{status?.label ?? '—'}</Text>
-            </Flex>
+            <StatusTag label={status?.label ?? '—'} color={`${colorToken ?? 'gray'}.500`} />
           );
         },
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       // LM-011 — AC-005/006/007/008/009.
       columnHelper.display({

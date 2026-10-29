@@ -8,12 +8,13 @@
 // Ações do legado (AR01/AR02): Visualizar e Relatório SLA.
 // -----------------------------------------------------------------------------
 
-import { Badge, Box, Flex, Icon, Text } from '@chakra-ui/react';
+import { Badge, Flex, Icon, Text } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileText } from 'lucide-react';
 import { FiClock, FiEye } from 'react-icons/fi';
 
 import { Actions } from '@/components/Action';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import formatDate from '@/utils/formatDate';
 import { styleColumTable } from '@/utils/style-colum-table';
@@ -21,7 +22,6 @@ import { styleColumTable } from '@/utils/style-colum-table';
 import { requestPurchasePriorityColor } from '@/constants/RequestPurchases/request-purchase-priority';
 import type { RequestPurchasePriority } from '@/constants/RequestPurchases/request-purchase-priority';
 import {
-  requestPurchaseStatusColor,
   requestPurchaseStatusDotToken,
 } from '@/constants/RequestPurchases/request-purchase-status';
 import type { RequestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
@@ -54,6 +54,8 @@ export interface RejectedColumnsOptions {
   canSla: boolean;
   onView: (uuid: string) => void;
   onSlaReport: (uuid: string) => void;
+  /** Cabeçalho da coluna de situação (`defaltStrings.statusColumn`); sem ele usa o texto da lista. */
+  statusHeader?: string;
 }
 
 const columnHelper = createColumnHelper<RequestPurchaseListItem>();
@@ -64,29 +66,23 @@ export function buildRejectedColumns({
   canSla,
   onView,
   onSlaReport,
+  statusHeader,
 }: RejectedColumnsOptions) {
   return [
-    columnHelper.display({
-      id: 'statusDot',
-      header: '',
+    // Situação escrita na linha (tag colorida): substitui a bolinha + a legenda acima do grid.
+    columnHelper.accessor('status_label', {
+      header: statusHeader ?? text.list.table.status,
       enableHiding: false,
       cell: ({ row }) => (
-        <Box
-          boxSize="2.5"
-          borderRadius="full"
-          backgroundColor={
-            requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]
-          }
-          role="img"
-          aria-label={row.original.status_label}
-          title={row.original.status_label}
+        <StatusTag
+          label={row.original.status_label}
+          color={requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]}
         />
       ),
       meta: {
-        ...styleColumTable.sm,
-        gridLabel: text.supply.filters.status,
+        ...styleColumTable.md,
+        gridLabel: statusHeader ?? text.list.table.status,
         gridOrder: 'fixed-start',
-        gridDataColumn: false,
       },
     }),
     columnHelper.accessor('code', {
@@ -169,22 +165,6 @@ export function buildRejectedColumns({
         </Badge>
       ),
       meta: { ...styleColumTable.sm, gridLabel: text.list.table.type },
-    }),
-    columnHelper.accessor('status_label', {
-      header: text.list.table.status,
-      cell: ({ row }) => (
-        <Badge
-          colorPalette={
-            requestPurchaseStatusColor[row.original.status as RequestPurchaseStatus] ?? 'gray'
-          }
-          variant="subtle"
-          py={1}
-          px={3}
-        >
-          {row.original.status_label}
-        </Badge>
-      ),
-      meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
     }),
     columnHelper.accessor('priority_label', {
       header: text.list.table.priority,

@@ -136,6 +136,7 @@ import type { OnChangeFn, RowSelectionState } from '@tanstack/react-table';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { useListSearch } from '@/hooks/useListSearch';
 
 // ACT-05/IG-06/IG-08 — cap de seleção em massa (individual OU lote).
@@ -426,13 +427,16 @@ export default function DfeRecebidasList() {
       columnHelper.accessor('integration_status', {
         header: text.table.integrationStatus,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            bg={row.original.integration_status === 'E' ? 'blue.500' : 'gray.400'}
+          <StatusTag
+            label={
+              row.original.integration_status === 'E'
+                ? languageGB.defaltStrings.integrationDone
+                : languageGB.defaltStrings.integrationPending
+            }
+            color={row.original.integration_status === 'E' ? 'blue.500' : 'gray.500'}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.table.integrationStatus },
+        meta: { ...styleColumTable.md, gridLabel: text.table.integrationStatus },
       }),
       // LST-02 — checkbox de seleção em massa, só linhas elegíveis (§6.2).
       columnHelper.display({

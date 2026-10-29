@@ -14,7 +14,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Box, Flex, HStack, Icon, Table, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Table, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCheckCircle, FiEye, FiXCircle } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +24,7 @@ import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { Table as GridTable } from '@/components/Table';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -41,7 +41,6 @@ import { checkLoadingStatus } from '@/utils/checkLoadingStatus';
 import formatDate from '@/utils/formatDate';
 import { styleColumTable } from '@/utils/style-colum-table';
 
-import { EQUIPMENT_TRANSFER_STATUS_LEGEND } from '@/constants/frota/equipment-transfer-status';
 import { queryKey } from '@/constants/query-key';
 
 import { cancelEquipmentTransfer } from '@/services/v2/EquipmentTransfers/equipment-transfer-service';
@@ -167,11 +166,11 @@ export default function TransferenciasList() {
     () => [
       // LM-01 — cor e rótulo vêm da API, ZERO mapa local na célula.
       columnHelper.accessor('status', {
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         cell: ({ row }) => (
-          <Status text={row.original.status.label} backgroundColor={row.original.status.color} />
+          <StatusTag label={row.original.status.label} color={row.original.status.color} />
         ),
-        meta: { ...styleColumTable.md, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       // LM-02
       columnHelper.accessor('code', {
@@ -319,26 +318,6 @@ export default function TransferenciasList() {
             {text.list.pageSubtitle}
           </Text>
         </HeaderGrid>
-
-        {/* Legenda — EXATAMENTE 3 entradas (OD-004). PROIBIDO um 4º estado
-            "Em Processamento"/#ff9900 — 2 significa "Finalizado". */}
-        <HStack gap={4} mt={2} mb={2} flexWrap="wrap">
-          <Status
-            text={text.list.legend.open}
-            backgroundColor={EQUIPMENT_TRANSFER_STATUS_LEGEND[0].color}
-            fontSize="xs"
-          />
-          <Status
-            text={text.list.legend.finished}
-            backgroundColor={EQUIPMENT_TRANSFER_STATUS_LEGEND[1].color}
-            fontSize="xs"
-          />
-          <Status
-            text={text.list.legend.canceled}
-            backgroundColor={EQUIPMENT_TRANSFER_STATUS_LEGEND[2].color}
-            fontSize="xs"
-          />
-        </HStack>
 
         <Box mt={4}>
           {isErrorState ? (

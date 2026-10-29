@@ -177,7 +177,7 @@ export default function SlaList() {
             >
               <Table.Header>
                 <Table.Row borderBottom="1px solid" borderColor="borderGrid">
-                  <Table.ColumnHeader>{text.list.table.statusLabel}</Table.ColumnHeader>
+                  <Table.ColumnHeader>{languageGB.defaltStrings.statusColumn}</Table.ColumnHeader>
                   <Table.ColumnHeader>{text.list.table.maxHours}</Table.ColumnHeader>
                   <Table.ColumnHeader width="112px" />
                 </Table.Row>

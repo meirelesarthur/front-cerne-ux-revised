@@ -2,6 +2,7 @@
   "name": "gb-cerne-front",
   "private": true,
   "version": "1.0.0",
+  "packageManager": "yarn@1.22.22",
   "type": "module",
   "description": "GB Cerne — Plataforma de Gestão Agro",
   "scripts": {

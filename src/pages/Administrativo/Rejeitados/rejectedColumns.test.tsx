@@ -63,7 +63,7 @@ describe('buildRejectedColumns', () => {
     const headers = columns()
       .map((column) => column.header)
       .filter((header) => typeof header === 'string' && header !== '');
-    expect(headers.slice(0, 7)).toEqual([
+    expect(headers.slice(1, 8)).toEqual([
       'Código',
       'Dt. Pedido',
       'Descrição/Chamado',
@@ -72,8 +72,10 @@ describe('buildRejectedColumns', () => {
       'Responsável Atual',
       'Fazenda',
     ]);
+    // a situação (tag colorida) é a 1ª coluna, no lugar da antiga bolinha
+    expect(headers[0]).toBeTruthy();
     const all = columns();
-    expect(all[0].id).toBe('statusDot');
+    expect((all[0] as { accessorKey?: string }).accessorKey).toBe('status_label');
     expect(all[all.length - 1].id).toBe('acoes');
   });
 
@@ -94,9 +96,9 @@ describe('buildRejectedColumns', () => {
     expect(screen.getByText('Fazenda Boa Vista')).toBeTruthy();
   });
 
-  it('bolinha de status tem nome acessível do status', () => {
-    renderCell('statusDot');
-    expect(screen.getByRole('img', { name: 'Pedido Não Aprovado' })).toBeTruthy();
+  it('mostra a situação escrita na linha (tag), sem depender de legenda', () => {
+    renderCell('status_label');
+    expect(screen.getByText('Pedido Não Aprovado')).toBeTruthy();
   });
 
   it('Responsável vazio mostra travessão', () => {

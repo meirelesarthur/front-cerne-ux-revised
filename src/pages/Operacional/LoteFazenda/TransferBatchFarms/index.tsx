@@ -25,7 +25,7 @@
 
 import { ElementType, useMemo, useState } from 'react';
 
-import { Box, Flex, HStack, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCheckCircle, FiDownload, FiRepeat, FiUpload } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +39,7 @@ import { HeaderGrid } from '@/components/HeaderGrid';
 import { ModalAction } from '@/components/ModalAction';
 import { Table } from '@/components/Table';
 import { toaster } from '@/components/ui/toaster';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { TableProvider } from '@/contexts/TableContext';
 
@@ -187,7 +188,7 @@ export default function TransferBatchFarmList() {
   const defaultColumns = useMemo(
     () => [
       columnHelper.accessor('status', {
-        header: text.list.columns.status,
+        header: languageGB.defaltStrings.statusColumn,
         cell: ({ row }) => {
           const status = row.original.status;
           const statusText = languageGB.loteFazenda.transferBatchFarm.status;
@@ -198,18 +199,10 @@ export default function TransferBatchFarmList() {
             [transferBatchFarmStatus.canceled]: statusText.canceled,
           };
           return (
-            <HStack gap={2}>
-              <Box
-                boxSize="2.5"
-                borderRadius="full"
-                flexShrink={0}
-                backgroundColor={transferBatchFarmStatusColor[status]}
-              />
-              <Text fontSize="sm">{labelByStatus[status] ?? '—'}</Text>
-            </HStack>
+            <StatusTag label={labelByStatus[status] ?? '—'} color={transferBatchFarmStatusColor[status]} />
           );
         },
-        meta: { ...styleColumTable.md, gridLabel: text.list.columns.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.columns.code,

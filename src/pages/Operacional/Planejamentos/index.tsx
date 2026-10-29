@@ -61,8 +61,9 @@ import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { HeaderGrid } from '@/components/HeaderGrid';
 import { ModalAction } from '@/components/ModalAction';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { toaster } from '@/components/ui/toaster';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -76,7 +77,6 @@ import { useRequest } from '@/hooks/useRequest';
 import { checkLoadingStatus } from '@/utils/checkLoadingStatus';
 import { styleColumTable } from '@/utils/style-colum-table';
 
-import { getPlanningStatusOptions } from '@/constants/plannings/options/planning-status-options';
 import { queryKey } from '@/constants/query-key';
 
 import {
@@ -90,8 +90,6 @@ import type { PlanningListItem } from '@/@types/v2/Operacional/planning';
 
 import { HeaderTable } from './HeaderTable';
 import { getPlanningStatusBadgeColor } from './planningStatus';
-
-import { PageHeader } from '@/components/ui/PageHeader';
 
 const PLANNINGS_STORAGE_KEY = 'OperacionalPlanejamentos' + queryKey.plannings.plannings;
 const PLANNINGS_ROUTE = '/operacional/planejamentos';
@@ -214,15 +212,15 @@ export default function PlanejamentosList() {
   const defaultColumns = useMemo(
     () => [
       columnHelper.accessor('status_label', {
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Status
-            text={row.original.status_label}
-            backgroundColor={getPlanningStatusBadgeColor(row.original.status)}
+          <StatusTag
+            label={row.original.status_label}
+            color={getPlanningStatusBadgeColor(row.original.status)}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.code,
@@ -335,8 +333,6 @@ export default function PlanejamentosList() {
   const items = planningsList.data?.data?.items;
   const isEmpty = !isLoading && !planningsList.isError && (items?.length ?? 0) === 0;
 
-  const statusLegend = getPlanningStatusOptions(languageGB);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -357,20 +353,6 @@ export default function PlanejamentosList() {
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda estática de cores de status — SEMPRE visível (Leitura do
-            dev do Roteiro), mirror `ServiceOrders`/`Appropriations`. */}
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((item) => (
-            <Status
-              key={item.status}
-              text={item.label}
-              backgroundColor={item.badgeColor}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box mt={6}>
           <Table

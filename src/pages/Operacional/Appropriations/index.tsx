@@ -28,6 +28,7 @@
 // -----------------------------------------------------------------------------
 
 import { useMemo, useState } from 'react';
+import type { ElementType } from 'react';
 
 import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -42,14 +43,13 @@ import {
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
-import type { ElementType } from 'react';
-
 import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { TableProvider } from '@/contexts/TableContext';
 
@@ -69,13 +69,11 @@ import { deleteAppropriation } from '@/services/v2/Appropriations/appropriation-
 
 import type { AppropriationFilterForm, AppropriationListItem } from '@/@types/v2/Appropriations';
 
-import { APPROPRIATION_STATUS_META, getAppropriationStatusLegend } from './appropriationStatus';
+import { APPROPRIATION_STATUS_META } from './appropriationStatus';
 import { FilterSideAppropriations } from './FilterSideAppropriations';
 import { HeaderTable } from './HeaderTable';
 import { RevertAppropriationStatusModal } from './RevertAppropriationStatusModal';
 import { useAppropriationsList } from './useAppropriations';
-
-import { PageHeader } from '@/components/ui/PageHeader';
 
 const APPROPRIATIONS_STORAGE_KEY =
   'OperacionalAppropriations' + queryKey.appropriations.appropriations;
@@ -175,15 +173,15 @@ export default function AppropriationsList() {
   const defaultColumns = useMemo(
     () => [
       columnHelper.accessor('status', {
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Status
-            text={row.original.status_label}
-            backgroundColor={APPROPRIATION_STATUS_META[row.original.status].badgeColor}
+          <StatusTag
+            label={row.original.status_label}
+            color={APPROPRIATION_STATUS_META[row.original.status].badgeColor}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.code,
@@ -322,8 +320,6 @@ export default function AppropriationsList() {
   const items = appropriationsList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  const statusLegend = getAppropriationStatusLegend(languageGB);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -351,21 +347,6 @@ export default function AppropriationsList() {
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda de status — SEMPRE visível (não é tooltip), 3 cores
-            derivadas de `APPROPRIATION_STATUS_META` (fonte única, sem hex
-            cru da API). */}
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((item) => (
-            <Status
-              key={item.status}
-              text={item.label}
-              backgroundColor={APPROPRIATION_STATUS_META[item.status].badgeColor}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box mt={6}>
           <Table

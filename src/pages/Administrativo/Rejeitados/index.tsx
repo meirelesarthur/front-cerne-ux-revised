@@ -26,7 +26,7 @@
 
 import { useMemo } from 'react';
 
-import { Box, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, useDisclosure } from '@chakra-ui/react';
 import { FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,7 +62,6 @@ import {
   FilterSideSolicitacao,
   type SolicitacaoFilterField,
 } from '../Solicitacao/FilterSideSolicitacao';
-import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
@@ -119,6 +118,7 @@ export default function RejeitadosList() {
   const defaultColumns = useMemo(
     () =>
       buildRejectedColumns({
+        statusHeader: languageGB.defaltStrings.statusColumn,
         text,
         canView,
         canSla,
@@ -173,10 +173,6 @@ export default function RejeitadosList() {
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
 
-        {/* Legenda de status (acréscimo do novo, D-01 manter). */}
-        <Box mt={4}>
-          <RequestPurchaseStatusLegend />
-        </Box>
 
         <Box>
           <Table

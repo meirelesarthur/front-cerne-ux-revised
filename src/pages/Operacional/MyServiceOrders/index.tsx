@@ -33,7 +33,6 @@ import { getServiceOrderStatusBadgeColor } from '@/pages/Operacional/ServiceOrde
 import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -46,7 +45,6 @@ import { checkLoadingStatus } from '@/utils/checkLoadingStatus';
 import { styleColumTable } from '@/utils/style-colum-table';
 
 import { queryKey } from '@/constants/query-key';
-import { getServiceOrderStatusOptions } from '@/constants/serviceOrders/options/service-order-status-options';
 
 import type { MyServiceOrderFilterForm, MyServiceOrderListItem } from '@/@types/v2/MyServiceOrders';
 
@@ -55,6 +53,7 @@ import { HeaderTable } from './HeaderTable';
 import { useMyServiceOrdersList } from './useMyServiceOrders';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 const MY_SERVICE_ORDERS_STORAGE_KEY =
   'OperacionalMyServiceOrders' + queryKey.myServiceOrders.myServiceOrders;
@@ -102,15 +101,15 @@ export default function MyServiceOrdersList() {
     () => [
       columnHelper.accessor((row) => row.status.label, {
         id: 'status',
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Status
-            text={row.original.status.label}
-            backgroundColor={getServiceOrderStatusBadgeColor(row.original.status.value)}
+          <StatusTag
+            label={row.original.status.label}
+            color={getServiceOrderStatusBadgeColor(row.original.status.value)}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.code,
@@ -193,8 +192,6 @@ export default function MyServiceOrdersList() {
   const items = myServiceOrdersList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  const statusLegend = getServiceOrderStatusOptions(languageGB);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -215,20 +212,6 @@ export default function MyServiceOrdersList() {
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda de status — SEMPRE visível, os 5 status do domínio (fiel
-            ao contrato §2), mirror `Monitoring`. */}
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((item) => (
-            <Status
-              key={item.status}
-              text={item.label}
-              backgroundColor={item.badgeColor}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box mt={6}>
           <Table

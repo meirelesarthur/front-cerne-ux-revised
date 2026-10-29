@@ -89,7 +89,6 @@ import { queryKey } from '@/constants/query-key';
 import { requestPurchasePriorityColor } from '@/constants/RequestPurchases/request-purchase-priority';
 import type { RequestPurchasePriority } from '@/constants/RequestPurchases/request-purchase-priority';
 import {
-  requestPurchaseStatusColor,
   requestPurchaseStatusDotToken,
 } from '@/constants/RequestPurchases/request-purchase-status';
 import type { RequestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
@@ -106,11 +105,11 @@ import type {
 
 import { FilterSideSolicitacao } from './FilterSideSolicitacao';
 import { HeaderTable } from './HeaderTable';
-import { RequestPurchaseStatusLegend } from './RequestPurchaseStatusLegend';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
 import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { useListSearch } from '@/hooks/useListSearch';
 
 export default function SolicitacaoList() {
@@ -225,27 +224,20 @@ export default function SolicitacaoList() {
   const defaultColumns = useMemo(
     () => [
       // Bolinha de status do legado (LM01): cor pelo token, nome acessível pelo status.
-      columnHelper.display({
-        id: 'statusDot',
-        header: '',
+      // Situação escrita na linha (tag colorida): substitui a bolinha + a legenda acima do grid.
+      columnHelper.accessor('status_label', {
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            backgroundColor={
-              requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]
-            }
-            role="img"
-            aria-label={row.original.status_label}
-            title={row.original.status_label}
+          <StatusTag
+            label={row.original.status_label}
+            color={requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]}
           />
         ),
         meta: {
-          ...styleColumTable.sm,
-          gridLabel: languageGB.requestPurchases.requestPurchase.list.table.status,
+          ...styleColumTable.md,
+          gridLabel: languageGB.defaltStrings.statusColumn,
           gridOrder: 'fixed-start',
-          gridDataColumn: false,
         },
       }),
       columnHelper.accessor('code', {
@@ -371,25 +363,6 @@ export default function SolicitacaoList() {
         meta: {
           ...styleColumTable.sm,
           gridLabel: languageGB.requestPurchases.requestPurchase.list.table.priority,
-        },
-      }),
-      columnHelper.accessor('status_label', {
-        header: languageGB.requestPurchases.requestPurchase.list.table.status,
-        cell: ({ row }) => (
-          <Badge
-            colorPalette={
-              requestPurchaseStatusColor[row.original.status as RequestPurchaseStatus] ?? 'gray'
-            }
-            variant="subtle"
-            py={1}
-            px={3}
-          >
-            {row.original.status_label}
-          </Badge>
-        ),
-        meta: {
-          ...styleColumTable.sm,
-          gridLabel: languageGB.requestPurchases.requestPurchase.list.table.status,
         },
       }),
       // ADITIVO (TASK-CQ-FE-02, hub de Cotações — LM-09) — contagem real de
@@ -548,14 +521,6 @@ export default function SolicitacaoList() {
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
 
-        {/* Legenda de status — TASK-CQ-FE-16, mesmo componente reutilizável
-            já usado em `Cotacoes/index.tsx` (`RequestPurchaseStatusLegend`,
-            TASK-CQ-FE-15), posição equivalente: acima do grid, abaixo do
-            cabeçalho/filtros. TODOS os 11 status do enum (default do
-            componente), fiel ao legado. */}
-        <Box mt={4}>
-          <RequestPurchaseStatusLegend />
-        </Box>
 
         <Box>
           <Table

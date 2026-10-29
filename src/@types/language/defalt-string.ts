@@ -101,6 +101,11 @@ export interface DefaltStrings {
   endDate: string;
   filters: string;
   searchList: string;
+  /** Cabeçalho da coluna que mostra a situação do registro com a tag colorida (`ui/StatusTag`). */
+  statusColumn: string;
+  /** Integração fiscal: P = pendente, E = integrado (tag da coluna de integração). */
+  integrationPending: string;
+  integrationDone: string;
   clearSearch: string;
   removeRow: string;
   navigationTrail: string;

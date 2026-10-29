@@ -72,9 +72,9 @@ vi.mock('./useModuleWeighings', () => ({
     refetch: vi.fn(),
   }),
 }));
+vi.mock('@/components/ui/StatusTag', () => ({ StatusTag: ({ label }: { label: string }) => <span>{label}</span> }));
 vi.mock('./HeaderTable', () => ({ HeaderTable: () => null }));
 vi.mock('./FilterSideModuleWeighing', () => ({ FilterSideModuleWeighing: () => null }));
-vi.mock('./ModuleWeighingStatusLegend', () => ({ ModuleWeighingStatusLegend: () => null }));
 vi.mock('./DeleteModuleWeighingDialog', () => ({ DeleteModuleWeighingDialog: () => null }));
 vi.mock('@/services/v2/ModuleWeighing/module-weighing-service', () => ({
   deleteModuleWeighing: vi.fn(),

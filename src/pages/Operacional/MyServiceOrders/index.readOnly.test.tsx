@@ -22,6 +22,7 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 vi.mock('@/hooks/useLanguage', () => ({
   useLanguage: () => ({ languageInUse: 'BR', languageGB: lang, updateLanguageGB: vi.fn() }),
 }));
+vi.mock('@/components/ui/StatusTag', () => ({ StatusTag: ({ label }: { label: string }) => <span>{label}</span> }));
 vi.mock('@/hooks/usePermissions', () => ({
   usePermissions: () => ({ can: () => true, canAny: () => true, canAll: () => true }),
 }));

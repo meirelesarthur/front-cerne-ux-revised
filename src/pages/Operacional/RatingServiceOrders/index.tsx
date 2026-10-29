@@ -31,7 +31,6 @@ import { getServiceOrderStatusBadgeColor } from '@/pages/Operacional/ServiceOrde
 import { Actions } from '@/components/Action';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
 
 import { TableProvider } from '@/contexts/TableContext';
@@ -57,6 +56,7 @@ import { HeaderTable } from './HeaderTable';
 import { useRatingServiceOrdersList } from './useRatingServiceOrders';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 const RATING_SERVICE_ORDERS_STORAGE_KEY =
   'OperacionalRatingServiceOrders' + queryKey.ratingServiceOrders.ratingServiceOrders;
@@ -101,15 +101,15 @@ export default function RatingServiceOrdersList() {
     () => [
       columnHelper.accessor((row) => row.status.label, {
         id: 'status',
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Status
-            text={row.original.status.label}
-            backgroundColor={getServiceOrderStatusBadgeColor(row.original.status.value)}
+          <StatusTag
+            label={row.original.status.label}
+            color={getServiceOrderStatusBadgeColor(row.original.status.value)}
           />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.code,

@@ -48,13 +48,15 @@ import { useNavigate } from 'react-router-dom';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { toaster } from '@/components/ui/toaster';
 
 import { TableProvider } from '@/contexts/TableContext';
 
 import { useLanguage } from '@/hooks/useLanguage';
+import { useListSearch } from '@/hooks/useListSearch';
 import { userPaginatedQuery } from '@/hooks/usePaginatedQueryStorage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useRequest } from '@/hooks/useRequest';
@@ -64,9 +66,7 @@ import formatCurrencyBRL from '@/utils/formatCurrencyBRL';
 import formatDate from '@/utils/formatDate';
 import { styleColumTable } from '@/utils/style-colum-table';
 
-import { orderStatusOptions } from '@/constants/Orders/options';
 import { defaultPaginationQuantity } from '@/constants/Orders/options/pagination-quantity-options';
-import { orderStatusColor } from '@/constants/Orders/order-status';
 import { queryKey } from '@/constants/query-key';
 
 import { deleteOrder, getOrderReportBlob } from '@/services/v2/Orders/order-service';
@@ -78,9 +78,6 @@ import { FilterSideOrder } from './FilterSideOrder';
 import { HeaderTable } from './HeaderTable';
 import { OrderActionsMenu } from './OrderActionsMenu';
 import { useOrdersList } from './useOrders';
-
-import { ListToolbar } from '@/components/ui/ListToolbar';
-import { useListSearch } from '@/hooks/useListSearch';
 
 const ORDER_STORAGE_KEY = 'OperacionalPedidos' + queryKey.orders.orders;
 
@@ -221,21 +218,15 @@ export default function OrdersList() {
   const columnHelper = createColumnHelper<OrderListItem>();
   const defaultColumns = useMemo(
     () => [
-      // LM-001 — dot+label DIRETO do `OrderStatusRef` do Resource (leitura
-      // do dev da Tarefa: "sem mapper de cor no componente").
+      // Situação (label+cor) DIRETO do `OrderStatusRef` do Resource, em StatusTag.
       columnHelper.accessor((row) => row.status.label, {
         id: 'status',
-        header: text.list.table.columns.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            bg={`${row.original.status.color}.500`}
-            title={row.original.status.label}
-          />
+          <StatusTag label={row.original.status.label} color={`${row.original.status.color}.500`} />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.columns.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.columns.code,
@@ -340,11 +331,6 @@ export default function OrdersList() {
   const items = ordersList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  // Legenda estática de cores de status — SEMPRE visível (mirror
-  // `Budget`/`Planejamentos`), fonte SÓ da legenda (a célula da linha usa o
-  // Resource direto, nunca este mapper).
-  const statusLegend = useMemo(() => orderStatusOptions.options(languageGB), [languageGB]);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -377,18 +363,6 @@ export default function OrdersList() {
           onOpenFilter={onOpenFilter}
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
-
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((option) => (
-            <Status
-              key={option.value}
-              text={option.label}
-              backgroundColor={`${orderStatusColor[option.value]}.500`}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box>
           <Table

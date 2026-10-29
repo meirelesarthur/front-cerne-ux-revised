@@ -51,6 +51,7 @@ import { HeaderTable } from './HeaderTable';
 import { useMdfesList } from './useMdfes';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 function formatQuantity(value: number): string {
   return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -152,14 +153,17 @@ export default function MdfesList() {
           const status = row.original.integration_status;
           if (!status) return null;
           return (
-            <Box
-              boxSize="2.5"
-              borderRadius="full"
-              bg={status === 'P' ? 'gray.400' : status === 'E' ? 'blue.500' : 'transparent'}
+            <StatusTag
+              label={
+                status === 'E'
+                  ? languageGB.defaltStrings.integrationDone
+                  : languageGB.defaltStrings.integrationPending
+              }
+              color={status === 'E' ? 'blue.500' : 'gray.500'}
             />
           );
         },
-        meta: styleColumTable.sm,
+        meta: styleColumTable.md,
       }),
       // LS002/LS009 — Número MDFe.
       columnHelper.accessor('mdfe_numero', {

@@ -1,7 +1,7 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `a6d189f` · 852 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `b7fffd7` · 859 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
@@ -15,12 +15,12 @@
 | `src/constants` | 3 | 33 | 0 |
 | `src/pages/Fiscal` | 0 | 34 | 0 |
 | `src/pages/Financeiro` | 0 | 27 | 0 |
-| `docs/ux` | 17 | 0 | 0 |
+| `docs/ux` | 19 | 0 | 0 |
 | `src/@types` | 1 | 13 | 0 |
 | `scripts/dev-db` | 13 | 0 | 0 |
 | `src/pages/Frota` | 0 | 11 | 0 |
+| `src/mocks` | 10 | 0 | 0 |
 | `src/components/(raiz)` | 0 | 8 | 0 |
-| `src/mocks` | 8 | 0 | 0 |
 | `src/pages/Planos` | 4 | 3 | 0 |
 | `src/pages/Configuracoes` | 0 | 6 | 0 |
 | `src/styles` | 0 | 6 | 0 |
@@ -30,13 +30,15 @@
 | `src/services` | 1 | 3 | 0 |
 | `src/components/Layout` | 0 | 3 | 0 |
 | `src/pages/Incomes` | 0 | 3 | 0 |
+| `scripts/dev-mocks` | 2 | 0 | 0 |
 | `src/components/Header` | 0 | 2 | 0 |
 | `src/pages/Login` | 1 | 1 | 0 |
 | `.env.example` | 0 | 1 | 0 |
 | `.gitignore` | 0 | 1 | 0 |
+| `CLAUDE.md` | 1 | 0 | 0 |
 | `chakra.config.ts` | 0 | 1 | 0 |
 | `package.json` | 0 | 1 | 0 |
-| `scripts/dev-mocks` | 1 | 0 | 0 |
+| `scripts/ux-docs` | 1 | 0 | 0 |
 | `src/components/MovementAllocationEditor` | 0 | 1 | 0 |
 | `src/config` | 0 | 1 | 0 |
 | `src/design` | 1 | 0 | 0 |
@@ -95,9 +97,11 @@
 - `src/mocks/dev-api/data/reference/cities.json`
 - `src/mocks/dev-api/data/reference/countries.json`
 - `src/mocks/dev-api/data/reference/states.json`
+- `src/mocks/dev-api/generated/schemas.json`
 - `src/mocks/dev-api/handlers/farms.ts`
 - `src/mocks/dev-api/handlers/reference.ts`
 - `src/mocks/dev-api/index.ts`
+- `src/mocks/dev-api/synthetic.ts`
 - `src/pages/Login/slides.ts`
 - `src/pages/Planos/Contratacao/catalog.ts`
 - `src/pages/Planos/Contratacao/index.tsx`
@@ -459,3 +463,4 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - e64515e feat(ui): contratacao de planos conforme documento da gestao - GIA por janela de mensagens, grupo GIA no pior caso, modulos novos, layout do print; Fazer upgrade do perfil leva a contratacao
 - 2ed5b7e fix(ui): contratacao sem entalhe nos cartoes, abas no cabecalho, aviso no rodape, regua com valores acima e modulos com icones e selos de valor
 - a6d189f fix(ui): modulo que puxa o plano para cima pode ser desmarcado e volta ao plano anterior
+- b7fffd7 feat(dev): mock sintetico global (schemas extraidos dos tipos dos servicos) e guia para IA (CLAUDE.md, PORTING.md, mapa de mudancas gerado, tag ux-baseline)

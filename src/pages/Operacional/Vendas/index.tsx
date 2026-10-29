@@ -28,7 +28,6 @@
 // -----------------------------------------------------------------------------
 
 import { useMemo, useState } from 'react';
-
 import type { ElementType } from 'react';
 
 import { Box, Flex, Text, useDisclosure, VStack } from '@chakra-ui/react';
@@ -40,12 +39,14 @@ import { useNavigate } from 'react-router-dom';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { TableProvider } from '@/contexts/TableContext';
 
 import { useLanguage } from '@/hooks/useLanguage';
+import { useListSearch } from '@/hooks/useListSearch';
 import { userPaginatedQuery } from '@/hooks/usePaginatedQueryStorage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useRequest } from '@/hooks/useRequest';
@@ -56,8 +57,7 @@ import formatDate from '@/utils/formatDate';
 import { styleColumTable } from '@/utils/style-colum-table';
 
 import { queryKey } from '@/constants/query-key';
-import { defaultPaginationQuantity, saleStatusOptions } from '@/constants/Sales/options';
-import { saleStatusColor } from '@/constants/Sales/sale-status';
+import { defaultPaginationQuantity } from '@/constants/Sales/options';
 
 import { deleteSale } from '@/services/v2/Sales/sale-service';
 import type { ListSalesParams } from '@/services/v2/Sales/sale-service';
@@ -69,9 +69,6 @@ import { HeaderTable } from './HeaderTable';
 import { SaleActionsMenu } from './SaleActionsMenu';
 import { SaleEmitNfeDialog } from './SaleEmitNfeDialog';
 import { useSalesList } from './useSales';
-
-import { ListToolbar } from '@/components/ui/ListToolbar';
-import { useListSearch } from '@/hooks/useListSearch';
 
 const SALE_STORAGE_KEY = 'OperacionalVendas' + queryKey.sales.sales;
 
@@ -210,21 +207,15 @@ export default function SalesList() {
   const columnHelper = createColumnHelper<SaleListItem>();
   const defaultColumns = useMemo(
     () => [
-      // LM001 col. 1 — dot DIRETO do `SaleListResource` (`status.color`) —
-      // mapper `saleStatusColor` é SÓ da legenda (contrato-tela §7.2).
+      // Situação em StatusTag, label+cor DIRETO do `SaleListResource` (`status`).
       columnHelper.accessor((row) => row.status.label, {
         id: 'status',
-        header: text.list.table.columns.status,
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            bg={`${row.original.status.color}.500`}
-            title={row.original.status.label}
-          />
+          <StatusTag label={row.original.status.label} color={`${row.original.status.color}.500`} />
         ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.columns.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.table.columns.code,
@@ -350,10 +341,6 @@ export default function SalesList() {
   const items = salesList.data?.data?.items;
   const isEmpty = !isLoading && (items?.length ?? 0) === 0;
 
-  // Legenda estática de cores de status — SEMPRE visível (mirror `Pedidos`),
-  // fonte SÓ da legenda (a célula da linha usa o Resource direto).
-  const statusLegend = useMemo(() => saleStatusOptions.options(languageGB), [languageGB]);
-
   return (
     <ContainerGrid>
       <TableProvider
@@ -387,18 +374,6 @@ export default function SalesList() {
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
 
-        <Flex gap={5} mt={4} wrap="wrap">
-          {statusLegend.map((option) => (
-            <Status
-              key={option.value}
-              text={option.label}
-              backgroundColor={`${saleStatusColor[option.value]}.500`}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
-
         <Box>
           <Table
             isLoading={isLoading}
@@ -411,7 +386,9 @@ export default function SalesList() {
             retryLabel={text.list.error.retry}
             emptyIcon={FiFileText as ElementType}
             emptyTitle={
-              filtersApplied > 0 ? text.list.emptyState.titleFiltered : text.list.emptyState.titleEmpty
+              filtersApplied > 0
+                ? text.list.emptyState.titleFiltered
+                : text.list.emptyState.titleEmpty
             }
             emptyDescription={
               filtersApplied > 0

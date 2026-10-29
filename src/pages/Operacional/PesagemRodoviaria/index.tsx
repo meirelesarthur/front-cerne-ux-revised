@@ -28,7 +28,7 @@
 import { useMemo, useState } from 'react';
 import type { ElementType } from 'react';
 
-import { Badge, Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiFileText } from 'react-icons/fi';
@@ -72,10 +72,10 @@ import { DeleteModuleWeighingDialog } from './DeleteModuleWeighingDialog';
 import { FilterSideModuleWeighing } from './FilterSideModuleWeighing';
 import { HeaderTable } from './HeaderTable';
 import { ModuleWeighingActionsMenu } from './ModuleWeighingActionsMenu';
-import { ModuleWeighingStatusLegend } from './ModuleWeighingStatusLegend';
 import { useModuleWeighingsList } from './useModuleWeighings';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 const MODULE_WEIGHING_LIST_ROUTE = '/operacional/pesagem-rodoviaria';
 
@@ -195,7 +195,7 @@ export default function ModuleWeighingList() {
   const defaultColumns = useMemo(
     () => [
       columnHelper.accessor('status', {
-        header: text.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         cell: ({ row }) => {
           // Correção 050 (BUG-10) — `ModuleWeighingStatus` é backed enum
           // STRING no backend (mesma causa-raiz de BUG-4/5): a API devolve
@@ -208,9 +208,10 @@ export default function ModuleWeighingList() {
           // de consumo, mesma técnica de `mapNextStepHydration`.
           const status = Number(row.original.status) as typeof row.original.status;
           return (
-            <Badge colorPalette={moduleWeighingStatusColor[status]} variant="subtle">
-              {moduleWeighingStatusOptions.getLabel(status, languageGB)}
-            </Badge>
+            <StatusTag
+              label={moduleWeighingStatusOptions.getLabel(status, languageGB) ?? ''}
+              color={`${moduleWeighingStatusColor[status]}.500`}
+            />
           );
         },
         enableSorting: false,
@@ -331,13 +332,6 @@ export default function ModuleWeighingList() {
         >
           <PageHeader title={text.list.pageTitle} description={text.list.pageSubtitle} />
         </HeaderGrid>
-
-        {/* Legenda de status (Bug 1, correção 050) — o Badge da coluna
-            Status já rotula cada linha; faltava a legenda dos 5 estados
-            acima do grid (mirror `RequestPurchaseStatusLegend`). */}
-        <Box mt={4}>
-          <ModuleWeighingStatusLegend />
-        </Box>
 
         <Box mt={6}>
           <Table

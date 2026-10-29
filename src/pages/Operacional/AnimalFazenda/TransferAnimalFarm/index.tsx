@@ -25,7 +25,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Box, Flex, HStack, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FiCheckCircle, FiRepeat, FiUpload } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +39,7 @@ import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSetting
 import { HeaderGrid } from '@/components/HeaderGrid';
 import { ModalAction } from '@/components/ModalAction';
 import { Table } from '@/components/Table';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { TableProvider } from '@/contexts/TableContext';
 
@@ -163,7 +164,7 @@ export default function TransferAnimalFarmList() {
   const defaultColumns = useMemo(
     () => [
       columnHelper.accessor('status', {
-        header: text.list.columns.status,
+        header: languageGB.defaltStrings.statusColumn,
         cell: ({ row }) => {
           const status = row.original.status;
           const statusText = languageGB.animalFazenda.transferAnimalFarm.status;
@@ -174,18 +175,10 @@ export default function TransferAnimalFarmList() {
             [transferAnimalFarmStatus.canceled]: statusText.canceled,
           };
           return (
-            <HStack gap={2}>
-              <Box
-                boxSize="2.5"
-                borderRadius="full"
-                flexShrink={0}
-                backgroundColor={transferAnimalFarmStatusColor[status]}
-              />
-              <Text fontSize="sm">{labelByStatus[status] ?? '—'}</Text>
-            </HStack>
+            <StatusTag label={labelByStatus[status] ?? '—'} color={transferAnimalFarmStatusColor[status]} />
           );
         },
-        meta: { ...styleColumTable.md, gridLabel: text.list.columns.status },
+        meta: { ...styleColumTable.md, gridLabel: languageGB.defaltStrings.statusColumn },
       }),
       columnHelper.accessor('code', {
         header: text.list.columns.code,

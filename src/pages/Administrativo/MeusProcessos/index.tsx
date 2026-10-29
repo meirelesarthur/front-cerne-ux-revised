@@ -78,7 +78,6 @@ import { queryKey } from '@/constants/query-key';
 import { requestPurchasePriorityColor } from '@/constants/RequestPurchases/request-purchase-priority';
 import type { RequestPurchasePriority } from '@/constants/RequestPurchases/request-purchase-priority';
 import {
-  requestPurchaseStatusColor,
   requestPurchaseStatusDotToken,
 } from '@/constants/RequestPurchases/request-purchase-status';
 import type { RequestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
@@ -102,9 +101,9 @@ import {
 
 import { InformRequestPurchaseStatusDialog } from '../Compras/InformRequestPurchaseStatusDialog';
 import { SeparateRequestPurchaseDialog } from '../Compras/SeparateRequestPurchaseDialog';
-import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 export default function MeusProcessosList() {
   const { languageGB } = useLanguage();
@@ -209,27 +208,20 @@ export default function MeusProcessosList() {
   const defaultColumns = useMemo(
     () => [
       // Bolinha de status do legado (cor pelo token, nome acessível pelo status).
-      columnHelper.display({
-        id: 'statusDot',
-        header: '',
+      // Situação escrita na linha (tag colorida): substitui a bolinha + a legenda acima do grid.
+      columnHelper.accessor('status_label', {
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            backgroundColor={
-              requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]
-            }
-            role="img"
-            aria-label={row.original.status_label}
-            title={row.original.status_label}
+          <StatusTag
+            label={row.original.status_label}
+            color={requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]}
           />
         ),
         meta: {
-          ...styleColumTable.sm,
-          gridLabel: text.supply.filters.status,
+          ...styleColumTable.md,
+          gridLabel: languageGB.defaltStrings.statusColumn,
           gridOrder: 'fixed-start',
-          gridDataColumn: false,
         },
       }),
       columnHelper.accessor('code', {
@@ -327,22 +319,6 @@ export default function MeusProcessosList() {
           </Badge>
         ),
         meta: { ...styleColumTable.sm, gridLabel: text.list.table.type },
-      }),
-      columnHelper.accessor('status_label', {
-        header: text.list.table.status,
-        cell: ({ row }) => (
-          <Badge
-            colorPalette={
-              requestPurchaseStatusColor[row.original.status as RequestPurchaseStatus] ?? 'gray'
-            }
-            variant="subtle"
-            py={1}
-            px={3}
-          >
-            {row.original.status_label}
-          </Badge>
-        ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
       }),
       columnHelper.accessor('priority_label', {
         header: text.list.table.priority,
@@ -539,9 +515,6 @@ export default function MeusProcessosList() {
           <PageHeader title={text.myProcesses.pageTitle} description={text.myProcesses.pageSubtitle} />
         </HeaderGrid>
 
-        <Box mt={4}>
-          <RequestPurchaseStatusLegend />
-        </Box>
 
         <Box mt={6}>
           <Table

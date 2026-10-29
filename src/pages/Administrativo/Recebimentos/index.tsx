@@ -65,7 +65,6 @@ import { styleColumTable } from '@/utils/style-colum-table';
 
 import { queryKey } from '@/constants/query-key';
 import {
-  requestPurchaseStatusColor,
   requestPurchaseStatusDotToken,
 } from '@/constants/RequestPurchases/request-purchase-status';
 import type { RequestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
@@ -84,11 +83,11 @@ import {
 } from './receiptsActions';
 import { SortableHeader } from './SortableHeader';
 
-import { RequestPurchaseStatusLegend } from '../Solicitacao/RequestPurchaseStatusLegend';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
 import { ListToolbar } from '@/components/ui/ListToolbar';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { useListSearch } from '@/hooks/useListSearch';
 
 export default function RecebimentosList() {
@@ -172,27 +171,20 @@ export default function RecebimentosList() {
   const defaultColumns = useMemo(
     () => [
       // Bolinha de status do legado (cor pelo token, nome acessível pelo status).
-      columnHelper.display({
-        id: 'statusDot',
-        header: '',
+      // Situação escrita na linha (tag colorida): substitui a bolinha + a legenda acima do grid.
+      columnHelper.accessor('status_label', {
+        header: languageGB.defaltStrings.statusColumn,
         enableHiding: false,
         cell: ({ row }) => (
-          <Box
-            boxSize="2.5"
-            borderRadius="full"
-            backgroundColor={
-              requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]
-            }
-            role="img"
-            aria-label={row.original.status_label}
-            title={row.original.status_label}
+          <StatusTag
+            label={row.original.status_label}
+            color={requestPurchaseStatusDotToken[row.original.status as RequestPurchaseStatus]}
           />
         ),
         meta: {
-          ...styleColumTable.sm,
-          gridLabel: text.list.table.status,
+          ...styleColumTable.md,
+          gridLabel: languageGB.defaltStrings.statusColumn,
           gridOrder: 'fixed-start',
-          gridDataColumn: false,
         },
       }),
       columnHelper.accessor('code', {
@@ -317,22 +309,6 @@ export default function RecebimentosList() {
         meta: { ...styleColumTable.sm, gridLabel: text.list.table.launched },
       }),
       // Acréscimo do novo (D-01 manter): Status em texto.
-      columnHelper.accessor('status_label', {
-        header: text.list.table.status,
-        cell: ({ row }) => (
-          <Badge
-            colorPalette={
-              requestPurchaseStatusColor[row.original.status as RequestPurchaseStatus] ?? 'gray'
-            }
-            variant="subtle"
-            py={1}
-            px={3}
-          >
-            {row.original.status_label}
-          </Badge>
-        ),
-        meta: { ...styleColumTable.sm, gridLabel: text.list.table.status },
-      }),
       columnHelper.display({
         id: 'acoes',
         header: '',
@@ -477,17 +453,6 @@ export default function RecebimentosList() {
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
 
-        {/* Legenda de status — mesmo componente reutilizável já usado em
-            `Compras`/`Cotacoes`/`Solicitacao`/`Rejeitados`/`Autorizacao`/
-            `MeusProcessos` (`RequestPurchaseStatusLegend`, hub RequestPurchase
-            compartilhado), posição equivalente: acima do grid, abaixo do
-            cabeçalho/filtros. TODOS os 11 status do enum (default do
-            componente), fiel ao legado — Recebimentos filtra a LISTAGEM por
-            {7,8,9}, mas a legenda não é restringida (mesmo padrão de
-            `Autorizacao`/`Rejeitados`). */}
-        <Box mt={4}>
-          <RequestPurchaseStatusLegend />
-        </Box>
 
         <Box mt={6}>
           <Table

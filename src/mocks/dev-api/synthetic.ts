@@ -170,6 +170,8 @@ function genNumber(key: string, c: Ctx): number {
   const k = key.toLowerCase();
   const i = c.i;
   if (k === 'id') return i + 1;
+  // situação numérica: varia de 1 a 6 para a tela mostrar cores/rótulos diferentes
+  if (/(^|_)(status|situacao|situation|stage|phase|step)$/.test(k)) return (i % 6) + 1;
   if (k.endsWith('_id')) return (i % 3) + 1;
   if (/(percent|perc|rate|aliq|taxa|margin|margem)/.test(k)) return Math.round((5 + ((i * 7) % 90)) * 100) / 100;
   if (/(price|preco|value|valor|amount|total|cost|custo|saldo|balance|salary|salario|revenue|receita|despesa|expense)/.test(k)) return Math.round((120 + i * 37.5) * 100) / 100;
@@ -193,7 +195,8 @@ function genBoolean(key: string, c: Ctx): boolean {
   return c.i % 2 === 0;
 }
 
-function enumLabel(v: unknown): string {
+function enumLabel(v: unknown, baseKey = ''): string {
+  if (typeof v === 'number' && /(status|situa|stage|phase)/.test(baseKey)) return STATUS_LABEL[(v - 1 + STATUS_LABEL.length * 4) % STATUS_LABEL.length];
   return typeof v === 'number' ? `Opção ${v}` : humanize(String(v));
 }
 
@@ -231,7 +234,7 @@ function gen(id: number, key: string, c: Ctx): unknown {
       for (const pk of Object.keys(obj)) {
         if (pk.endsWith('_label') && pk.slice(0, -6) in obj) {
           const base = obj[pk.slice(0, -6)];
-          if (base !== null && typeof base !== 'object') obj[pk] = enumLabel(base);
+          if (base !== null && typeof base !== 'object') obj[pk] = enumLabel(base, pk.slice(0, -6).toLowerCase());
         }
       }
       return obj;
@@ -410,12 +413,43 @@ export async function loadSynthetic(): Promise<boolean> {
   }
 }
 
+/**
+ * Escritas sem tipo de resposta no serviço (ex.: `api.V2.delete('/x/:id')` sem genérico): se a
+ * coleção existe (há um GET de lista), aplica o efeito em memória e responde sucesso.
+ */
+function untypedWrite(verb: string, path: string, req: SyntheticRequest): SyntheticResponse | null {
+  if (verb === 'get') return null;
+  const { coll, id } = collectionOf(path);
+  const listRoute = findRoute('get', coll);
+  if (!listRoute || !isListRoot(listRoute.root)) return null;
+  const list = entitiesOf(coll);
+  const at = id ? list.findIndex((x) => x.id === id || String(x.i + 1) === id) : -1;
+  if (verb === 'delete' && id) {
+    if (at >= 0) list.splice(at, 1);
+    return { status: 204, data: '' };
+  }
+  const payload = bodyToObject(req.body);
+  if ((verb === 'put' || verb === 'patch') && id) {
+    const e = at >= 0 ? list[at] : { i: 0, id, patch: {} };
+    if (at < 0) list.push(e);
+    e.patch = { ...e.patch, ...payload };
+    return { status: 200, data: envelope(listRoute.root, genRow(listRoute.root, coll, e), undefined) };
+  }
+  if (verb === 'post' && !id) {
+    created += 1;
+    const e: Entity = { i: 1000 + created, id: uuidFor(`${coll}:new:${created}`), patch: payload };
+    list.unshift(e);
+    return { status: 201, data: envelope(listRoute.root, genRow(listRoute.root, coll, e), undefined) };
+  }
+  return null;
+}
+
 export function syntheticHandle(req: SyntheticRequest): SyntheticResponse | null {
   if (!schema) return null;
   const verb = req.method.toLowerCase();
   const path = '/' + req.path.replace(/^\/+/, '').replace(/\/+$/, '').replace(/^api\/v1\//, '');
   const route = findRoute(verb, path);
-  if (!route) return null;
+  if (!route) return untypedWrite(verb, path, req);
   const { coll, id } = collectionOf(path);
   const root = route.root;
   const listRoute = isListRoot(root);

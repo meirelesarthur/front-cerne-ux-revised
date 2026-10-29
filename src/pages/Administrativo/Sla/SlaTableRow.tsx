@@ -27,7 +27,7 @@
 // descartando o estado do RHF automaticamente junto.
 // -----------------------------------------------------------------------------
 
-import { Box, Flex, Icon, Table } from '@chakra-ui/react';
+import { Flex, Icon, Table } from '@chakra-ui/react';
 import { Controller, useForm } from 'react-hook-form';
 import { FiCheck, FiEdit, FiX } from 'react-icons/fi';
 
@@ -39,6 +39,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { supplyStatusSlaSchemaResolver } from '@/validations/schemas/SupplyStatusSlas/supply-status-sla-schema';
 
 import type { SupplyStatusSlaListItem } from '@/@types/v2/SupplyStatusSlas';
+
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { slaStatusDotToken } from './slaStatusDot';
 
@@ -63,25 +65,12 @@ export function SlaTableRow({
 }: SlaTableRowProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.supplyStatusSlas.supplyStatusSla;
-  const dotToken = slaStatusDotToken(item.status);
+  const statusColor = slaStatusDotToken(item.status);
 
   return (
     <Table.Row borderBottom="1px solid" borderColor="borderGrid">
       <Table.Cell borderBottom="1px solid" borderColor="borderGrid" paddingY="10px" paddingX="4">
-        <Flex align="center" gap={2}>
-          {dotToken && (
-            <Box
-              boxSize="2.5"
-              flexShrink={0}
-              borderRadius="full"
-              backgroundColor={dotToken}
-              role="img"
-              aria-label={item.status_label}
-              title={item.status_label}
-            />
-          )}
-          {item.status_label}
-        </Flex>
+        <StatusTag label={item.status_label} color={statusColor ?? undefined} />
       </Table.Cell>
 
       {isEditing ? (

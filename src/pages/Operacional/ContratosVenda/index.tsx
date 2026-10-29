@@ -32,7 +32,7 @@
 
 import { useEffect, useMemo, useState, type ElementType } from 'react';
 
-import { Badge, Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, Text, useDisclosure } from '@chakra-ui/react';
 import { createColumnHelper } from '@tanstack/react-table';
 import { FileSignature } from 'lucide-react';
 import { FiEdit, FiEye, FiTrash2 } from 'react-icons/fi';
@@ -44,8 +44,10 @@ import { ContainerGrid } from '@/components/ContainerGrid';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import { HeaderGrid } from '@/components/HeaderGrid';
-import { Status } from '@/components/Status';
 import { Table } from '@/components/Table';
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { TableProvider } from '@/contexts/TableContext';
 
@@ -53,6 +55,7 @@ import { useCustomGridQuery } from '@/hooks/useCustomGridQuery';
 import { useGridSettings } from '@/hooks/useGridSettings';
 import { useGridStorageScope } from '@/hooks/useGridStorageScope';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useListSearch } from '@/hooks/useListSearch';
 import { userPaginatedQuery } from '@/hooks/usePaginatedQueryStorage';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useRequest } from '@/hooks/useRequest';
@@ -73,16 +76,7 @@ import type { SaleContractFilterForm, SaleContractListItem } from '@/@types/v2/S
 
 import { FilterSideContratosVenda } from './FilterSideContratosVenda';
 import { formatSaleContractQuantity } from './saleContractFormat';
-import {
-  getSaleContractStatusLabel,
-  getSaleContractStatusLegend,
-  SALE_CONTRACT_STATUS_BADGE_VARIANT,
-} from './saleContractStatus';
-
-import { PageHeader } from '@/components/ui/PageHeader';
-
-import { ListToolbar } from '@/components/ui/ListToolbar';
-import { useListSearch } from '@/hooks/useListSearch';
+import { getSaleContractStatusLabel, getSaleContractStatusDotColor } from './saleContractStatus';
 
 export default function ContratosVendaList() {
   const { languageGB } = useLanguage();
@@ -308,20 +302,16 @@ export default function ContratosVendaList() {
       }),
       columnHelper.accessor((row) => row.status.value, {
         id: 'status',
-        header: languageGB.saleContracts.saleContract.list.table.status,
+        header: languageGB.defaltStrings.statusColumn,
         cell: ({ row }) => (
-          <Badge
-            colorPalette={SALE_CONTRACT_STATUS_BADGE_VARIANT[row.original.status.value]}
-            variant="subtle"
-            py={1}
-            px={3}
-          >
-            {getSaleContractStatusLabel(row.original.status.value, languageGB)}
-          </Badge>
+          <StatusTag
+            label={getSaleContractStatusLabel(row.original.status.value, languageGB)}
+            color={getSaleContractStatusDotColor(row.original.status.value)}
+          />
         ),
         meta: {
           ...styleColumTable.md,
-          gridLabel: languageGB.saleContracts.saleContract.list.table.status,
+          gridLabel: languageGB.defaltStrings.statusColumn,
         },
       }),
       columnHelper.display({
@@ -378,8 +368,6 @@ export default function ContratosVendaList() {
     [navigate, isDeleting, languageGB, canView, canEdit, canDelete]
   );
 
-  const statusLegend = useMemo(() => getSaleContractStatusLegend(languageGB), [languageGB]);
-
   const gridSettings = useGridSettings<SaleContractListItem>({
     storageKey: saleContractsStorageKey,
     storageScope: useGridStorageScope(),
@@ -422,7 +410,10 @@ export default function ContratosVendaList() {
             </>
           }
         >
-          <PageHeader title={languageGB.saleContracts.saleContract.list.pageTitle} description={languageGB.saleContracts.saleContract.list.pageSubtitle} />
+          <PageHeader
+            title={languageGB.saleContracts.saleContract.list.pageTitle}
+            description={languageGB.saleContracts.saleContract.list.pageSubtitle}
+          />
         </HeaderGrid>
 
         <ListToolbar
@@ -432,27 +423,6 @@ export default function ContratosVendaList() {
           onOpenFilter={onOpenFilter}
           filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
         />
-
-        {/* Legenda global de status — SEMPRE visível (não é tooltip),
-            restaurada pelo rework de fidelidade (`SC-LST-010`, mirror
-            `<b>Legenda:</b>` do `index.blade.php` legado). Mesmo padrão de
-            `Operacional/Appropriations/index.tsx` (`Status` = dot + label,
-            nunca hex cru — cor via `getSaleContractStatusDotColor`, escala
-            `.500` do MESMO dicionário do Badge por linha). */}
-        <Flex align="center" gap={5} mt={4} wrap="wrap">
-          <Text fontSize="sm" fontWeight="medium" color="fg.muted">
-            {languageGB.saleContracts.saleContract.list.statusLegendTitle}
-          </Text>
-          {statusLegend.map((item) => (
-            <Status
-              key={item.status}
-              text={item.label}
-              backgroundColor={item.dotColor}
-              fontSize="sm"
-              color="fg.muted"
-            />
-          ))}
-        </Flex>
 
         <Box mt={6}>
           <Table
