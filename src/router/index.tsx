@@ -38,6 +38,9 @@ const TwoFactorVerify = lazy(() => import('@/pages/Login/TwoFactorVerify'));
 const ForgotPassword = lazy(() => import('@/pages/Login/ForgotPassword'));
 const ResetPassword = lazy(() => import('@/pages/Login/ResetPassword'));
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const ErrorRoute = lazy(() => import('@/pages/Errors'));
+const ErrorsIndex = lazy(() => import('@/pages/Errors').then((m) => ({ default: m.ErrorsIndex })));
+const Error404 = lazy(() => import('@/pages/Errors').then((m) => ({ default: () => <m.ErrorStatus code={404} /> })));
 
 // ---- Público ANÔNIMO (formulário do fornecedor, hash — esteira
 // 97-Esteiras/035, TASK-CQ-FE-10). FORA de `PublicRoute`/`PrivateRoute` —
@@ -13010,6 +13013,11 @@ export function AppRoutes() {
         {/* 404 dentro do layout autenticado */}
         <Route path="*" element={<NotFound />} />
       </Route>
+
+      {/* Telas de erro por status HTTP (design 404): públicas e sem layout */}
+      <Route path="/404" element={lazyRoute(Error404)} />
+      <Route path="/erro/:code" element={lazyRoute(ErrorRoute)} />
+      <Route path="/erros" element={lazyRoute(ErrorsIndex)} />
 
       {/* Fallback global -> login */}
       <Route path="*" element={<Navigate to="/login" replace />} />
