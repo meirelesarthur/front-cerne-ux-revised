@@ -6,10 +6,10 @@
 // teclado, atrapalhando a navegação do select — mesmo racional do
 // `NotificationPanel` (precedente Popover no projeto).
 //
-// Itens "ainda não construídos" (Fazer upgrade, Configurações, Planos,
-// Central de ajuda — AD-FE-02, D3/D5/D6): permanecem VISÍVEIS e FOCÁVEIS,
-// com um badge "Em breve" e um toast informativo ao clicar. NENHUMA
-// navegação, link de e-mail direto ou request nesses 4 itens.
+// "Fazer upgrade" leva à contratação de plano (`/planos/contratar`). Itens "ainda não
+// construídos" (Configurações, Planos, Central de ajuda — AD-FE-02, D3/D5/D6): permanecem
+// VISÍVEIS e FOCÁVEIS, com um badge "Em breve" e um toast informativo ao clicar. NENHUMA
+// navegação, link de e-mail direto ou request nesses 3 itens.
 //
 // Adaptado (não copiado) de `GB.Cerne.UX@ffe92bc`
 // `src/components/layout/Topbar.tsx:199-309`.
@@ -199,18 +199,18 @@ export function AccountMenu() {
               </Box>
             </Flex>
 
-            {/* 2 — Fazer upgrade (Em breve) — bloco, primário, ícone sparkles */}
+            {/* 2 — Fazer upgrade — bloco, primário, ícone sparkles; leva à contratação de plano */}
             <ChakraButton
               variant="solid"
               width="full"
               mb={1}
-              onClick={() => notifyComingSoon(text.upgrade)}
+              onClick={() => {
+                close();
+                navigate('/planos/contratar');
+              }}
             >
               <Icon as={Sparkles} boxSize={4} />
               <Text as="span">{text.upgrade}</Text>
-              <Badge size="xs" variant="subtle" colorPalette="gray" ml={2}>
-                {text.comingSoonBadge}
-              </Badge>
             </ChakraButton>
 
             {/* 3 — Plano atual (não clicável) */}

@@ -23,6 +23,8 @@ import { FormContainer } from '@/components/Layout/FormContainer';
 import { BandSlider } from '@/components/ui/BandSlider';
 import { CheckOptionRow } from '@/components/ui/CheckOptionRow';
 import { ChoiceCardGroup } from '@/components/ui/ChoiceCardGroup';
+import { DashedActionButton } from '@/components/ui/DashedActionButton';
+import { GiaTierCard } from '@/components/ui/GiaTierCard';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { PlanCompareStrip } from '@/components/ui/PlanCompareStrip';
 import { PlanOptionCard } from '@/components/ui/PlanOptionCard';
@@ -50,6 +52,9 @@ import {
   compareTiers,
   consultPrice,
   formatBRL,
+  giaMinimumPass,
+  giaTypicalCost,
+  giaWorstCost,
   isIncluded,
   positionToSize,
   pruneUnavailable,
@@ -68,14 +73,7 @@ type Billing = 'monthly' | 'annual';
  * PLACEHOLDER — assinatura atual do contratante. Virá de `GET /subscription` quando existir;
  * `null` = contratação nova (sem selo "Plano atual" nem comparação com o atual).
  */
-const CURRENT_SUBSCRIPTION: Selection | null = {
-  plan: 'Pro',
-  users: 5,
-  modules: new Set<string>(),
-  unit: 'cab',
-  size: 1200,
-  consult: 'none',
-};
+const CURRENT_SUBSCRIPTION: Selection | null = null;
 
 const fill = (template: string, vars: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ''));
@@ -111,6 +109,10 @@ export default function ContratacaoPlano() {
   const monthShown = annual ? annualMonthly(current.month) : current.month;
   const consultMonth = consultPrice(selection.consult);
   const consultOption = CATALOG.consult.find((c) => c.key === selection.consult)!;
+  const giaWindow = CATALOG.gia.tiers[selection.plan].window;
+  const giaTypical = giaTypicalCost(selection.plan, selection.users);
+  const giaWorst = giaWorstCost(selection.plan, selection.users);
+  const giaMin = giaMinimumPass(selection.plan, selection.users);
   const includedModules = CATALOG.modules.filter((m) => isIncluded(selection.plan, m));
   const currentQuote = CURRENT_SUBSCRIPTION ? quote(CURRENT_SUBSCRIPTION.plan, CURRENT_SUBSCRIPTION) : null;
   const deltaVsCurrent = currentQuote ? current.month - currentQuote.month : null;
@@ -184,6 +186,7 @@ export default function ContratacaoPlano() {
       `Software: ${formatBRL(current.month)}${text.plan.perMonth}${
         annual ? ` · ${formatBRL(annualTotal(current.month))} / ano` : ` · ${formatBRL(current.month * 12)} / ano`
       }`,
+      `${text.summary.ai}: ${CATALOG.gia.tiers[selection.plan].level} · ${fill(text.summary.aiValue, { n: giaWindow })}`,
       consultMonth
         ? `${fill(text.consult.summaryName, { name: consultOption.name })}: ${formatBRL(consultMonth)}${text.plan.perMonth} · ${text.summary.totalWithConsult} ${formatBRL((annual ? annualMonthly(current.month) : current.month) + consultMonth)}${text.plan.perMonth}`
         : `${text.summary.consult}: ${text.consult.none}`,
@@ -273,9 +276,6 @@ export default function ContratacaoPlano() {
             />
           ))}
         </Grid>
-        <Text fontSize="base" color="fg.muted" mt="12px" lineHeight="1.5">
-          <b>{selection.plan}:</b> {PLAN_DESCRIPTION[selection.plan]}
-        </Text>
       </FieldRow>
 
       <FieldRow icon="users" title={text.accesses.title} hint={text.accesses.hint}>
@@ -307,9 +307,9 @@ export default function ContratacaoPlano() {
         />
       </FieldRow>
 
-      <Flex justify="flex-end" pt={5}>
-        <Button title={text.nav.next} onClick={() => setStep('modules')} />
-      </Flex>
+      <Box pt={5}>
+        <Button title={text.nav.next} onClick={() => setStep('modules')} w="full" />
+      </Box>
     </>
   );
 
@@ -409,7 +409,7 @@ export default function ContratacaoPlano() {
         <SummaryRow label={text.summary.baseValue} value={`${formatBRL(current.base)}${open ? '+' : ''}`} />
         <SummaryRow
           label={text.summary.ai}
-          value={fill(text.summary.aiValue, { w: CATALOG.ai[selection.plan].perWindow, t: CATALOG.ai[selection.plan].monthlyTokensMi })}
+          value={fill(text.summary.aiValue, { n: CATALOG.gia.tiers[selection.plan].window })}
         />
         <SummaryNote>{PLAN_DESCRIPTION[selection.plan]}</SummaryNote>
       </SummaryGroup>
@@ -442,6 +442,20 @@ export default function ContratacaoPlano() {
             {fill(text.summary.alreadyIncluded, { plan: selection.plan })}: {includedModules.map((m) => m.name).join(' · ')}
           </SummaryNote>
         )}
+      </SummaryGroup>
+
+      <SummaryGroup title={text.gia.worstTitle}>
+        <SummaryRow label={text.gia.worstWindow} value={fill(text.gia.worstWindowValue, { n: giaWindow, p: selection.users })} />
+        <SummaryRow label={text.gia.typicalCost} value={formatBRL(giaTypical)} />
+        <SummaryRow label={text.gia.worstCost} value={formatBRL(giaWorst)} />
+        <SummaryNote>
+          {fill(text.gia.worstNote, {
+            u: CATALOG.gia.typicalPerDay,
+            pct: Math.round((giaTypical / current.month) * 100),
+            w: CATALOG.gia.worstPerDay,
+            min: formatBRL(giaMin),
+          })}
+        </SummaryNote>
       </SummaryGroup>
 
       <SummaryGroup title={text.summary.consult}>
@@ -512,7 +526,7 @@ export default function ContratacaoPlano() {
 
       <Flex direction="column" gap="8px" pt="4px">
         <Button title={requestLabel} onClick={() => setRequestOpen(true)} />
-        <Button title={text.summary.copy} variant="secondary" onClick={copySummary} />
+        <DashedActionButton label={text.summary.copy} onClick={copySummary} />
       </Flex>
     </SummaryPanel>
   );
@@ -555,28 +569,6 @@ export default function ContratacaoPlano() {
     },
   }));
 
-  const aiRows: SimpleTableRow[] = [
-    ...CATALOG.tiers.map((t) => ({
-      key: `ai-${t}`,
-      cells: {
-        plan: <PlanChip tier={t} />,
-        window: fill(ov.aiWindowValue, { n: CATALOG.ai[t].perWindow }),
-        monthly: fill(ov.aiTokens, { n: CATALOG.ai[t].monthlyTokensMi }),
-        equals: `~${n0(CATALOG.ai[t].approxMessages)} ${fill(ov.aiMessages, { n: '' }).trim()}`,
-      },
-    })),
-    {
-      key: 'ai-extra',
-      kind: 'total',
-      cells: {
-        plan: ov.aiExtraTitle,
-        window: '—',
-        monthly: ov.aiExtraTokens,
-        equals: `~${n0(650)} ${fill(ov.aiMessages, { n: '' }).trim()}`,
-      },
-    },
-  ];
-
   const dot = <Box as="span" display="inline-block" boxSize="12px" borderRadius="full" bg="green.600" aria-label={ov.legendIncluded} />;
   const ring = <Box as="span" display="inline-block" boxSize="12px" borderRadius="full" borderWidth="2px" borderColor="addonText" aria-label={ov.legendAddon} />;
   const na = <Text as="span" color="fg.muted" aria-label={ov.legendNa}>—</Text>;
@@ -590,7 +582,7 @@ export default function ContratacaoPlano() {
   ];
   let lastGroup = '';
   CATALOG.modules.forEach((m) => {
-    const g = m.includedIn === 'Deluxe' ? ov.groupDeluxe : ov.groupEnterprise;
+    const g = m.includedIn === 'Deluxe' ? ov.groupDeluxe : m.includedIn === 'Enterprise' ? ov.groupEnterprise : text.modules.groupAny;
     if (g !== lastGroup) {
       matrixRows.push({ key: `g-${g}`, kind: 'group', label: g });
       lastGroup = g;
@@ -708,20 +700,31 @@ export default function ContratacaoPlano() {
 
       <Box>
         <Text fontSize="lg" fontWeight="semibold" mb={2}>
-          {ov.aiTitle}
+          {text.gia.overviewTitle}
         </Text>
-        <SimpleTable
-          ariaLabel={ov.aiTitle}
-          columns={[
-            { key: 'plan', header: ov.colPlan },
-            { key: 'window', header: ov.colWindow, align: 'right' },
-            { key: 'monthly', header: ov.colMonthly, align: 'right' },
-            { key: 'equals', header: ov.colEquals, align: 'right' },
-          ]}
-          rows={aiRows}
-        />
+        <Grid templateColumns={{ base: '1fr', lg: 'repeat(3, minmax(0, 1fr))' }} gap="12px" alignItems="stretch">
+          {CATALOG.tiers.map((tier) => {
+            const g = CATALOG.gia.tiers[tier];
+            const statusLabel = { available: text.gia.statusAvailable, build: text.gia.statusBuild, decide: text.gia.statusDecide } as const;
+            return (
+              <GiaTierCard
+                key={tier}
+                name={g.level}
+                tag={fill(text.gia.includedIn, { plan: tier })}
+                accent={CATALOG.accent[tier]}
+                inheritsLabel={g.inherits ? fill(text.gia.inherits, { name: g.inherits }) : undefined}
+                metrics={[
+                  { label: text.gia.window, value: fill(text.gia.windowValue, { n: g.window }) },
+                  { label: text.gia.economy, value: fill(text.gia.economyValue, { n: g.economy }) },
+                  { label: text.gia.extraPack, value: fill(text.gia.extraPackValue, { p: formatBRL(CATALOG.gia.extraPackPrice), n: n0(CATALOG.gia.extraPackMessages) }) },
+                ]}
+                capabilities={g.capabilities.map((cap) => ({ title: cap.title, text: cap.text, tone: cap.status, statusLabel: statusLabel[cap.status] }))}
+              />
+            );
+          })}
+        </Grid>
         <Text fontSize="sm" color="fg.muted" mt="6px">
-          {fill(ov.aiExtraNote, { n: CATALOG.aiExtraPackPrice })}. {ov.aiNote}
+          {text.gia.overviewNote}
         </Text>
       </Box>
 

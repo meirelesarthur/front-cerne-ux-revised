@@ -168,3 +168,29 @@ export function compareTiers(sel: QuoteInput, catalog: Catalog = CATALOG) {
 
 export const formatBRL = (value: number) =>
   `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/,00$/, '')}`;
+
+/**
+ * Custo mensal da GIA para `people` pessoas que enviam `perDay` mensagens por dia: até a janela
+ * do plano o custo é "normal"; depois vem o modo economia e, passado esse limite, o reduzido.
+ */
+export function giaMonthlyCost(tier: PlanTier, perDay: number, people: number, catalog: Catalog = CATALOG): number {
+  const g = catalog.gia;
+  const t = g.tiers[tier];
+  const normal = Math.min(perDay, t.window);
+  const economy = Math.min(Math.max(perDay - t.window, 0), t.economy);
+  const reduced = Math.max(perDay - t.window - t.economy, 0);
+  const perPersonDay = normal * g.costPerMessage.normal + economy * g.costPerMessage.economy + reduced * g.costPerMessage.reduced;
+  return perPersonDay * g.daysPerMonth * people;
+}
+
+/** Custo no uso típico (ex.: 20 mensagens/dia por pessoa). */
+export const giaTypicalCost = (tier: PlanTier, people: number, catalog: Catalog = CATALOG) =>
+  giaMonthlyCost(tier, catalog.gia.typicalPerDay, people, catalog);
+
+/** Custo no pior caso (todos com 480 mensagens/dia). */
+export const giaWorstCost = (tier: PlanTier, people: number, catalog: Catalog = CATALOG) =>
+  giaMonthlyCost(tier, catalog.gia.worstPerDay, people, catalog);
+
+/** Repasse mínimo no pior caso: custo ÷ (1 − margem). */
+export const giaMinimumPass = (tier: PlanTier, people: number, catalog: Catalog = CATALOG) =>
+  giaWorstCost(tier, people, catalog) / (1 - catalog.gia.margin);

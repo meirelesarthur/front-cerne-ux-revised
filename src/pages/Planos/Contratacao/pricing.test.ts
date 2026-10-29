@@ -8,6 +8,10 @@ import {
   compareTiers,
   consultPrice,
   formatBRL,
+  giaMinimumPass,
+  giaMonthlyCost,
+  giaTypicalCost,
+  giaWorstCost,
   positionToSize,
   pruneUnavailable,
   quote,
@@ -131,9 +135,28 @@ describe('anual, consultoria e formatação', () => {
     expect(['none', 'fis', 'faz', 'cor'].map((k) => consultPrice(k))).toEqual([0, 489, 1290, 3490]);
   });
 
-  it('formata BRL sem ,00 e o catálogo tem 15 módulos', () => {
+  it('formata BRL sem ,00 e o catálogo tem 17 módulos', () => {
     expect(formatBRL(349)).toBe('R$ 349');
     expect(formatBRL(408.33)).toBe('R$ 408,33');
-    expect(CATALOG.modules.length).toBe(15);
+    expect(CATALOG.modules.length).toBe(17);
+  });
+
+  it('GIA: custo por janela, no uso típico e no pior caso (exemplo do Pro com 5 pessoas)', () => {
+    // 20 msg/dia por pessoa, todas na janela normal: 20 × 0,0038 × 30 × 5
+    expect(giaTypicalCost('Pro', 5)).toBeCloseTo(11.4, 2);
+    // 480 msg/dia: 60 normais + 100 economia + 320 reduzidas, × 30 dias × 5 pessoas
+    expect(giaWorstCost('Pro', 5)).toBeCloseTo(191.1, 2);
+    // repasse mínimo = custo ÷ (1 − 70%)
+    expect(giaMinimumPass('Pro', 5)).toBeCloseTo(637, 0);
+    // janelas maiores nos planos de cima custam mais no pior caso, por pessoa
+    const perPerson = (t: 'Pro' | 'Deluxe' | 'Enterprise') => giaWorstCost(t, 1);
+    expect(perPerson('Pro')).toBeLessThan(perPerson('Deluxe'));
+    expect(perPerson('Deluxe')).toBeLessThan(perPerson('Enterprise'));
+    expect(giaMonthlyCost('Pro', 0, 5)).toBe(0);
+  });
+
+  it('janela da GIA por plano: 60 · 100 · 150 mensagens/dia por pessoa', () => {
+    expect(['Pro', 'Deluxe', 'Enterprise'].map((t) => CATALOG.gia.tiers[t as 'Pro'].window)).toEqual([60, 100, 150]);
+    expect(CATALOG.gia.extraPackPrice).toBe(29);
   });
 });

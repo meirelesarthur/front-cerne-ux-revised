@@ -132,6 +132,27 @@ export interface ModuleSubscription {
     withService: string;
     summaryName: string;
   };
+  gia: {
+    overviewTitle: string;
+    overviewNote: string;
+    includedIn: string;
+    inherits: string;
+    window: string;
+    windowValue: string;
+    economy: string;
+    economyValue: string;
+    extraPack: string;
+    extraPackValue: string;
+    statusAvailable: string;
+    statusBuild: string;
+    statusDecide: string;
+    worstTitle: string;
+    worstWindow: string;
+    worstWindowValue: string;
+    typicalCost: string;
+    worstCost: string;
+    worstNote: string;
+  };
   overview: {
     title: string;
     subtitle: string;
