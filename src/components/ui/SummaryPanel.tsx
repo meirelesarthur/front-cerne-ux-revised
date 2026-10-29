@@ -13,6 +13,9 @@ import { Icon, type IconName } from './Icon';
 const BORDER = 'summaryLine';
 const MUTED = 'summaryMuted';
 
+/** Altura única do cabeçalho do configurador (faixa dos passos à esquerda e título do resumo à direita). */
+export const CONFIGURATOR_HEADER_HEIGHT = '72px';
+
 export interface SummaryPanelProps {
   title: string;
   icon?: IconName;
@@ -25,8 +28,6 @@ export function SummaryPanel({ title, icon = 'receipt', children }: SummaryPanel
       as="aside"
       aria-label={title}
       direction="column"
-      gap="12px"
-      p={5}
       bg="summaryBg"
       color="summaryText"
       borderLeftWidth="3px"
@@ -36,7 +37,7 @@ export function SummaryPanel({ title, icon = 'receipt', children }: SummaryPanel
       top={{ lg: 0 }}
       alignSelf="stretch"
     >
-      <Flex align="center" gap="12px" pb="4px">
+      <Flex align="center" gap="12px" h={CONFIGURATOR_HEADER_HEIGHT} px={5} flexShrink={0} borderBottomWidth="1px" borderBottomColor="summaryLine">
         <Flex align="center" justify="center" boxSize="38px" borderRadius="lg" bg="summaryFillMid" borderWidth="1px" borderColor={BORDER} color="summaryIcon">
           <Icon name={icon} size={18} />
         </Flex>
@@ -44,7 +45,9 @@ export function SummaryPanel({ title, icon = 'receipt', children }: SummaryPanel
           {title}
         </Text>
       </Flex>
-      {children}
+      <Flex direction="column" gap="12px" p={5}>
+        {children}
+      </Flex>
     </Flex>
   );
 }

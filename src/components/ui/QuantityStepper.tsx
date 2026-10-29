@@ -1,8 +1,8 @@
 // src/components/ui/QuantityStepper.tsx
-// Seletor de quantidade: − [número] + (campo editável) e, opcionalmente, um slider abaixo.
+// Seletor de quantidade: régua (opcional) e − [número] + (campo editável) na mesma linha.
 // Controlado; limita ao intervalo [min, max]. Rótulos acessíveis vêm por props (i18n fora).
 
-import { Box, Flex, Input } from '@chakra-ui/react';
+import { Flex, Input } from '@chakra-ui/react';
 
 // `as="button"` não altera os tipos de props do Chakra; o `type` entra por spread.
 const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
@@ -13,7 +13,7 @@ export interface QuantityStepperProps {
   max?: number;
   onChange: (value: number) => void;
   labels: { decrease: string; increase: string; input: string };
-  /** Mostra o slider abaixo (limitado a `sliderMax`). */
+  /** Mostra a régua ao lado (limitada a `sliderMax`). */
   slider?: boolean;
   sliderMax?: number;
 }
@@ -37,7 +37,7 @@ export function QuantityStepper({
       onClick={() => onChange(clamp(value + delta))}
       align="center"
       justify="center"
-      w="42px"
+      w="36px"
       bg="semanticNeutral.100"
       fontSize="xl"
       fontWeight="semibold"
@@ -47,9 +47,21 @@ export function QuantityStepper({
     </Flex>
   );
 
+  // Na horizontal: régua à esquerda (ocupa o espaço que sobrar) e − [número] + à direita.
   return (
-    <Box>
-      <Flex display="inline-flex" borderWidth="1px" borderColor="semanticNeutral.200" borderRadius="lg" overflow="hidden" bg="cardBG">
+    <Flex align="center" gap="14px">
+      {slider && (
+        <input
+          type="range"
+          aria-label={labels.input}
+          min={min}
+          max={sliderMax}
+          value={Math.min(sliderMax, value)}
+          onChange={(e) => onChange(clamp(Number(e.target.value)))}
+          style={{ flex: "1 1 80px", minWidth: 80, accentColor: 'var(--chakra-colors-green-600)' }}
+        />
+      )}
+      <Flex display="inline-flex" flexShrink={0} borderWidth="1px" borderColor="semanticNeutral.200" borderRadius="lg" overflow="hidden" bg="cardBG">
         {stepButton('−', labels.decrease, -1)}
         <Input
           type="number"
@@ -58,7 +70,7 @@ export function QuantityStepper({
           min={min}
           max={max}
           onChange={(e) => e.target.value !== '' && onChange(clamp(Number(e.target.value)))}
-          w="84px"
+          w="56px"
           h="auto"
           py="10px"
           textAlign="center"
@@ -71,18 +83,7 @@ export function QuantityStepper({
         />
         {stepButton('+', labels.increase, 1)}
       </Flex>
-      {slider && (
-        <input
-          type="range"
-          aria-label={labels.input}
-          min={min}
-          max={sliderMax}
-          value={Math.min(sliderMax, value)}
-          onChange={(e) => onChange(clamp(Number(e.target.value)))}
-          style={{ width: '100%', marginTop: 12, accentColor: 'var(--chakra-colors-green-600)' }}
-        />
-      )}
-    </Box>
+    </Flex>
   );
 }
 

@@ -1,0 +1,11 @@
+{
+  // Deploy do front (Cloudflare Workers com assets estáticos). Config explícita: sem ela o
+  // `wrangler deploy` tenta auto-configurar o projeto e exige Vite >= 6.
+  "name": "front-cerne-ux-revised",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // SPA: qualquer rota desconhecida devolve o index.html (React Router)
+    "not_found_handling": "single-page-application"
+  }
+}

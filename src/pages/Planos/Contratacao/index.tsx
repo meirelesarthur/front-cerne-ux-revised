@@ -34,6 +34,7 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { SimpleTable, type SimpleTableRow } from '@/components/ui/SimpleTable';
 import { StepIndicator } from '@/components/ui/StepIndicator';
 import {
+  CONFIGURATOR_HEADER_HEIGHT,
   SummaryGroup,
   SummaryNote,
   SummaryPanel,
@@ -808,28 +809,25 @@ export default function ContratacaoPlano() {
       }
     >
       <Grid templateColumns={{ base: '1fr', lg: view === 'simulate' ? 'minmax(0, 1fr) 360px' : 'minmax(0, 1fr)' }} height="100%" minH={0}>
-        <Box px={{ base: 4, md: 7 }} py={5} overflowY="auto" minW={0}>
-
-          {view === 'plans' ? (
-            overview
-          ) : (
-            <>
-              <Box mb={4}>
-                <StepIndicator<StepKey>
-                  ariaLabel={text.steps.label}
-                  value={step}
-                  onChange={setStep}
-                  steps={[
-                    { key: 'plan', label: text.steps.plan },
-                    { key: 'modules', label: text.steps.modules },
-                  ]}
-                />
-              </Box>
-
-              {step === 'plan' ? planStep : modulesStep}
-            </>
+        <Flex direction="column" minW={0} minH={0} h="full">
+          {view === 'simulate' && (
+            // faixa dos passos: mesma altura do título do resumo e ocupando toda a largura da área branca
+            <Flex align="center" justify="center" h={CONFIGURATOR_HEADER_HEIGHT} px={{ base: 4, md: 7 }} flexShrink={0} bg="cardBG" borderBottomWidth="1px" borderColor="border.muted">
+              <StepIndicator<StepKey>
+                ariaLabel={text.steps.label}
+                value={step}
+                onChange={setStep}
+                steps={[
+                  { key: 'plan', label: text.steps.plan },
+                  { key: 'modules', label: text.steps.modules },
+                ]}
+              />
+            </Flex>
           )}
-        </Box>
+          <Box flex="1" minH={0} px={{ base: 4, md: 7 }} py={5} overflowY="auto">
+            {view === 'plans' ? overview : step === 'plan' ? planStep : modulesStep}
+          </Box>
+        </Flex>
         {view === 'simulate' && (
           <Box overflowY="auto" minH={0}>
             {summary}
