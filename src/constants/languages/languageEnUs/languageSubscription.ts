@@ -142,8 +142,10 @@ export const languageSubscription: ModuleSubscription = {
   },
   gia: {
     overviewTitle: "GIA assistant: AI built into the plans, with a per-person usage window",
-    overviewNote: "AI is not sold separately: its cost is part of each plan price. Past the daily window, GIA saves resources instead of blocking; anyone who wants more messages can buy the extra pack. \"To be built\" and \"to be decided\" items are not available yet.",
+    overviewNote: "AI is not sold separately: its cost is part of each plan price. Past the daily window, GIA saves resources instead of blocking; those who want more messages can buy the extra pack. \"To build\" items are not available yet.",
     includedIn: "In the {plan} plan",
+    allPlans: "In every plan",
+    futureTag: "Future · outside the plans",
     inherits: "Everything in {name}",
     window: "Usage window",
     windowValue: "{n} msg/day per person",

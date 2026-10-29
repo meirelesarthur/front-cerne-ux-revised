@@ -144,6 +144,8 @@ export interface ModuleSubscription {
     overviewTitle: string;
     overviewNote: string;
     includedIn: string;
+    allPlans: string;
+    futureTag: string;
     inherits: string;
     window: string;
     windowValue: string;

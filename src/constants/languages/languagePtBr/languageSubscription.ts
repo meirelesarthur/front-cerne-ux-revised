@@ -142,8 +142,10 @@ export const languageSubscription: ModuleSubscription = {
   },
   gia: {
     overviewTitle: "Assistente GIA: IA embutida nos planos, com janela de uso por pessoa",
-    overviewNote: "A IA não é vendida à parte: o custo dela entra no preço de cada plano. Passou da janela do dia, a GIA economiza recursos em vez de bloquear; quem quiser mais mensagens pode comprar o pacote extra. Itens \"a construir\" e \"a decidir\" ainda não estão disponíveis.",
+    overviewNote: "A IA não é vendida à parte: o custo dela entra no preço de cada plano. Passou da janela do dia, a GIA economiza recursos em vez de bloquear; quem quiser mais mensagens pode comprar o pacote extra. Itens \"a construir\" ainda não estão disponíveis.",
     includedIn: "No plano {plan}",
+    allPlans: "Em todos os planos",
+    futureTag: "Futuro · fora dos planos",
     inherits: "Tudo do {name}",
     window: "Janela de uso",
     windowValue: "{n} msg/dia por pessoa",

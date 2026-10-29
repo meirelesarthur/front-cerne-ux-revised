@@ -829,21 +829,23 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
           {text.gia.overviewTitle}
         </Text>
         <Grid templateColumns={{ base: '1fr', lg: 'repeat(3, minmax(0, 1fr))' }} gap="12px" alignItems="stretch">
-          {CATALOG.tiers.map((tier) => {
-            const g = CATALOG.gia.tiers[tier];
+          {CATALOG.gia.levels.map((g, i) => {
             const statusLabel = { available: text.gia.statusAvailable, build: text.gia.statusBuild, decide: text.gia.statusDecide } as const;
+            const all = g.scope === 'all';
             return (
               <GiaTierCard
-                key={tier}
+                key={g.level}
                 name={g.level}
-                tag={fill(text.gia.includedIn, { plan: tier })}
-                accent={CATALOG.accent[tier]}
-                inheritsLabel={g.inherits ? fill(text.gia.inherits, { name: g.inherits }) : undefined}
-                metrics={[
-                  { label: text.gia.window, value: fill(text.gia.windowValue, { n: g.window }) },
-                  { label: text.gia.economy, value: fill(text.gia.economyValue, { n: g.economy }) },
-                  { label: text.gia.extraPack, value: fill(text.gia.extraPackValue, { p: formatBRL(CATALOG.gia.extraPackPrice), n: n0(CATALOG.gia.extraPackMessages) }) },
-                ]}
+                tag={all ? text.gia.allPlans : text.gia.futureTag}
+                accent={all ? CATALOG.accent[CATALOG.tiers[i === 0 ? 0 : 1]] : undefined}
+                metrics={
+                  all
+                    ? [
+                        { label: text.gia.window, value: fill(text.gia.windowValue, { n: CATALOG.gia.tiers.Pro.window }) },
+                        { label: text.gia.extraPack, value: fill(text.gia.extraPackValue, { p: formatBRL(CATALOG.gia.extraPackPrice), n: n0(CATALOG.gia.extraPackMessages) }) },
+                      ]
+                    : []
+                }
                 capabilities={g.capabilities.map((cap) => ({ title: cap.title, text: cap.text, tone: cap.status, statusLabel: statusLabel[cap.status] }))}
               />
             );

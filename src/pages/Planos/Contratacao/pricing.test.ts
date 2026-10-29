@@ -155,22 +155,21 @@ describe('anual, consultoria e formatação', () => {
     expect(CATALOG.modules.length).toBe(17);
   });
 
-  it('GIA: custo por janela, no uso típico e no pior caso (exemplo do Pro com 5 pessoas)', () => {
-    // 20 msg/dia por pessoa, todas na janela normal: 20 × 0,0038 × 30 × 5
-    expect(giaTypicalCost('Pro', 5)).toBeCloseTo(11.4, 2);
-    // 480 msg/dia: 60 normais + 100 economia + 320 reduzidas, × 30 dias × 5 pessoas
-    expect(giaWorstCost('Pro', 5)).toBeCloseTo(191.1, 2);
-    // repasse mínimo = custo ÷ (1 − 70%)
-    expect(giaMinimumPass('Pro', 5)).toBeCloseTo(637, 0);
-    // janelas maiores nos planos de cima custam mais no pior caso, por pessoa
-    const perPerson = (t: 'Pro' | 'Deluxe' | 'Enterprise') => giaWorstCost(t, 1);
-    expect(perPerson('Pro')).toBeLessThan(perPerson('Deluxe'));
-    expect(perPerson('Deluxe')).toBeLessThan(perPerson('Enterprise'));
+  it('GIA: custo por janela, no uso típico e no uso máximo (Pro com 5 pessoas)', () => {
+    // 20 msg/dia por pessoa: 20 × 0,00146 × 30 × 5
+    expect(giaTypicalCost('Pro', 5)).toBeCloseTo(4.38, 2);
+    // uso máximo = janela cheia (137/dia): ≈ R$ 6 por pessoa, R$ 30 para 5
+    expect(giaWorstCost('Pro', 1)).toBeCloseTo(6, 1);
+    expect(giaWorstCost('Pro', 5)).toBeCloseTo(30, 0);
+    // repasse mínimo = custo ÷ (1 − 35%)
+    expect(giaMinimumPass('Pro', 5)).toBeCloseTo(giaWorstCost('Pro', 5) / 0.65, 2);
+    // mesma janela em todos os planos
+    expect(giaWorstCost('Pro', 1)).toBe(giaWorstCost('Enterprise', 1));
     expect(giaMonthlyCost('Pro', 0, 5)).toBe(0);
   });
 
-  it('janela da GIA por plano: 60 · 100 · 150 mensagens/dia por pessoa', () => {
-    expect(['Pro', 'Deluxe', 'Enterprise'].map((t) => CATALOG.gia.tiers[t as 'Pro'].window)).toEqual([60, 100, 150]);
+  it('janela da GIA: 137 mensagens/dia por pessoa em todos os planos', () => {
+    expect(['Pro', 'Deluxe', 'Enterprise'].map((t) => CATALOG.gia.tiers[t as 'Pro'].window)).toEqual([137, 137, 137]);
     expect(CATALOG.gia.extraPackPrice).toBe(29);
   });
 });

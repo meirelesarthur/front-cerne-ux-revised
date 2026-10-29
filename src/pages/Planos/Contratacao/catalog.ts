@@ -69,7 +69,7 @@ export interface ConsultOption {
 }
 
 /** Nível da GIA (assistente de IA) de cada plano. */
-export type GiaLevel = 'Suporte' | 'Consulta' | 'Execução';
+export type GiaLevel = 'Suporte' | 'Consulta' | 'Suporte e consulta' | 'Execução';
 
 /** Situação de cada capacidade: já existe, será construída ou ainda não decidida. */
 export type GiaStatus = 'available' | 'build' | 'decide';
@@ -92,6 +92,13 @@ export interface GiaTier {
   capabilities: GiaCapability[];
 }
 
+/** Nível da GIA mostrado no resumo dos planos: `all` = vem em todos os planos; `future` = evolução fora da oferta. */
+export interface GiaLevelInfo {
+  level: string;
+  scope: 'all' | 'future';
+  capabilities: GiaCapability[];
+}
+
 /** Modelo de uso e custo da GIA (medido em produção, 27/10/2026; valores aproximados). */
 export interface GiaModel {
   /** R$ por mensagem em cada modo (normal · economia · reduzido). */
@@ -106,6 +113,8 @@ export interface GiaModel {
   extraPackPrice: number;
   extraPackMessages: number;
   tiers: Record<PlanTier, GiaTier>;
+  /** Níveis para o resumo dos planos (o mesmo conteúdo em todos os planos). */
+  levels: GiaLevelInfo[];
 }
 
 export interface Catalog {
@@ -153,53 +162,51 @@ export const CATALOG: Catalog = {
   // tokens de tema (`planPro`…): a cor de marca no claro e a versão clara no escuro
   accent: { Pro: 'var(--chakra-colors-plan-pro)', Deluxe: 'var(--chakra-colors-plan-deluxe)', Enterprise: 'var(--chakra-colors-plan-enterprise)' },
   annualBilledMonths: 10,
+  // Documento de precificação atualizado em 28/10/2026 (medição 40): suporte e consulta em TODOS os
+  // planos, janela de 137 mensagens comuns por pessoa por dia, R$ 0,00146 por mensagem (uso máximo
+  // ≈ R$ 6 por pessoa no mês). Execução e WhatsApp são evolução futura, fora dos planos.
   gia: {
-    costPerMessage: { normal: 0.0038, economy: 0.0031, reduced: 0.0023 },
-    margin: 0.7,
+    costPerMessage: { normal: 0.00146, economy: 0.00146, reduced: 0.00146 },
+    margin: 0.35,
     typicalPerDay: 20,
-    worstPerDay: 480,
+    worstPerDay: 137,
     daysPerMonth: 30,
     extraPackPrice: 29,
     extraPackMessages: 1000,
     tiers: {
-      Pro: {
+      Pro: { level: 'Suporte e consulta', window: 137, economy: 0, inherits: null, capabilities: [] },
+      Deluxe: { level: 'Suporte e consulta', window: 137, economy: 0, inherits: null, capabilities: [] },
+      Enterprise: { level: 'Suporte e consulta', window: 137, economy: 0, inherits: null, capabilities: [] },
+    },
+    levels: [
+      {
         level: 'Suporte',
-        window: 60,
-        economy: 100,
-        inherits: null,
+        scope: 'all',
         capabilities: [
           { text: 'Dúvidas de uso pela documentação do sistema', status: 'available' },
           { text: 'Passo a passo de telas, campos e erros comuns', status: 'available' },
           { text: 'Leitura de print de tela com erro', status: 'available' },
           { text: 'Abre chamado com o resumo quando não resolve', status: 'available' },
-          { text: 'Consulta simples ao sistema (opcional, gasta mais mensagens da janela)', status: 'decide' },
         ],
       },
-      Deluxe: {
+      {
         level: 'Consulta',
-        window: 100,
-        economy: 60,
-        inherits: 'Suporte',
+        scope: 'all',
         capabilities: [
-          { title: 'Consultas aos dados do cliente', text: 'saldos, notas, contratos, títulos, estoque e animais, em linguagem natural', status: 'available' },
-          { text: 'Explica números e indicadores e compara períodos', status: 'available' },
-          { title: 'GIA no WhatsApp', text: 'mesmas consultas pelo celular, no campo e na estrada', status: 'build' },
-          { text: 'Áudio no WhatsApp: a pessoa fala e a GIA entende (conta na janela como qualquer mensagem)', status: 'build' },
+          { title: 'Consultas aos dados da fazenda', text: 'saldos, notas, contratos, títulos, estoque e animais, em linguagem natural', status: 'available' },
+          { text: 'Monta relatórios, explica números e indicadores e compara períodos', status: 'available' },
         ],
       },
-      Enterprise: {
-        level: 'Execução',
-        window: 150,
-        economy: 25,
-        inherits: 'Consulta',
+      {
+        level: 'Execução e WhatsApp',
+        scope: 'future',
         capabilities: [
-          { title: 'Executa operações com confirmação', text: 'lança despesa, dá baixa em título, cria pedido, registra pesagem ou manejo, prepara NF-e para revisão', status: 'build' },
-          { title: 'Documentos viram lançamento', text: 'foto de nota, romaneio ou boleto é lida e o lançamento sai pronto para confirmar', status: 'build' },
-          { title: 'Rotinas e alertas', text: 'resumo diário da fazenda, títulos a vencer, estoque baixo, MDF-e não encerrado, enviados no WhatsApp', status: 'build' },
-          { title: 'Análises para a gestão', text: 'previsto × realizado, custo por cabeça ou por hectare, tendências, em relatório pronto', status: 'build' },
+          { title: 'Executa operações com confirmação', text: 'lança despesa, dá baixa em título, cria pedido, prepara NF-e para revisão', status: 'build' },
+          { title: 'GIA no WhatsApp', text: 'as mesmas consultas pelo celular, com áudio', status: 'build' },
+          { title: 'Rotinas e alertas', text: 'resumo diário, títulos a vencer, estoque baixo', status: 'build' },
         ],
       },
-    },
+    ],
   },
   consult: [
     { key: 'none', name: 'Sem serviço', price: 0, description: '' },
@@ -242,7 +249,7 @@ export const PLAN_HIGHLIGHTS: Record<PlanTier, { inherits: string | null; items:
   Pro: {
     inherits: null,
     items: [
-      'GIA Suporte: 60 mensagens/dia por pessoa',
+      'GIA: suporte e consulta, 137 mensagens/dia por pessoa',
       'Financeiro, caixa e bancos',
       'Estoque e entradas por NF',
       'Emissão de NF-e e LCDPR',
@@ -254,7 +261,7 @@ export const PLAN_HIGHLIGHTS: Record<PlanTier, { inherits: string | null; items:
   Deluxe: {
     inherits: 'Pro',
     items: [
-      'GIA Consulta: 100 mensagens/dia por pessoa',
+      'GIA: suporte e consulta, 137 mensagens/dia por pessoa',
       'DRE, centro de custo, orçamento',
       'Depreciação e contabilidade',
       'Conciliação bancária',
@@ -266,7 +273,7 @@ export const PLAN_HIGHLIGHTS: Record<PlanTier, { inherits: string | null; items:
   Enterprise: {
     inherits: 'Deluxe',
     items: [
-      'GIA Execução: 150 mensagens/dia por pessoa',
+      'GIA: suporte e consulta, 137 mensagens/dia por pessoa',
       'Compras com cotação e alçada',
       'Vendas e pedidos',
       'Ordens de serviço',
