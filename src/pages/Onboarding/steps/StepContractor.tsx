@@ -8,7 +8,6 @@ import { Box, Grid, Text } from '@chakra-ui/react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Form/Input';
 import { MaskedInput } from '@/components/Form/MaskedInput';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useLanguage } from '@/hooks/useLanguage';
 
 import { digits, isEmail, type ContractorData } from '../types';
@@ -32,13 +31,15 @@ export function StepContractor({ initial, defaultContactName, defaultContactEmai
   });
   const [submitted, setSubmitted] = useState(false);
   const set = <K extends keyof ContractorData>(k: K, v: ContractorData[K]) => setF((s) => ({ ...s, [k]: v }));
-  const pj = f.personType === 'pj';
+  // PF/PJ vem do documento digitado: 11 dígitos = CPF, mais que isso = CNPJ.
+  const docDigits = digits(f.document).length;
+  const pj = docDigits > 11;
   const req = (v: string) => (v.trim() ? '' : t.errors.required);
 
   const errors: Record<string, string> = {
-    document: req(f.document) || (digits(f.document).length === (pj ? 14 : 11) ? '' : t.errors.document),
+    document: req(f.document) || (docDigits === 11 || docDigits === 14 ? '' : t.errors.document),
     legalName: req(f.legalName),
-    phone: req(f.phone),
+    cellphone: req(f.cellphone),
     contactName: req(f.contactName),
     contactEmail: req(f.contactEmail) || (isEmail(f.contactEmail) ? '' : t.errors.email),
     zip: req(f.zip) || (digits(f.zip).length === 8 ? '' : t.errors.zip),
@@ -61,26 +62,17 @@ export function StepContractor({ initial, defaultContactName, defaultContactEmai
       onSubmit={(ev: React.FormEvent) => {
         ev.preventDefault();
         setSubmitted(true);
-        if (valid) onSubmit(f);
+        if (valid) onSubmit({ ...f, personType: pj ? 'pj' : 'pf' });
       }}
       style={FORM_STYLE}
     >
-      <SegmentedControl<'pj' | 'pf'>
-        ariaLabel={t.sections.identity}
-        value={f.personType}
-        onChange={(v) => setF((s) => ({ ...s, personType: v, document: '' }))}
-        options={[
-          { key: 'pj', label: t.personType.pj },
-          { key: 'pf', label: t.personType.pf },
-        ]}
-      />
       {title(t.sections.identity)}
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
         <MaskedInput name="cpfCnpj" kind="cpfCnpj" label={t.fields.document} isRequired value={f.document} onChange={(ev) => set('document', ev.target.value)} error={e('document')} />
         <Input label={pj ? t.fields.legalName : t.fields.name} isRequired value={f.legalName} onChange={(ev) => set('legalName', ev.target.value)} error={e('legalName')} />
         {pj && <Input label={t.fields.tradeName} value={f.tradeName} onChange={(ev) => set('tradeName', ev.target.value)} />}
-        <MaskedInput name="phone" kind="phone" label={t.fields.phone} isRequired value={f.phone} onChange={(ev) => set('phone', ev.target.value)} error={e('phone')} />
-        <MaskedInput name="cellphone" kind="phone" label={t.fields.cellphone} value={f.cellphone} onChange={(ev) => set('cellphone', ev.target.value)} />
+        <MaskedInput name="cellphone" kind="phone" label={t.fields.cellphone} isRequired value={f.cellphone} onChange={(ev) => set('cellphone', ev.target.value)} error={e('cellphone')} />
+        <MaskedInput name="phone" kind="phone" label={t.fields.phone} value={f.phone} onChange={(ev) => set('phone', ev.target.value)} />
       </Grid>
       {title(t.sections.contact)}
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
