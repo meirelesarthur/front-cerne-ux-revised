@@ -343,26 +343,19 @@ export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps =
           {!mixed && sizeInput(selection.unit === 'ha' ? 'ha' : 'cab', selection.size, selection.unit === 'ha' ? setHa : setCabs, text.size.quantity)}
         </Flex>
         {mixed ? (
-          <Flex direction="column" gap="14px">
-            <Box>
-              <Flex align="center" gap="12px" wrap="wrap" mb="4px">
-                <Text fontSize="base" fontWeight="semibold">
-                  {text.size.mixCab}
-                </Text>
-                {sizeInput('cab', selection.size, setCabs, text.size.mixCab)}
-              </Flex>
-              {sizeSlider('cab', selection.size, setCabs, bandIndex('cab', selection.size), text.size.scaleCab)}
-            </Box>
-            <Box>
-              <Flex align="center" gap="12px" wrap="wrap" mb="4px">
-                <Text fontSize="base" fontWeight="semibold">
-                  {text.size.mixHa}
-                </Text>
-                {sizeInput('ha', sizeHa, setHaMix, text.size.mixHa)}
-              </Flex>
-              {sizeSlider('ha', sizeHa, setHaMix, bandIndex('ha', sizeHa), text.size.scaleHa)}
-            </Box>
-          </Flex>
+          <Box>
+            <Text fontSize="sm" color="fg.muted" mb="2px">
+              {CATALOG.sizeUnits.cab.word} · {CATALOG.sizeUnits.ha.word}
+            </Text>
+            <BandSlider
+              ariaLabel={`${text.size.scaleCab} · ${text.size.scaleHa}`}
+              value={sizeToPosition('cab', selection.size)}
+              onChange={(p) => setSelection((s) => ({ ...s, size: positionToSize('cab', p), sizeHa: positionToSize('ha', p) }))}
+              ticks={ticksFor('cab').map((c, i) => `${c} · ${ticksFor('ha')[i]}`)}
+              bandLabels={[0, 1, 2, 3, 4].map((i) => `M${i + 1}`)}
+              activeBand={band}
+            />
+          </Box>
         ) : (
           sizeSlider(selection.unit === 'ha' ? 'ha' : 'cab', selection.size, selection.unit === 'ha' ? setHa : setCabs, band, fill(text.size.scale, { word: unitInfo.word }))
         )}
