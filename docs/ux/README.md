@@ -17,11 +17,28 @@ Com `VITE_DEV_MOCKS=true` (só `.env` local, só em modo dev), um adapter do axi
 
 - **Rotas registradas** (`handlers/*.ts`) devolvem dados realistas: hoje Fazendas
   (sintético), Bancos, Estados e Cidades (reais, do dump `init_db.sql`).
-- **Rotas não registradas** devolvem lista vazia (GET) ou sucesso genérico (escrita),
-  então toda tela abre e mostra o estado vazio em vez de erro de rede. Para deixar essas
+- **Mock sintético (padrão, cobre TODAS as telas):** qualquer rota de `src/services/v2/**` responde com dados
+  fictícios no formato certo (15 linhas por lista, busca e paginação, detalhe = mesma linha da lista,
+  criar/editar/excluir em memória — some ao recarregar). Veja a seção "Mock sintético" abaixo.
+- **Rotas sem tipo conhecido** devolvem lista vazia (GET) ou sucesso genérico (escrita). Para deixar essas
   rotas irem à rede real: `VITE_DEV_MOCKS_FALLBACK=false`.
 - Para simular uma tela nova: crie `handlers/<recurso>.ts` (lista `MockRoute[]`) e some
   em `src/mocks/dev-api/index.ts`. Copie o contrato do `*-service.ts` da tela.
+
+### Mock sintético (todas as telas, sem banco)
+
+`src/mocks/dev-api/synthetic.ts` + `src/mocks/dev-api/generated/schemas.json`.
+
+1. **Schemas:** `node scripts/dev-mocks/extract-schemas.mjs` lê com o compilador do TypeScript cada chamada `api.V2.<verbo><Tipo>('/rota')` dos
+   serviços e grava o **formato** da resposta (campos, enums, aninhamento; ~1.400 rotas, ~220 KB). Rode de novo quando mudar tipos ou serviços.
+2. **Dados:** o gerador preenche cada campo por **nome e tipo** (e-mail `.test`, telefone, CPF/CNPJ fictícios, datas, valores, enums, rótulos coerentes
+   `x` → `x_label`). Determinístico: a mesma rota devolve sempre as mesmas linhas. Nenhum dado real.
+3. **Coleções:** `/recurso` (15 linhas, `per_page`/`page`/`search`/filtros simples), `/recurso/:id` (mesma linha, em formato de detalhe), `/recurso/options`
+   (mesmos ids). `POST` cria no topo, `PUT/PATCH` altera, `DELETE` remove — tudo em memória.
+4. **Flags (`.env`):** `VITE_DEV_MOCKS=true` liga; `VITE_DEV_MOCKS_SYNTHETIC=false` desliga só o sintético; `VITE_DEV_MOCKS_API_FIRST=true` tenta antes a API
+   local de dev (`scripts/dev-db`) e usa o sintético só onde ela não atende (resposta com cabeçalho `x-dev-fallback`) ou está fora do ar.
+5. **Limites:** não há validação (salvar sempre dá certo); relações entre recursos são só visuais (ids estáveis por nome de campo); telas que montam dados por
+   regra própria (dashboards, relatórios) mostram o que o tipo permite.
 
 ### Dados REAIS locais (API de dev + PostgreSQL do dump)
 
@@ -30,7 +47,7 @@ API de dev (somente leitura) serve o contrato do front. **Nada disso vai para o 
 
 | Peça | Onde | Como |
 |------|------|------|
-| PostgreSQL 17 portátil | `C:\Users\Arthur\devdb\pg` (dados em `devdb\data`, porta **54329**, user `postgres`, senha `devpass`, banco `gbcerne`) | `devdb\pg\pgsql\bin\pg_ctl.exe -D devdb\data -l devdb\pg.log start` |
+| PostgreSQL 17 portátil | pasta local `devdb\pg` fora do repositório (dados em `devdb\data`, porta **54329**, banco `gbcerne`; usuário e senha só no ambiente local) | `devdb\pg\pgsql\bin\pg_ctl.exe -D devdb\data -l devdb\pg.log start` |
 | API local de dev | `scripts/dev-db/server.mjs` (Node + `pg`) | `cd scripts/dev-db && npm install` (1ª vez) → `node scripts/dev-db/server.mjs` → http://localhost:8080/api/v1 |
 | Front | `.env`: `VITE_API_PHP_BACK_URL=http://localhost:8080/api/v1`, `VITE_DEV_AUTH_BYPASS=true`, `VITE_DEV_MOCKS=false` | login de dev continua local (qualquer e-mail/senha) |
 

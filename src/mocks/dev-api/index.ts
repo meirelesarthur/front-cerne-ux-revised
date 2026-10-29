@@ -16,6 +16,7 @@ import axios, { type AxiosAdapter, type AxiosInstance, type InternalAxiosRequest
 
 import { farmRoutes } from './handlers/farms';
 import { referenceRoutes } from './handlers/reference';
+import { loadSynthetic, syntheticHandle } from './synthetic';
 
 export const DEV_MOCKS = import.meta.env.DEV && import.meta.env.VITE_DEV_MOCKS === 'true';
 
@@ -36,6 +37,13 @@ export interface MockRoute {
 const routes: MockRoute[] = [...farmRoutes, ...referenceRoutes];
 
 const LATENCY_MS = 250;
+
+// Mock sintético (qualquer endpoint dos serviços, com dados fictícios) — ligado por padrão junto
+// com os mocks; desligue com VITE_DEV_MOCKS_SYNTHETIC=false.
+const SYNTHETIC = import.meta.env.VITE_DEV_MOCKS_SYNTHETIC !== 'false';
+// Com a API local de dev (scripts/dev-db) no ar: tenta ela primeiro e só usa os mocks quando ela
+// não atende a rota (resposta marcada `x-dev-fallback`) ou está fora do ar.
+const API_FIRST = import.meta.env.VITE_DEV_MOCKS_API_FIRST === 'true';
 
 /** Envelope ApiResponse: { success, message, data, errors, meta }. */
 const envelope = (data: unknown, meta: unknown = null) => ({
@@ -60,6 +68,16 @@ export function installDevMocks(instance: AxiosInstance) {
     const method = (config.method ?? 'get').toLowerCase();
     const path = toPath(config);
 
+    if (API_FIRST) {
+      try {
+        const res = await realAdapter(config);
+        if (!res.headers?.['x-dev-fallback']) return res;
+      } catch (err: any) {
+        // erro HTTP de verdade (ex.: 422 da API local) segue para a tela; só rede indisponível cai no mock
+        if (err?.response) throw err;
+      }
+    }
+
     for (const route of routes) {
       const match = path.match(route.pattern);
       if (route.method !== method || !match) continue;
@@ -74,6 +92,20 @@ export function installDevMocks(instance: AxiosInstance) {
         headers: {},
         config,
       };
+    }
+
+    if (SYNTHETIC && (await loadSynthetic())) {
+      const out = syntheticHandle({ method, path, params: config.params ?? {}, body: config.data });
+      if (out) {
+        await new Promise((r) => setTimeout(r, LATENCY_MS / 2));
+        return {
+          data: out.status === 204 ? '' : out.data,
+          status: out.status,
+          statusText: 'OK (dev-mock synthetic)',
+          headers: {},
+          config,
+        };
+      }
     }
 
     // Fallback "navegável": sem backend, rota não registrada não deve derrubar a tela.

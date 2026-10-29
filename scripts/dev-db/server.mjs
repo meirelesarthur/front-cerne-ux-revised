@@ -51,6 +51,7 @@ function cors(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers'] ?? '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Expose-Headers', 'x-dev-fallback');
   }
 }
 
@@ -108,8 +109,8 @@ const server = http.createServer(async (req, res) => {
   const query = parseQuery(url.searchParams);
   const farmId = req.headers['x-farm-id'] ?? null;
 
-  const send = (status, payload) => {
-    res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+  const send = (status, payload, extraHeaders = {}) => {
+    res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', ...extraHeaders });
     res.end(status === 204 ? '' : JSON.stringify(payload));
   };
 
@@ -131,12 +132,14 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Fallback: sem recurso registrado
+    // O cabeçalho avisa o front (mocks de UX) de que esta rota NÃO é atendida aqui.
+    const fb = { 'x-dev-fallback': '1' };
     if (method === 'get') {
-      send(200, envelope([], { total: 0, count: 0, per_page: 10, current_page: 1, last_page: 1, from: null, to: null }));
+      send(200, envelope([], { total: 0, count: 0, per_page: 10, current_page: 1, last_page: 1, from: null, to: null }), fb);
     } else if (method === 'delete') {
-      send(204, null);
+      send(204, null, fb);
     } else {
-      send(200, envelope({}, null));
+      send(200, envelope({}, null), fb);
     }
     console.log(`${method.toUpperCase()} ${path} -> fallback`);
   } catch (err) {
