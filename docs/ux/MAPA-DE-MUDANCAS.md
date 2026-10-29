@@ -1,25 +1,25 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `b7fffd7` · 859 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `ed8079d` · 873 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
 | Área | Novos | Alterados | Removidos |
 |---|---:|---:|---:|
-| `src/pages/Operacional` | 0 | 191 | 0 |
+| `src/pages/Operacional` | 0 | 197 | 1 |
 | `src/pages/CadastrosBase` | 0 | 171 | 1 |
 | `src/pages/BaseRegistrations` | 0 | 137 | 0 |
-| `src/pages/Administrativo` | 0 | 84 | 0 |
-| `src/components/ui` | 37 | 3 | 0 |
+| `src/pages/Administrativo` | 0 | 87 | 1 |
+| `src/components/ui` | 38 | 3 | 0 |
 | `src/constants` | 3 | 33 | 0 |
 | `src/pages/Fiscal` | 0 | 34 | 0 |
 | `src/pages/Financeiro` | 0 | 27 | 0 |
 | `docs/ux` | 19 | 0 | 0 |
 | `src/@types` | 1 | 13 | 0 |
 | `scripts/dev-db` | 13 | 0 | 0 |
-| `src/pages/Frota` | 0 | 11 | 0 |
-| `src/mocks` | 10 | 0 | 0 |
+| `src/pages/Frota` | 0 | 12 | 0 |
+| `src/mocks` | 11 | 0 | 0 |
 | `src/components/(raiz)` | 0 | 8 | 0 |
 | `src/pages/Planos` | 4 | 3 | 0 |
 | `src/pages/Configuracoes` | 0 | 6 | 0 |
@@ -79,6 +79,7 @@
 - `src/components/ui/RepeaterList.tsx`
 - `src/components/ui/SegmentedControl.tsx`
 - `src/components/ui/SimpleTable.tsx`
+- `src/components/ui/StatusTag.tsx`
 - `src/components/ui/StepBody.tsx`
 - `src/components/ui/StepFooter.tsx`
 - `src/components/ui/StepHeader.tsx`
@@ -101,6 +102,7 @@
 - `src/mocks/dev-api/handlers/farms.ts`
 - `src/mocks/dev-api/handlers/reference.ts`
 - `src/mocks/dev-api/index.ts`
+- `src/mocks/dev-api/synthetic.test.ts`
 - `src/mocks/dev-api/synthetic.ts`
 - `src/pages/Login/slides.ts`
 - `src/pages/Planos/Contratacao/catalog.ts`
@@ -119,6 +121,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `ButtonFilter` | `src/components/ButtonFilter.tsx` | Botão "Filtros" das listagens (DS `FilterButton`): borda 1.5px; com filtros ativos vira verde | 96 |
 | `ListToolbar` | `src/components/ui/ListToolbar.tsx` | Barra das listagens (DS `ListToolbar`): busca inline + botão "Filtros" na mesma linha. | 80 |
 | `switch` | `src/components/ui/switch.tsx` |  | 38 |
+| `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 28 |
 | `checkbox` | `src/components/ui/checkbox.tsx` |  | 22 |
 | `tooltip` | `src/components/ui/tooltip.tsx` |  | 14 |
 | `FormSection` | `src/components/FormSection/index.tsx` | Adaptação Chakra v3 (não cópia) do `FormSection` do design system `cerne` | 10 |
@@ -464,3 +467,5 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - 2ed5b7e fix(ui): contratacao sem entalhe nos cartoes, abas no cabecalho, aviso no rodape, regua com valores acima e modulos com icones e selos de valor
 - a6d189f fix(ui): modulo que puxa o plano para cima pode ser desmarcado e volta ao plano anterior
 - b7fffd7 feat(dev): mock sintetico global (schemas extraidos dos tipos dos servicos) e guia para IA (CLAUDE.md, PORTING.md, mapa de mudancas gerado, tag ux-baseline)
+- 0d76171 feat(ui): situacao em tag (StatusTag) no lugar de bolinha e legenda em todas as listagens; mock sintetico com delete/status; packageManager yarn 1 para o build
+- ed8079d fix(build): aumenta heap do Node no tsc e no vite build (OOM no deploy)

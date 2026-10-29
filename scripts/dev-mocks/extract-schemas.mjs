@@ -143,6 +143,7 @@ function visit(sf) {
         const raw = arg ? urlPattern(arg) : null;
         if (raw === null || !typeArg) {
           skipped++;
+          if (process.env.SHOW_SKIPPED) console.log(`skip ${verb} ${raw} :: ${sf.fileName.split('/services/v2/')[1]}`);
         } else {
           const pattern = '/' + raw.split('?')[0].replace(/^\/+/, '').replace(/\/+$/, '');
           const key = `${verb} ${pattern}`;

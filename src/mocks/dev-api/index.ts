@@ -113,6 +113,9 @@ export function installDevMocks(instance: AxiosInstance) {
     // escrita → sucesso genérico. Desligue com VITE_DEV_MOCKS_FALLBACK=false para
     // deixar rotas não registradas irem à rede real.
     if (import.meta.env.VITE_DEV_MOCKS_FALLBACK !== 'false') {
+      // Diagnóstico: rotas sem tipo nos serviços (nem handler) — consulte window.__mockMisses no console.
+      const w = window as unknown as { __mockMisses?: Set<string> };
+      (w.__mockMisses ??= new Set()).add(`${method.toUpperCase()} ${path}`);
       await new Promise((r) => setTimeout(r, LATENCY_MS));
       const empty = {
         total: 0,

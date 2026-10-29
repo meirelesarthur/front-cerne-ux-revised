@@ -144,7 +144,9 @@ function genString(key: string, c: Ctx): unknown {
   if (/(photo|image|logo|avatar|picture|thumbnail)/.test(k)) return null;
   if (/(url|link|href|path|file|arquivo)/.test(k)) return null;
   if (/(_at$|datetime|timestamp)/.test(k)) return `${isoDay(i)}T${pad(8 + (i % 9), 2)}:${pad((i * 7) % 60, 2)}:00.000000Z`;
-  if (/(date|data_|_data|vencimento|emissao|due|start|end|begin|inicio|fim)/.test(k) && !/(update|candidate)/.test(k)) return isoDay(i, /(end|fim|due|venc)/.test(k) ? -20 : 10);
+  if (/(competenc|month_year|period|reference)$/.test(k) && !/label/.test(k)) return `2026-${pad((i % 12) + 1, 2)}`;
+  if (/(weekday|day_name)/.test(k)) return pick(['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira'], i);
+  if (/(^dt_|_dt$|^dt$|date|data_|_data|vencimento|emissao|emission|due|deadline|validity|valid_(from|to)|birthday|birth_forecast|start|end|begin|inicio|fim)/.test(k) && !/(update|candidate|label|type_)/.test(k)) return isoDay(i, /(end|fim|due|venc|deadline|valid_to|validity)/.test(k) ? -20 : 10);
   if (/(^time$|hora|_time$)/.test(k)) return `${pad(7 + (i % 10), 2)}:${pad((i * 11) % 60, 2)}`;
   if (/(color|cor$)/.test(k)) return pick(['#059669', '#0ea5e9', '#f59e0b', '#8b5cf6', '#ef4444'], i);
   if (/(plate|placa)/.test(k)) return `ABC${i % 10}${pick(['D', 'E', 'F'], i)}${pad((i * 13) % 100, 2)}`;
@@ -219,7 +221,8 @@ function gen(id: number, key: string, c: Ctx): unknown {
     case 'm':
       return {};
     case 'a': {
-      if (c.depth > 3) return [];
+      // elemento desconhecido/recursivo (ex.: árvore `children`): lista vazia, nunca [null]
+      if (c.depth > 3 || node(n[1])[0] === 'x' || node(n[1])[0] === 'z') return [];
       const count = c.depth === 0 ? LIST_SIZE : c.depth === 1 ? 2 : 1;
       const out: unknown[] = [];
       for (let j = 0; j < count; j += 1) out.push(gen(n[1], key, { ...c, i: c.i * 3 + j, depth: c.depth + 1 }));

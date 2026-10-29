@@ -147,3 +147,9 @@ Mapa de divergências e plano em ondas: [alinhamento-ds.md](alinhamento-ds.md).
 
 ### Build/deploy (Yarn)
 `package.json` fixa `"packageManager": "yarn@1.22.22"`: o `yarn.lock` é do Yarn 1 e plataformas que detectam o Yarn 4 falhavam com "The lockfile would have been modified by this install" (YN0028).
+
+### Cobertura do mock sintético (2026-10-29)
+- Varredura das 359 rotas do menu em `yarn dev` com `VITE_DEV_MOCKS=true`: **nenhuma** queda de tela e **nenhuma** rota caindo no "vazio genérico" (`window.__mockMisses` no console lista as que cairem — hoje vazio).
+- Ajustes que a varredura trouxe: campos de data com nomes `dt_*`/`*_emission`/`deadline`/`validity` agora saem em ISO; listas de tipo recursivo/desconhecido (ex.: `children` de árvores) saem vazias em vez de `[null]`; `DELETE` sem tipo no serviço remove o registro em memória.
+- Telas que seguem sem linhas por desenho: filtros obrigatórios antes de listar (fluxo bancário, XML, DF-e recebidas), exportações e telas "em construção".
+- Build de produção: `npm run build` aumenta o heap do Node (`--max-old-space-size=6144`) para `tsc` e `vite build` (a plataforma de deploy estourava os 2 GB padrão).
