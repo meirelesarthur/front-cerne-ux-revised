@@ -112,6 +112,8 @@ export default function ContratacaoPlano() {
     CURRENT_SUBSCRIPTION ?? { plan: 'Pro', users: 5, modules: new Set<string>(), unit: 'cab', size: 1200, consult: 'none' }
   );
   const [note, setNote] = useState('');
+  // Módulo que só existe em plano acima e puxou o plano para cima: desmarcá-lo volta ao plano anterior.
+  const [planUndo, setPlanUndo] = useState<{ plan: PlanTier; key: string } | null>(null);
   const [requestOpen, setRequestOpen] = useState(false);
 
   const tagline: Record<PlanTier, string> = {
@@ -163,6 +165,7 @@ export default function ContratacaoPlano() {
 
   // ---- Ações ----
   function choosePlan(plan: PlanTier) {
+    setPlanUndo(null);
     const { selection: next, removed } = pruneUnavailable({ ...selection, plan });
     setSelection(next);
     setNote(
@@ -173,7 +176,16 @@ export default function ContratacaoPlano() {
   }
 
   function onToggleModule(key: string, checked: boolean) {
+    if (!checked && planUndo?.key === key) {
+      const modules = new Set(selection.modules);
+      modules.delete(key);
+      setSelection({ ...selection, plan: planUndo.plan, modules });
+      setPlanUndo(null);
+      setNote('');
+      return;
+    }
     const result = toggleModule(selection, key, checked);
+    if (result.adjustedTo) setPlanUndo({ plan: selection.plan, key });
     setSelection(result.selection);
     setNote(
       result.adjustedTo
@@ -365,6 +377,8 @@ export default function ContratacaoPlano() {
             <Flex direction="column" gap="6px">
               {group.items.map((m) => {
                 const included = isIncluded(selection.plan, m);
+                // o módulo que puxou o plano pode ser desmarcado (volta ao plano anterior)
+                const undoable = planUndo?.key === m.key && included;
                 return (
                   <CheckOptionRow
                     key={m.key}
@@ -373,7 +387,7 @@ export default function ContratacaoPlano() {
                     description={m.description}
                     icon={MODULE_ICON[m.key]}
                     checked={included || selection.modules.has(m.key)}
-                    locked={included}
+                    locked={included && !undoable}
                     trailing={
                       included
                         ? text.modules.included

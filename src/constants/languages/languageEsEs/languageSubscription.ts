@@ -89,7 +89,7 @@ export const languageSubscription: ModuleSubscription = {
     totalWithConsult: "Total con servicio",
   },
   messages: {
-    moduleRequires: "{module} solo existe desde {plan}. Plan ajustado a {plan}.",
+    moduleRequires: "{module} solo existe desde {plan}. Plan ajustado a {plan}. Desmarque el módulo para volver al plan anterior.",
     moduleRemoved: "{module} salió de la propuesta porque solo existe desde {plan}.",
     upgradeCheaper: "Con esta configuración, {plan} sale {v} más barato por mes e incluye más módulos. Aquí el sistema sugiere el upgrade.",
     otherCheaper: "Con esta configuración, {plan} atiende el mismo pedido por {v} menos por mes.",
