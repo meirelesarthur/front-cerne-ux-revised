@@ -376,13 +376,16 @@ export function Login() {
             >
               {languageGB.common.login.platformSubtitle}{' '}
               <ChakraAnchor
-                href="#solicitar"
-                onClick={(e: React.MouseEvent) => e.preventDefault()}
+                href="/criar-conta"
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  navigate('/criar-conta');
+                }}
                 color="loginButtonPrimary"
                 fontWeight="medium"
                 _hover={{ textDecoration: 'underline' }}
               >
-                Solicitar acesso
+                {languageGB.common.login.createAccount}
               </ChakraAnchor>
             </Text>
           </Box>

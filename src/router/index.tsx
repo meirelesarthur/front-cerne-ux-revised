@@ -37,6 +37,7 @@ const Login = lazy(() => import('@/pages/Login'));
 const TwoFactorVerify = lazy(() => import('@/pages/Login/TwoFactorVerify'));
 const ForgotPassword = lazy(() => import('@/pages/Login/ForgotPassword'));
 const ResetPassword = lazy(() => import('@/pages/Login/ResetPassword'));
+const Onboarding = lazy(() => import('@/pages/Onboarding'));
 
 // ---- Público ANÔNIMO (formulário do fornecedor, hash — esteira
 // 97-Esteiras/035, TASK-CQ-FE-10). FORA de `PublicRoute`/`PrivateRoute` —
@@ -3584,6 +3585,7 @@ export function AppRoutes() {
         <Route path="/login/two-factor" element={lazyRoute(TwoFactorVerify)} />
         <Route path="/forgot-password" element={lazyRoute(ForgotPassword)} />
         <Route path="/reset-password" element={lazyRoute(ResetPassword)} />
+        <Route path="/criar-conta" element={lazyRoute(Onboarding)} />
       </Route>
 
       {/* ========================================= */}

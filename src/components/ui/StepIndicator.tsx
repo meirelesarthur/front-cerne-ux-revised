@@ -18,23 +18,31 @@ export interface StepIndicatorProps<K extends string = string> {
   value: K;
   onChange: (key: K) => void;
   ariaLabel?: string;
+  /** Ocupa toda a largura: primeira etapa colada à esquerda, última à direita, linha esticada entre elas. */
+  spread?: boolean;
+  /** Etapas bloqueadas (ex.: ainda não alcançadas num fluxo linear). */
+  isStepDisabled?: (key: K) => boolean;
 }
 
-export function StepIndicator<K extends string = string>({ steps, value, onChange, ariaLabel }: StepIndicatorProps<K>) {
+export function StepIndicator<K extends string = string>({ steps, value, onChange, ariaLabel, spread = false, isStepDisabled }: StepIndicatorProps<K>) {
   return (
-    <Flex role="tablist" aria-label={ariaLabel} align="center" justify="center" gap="14px" wrap="wrap">
+    <Flex role="tablist" aria-label={ariaLabel} align="center" justify={spread ? 'space-between' : 'center'} gap="14px" wrap={spread ? 'nowrap' : 'wrap'} w={spread ? 'full' : undefined}>
       {steps.map((step, index) => {
         const active = step.key === value;
+        const disabled = isStepDisabled?.(step.key) ?? false;
         return (
-          <Flex key={step.key} align="center" gap="14px">
-            {index > 0 && <Box aria-hidden="true" w="64px" h="1px" bg="semanticNeutral.200" />}
+          <Flex key={step.key} align="center" gap="14px" flex={spread && index > 0 ? 1 : undefined} minW={0}>
+            {index > 0 && <Box aria-hidden="true" w={spread ? undefined : '64px'} flex={spread ? 1 : undefined} h="1px" bg="semanticNeutral.200" />}
             <Flex
               as="button"
               role="tab"
               {...BUTTON_ATTRS}
               id={`step-${step.key}`}
               aria-selected={active}
-              onClick={() => onChange(step.key)}
+              {...({ disabled } as Record<string, boolean>)}
+              opacity={disabled ? 0.5 : 1}
+              cursor={disabled ? 'not-allowed' : 'pointer'}
+              onClick={() => !disabled && onChange(step.key)}
               align="center"
               gap="10px"
               px="4px"

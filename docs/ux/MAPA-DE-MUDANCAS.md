@@ -1,7 +1,7 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `ed8079d` · 873 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `791b822` · 874 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
@@ -46,6 +46,7 @@
 | `src/pages/Dashboards` | 0 | 1 | 0 |
 | `src/pages/Home` | 0 | 1 | 0 |
 | `src/router` | 0 | 1 | 0 |
+| `wrangler.jsonc` | 1 | 0 | 0 |
 | `yarn.lock` | 0 | 1 | 0 |
 
 ### Arquivos novos em `src/`
@@ -153,7 +154,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `PlanCompareStrip` | `src/components/ui/PlanCompareStrip.tsx` | Faixa de comparação rápida entre planos para a MESMA configuração: um botão por plano com o | 1 |
 | `PlanOptionCard` | `src/components/ui/PlanOptionCard.tsx` | Cartão selecionável de plano (Pro / Deluxe / Enterprise): nome na cor do plano, | 1 |
 | `PlanTierCard` | `src/components/ui/PlanTierCard.tsx` | Cartão de um plano na "escada" de planos (visão de resumo): faixa de cor no topo, nome e | 1 |
-| `QuantityStepper` | `src/components/ui/QuantityStepper.tsx` | Seletor de quantidade: − [número] + (campo editável) e, opcionalmente, um slider abaixo. | 1 |
+| `QuantityStepper` | `src/components/ui/QuantityStepper.tsx` | Seletor de quantidade: régua (opcional) e − [número] + (campo editável) na mesma linha. | 1 |
 | `QueueTabs` | `src/components/ui/QueueTabs.tsx` | Abas de "fila de trabalho" com contador por aba (ex.: Para revisar 8 · Sugestões 3). | 1 |
 | `ReconciliationDetailPanel` | `src/components/ui/ReconciliationDetailPanel.tsx` | Painel de detalhe da transação selecionada (lado direito do workspace): cabeçalho com | 1 |
 | `ReconciliationRow` | `src/components/ui/ReconciliationRow.tsx` | Linha de transação bancária na fila de conciliação: ícone de direção (entrada/saída), | 1 |
@@ -469,3 +470,5 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - b7fffd7 feat(dev): mock sintetico global (schemas extraidos dos tipos dos servicos) e guia para IA (CLAUDE.md, PORTING.md, mapa de mudancas gerado, tag ux-baseline)
 - 0d76171 feat(ui): situacao em tag (StatusTag) no lugar de bolinha e legenda em todas as listagens; mock sintetico com delete/status; packageManager yarn 1 para o build
 - ed8079d fix(build): aumenta heap do Node no tsc e no vite build (OOM no deploy)
+- 6422993 fix(dev): mock sintetico reconhece datas dt_*, evita arrays com null em tipos recursivos e registra rotas sem cobertura
+- 791b822 fix(ui): cabecalhos do configurador com a mesma altura e faixa dos passos em largura total; acessos com regua e quantidade na horizontal; wrangler.jsonc para o deploy

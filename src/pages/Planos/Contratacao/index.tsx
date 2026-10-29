@@ -45,6 +45,7 @@ import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
+import type { OnboardingOrder } from './order';
 import { CATALOG, PLAN_DESCRIPTION, PLAN_HIGHLIGHTS, type PlanTier, type SizeUnit } from './catalog';
 import {
   annualMonthly,
@@ -102,11 +103,21 @@ const fill = (template: string, vars: Record<string, string | number>) =>
 
 const n0 = (v: number) => Math.round(v).toLocaleString('pt-BR');
 
-export default function ContratacaoPlano() {
+/** Modo "Criar conta": o configurador vira a 1ª etapa do onboarding e entrega o pedido ao continuar. */
+export interface ContratacaoPlanoProps {
+  onboarding?: {
+    continueLabel: string;
+    onContinue: (order: OnboardingOrder) => void;
+  };
+}
+
+export default function ContratacaoPlano({ onboarding }: ContratacaoPlanoProps = {}) {
   const { languageGB } = useLanguage();
   const text = languageGB.subscription;
 
-  const [view, setView] = useState<ViewKey>('simulate');
+  // no onboarding só existe o simulador (sem a aba "Resumo dos planos")
+  const [view, setViewState] = useState<ViewKey>('simulate');
+  const setView = (v: ViewKey) => setViewState(onboarding ? 'simulate' : v);
   const [step, setStep] = useState<StepKey>('plan');
   const [billing, setBilling] = useState<Billing>('monthly');
   const [selection, setSelection] = useState<Selection>(
@@ -238,6 +249,25 @@ export default function ContratacaoPlano() {
   function sendRequest() {
     setRequestOpen(false);
     toaster.success({ title: text.request.done, description: text.request.devNotice, duration: 8000 });
+  }
+
+  function buildOrder(): OnboardingOrder {
+    const softwareMonth = current.month;
+    const totalMonth = softwareMonth + consultMonth;
+    return {
+      plan: selection.plan,
+      unit: selection.unit,
+      size: selection.size,
+      band: band + 1,
+      openRange: open,
+      users: selection.users,
+      modules: current.addedModules.map((m) => ({ key: m.key, name: m.name, price: m.price ?? 0 })),
+      consult: consultMonth > 0 ? { key: consultOption.key, name: consultOption.name, price: consultMonth } : null,
+      billing,
+      softwareMonth,
+      totalMonth,
+      chargeNow: annual ? annualTotal(softwareMonth) + consultMonth * CATALOG.annualBilledMonths : totalMonth,
+    };
   }
 
   const requestLabel = !CURRENT_SUBSCRIPTION
@@ -562,7 +592,10 @@ export default function ContratacaoPlano() {
       </Flex>
 
       <Flex direction="column" gap="8px" pt="4px">
-        <Button title={requestLabel} onClick={() => setRequestOpen(true)} />
+        <Button
+          title={onboarding ? onboarding.continueLabel : requestLabel}
+          onClick={() => (onboarding ? onboarding.onContinue(buildOrder()) : setRequestOpen(true))}
+        />
         <DashedActionButton label={text.summary.copy} onClick={copySummary} />
       </Flex>
     </SummaryPanel>
@@ -783,37 +816,15 @@ export default function ContratacaoPlano() {
     </Flex>
   );
 
-  return (
-    <FormContainer
-      fullBleed
-      title={text.pageTitle}
-      subtitle={text.pageSubtitle}
-      headerActions={
-        <SegmentedControl<ViewKey>
-          value={view}
-          onChange={setView}
-          ariaLabel={text.view.label}
-          options={[
-            { key: 'simulate', label: text.view.simulate },
-            { key: 'plans', label: text.view.plans },
-          ]}
-        />
-      }
-      footer={
-        view === 'simulate' ? (
-          <Flex align="center" gap="10px" w="full" color="fg.muted" fontSize="base">
-            <Icon name="info" size="sm" />
-            <Text as="span">{text.simulationNotice}</Text>
-          </Flex>
-        ) : undefined
-      }
-    >
+  const content = (
+    <>
       <Grid templateColumns={{ base: '1fr', lg: view === 'simulate' ? 'minmax(0, 1fr) 360px' : 'minmax(0, 1fr)' }} height="100%" minH={0}>
         <Flex direction="column" minW={0} minH={0} h="full">
           {view === 'simulate' && (
             // faixa dos passos: mesma altura do título do resumo e ocupando toda a largura da área branca
             <Flex align="center" justify="center" h={CONFIGURATOR_HEADER_HEIGHT} px={{ base: 4, md: 7 }} flexShrink={0} bg="cardBG" borderBottomWidth="1px" borderColor="border.muted">
               <StepIndicator<StepKey>
+                spread
                 ariaLabel={text.steps.label}
                 value={step}
                 onChange={setStep}
@@ -846,6 +857,43 @@ export default function ContratacaoPlano() {
         tone="info"
         confirmButtonText={text.request.confirm}
       />
+    </>
+  );
+
+  if (onboarding) {
+    return (
+      <Box bg="cardBG" borderWidth="1px" borderColor="border.muted" borderRadius="2xl" overflow="hidden" h={{ base: 'auto', lg: 'min(820px, calc(100vh - 190px))' }} minH={{ lg: '640px' }}>
+        {content}
+      </Box>
+    );
+  }
+
+  return (
+    <FormContainer
+      fullBleed
+      title={text.pageTitle}
+      subtitle={text.pageSubtitle}
+      headerActions={
+        <SegmentedControl<ViewKey>
+          value={view}
+          onChange={setView}
+          ariaLabel={text.view.label}
+          options={[
+            { key: 'simulate', label: text.view.simulate },
+            { key: 'plans', label: text.view.plans },
+          ]}
+        />
+      }
+      footer={
+        view === 'simulate' ? (
+          <Flex align="center" gap="10px" w="full" color="fg.muted" fontSize="base">
+            <Icon name="info" size="sm" />
+            <Text as="span">{text.simulationNotice}</Text>
+          </Flex>
+        ) : undefined
+      }
+    >
+      {content}
     </FormContainer>
   );
 }

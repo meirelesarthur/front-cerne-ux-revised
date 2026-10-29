@@ -104,6 +104,7 @@ listas repetíveis com `RepeaterList`. Fazendas: logo com `ImageUpload editor={t
 |---|---|---|
 | Contratação de planos | `funcionalidades/contratacao-plano.md` | catálogo/preço em `pages/Planos/Contratacao/{catalog,pricing}.ts` (+ testes), GIA por janela de mensagens, módulos com ícone |
 | Conciliação OFX | `funcionalidades/conciliacao-ofx.md` | workspace mestre-detalhe, candidatos com score |
+| Criar conta (onboarding) | `funcionalidades/onboarding-criar-conta.md` | `/criar-conta`: plano → conta → pagamento simulado (Stripe depois) → contratante → pronto |
 | Login | `funcionalidades/login.md` | carrossel/vídeos, SSO desabilitado até existir integração |
 | Safras, Usuários, Plano de Contas, Centro de Custo, Produtos, Fazendas | `funcionalidades/*.md` | formulários por seção |
 

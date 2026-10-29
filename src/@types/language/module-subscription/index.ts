@@ -153,6 +153,123 @@ export interface ModuleSubscription {
     worstCost: string;
     worstNote: string;
   };
+  onboarding: {
+    title: string;
+    haveAccount: string;
+    enter: string;
+    back: string;
+    steps: {
+      plan: string;
+      account: string;
+      payment: string;
+      contractor: string;
+      done: string;
+    };
+    plan: {
+      heading: string;
+      sub: string;
+      continue: string;
+    };
+    account: {
+      title: string;
+      subtitle: string;
+      name: string;
+      email: string;
+      password: string;
+      passwordConfirm: string;
+      passwordHint: string;
+      terms: string;
+      submit: string;
+      errors: {
+        required: string;
+        email: string;
+        passwordShort: string;
+        passwordMismatch: string;
+        terms: string;
+      };
+    };
+    payment: {
+      title: string;
+      subtitle: string;
+      method: {
+        card: string;
+        pix: string;
+        boleto: string;
+      };
+      cardNumber: string;
+      cardName: string;
+      expiry: string;
+      cvc: string;
+      testCard: string;
+      pixHelp: string;
+      boletoHelp: string;
+      pay: string;
+      payPix: string;
+      payBoleto: string;
+      processing: string;
+      secure: string;
+      orderTitle: string;
+      dueNow: string;
+      recurring: string;
+      monthly: string;
+      annual: string;
+      openRange: string;
+      errors: {
+        cardNumber: string;
+        cardName: string;
+        expiry: string;
+        cvc: string;
+      };
+    };
+    contractor: {
+      title: string;
+      subtitle: string;
+      personType: {
+        pj: string;
+        pf: string;
+      };
+      sections: {
+        identity: string;
+        contact: string;
+        address: string;
+      };
+      fields: {
+        document: string;
+        legalName: string;
+        name: string;
+        tradeName: string;
+        phone: string;
+        cellphone: string;
+        contactName: string;
+        contactEmail: string;
+        zip: string;
+        address: string;
+        number: string;
+        complement: string;
+        city: string;
+        state: string;
+      };
+      submit: string;
+      errors: {
+        required: string;
+        document: string;
+        email: string;
+        zip: string;
+      };
+    };
+    done: {
+      title: string;
+      subtitle: string;
+      contract: string;
+      plan: string;
+      paid: string;
+      paidValue: string;
+      nextTitle: string;
+      next: string[];
+      enter: string;
+      devNote: string;
+    };
+  };
   overview: {
     title: string;
     subtitle: string;
