@@ -7,7 +7,7 @@ Código: `src/components/GuidedTour/`. Biblioteca: [driver.js](https://driverjs.
 ## Como o cliente vive isso
 1. Termina o checkout → animação de pagamento → entra no sistema "como se tivesse clicado no link do e-mail".
 2. O tutorial **"Cadastre sua primeira fazenda"** começa sozinho (balão de boas-vindas).
-3. Pode pular a qualquer momento (**Pular tutorial**, X, Esc ou clique fora): o fluxo fica **Pausado** e dá para **Continuar** de onde parou.
+3. Pode pular a qualquer momento (**Pular tutorial** no canto inferior esquerdo, X, Esc ou clique fora): o fluxo fica **Pausado** e dá para **Continuar** de onde parou.
 4. O ícone de ajuda (⊙?) ao lado do sino abre **Primeiros passos**: nível, pontos, anel de progresso e a lista de fluxos com **Começar / Continuar / Refazer**. "Zerar progresso" recomeça tudo.
 
 ## Gamificação
@@ -37,7 +37,7 @@ GuidedTour/
 - **Um passo por vez**: cada passo é um `driver().highlight(...)`. É isso que permite atravessar rotas (o Driver.js nativo assume uma página). O motor navega até `step.route`, espera o elemento aparecer (`waitMs`, padrão 4 s) e só então mostra o balão.
 - Passo com `advanceOn: 'click'` avança quando o usuário clica **no próprio elemento destacado** (o botão Próximo some). Passo `optional: true` é pulado se o elemento não existir (permissão, menu recolhido).
 - Passo sem `element` vira aviso centralizado.
-- **Passos atrelados a um estado da tela** (assistente de várias etapas): `showWhen` (seletor que precisa existir para o balão aparecer) e `advanceWhen` (seletor que, ao aparecer, avança o tutorial sozinho). Assim o balão acompanha o usuário etapa por etapa. No cadastro de fazenda, o formulário expõe `data-tour="wizard"` + `data-tour-step="<etapa>"` e `data-tour="wizard-footer"`. Nesses passos o fundo fica leve e **não bloqueia cliques** (classe `cerne-tour-passthrough`), para o usuário preencher os campos com o balão aberto. Nesses passos o botão **Pausar** (no lugar de "Pular tutorial") esconde o balão e mostra a barrinha "Tutorial pausado"; o tutorial volta sozinho na próxima etapa ou pelo botão **Continuar** da barrinha. Se o tutorial for retomado com o usuário em outra etapa do assistente, o motor salta para o passo correspondente à tela.
+- **Passos atrelados a um estado da tela** (assistente de várias etapas): `showWhen` (seletor que precisa existir para o balão aparecer) e `advanceWhen` (seletor que, ao aparecer, avança o tutorial sozinho). Assim o balão acompanha o usuário etapa por etapa. No cadastro de fazenda, o formulário expõe `data-tour="wizard"` + `data-tour-step="<etapa>"` e `data-tour="wizard-footer"`. Nesses passos o fundo fica leve e **não bloqueia cliques** (classe `cerne-tour-passthrough`), para o usuário preencher os campos com o balão aberto. Nesses passos o foco destaca o **formulário** (não os botões) e o balão tem **Continuar**, que esconde o balão para o usuário preencher e mostra a barrinha "Preencha à vontade"; o tutorial volta sozinho na próxima etapa ou pelo botão **Ver dica**. O botão **Pular tutorial** fica fixo no canto inferior esquerdo enquanto qualquer tutorial roda. Se o tutorial for retomado com o usuário em outra etapa do assistente, o motor salta para o passo correspondente à tela.
 
 ## Como criar um fluxo novo
 1. Em `flows.ts`, acrescente um objeto em `TOUR_FLOWS` (`id` único e estável, `title`, `description`, `icon` do kit, `points`, `minutes`, `steps`).

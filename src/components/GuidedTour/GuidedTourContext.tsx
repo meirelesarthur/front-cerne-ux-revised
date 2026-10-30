@@ -93,6 +93,8 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
   /** Passo pausado pelo usuário (para digitar sem o balão): volta sozinho na próxima etapa. */
   const [paused, setPaused] = useState<{ flowId: string; index: number } | null>(null);
   const resumeRef = useRef<(() => void) | null>(null);
+  /** Passo exibido agora (para o "Pular tutorial" fixo no canto saber onde parou). */
+  const currentRef = useRef<{ flowId: string; index: number } | null>(null);
 
   // recarrega ao trocar de usuário
   useEffect(() => {
@@ -165,6 +167,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
       }
       const step = flow.steps[index];
       setFlowProgress(flow.id, 'in_progress', index);
+      currentRef.current = { flowId: flow.id, index };
 
       if (step.route && !window.location.pathname.startsWith(step.route)) navigate(step.route);
 
@@ -216,7 +219,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
             const pause = document.createElement('button');
             pause.type = 'button';
             pause.className = 'cerne-tour-pause';
-            pause.textContent = t.pause;
+            pause.textContent = t.resume;
             pause.onclick = () => {
               programmaticDestroy.current = true;
               try {
@@ -231,19 +234,6 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
               setPaused({ flowId: flow.id, index });
             };
             popover.footer.appendChild(pause);
-          }
-          // nos passos de preenchimento, "Pausar" ocupa o lugar de "Pular tutorial" (o X ainda sai)
-          if (!step.advanceWhen) {
-            const skip = document.createElement('button');
-            skip.type = 'button';
-            skip.className = 'cerne-tour-skip';
-            skip.textContent = t.skip;
-            skip.onclick = () => {
-              teardown();
-              setFlowProgress(flow.id, 'skipped', index);
-              setRunningFlowId(null);
-            };
-            popover.footer.appendChild(skip);
           }
         },
         onDestroyed: () => {
@@ -349,12 +339,43 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
   );
   const levelIndex = useMemo(() => LEVEL_THRESHOLDS.reduce((acc, min, i) => (points >= min ? i : acc), 0), [points]);
 
+  const skipAll = () => {
+    const cur = currentRef.current;
+    runToken.current += 1;
+    teardown();
+    if (cur) setFlowProgress(cur.flowId, 'skipped', cur.index);
+    setRunningFlowId(null);
+  };
+  // sempre disponível enquanto um tutorial roda, no canto inferior esquerdo
+  const skipButton = runningFlowId && (
+    <Text
+      as="button"
+      position="fixed"
+      left="16px"
+      bottom="16px"
+      zIndex={10001}
+      fontSize="sm"
+      fontWeight="semibold"
+      color="fg.default"
+      bg="cardBG"
+      borderWidth="1px"
+      borderColor="border.muted"
+      borderRadius="full"
+      boxShadow="0 6px 20px rgba(0,0,0,.18)"
+      px={4}
+      py="6px"
+      onClick={skipAll}
+    >
+      {t.skip}
+    </Text>
+  );
+
   const pausedBar = paused && (
     <Flex position="fixed" left="50%" bottom="84px" transform="translateX(-50%)" zIndex={9999} align="center" gap={3} bg="cardBG" borderWidth="1px" borderColor="border.muted" borderRadius="full" boxShadow="0 10px 30px rgba(0,0,0,.2)" pl={4} pr={2} py={2} role="status">
       <Box boxSize="8px" borderRadius="full" bg="green.500" />
       <Text fontSize="sm">{t.pausedNote}</Text>
       <Text as="button" fontSize="sm" fontWeight="semibold" color="white" bg="green.600" borderRadius="full" px={3} py="4px" onClick={() => resumeRef.current?.()}>
-        {t.resume}
+        {t.showHint}
       </Text>
     </Flex>
   );
@@ -368,6 +389,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider value={value}>
       {children}
       {pausedBar}
+      {skipButton}
     </Ctx.Provider>
   );
 }

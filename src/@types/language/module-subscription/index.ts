@@ -183,6 +183,7 @@ export interface ModuleSubscription {
     done: string;
     pause: string;
     pausedNote: string;
+    showHint: string;
     skip: string;
     progress: string;
     allDone: string;
