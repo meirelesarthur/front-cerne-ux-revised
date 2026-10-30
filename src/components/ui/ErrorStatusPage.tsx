@@ -54,7 +54,7 @@ export function ErrorStatusPage({ status, headline, message, statusName, detail,
       </Flex>
 
       <Flex flex={1} bg="cardBG" borderRadius="2xl" overflow="hidden" align="center" justify="center" px={{ base: 6, lg: '6vw' }} py={10} gap={{ base: 8, lg: '60px' }} direction={{ base: 'column', lg: 'row' }}>
-        <Flex direction="column" gap="32px" w="full" maxW="540px" flexShrink={0}>
+        <Flex direction="column" gap="32px" flex={{ lg: "6 1 0" }} minW={0} w="full" maxW={{ lg: "none" }}>
           <Box>
             <Text as="h1" fontSize="50px" fontWeight="700" lineHeight="1" letterSpacing="-0.02em">
               {status}
@@ -88,17 +88,19 @@ export function ErrorStatusPage({ status, headline, message, statusName, detail,
           </Flex>
         </Flex>
 
-        <Image
-          src={cow}
-          alt=""
-          aria-hidden="true"
-          display={{ base: 'none', lg: 'block' }}
-          flex="1 1 0"
-          minW={0}
-          maxW="900px"
-          objectFit="contain"
-          style={{ maskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)' }}
-        />
+        <Flex display={{ base: 'none', lg: 'flex' }} flex="4 1 0" minW={0} align="center" justify="center" alignSelf="stretch" position="relative">
+          <Image
+            src={cow}
+            alt=""
+            aria-hidden="true"
+            position="absolute"
+            w="140%"
+            maxW="none"
+            right="-8%"
+            objectFit="contain"
+            style={{ maskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)' }}
+          />
+        </Flex>
       </Flex>
     </Flex>
   );

@@ -14,6 +14,12 @@ Rota pública `/criar-conta` (dentro do `AuthLayout`, guardada por `PublicRoute`
 | 4 | Contratante | PF/PJ, CPF/CNPJ, razão social, telefones, responsável (pré-preenchido com a conta), endereço | `steps/StepContractor.tsx` |
 | 5 | Pronto | Resumo do contrato e próximos passos; "Entrar no sistema" limpa o rascunho e vai ao `/login` | `steps/StepDone.tsx` |
 
+## Depois do pagamento
+- **Sem validação por enquanto:** nenhum passo valida nada e as etapas são livres (dá para clicar em qualquer etapa do indicador; o que faltar cai num padrão). Chave única: `ONBOARDING_VALIDATE` em `pages/Onboarding/types.ts` (`false`); com `true` os erros e bloqueios voltam.
+- **Celebração em tela cheia** (`components/ui/PaymentSuccessOverlay.tsx`): círculo verde enche a tela, ✓ desenhado, "Pagamento confirmado!", confete; depois "E-mail confirmado · Entrando no Cerne…" (simula o clique no link do e-mail). Só CSS; respeita `prefers-reduced-motion`.
+- **Entrada automática:** `useAuth().signIn(...)` (no front de design, o bypass de dev cria a sessão) e vai para `/home`. No produto, isto vira a verificação por token do e-mail, que já devolve a sessão.
+- **Tutorial:** ao entrar, o checkout marca `queueTourAutoStart('first-farm')` e o [tutorial guiado](onboarding-tour.md) começa sozinho. Ele só roda para quem veio deste fluxo.
+
 ## Decisões
 - **Pagamento antes dos dados do contratante** (o pedido sugeriu "antes ou depois"): o cliente confirma o valor logo após criar o acesso; os dados fiscais vêm em seguida. Trocar a ordem é mudar `ONBOARDING_STEPS` em `types.ts`.
 - **Navegação linear**: `StepIndicator` ganhou `isStepDisabled`; só dá para voltar a passos já alcançados e, depois de concluído, nenhum passo é clicável.

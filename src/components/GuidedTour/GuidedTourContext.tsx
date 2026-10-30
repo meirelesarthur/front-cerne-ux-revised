@@ -1,0 +1,279 @@
+// src/components/GuidedTour/GuidedTourContext.tsx
+// MOTOR do tutorial guiado. Usa o Driver.js para destacar elementos e mostrar o balão; todo o
+// resto (fluxos, progresso, pontos, navegação entre telas) é nosso. Um passo por vez: cada passo é
+// um `driver().highlight(...)`, o que permite atravessar rotas diferentes (o Driver.js nativo
+// assume uma única página). Documentação: docs/ux/funcionalidades/onboarding-tour.md
+
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+
+import { driver, type Driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import { useNavigate } from 'react-router-dom';
+
+import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/hooks/useLanguage';
+
+import './guided-tour.css';
+import { FIRST_FLOW_ID, LEVEL_THRESHOLDS, TOUR_FLOWS } from './flows';
+import { takeTourAutoStart, tourStorage } from './storage';
+import type { FlowProgress, TourFlow, TourState, TourStatus } from './types';
+
+interface GuidedTourValue {
+  /** Falso para contas que não vieram do "Criar conta": o helper e os balões não aparecem. */
+  enabled: boolean;
+  flows: TourFlow[];
+  progress: Record<string, FlowProgress>;
+  points: number;
+  /** Índice do nível atual (0 a LEVEL_THRESHOLDS.length - 1). */
+  levelIndex: number;
+  runningFlowId: string | null;
+  /** Inicia (ou retoma, se estava em andamento/pausado) um fluxo. */
+  startFlow: (id: string) => void;
+  /** Recomeça um fluxo do primeiro passo. */
+  restartFlow: (id: string) => void;
+  /** Apaga todo o progresso do usuário. */
+  resetAll: () => void;
+}
+
+const Ctx = createContext<GuidedTourValue | null>(null);
+
+/** Fora do provider (telas públicas, testes) o tutorial fica desligado em vez de quebrar. */
+const DISABLED: GuidedTourValue = {
+  enabled: false,
+  flows: [],
+  progress: {},
+  points: 0,
+  levelIndex: 0,
+  runningFlowId: null,
+  startFlow: () => {},
+  restartFlow: () => {},
+  resetAll: () => {},
+};
+
+export const useGuidedTour = (): GuidedTourValue => useContext(Ctx) ?? DISABLED;
+
+const nowIso = () => new Date().toISOString();
+
+/** Espera um elemento aparecer no DOM (as telas carregam depois da navegação). */
+function waitForElement(selector: string, timeoutMs: number): Promise<Element | null> {
+  return new Promise((resolve) => {
+    const started = Date.now();
+    const tick = () => {
+      const el = document.querySelector(selector);
+      if (el) return resolve(el);
+      if (Date.now() - started >= timeoutMs) return resolve(null);
+      window.setTimeout(tick, 120);
+    };
+    tick();
+  });
+}
+
+export function GuidedTourProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { languageGB } = useLanguage();
+  const t = languageGB.subscription.tour;
+  const userKey = (user as { uuid?: string } | null)?.uuid ?? 'anon';
+
+  const [state, setState] = useState<TourState>(() => tourStorage.load(userKey));
+  const [runningFlowId, setRunningFlowId] = useState<string | null>(null);
+
+  // recarrega ao trocar de usuário
+  useEffect(() => {
+    setState(tourStorage.load(userKey));
+  }, [userKey]);
+
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const driverRef = useRef<Driver | null>(null);
+  const programmaticDestroy = useRef(false);
+  const detachRef = useRef<(() => void) | null>(null);
+  const pendingRef = useRef<string | null | undefined>(undefined);
+  /** Evita que um passo antigo (ainda esperando elemento) apareça depois de o fluxo mudar. */
+  const runToken = useRef(0);
+
+  const commit = useCallback(
+    (updater: (s: TourState) => TourState) => {
+      const next = updater(stateRef.current);
+      stateRef.current = next;
+      setState(next);
+      tourStorage.save(userKey, next);
+    },
+    [userKey]
+  );
+
+  const setFlowProgress = useCallback(
+    (flowId: string, status: TourStatus, stepIndex: number) =>
+      commit((s) => ({
+        ...s,
+        flows: {
+          ...s.flows,
+          [flowId]: {
+            status,
+            stepIndex,
+            updatedAt: nowIso(),
+            completedAt: status === 'completed' ? nowIso() : s.flows[flowId]?.completedAt,
+          },
+        },
+      })),
+    [commit]
+  );
+
+  const teardown = useCallback(() => {
+    detachRef.current?.();
+    detachRef.current = null;
+    if (driverRef.current) {
+      programmaticDestroy.current = true;
+      try {
+        driverRef.current.destroy();
+      } catch {
+        /* já destruído */
+      }
+      driverRef.current = null;
+      programmaticDestroy.current = false;
+    }
+  }, []);
+
+  const runStep = useCallback(
+    async (flow: TourFlow, index: number, token: number): Promise<void> => {
+      teardown();
+      if (token !== runToken.current) return;
+
+      if (index >= flow.steps.length) {
+        setFlowProgress(flow.id, 'completed', flow.steps.length - 1);
+        setRunningFlowId(null);
+        return;
+      }
+      const step = flow.steps[index];
+      setFlowProgress(flow.id, 'in_progress', index);
+
+      if (step.route && !window.location.pathname.startsWith(step.route)) navigate(step.route);
+
+      let el: Element | null = null;
+      if (step.element) {
+        el = await waitForElement(step.element, step.waitMs ?? 4000);
+        if (token !== runToken.current) return;
+        if (!el && step.optional) return runStep(flow, index + 1, token);
+      }
+
+      const go = (to: number) => void runStep(flow, to, token);
+      const last = index === flow.steps.length - 1;
+      const clickToAdvance = !!(step.advanceOn === 'click' && el);
+
+      const d = driver({
+        stagePadding: 6,
+        stageRadius: 10,
+        overlayOpacity: 0.55,
+        smoothScroll: true,
+        allowClose: true,
+        popoverClass: 'cerne-tour',
+        onPopoverRender: (popover) => {
+          const progress = document.createElement('span');
+          progress.className = 'cerne-tour-progress';
+          progress.textContent = t.stepOf.replace('{n}', String(index + 1)).replace('{t}', String(flow.steps.length));
+          popover.footer.prepend(progress);
+          const skip = document.createElement('button');
+          skip.type = 'button';
+          skip.className = 'cerne-tour-skip';
+          skip.textContent = t.skip;
+          skip.onclick = () => {
+            teardown();
+            setFlowProgress(flow.id, 'skipped', index);
+            setRunningFlowId(null);
+          };
+          popover.footer.appendChild(skip);
+        },
+        onDestroyed: () => {
+          // fechou pelo X, Esc ou clique fora: tratamos como "pausar" (fica salvo)
+          if (programmaticDestroy.current) return;
+          detachRef.current?.();
+          detachRef.current = null;
+          driverRef.current = null;
+          setFlowProgress(flow.id, 'skipped', index);
+          setRunningFlowId(null);
+        },
+      });
+      driverRef.current = d;
+
+      d.highlight({
+        element: el ?? undefined,
+        popover: {
+          title: step.title,
+          description: step.description,
+          side: step.side ?? 'bottom',
+          align: 'start',
+          showButtons: clickToAdvance ? ['previous', 'close'] : ['next', 'previous', 'close'],
+          nextBtnText: last ? t.done : t.next,
+          prevBtnText: t.prev,
+          onNextClick: () => go(index + 1),
+          onPrevClick: () => go(Math.max(0, index - 1)),
+        },
+      });
+
+      if (clickToAdvance && el) {
+        const onClick = () => {
+          detachRef.current?.();
+          detachRef.current = null;
+          // deixa o clique original navegar/abrir antes de seguir
+          window.setTimeout(() => go(index + 1), 250);
+        };
+        el.addEventListener('click', onClick, { once: true });
+        detachRef.current = () => el!.removeEventListener('click', onClick);
+      }
+    },
+    [navigate, setFlowProgress, t, teardown]
+  );
+
+  const begin = useCallback(
+    (flowId: string, fromStart: boolean) => {
+      const flow = TOUR_FLOWS.find((f) => f.id === flowId);
+      if (!flow) return;
+      runToken.current += 1;
+      const saved = stateRef.current.flows[flowId];
+      const index = fromStart || !saved || saved.status === 'completed' ? 0 : saved.stepIndex;
+      setRunningFlowId(flowId);
+      void runStep(flow, index, runToken.current);
+    },
+    [runStep]
+  );
+
+  const startFlow = useCallback((id: string) => begin(id, false), [begin]);
+  const restartFlow = useCallback((id: string) => begin(id, true), [begin]);
+
+  const resetAll = useCallback(() => {
+    runToken.current += 1;
+    teardown();
+    setRunningFlowId(null);
+    commit((s) => ({ enabled: s.enabled, flows: {}, autoStart: null }));
+  }, [commit, teardown]);
+
+  // Início automático logo após criar a conta (marca gravada pelo onboarding "Criar conta").
+  useEffect(() => {
+    // lido uma única vez (o StrictMode do React monta o efeito duas vezes em dev)
+    if (pendingRef.current === undefined) pendingRef.current = takeTourAutoStart();
+    const pending = pendingRef.current;
+    if (!pending) return;
+    // veio do "Criar conta": liga o tutorial para este usuário
+    commit((s) => ({ ...s, enabled: true }));
+    const id = window.setTimeout(() => begin(pending === 'default' ? FIRST_FLOW_ID : pending, true), 900);
+    return () => window.clearTimeout(id);
+    // só na montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // limpa o balão ao desmontar
+  useEffect(() => () => teardown(), [teardown]);
+
+  const points = useMemo(
+    () => TOUR_FLOWS.reduce((sum, f) => sum + (state.flows[f.id]?.status === 'completed' ? f.points : 0), 0),
+    [state]
+  );
+  const levelIndex = useMemo(() => LEVEL_THRESHOLDS.reduce((acc, min, i) => (points >= min ? i : acc), 0), [points]);
+
+  const value = useMemo<GuidedTourValue>(
+    () => ({ enabled: !!state.enabled, flows: TOUR_FLOWS, progress: state.flows, points, levelIndex, runningFlowId, startFlow, restartFlow, resetAll }),
+    [state.enabled, state.flows, points, levelIndex, runningFlowId, startFlow, restartFlow, resetAll]
+  );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}

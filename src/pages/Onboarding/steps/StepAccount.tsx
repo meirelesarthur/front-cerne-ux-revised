@@ -10,7 +10,7 @@ import { Input } from '@/components/Form/Input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useLanguage } from '@/hooks/useLanguage';
 
-import { isEmail, type AccountData } from '../types';
+import { isEmail, ONBOARDING_VALIDATE, type AccountData } from '../types';
 
 interface Props {
   initial: Omit<AccountData, 'password'> | null;
@@ -42,8 +42,8 @@ export function StepAccount({ initial, onSubmit }: Props) {
       noValidate
       onSubmit={(e: React.FormEvent) => {
         e.preventDefault();
-        setSubmitted(true);
-        if (valid) onSubmit(form);
+        setSubmitted(ONBOARDING_VALIDATE);
+        if (!ONBOARDING_VALIDATE || valid) onSubmit(form);
       }}
       style={FORM_STYLE}
     >

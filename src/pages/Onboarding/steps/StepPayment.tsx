@@ -12,7 +12,7 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useLanguage } from '@/hooks/useLanguage';
 import { formatBRL } from '@/pages/Planos/Contratacao/pricing';
 
-import { digits, type PayMethod, type PaymentResult } from '../types';
+import { digits, ONBOARDING_VALIDATE, type PayMethod, type PaymentResult } from '../types';
 
 interface Props {
   amount: number;
@@ -47,8 +47,8 @@ export function StepPayment({ amount, onPaid }: Props) {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    if (!valid || processing) return;
+    setSubmitted(ONBOARDING_VALIDATE);
+    if ((ONBOARDING_VALIDATE && !valid) || processing) return;
     setProcessing(true);
     window.setTimeout(() => onPaid({ method, paidAt: new Date().toISOString() }), 1400);
   };

@@ -12,6 +12,7 @@ import { SecondaryNav } from '@/components/Layout/SecondaryNav';
 import { NoFarmOnboardingGuard } from '@/components/NoFarmOnboardingGuard';
 import { type NavModule } from '@/config/v2/navigationTree';
 import { useMenuModuleById, useMenuModuleByPath } from '@/hooks/useMenuModules';
+import { GuidedTourProvider } from '@/components/GuidedTour';
 import { RightPanelProvider } from '@/contexts/RightPanelContext';
 import { LeftSidebarProvider } from '@/contexts/LeftSidebarContext';
 
@@ -73,6 +74,7 @@ export function DashboardLayout() {
   const canvasMargin = "8px";
 
   return (
+    <GuidedTourProvider>
     <RightPanelProvider>
       <LeftSidebarProvider>
         {/* Canvas: fundo geral atrás dos 2 cards flutuantes (sidebar + conteúdo) */}
@@ -144,5 +146,6 @@ export function DashboardLayout() {
         </Flex>
       </LeftSidebarProvider>
     </RightPanelProvider>
+    </GuidedTourProvider>
   );
 }

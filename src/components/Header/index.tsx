@@ -30,6 +30,7 @@ import { Icon as GbIcon } from "@/components/ui/Icon";
 import { ErrorLogPanel } from "@/components/ErrorLogPanel";
 import { FarmSwitcher } from "@/components/FarmSwitcher";
 import { HeaderSearch } from "@/components/HeaderSearch";
+import { TourHelper } from "@/components/GuidedTour";
 import { NotificationPanel } from "@/components/NotificationPanel";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useRightPanel } from "@/contexts/RightPanelContext";
@@ -153,6 +154,9 @@ export function Header({
               }
             />
           )}
+
+          {/* Primeiros passos: tutorial guiado (Driver.js), ao lado do sino */}
+          <TourHelper />
 
           {/* Sino global (T-081-FE-11): o contador real é desenhado pelo NotificationPanel */}
           <NotificationPanel

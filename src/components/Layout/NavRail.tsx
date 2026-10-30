@@ -175,6 +175,7 @@ function NavRailContent({
           const button = (
             <Flex
               as="button"
+              data-tour={`nav-${module.id}`}
               onClick={(e) => {
                 // Divergência deliberada vs. o cerne: lá, clicar num módulo em
                 // modo FULL propaga e também colapsa a sidebar (onClick da raiz).

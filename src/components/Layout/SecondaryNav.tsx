@@ -93,6 +93,7 @@ function NavItemButton({
     <Box>
       <Flex
         as="button"
+        data-tour={`nav-${item.id}`}
         className="group"
         onClick={handleClick}
         w="100%"

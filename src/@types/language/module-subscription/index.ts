@@ -163,8 +163,37 @@ export interface ModuleSubscription {
     worstCost: string;
     worstNote: string;
   };
+  tour: {
+    helper: string;
+    title: string;
+    subtitle: string;
+    level: string;
+    points: string;
+    levels: string[];
+    start: string;
+    resume: string;
+    restart: string;
+    completed: string;
+    paused: string;
+    minutes: string;
+    pts: string;
+    stepOf: string;
+    next: string;
+    prev: string;
+    done: string;
+    skip: string;
+    progress: string;
+    allDone: string;
+    reset: string;
+  };
   onboarding: {
     title: string;
+    success: {
+      title: string;
+      subtitle: string;
+      confirmed: string;
+      entering: string;
+    };
     haveAccount: string;
     enter: string;
     back: string;

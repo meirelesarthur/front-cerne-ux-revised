@@ -1,7 +1,7 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `29e44c5` · 882 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `6e9cf2d` · 888 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
@@ -11,7 +11,7 @@
 | `src/pages/CadastrosBase` | 0 | 171 | 1 |
 | `src/pages/BaseRegistrations` | 0 | 137 | 0 |
 | `src/pages/Administrativo` | 0 | 87 | 1 |
-| `src/components/ui` | 38 | 3 | 0 |
+| `src/components/ui` | 39 | 3 | 0 |
 | `src/constants` | 3 | 33 | 0 |
 | `src/pages/Fiscal` | 0 | 34 | 0 |
 | `src/pages/Financeiro` | 0 | 27 | 0 |
@@ -20,7 +20,7 @@
 | `scripts/dev-db` | 13 | 0 | 0 |
 | `src/pages/Frota` | 0 | 12 | 0 |
 | `src/mocks` | 11 | 0 | 0 |
-| `src/components/(raiz)` | 0 | 8 | 0 |
+| `src/components/(raiz)` | 0 | 9 | 0 |
 | `src/pages/Planos` | 5 | 3 | 0 |
 | `src/pages/Configuracoes` | 0 | 6 | 0 |
 | `src/pages/Onboarding` | 6 | 0 | 0 |
@@ -33,6 +33,7 @@
 | `src/pages/Incomes` | 0 | 3 | 0 |
 | `scripts/dev-mocks` | 2 | 0 | 0 |
 | `src/components/Header` | 0 | 2 | 0 |
+| `src/pages/Errors` | 2 | 0 | 0 |
 | `src/pages/Login` | 1 | 1 | 0 |
 | `.env.example` | 0 | 1 | 0 |
 | `.gitignore` | 0 | 1 | 0 |
@@ -40,7 +41,9 @@
 | `chakra.config.ts` | 0 | 1 | 0 |
 | `package.json` | 0 | 1 | 0 |
 | `scripts/ux-docs` | 1 | 0 | 0 |
+| `src/assets` | 1 | 0 | 0 |
 | `src/components/MovementAllocationEditor` | 0 | 1 | 0 |
+| `src/components/NotFound` | 0 | 1 | 0 |
 | `src/config` | 0 | 1 | 0 |
 | `src/design` | 1 | 0 | 0 |
 | `src/hooks` | 1 | 0 | 0 |
@@ -52,6 +55,7 @@
 
 ### Arquivos novos em `src/`
 - `src/@types/language/module-subscription/index.ts`
+- `src/assets/error-cow.png`
 - `src/components/ui/Badge.tsx`
 - `src/components/ui/BandSlider.tsx`
 - `src/components/ui/BreadcrumbTrail.tsx`
@@ -60,6 +64,7 @@
 - `src/components/ui/ChoiceCardGroup.tsx`
 - `src/components/ui/ConfidenceMeter.tsx`
 - `src/components/ui/DashedActionButton.tsx`
+- `src/components/ui/ErrorStatusPage.tsx`
 - `src/components/ui/FormSurface.tsx`
 - `src/components/ui/GiaTierCard.tsx`
 - `src/components/ui/Icon.tsx`
@@ -106,6 +111,8 @@
 - `src/mocks/dev-api/index.ts`
 - `src/mocks/dev-api/synthetic.test.ts`
 - `src/mocks/dev-api/synthetic.ts`
+- `src/pages/Errors/copy.ts`
+- `src/pages/Errors/index.tsx`
 - `src/pages/Login/slides.ts`
 - `src/pages/Onboarding/index.tsx`
 - `src/pages/Onboarding/steps/StepAccount.tsx`
@@ -125,7 +132,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 
 | Componente | Arquivo | Para quê | Consumidores |
 |---|---|---|---:|
-| `toaster` | `src/components/ui/toaster.tsx` |  | 450 |
+| `toaster` | `src/components/ui/toaster.tsx` |  | 449 |
 | `PageHeader` | `src/components/ui/PageHeader.tsx` | Título de página (DS `PageHeader`): título 24px em negrito, contador opcional em pílula e | 168 |
 | `ButtonFilter` | `src/components/ButtonFilter.tsx` | Botão "Filtros" das listagens (DS `FilterButton`): borda 1.5px; com filtros ativos vira verde | 96 |
 | `ListToolbar` | `src/components/ui/ListToolbar.tsx` | Barra das listagens (DS `ListToolbar`): busca inline + botão "Filtros" na mesma linha. | 80 |
@@ -133,8 +140,8 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 28 |
 | `checkbox` | `src/components/ui/checkbox.tsx` |  | 23 |
 | `tooltip` | `src/components/ui/tooltip.tsx` |  | 14 |
+| `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 10 |
 | `FormSection` | `src/components/FormSection/index.tsx` | Adaptação Chakra v3 (não cópia) do `FormSection` do design system `cerne` | 10 |
-| `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 9 |
 | `StepBody` | `src/components/ui/StepBody.tsx` | Corpo de uma etapa de wizard (DS): conteúdo centralizado, largura máxima 760px. | 6 |
 | `ToggleRow` | `src/components/ui/ToggleRow.tsx` | Campo booleano em linha (DS `ToggleRow`): interruptor + rótulo e, opcional, ícone de ajuda com | 5 |
 | `steps` | `src/components/ui/steps.tsx` | Wrapper sobre o `Steps` nativo do Chakra UI v3. RESKIN (execução 024, | 5 |
@@ -159,6 +166,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `ChoiceCardGroup` | `src/components/ui/ChoiceCardGroup.tsx` | Grupo de cartões de escolha única (rádio): título, valor e descrição curta por opção. | 1 |
 | `ConfidenceMeter` | `src/components/ui/ConfidenceMeter.tsx` | Medidor de confiança (0–100) por FAIXA: alta ≥90 (verde), média 60–89 (âmbar), baixa <60 | 1 |
 | `DashedActionButton` | `src/components/ui/DashedActionButton.tsx` | Ação secundária em contorno tracejado, com seta à direita (ex.: "Copiar resumo da proposta →"), | 1 |
+| `ErrorStatusPage` | `src/components/ui/ErrorStatusPage.tsx` | Tela cheia de ERRO por status HTTP (design "404" do Figma GB-CERNE, nó 54212:6543): barra com | 1 |
 | `GiaTierCard` | `src/components/ui/GiaTierCard.tsx` | Cartão de um nível da GIA (assistente de IA): nome do nível e plano onde vem, métricas (janela de | 1 |
 | `MatchCandidateCard` | `src/components/ui/MatchCandidateCard.tsx` | Cartão de candidato de conciliação: título + subtítulo, MOTIVOS do casamento (✓ atendido, | 1 |
 | `PlanCompareStrip` | `src/components/ui/PlanCompareStrip.tsx` | Faixa de comparação rápida entre planos para a MESMA configuração: um botão por plano com o | 1 |
@@ -482,3 +490,8 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - 791b822 fix(ui): cabecalhos do configurador com a mesma altura e faixa dos passos em largura total; acessos com regua e quantidade na horizontal; wrangler.jsonc para o deploy
 - 61c349b feat(onboarding): fluxo Criar conta (plano, conta, pagamento simulado, contratante, pronto); passos do configurador nas extremidades
 - 29e44c5 fix(onboarding): PF/PJ deduzido do documento (sem seletor); celular obrigatorio e antes do telefone
+- dbbc3ad feat(contratacao): faixa mista (agricultura + pecuaria), acessos 5/10/20 com extra R$ 25 e resumo do pedido do onboarding com grupos recolhiveis
+- d1e08db feat(contratacao): faixa mista com uma regua unica (cabecas e hectares na mesma escala M1 a M5)
+- de7d1b5 feat(contratacao): piso de acessos por plano, cobranca a direita, resumo enxuto (modulos/consult so quando houver, sem GIA), regua mista em 2 linhas, botao Continuar
+- 3fb2a50 feat(contratacao): GIA conforme documento atualizado (suporte e consulta em todos os planos, 137 msg/dia por pessoa, R$ 0,00146 por mensagem)
+- 6e9cf2d feat(ui): tela de erro por status HTTP (design 404 do Figma) com exemplos das faixas 4xx e 5xx em /erro/:code e /erros

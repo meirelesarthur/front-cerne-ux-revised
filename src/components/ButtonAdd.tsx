@@ -32,6 +32,7 @@ export const ButtonAdd = forwardRef<HTMLButtonElement, ButtonProps>(
           >
             <IconButton
               {...rest}
+              data-tour="btn-add"
               fontSize="2xl"
               aria-label={languageGB.defaltStrings.new}
               variant="outline"
@@ -44,6 +45,7 @@ export const ButtonAdd = forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           <ChakraButton
             {...rest}
+            data-tour="btn-add"
             borderRadius="8px"
             variant="solid"
             ref={ref}

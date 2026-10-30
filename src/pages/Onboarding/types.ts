@@ -63,6 +63,12 @@ export interface OnboardingDraft {
   contractor: ContractorData;
 }
 
+/**
+ * FRONT DE DESIGN: por enquanto NENHUM passo valida nada (dá para andar pelas etapas só clicando).
+ * Quando a integração real entrar, troque para `true` e os erros/bloqueios voltam a funcionar.
+ */
+export const ONBOARDING_VALIDATE = false;
+
 export const DRAFT_KEY = 'cerne-onboarding-draft-v2';
 export const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 export const digits = (v: string) => v.replace(/\D/g, '');

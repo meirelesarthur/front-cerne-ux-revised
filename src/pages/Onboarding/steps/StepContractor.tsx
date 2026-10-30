@@ -10,7 +10,7 @@ import { Input } from '@/components/Form/Input';
 import { MaskedInput } from '@/components/Form/MaskedInput';
 import { useLanguage } from '@/hooks/useLanguage';
 
-import { digits, isEmail, type ContractorData } from '../types';
+import { digits, isEmail, ONBOARDING_VALIDATE, type ContractorData } from '../types';
 
 interface Props {
   initial: ContractorData;
@@ -61,8 +61,8 @@ export function StepContractor({ initial, defaultContactName, defaultContactEmai
       noValidate
       onSubmit={(ev: React.FormEvent) => {
         ev.preventDefault();
-        setSubmitted(true);
-        if (valid) onSubmit({ ...f, personType: pj ? 'pj' : 'pf' });
+        setSubmitted(ONBOARDING_VALIDATE);
+        if (!ONBOARDING_VALIDATE || valid) onSubmit({ ...f, personType: pj ? 'pj' : 'pf' });
       }}
       style={FORM_STYLE}
     >

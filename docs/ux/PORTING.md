@@ -105,6 +105,8 @@ listas repetíveis com `RepeaterList`. Fazendas: logo com `ImageUpload editor={t
 | Contratação de planos | `funcionalidades/contratacao-plano.md` | catálogo/preço em `pages/Planos/Contratacao/{catalog,pricing}.ts` (+ testes), GIA por janela de mensagens, módulos com ícone |
 | Conciliação OFX | `funcionalidades/conciliacao-ofx.md` | workspace mestre-detalhe, candidatos com score |
 | Criar conta (onboarding) | `funcionalidades/onboarding-criar-conta.md` | `/criar-conta`: plano → conta → pagamento simulado (Stripe depois) → contratante → pronto |
+| Tutorial guiado (Driver.js) | `funcionalidades/onboarding-tour.md` | `components/GuidedTour/` (fluxos em `flows.ts`), helper no Header, `data-tour` em NavRail/SecondaryNav/ButtonAdd; só para contas vindas do "Criar conta" |
+| Telas de erro HTTP | `pages/Errors/` | `ErrorStatusPage` (design 404), `/404`, `/erro/:code`, `/erros` (faixas 4xx e 5xx) |
 | Login | `funcionalidades/login.md` | carrossel/vídeos, SSO desabilitado até existir integração |
 | Safras, Usuários, Plano de Contas, Centro de Custo, Produtos, Fazendas | `funcionalidades/*.md` | formulários por seção |
 
