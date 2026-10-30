@@ -181,6 +181,8 @@ export interface ModuleSubscription {
     next: string;
     prev: string;
     done: string;
+    pause: string;
+    pausedNote: string;
     skip: string;
     progress: string;
     allDone: string;

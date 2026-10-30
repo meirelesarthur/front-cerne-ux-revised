@@ -8,6 +8,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 
 import { driver, type Driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -89,6 +90,9 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
 
   const [state, setState] = useState<TourState>(() => tourStorage.load(userKey));
   const [runningFlowId, setRunningFlowId] = useState<string | null>(null);
+  /** Passo pausado pelo usuário (para digitar sem o balão): volta sozinho na próxima etapa. */
+  const [paused, setPaused] = useState<{ flowId: string; index: number } | null>(null);
+  const resumeRef = useRef<(() => void) | null>(null);
 
   // recarrega ao trocar de usuário
   useEffect(() => {
@@ -133,6 +137,8 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
 
   const teardown = useCallback(() => {
     document.body.classList.remove('cerne-tour-passthrough');
+    setPaused(null);
+    resumeRef.current = null;
     detachRef.current?.();
     detachRef.current = null;
     if (driverRef.current) {
@@ -164,6 +170,14 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
 
       // passo ligado a um estado da tela (ex.: etapa N do assistente): só aparece quando ele ocorre
       if (step.showWhen) {
+        // se o usuário já está em outra etapa do assistente (ex.: retomou o tutorial), salta para o
+        // passo que corresponde ao que está na tela, em vez de ficar esperando em silêncio
+        const here = await waitForElement(step.showWhen, 1200);
+        if (token !== runToken.current) return;
+        if (!here) {
+          const match = flow.steps.findIndex((st) => st.showWhen && document.querySelector(st.showWhen));
+          if (match >= 0 && match !== index) return runStep(flow, match, token);
+        }
         const ok = await waitUntilPresent(step.showWhen, () => token !== runToken.current);
         if (!ok || token !== runToken.current) return;
       }
@@ -196,16 +210,41 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
           progress.className = 'cerne-tour-progress';
           progress.textContent = t.stepOf.replace('{n}', String(index + 1)).replace('{t}', String(flow.steps.length));
           popover.footer.prepend(progress);
-          const skip = document.createElement('button');
-          skip.type = 'button';
-          skip.className = 'cerne-tour-skip';
-          skip.textContent = t.skip;
-          skip.onclick = () => {
-            teardown();
-            setFlowProgress(flow.id, 'skipped', index);
-            setRunningFlowId(null);
-          };
-          popover.footer.appendChild(skip);
+          // passos em que o usuário precisa digitar: "Pausar" esconde o balão sem perder o fio; o
+          // tutorial volta sozinho na próxima etapa (ou pelo botão Continuar da barrinha)
+          if (step.advanceWhen) {
+            const pause = document.createElement('button');
+            pause.type = 'button';
+            pause.className = 'cerne-tour-pause';
+            pause.textContent = t.pause;
+            pause.onclick = () => {
+              programmaticDestroy.current = true;
+              try {
+                driverRef.current?.destroy();
+              } catch {
+                /* já destruído */
+              }
+              programmaticDestroy.current = false;
+              driverRef.current = null;
+              document.body.classList.remove('cerne-tour-passthrough');
+              resumeRef.current = () => void runStep(flow, index, token);
+              setPaused({ flowId: flow.id, index });
+            };
+            popover.footer.appendChild(pause);
+          }
+          // nos passos de preenchimento, "Pausar" ocupa o lugar de "Pular tutorial" (o X ainda sai)
+          if (!step.advanceWhen) {
+            const skip = document.createElement('button');
+            skip.type = 'button';
+            skip.className = 'cerne-tour-skip';
+            skip.textContent = t.skip;
+            skip.onclick = () => {
+              teardown();
+              setFlowProgress(flow.id, 'skipped', index);
+              setRunningFlowId(null);
+            };
+            popover.footer.appendChild(skip);
+          }
         },
         onDestroyed: () => {
           // fechou pelo X, Esc ou clique fora: tratamos como "pausar" (fica salvo)
@@ -310,10 +349,25 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
   );
   const levelIndex = useMemo(() => LEVEL_THRESHOLDS.reduce((acc, min, i) => (points >= min ? i : acc), 0), [points]);
 
+  const pausedBar = paused && (
+    <Flex position="fixed" left="50%" bottom="84px" transform="translateX(-50%)" zIndex={9999} align="center" gap={3} bg="cardBG" borderWidth="1px" borderColor="border.muted" borderRadius="full" boxShadow="0 10px 30px rgba(0,0,0,.2)" pl={4} pr={2} py={2} role="status">
+      <Box boxSize="8px" borderRadius="full" bg="green.500" />
+      <Text fontSize="sm">{t.pausedNote}</Text>
+      <Text as="button" fontSize="sm" fontWeight="semibold" color="white" bg="green.600" borderRadius="full" px={3} py="4px" onClick={() => resumeRef.current?.()}>
+        {t.resume}
+      </Text>
+    </Flex>
+  );
+
   const value = useMemo<GuidedTourValue>(
     () => ({ enabled: !!state.enabled, flows: TOUR_FLOWS, progress: state.flows, points, levelIndex, runningFlowId, startFlow, restartFlow, resetAll }),
     [state.enabled, state.flows, points, levelIndex, runningFlowId, startFlow, restartFlow, resetAll]
   );
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={value}>
+      {children}
+      {pausedBar}
+    </Ctx.Provider>
+  );
 }

@@ -75,3 +75,8 @@ body.cerne-tour-passthrough .driver-overlay * {
 body.driver-active.cerne-tour-passthrough *:not(.driver-overlay):not(.driver-overlay *) {
   pointer-events: auto !important;
 }
+
+.cerne-tour-pause {
+  color: var(--chakra-colors-green-600, #059669) !important;
+  border-color: var(--chakra-colors-green-600, #059669) !important;
+}

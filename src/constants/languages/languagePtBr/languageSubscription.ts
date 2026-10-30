@@ -181,6 +181,8 @@ export const languageSubscription: ModuleSubscription = {
     next: "Próximo",
     prev: "Voltar",
     done: "Concluir",
+    pause: "Pausar",
+    pausedNote: "Tutorial pausado. Ele volta sozinho na próxima etapa.",
     skip: "Pular tutorial",
     progress: "{done} de {total} concluídos",
     allDone: "Tudo em dia!",
