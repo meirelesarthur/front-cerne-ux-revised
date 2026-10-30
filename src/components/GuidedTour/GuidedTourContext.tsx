@@ -370,8 +370,10 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
     </Text>
   );
 
+  // Barrinha no canto superior direito: cobre o X de fechar do formulário enquanto o tutorial está
+  // pausado, para ninguém fechar o primeiro cadastro por engano (perderia o que digitou).
   const pausedBar = paused && (
-    <Flex position="fixed" left="50%" bottom="84px" transform="translateX(-50%)" zIndex={9999} align="center" gap={3} bg="cardBG" borderWidth="1px" borderColor="border.muted" borderRadius="full" boxShadow="0 10px 30px rgba(0,0,0,.2)" pl={4} pr={2} py={2} role="status">
+    <Flex position="fixed" right="16px" top="80px" zIndex={9999} align="center" gap={3} bg="cardBG" borderWidth="1px" borderColor="border.muted" borderRadius="full" boxShadow="0 10px 30px rgba(0,0,0,.2)" pl={4} pr={2} py={2} role="status">
       <Box boxSize="8px" borderRadius="full" bg="green.500" />
       <Text fontSize="sm">{t.pausedNote}</Text>
       <Text as="button" fontSize="sm" fontWeight="semibold" color="white" bg="green.600" borderRadius="full" px={3} py="4px" onClick={() => resumeRef.current?.()}>
