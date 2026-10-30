@@ -514,7 +514,7 @@ export default function CreateOrUpdateFarm() {
       title={isEditing ? text.form.title.edit : text.form.title.create}
       subtitle={isEditing ? text.form.subtitle.edit : text.form.subtitle.create}
       footer={
-        <div data-tour="wizard-footer">
+        <div data-tour="wizard-footer" style={{ width: "100%" }}>
         <StepFooter
           stepLabel={stepCounterLabel}
           backLabel={text.form.footer.back}
