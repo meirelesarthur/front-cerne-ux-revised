@@ -514,6 +514,7 @@ export default function CreateOrUpdateFarm() {
       title={isEditing ? text.form.title.edit : text.form.title.create}
       subtitle={isEditing ? text.form.subtitle.edit : text.form.subtitle.create}
       footer={
+        <div data-tour="wizard-footer">
         <StepFooter
           stepLabel={stepCounterLabel}
           backLabel={text.form.footer.back}
@@ -525,6 +526,7 @@ export default function CreateOrUpdateFarm() {
           nextDisabled={isSubmitting || isLoading}
           hideNext={!canSave}
         />
+        </div>
       }
     >
       {/* `<Form>` só como wrapper de padding — a navegação/salvamento do
@@ -532,7 +534,7 @@ export default function CreateOrUpdateFarm() {
           `StepFooter`, nunca via submit nativo (mesmo padrão de
           `CreateOrUpdatePessoa.tsx`). */}
       <Form noPadding onSubmit={(e) => e.preventDefault()}>
-        <StepsRoot step={idx} count={STEPS.length}>
+        <StepsRoot step={idx} count={STEPS.length} data-tour="wizard" data-tour-step={STEPS[idx]}>
           <StepsList>
             {STEPS.map((key, i) => (
               <Steps.Item key={key} index={i} title={stepLabels[key]} />

@@ -24,6 +24,13 @@ export interface TourStep {
    * Padrão: avança pelo botão "Próximo".
    */
   advanceOn?: 'click';
+  /**
+   * Só mostra o passo quando este seletor existir (ex.: a etapa N do assistente está aberta).
+   * O motor espera sem limite; se o usuário abandonar o fluxo, a espera é cancelada.
+   */
+  showWhen?: string;
+  /** Avança sozinho quando este seletor passar a existir (ex.: o usuário foi para a próxima etapa). */
+  advanceWhen?: string;
   /** Se o elemento não aparecer (ex.: permissão, grupo recolhido), pula o passo em vez de travar. */
   optional?: boolean;
   /** Tempo máximo (ms) esperando o elemento aparecer. Padrão 4000. */

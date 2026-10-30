@@ -55,6 +55,18 @@ export const useGuidedTour = (): GuidedTourValue => useContext(Ctx) ?? DISABLED;
 const nowIso = () => new Date().toISOString();
 
 /** Espera um elemento aparecer no DOM (as telas carregam depois da navegação). */
+/** Espera indefinidamente (até o fluxo mudar) o seletor aparecer: usado por passos que dependem da ação do usuário. */
+function waitUntilPresent(selector: string, isCancelled: () => boolean): Promise<boolean> {
+  return new Promise((resolve) => {
+    const tick = () => {
+      if (isCancelled()) return resolve(false);
+      if (document.querySelector(selector)) return resolve(true);
+      window.setTimeout(tick, 200);
+    };
+    tick();
+  });
+}
+
 function waitForElement(selector: string, timeoutMs: number): Promise<Element | null> {
   return new Promise((resolve) => {
     const started = Date.now();
@@ -120,6 +132,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
   );
 
   const teardown = useCallback(() => {
+    document.body.classList.remove('cerne-tour-passthrough');
     detachRef.current?.();
     detachRef.current = null;
     if (driverRef.current) {
@@ -149,6 +162,12 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
 
       if (step.route && !window.location.pathname.startsWith(step.route)) navigate(step.route);
 
+      // passo ligado a um estado da tela (ex.: etapa N do assistente): só aparece quando ele ocorre
+      if (step.showWhen) {
+        const ok = await waitUntilPresent(step.showWhen, () => token !== runToken.current);
+        if (!ok || token !== runToken.current) return;
+      }
+
       let el: Element | null = null;
       if (step.element) {
         el = await waitForElement(step.element, step.waitMs ?? 4000);
@@ -159,11 +178,16 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
       const go = (to: number) => void runStep(flow, to, token);
       const last = index === flow.steps.length - 1;
       const clickToAdvance = !!(step.advanceOn === 'click' && el);
+      const autoAdvance = clickToAdvance || !!step.advanceWhen;
 
       const d = driver({
         stagePadding: 6,
         stageRadius: 10,
-        overlayOpacity: 0.55,
+        // passos que esperam o usuário agir na tela (ex.: preencher o formulário): fundo leve e
+        // sem bloquear cliques; os demais escurecem a tela e focam o elemento
+        overlayOpacity: step.advanceWhen ? 0.18 : 0.55,
+        // nesses passos, clicar fora (para preencher campos) NÃO fecha o tutorial
+        ...(step.advanceWhen ? { overlayClickBehavior: () => {} } : {}),
         smoothScroll: true,
         allowClose: true,
         popoverClass: 'cerne-tour',
@@ -185,6 +209,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
         },
         onDestroyed: () => {
           // fechou pelo X, Esc ou clique fora: tratamos como "pausar" (fica salvo)
+          document.body.classList.remove('cerne-tour-passthrough');
           if (programmaticDestroy.current) return;
           detachRef.current?.();
           detachRef.current = null;
@@ -194,6 +219,7 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
         },
       });
       driverRef.current = d;
+      document.body.classList.toggle('cerne-tour-passthrough', !!step.advanceWhen);
 
       d.highlight({
         element: el ?? undefined,
@@ -202,13 +228,27 @@ export function GuidedTourProvider({ children }: { children: ReactNode }) {
           description: step.description,
           side: step.side ?? 'bottom',
           align: 'start',
-          showButtons: clickToAdvance ? ['previous', 'close'] : ['next', 'previous', 'close'],
+          showButtons: autoAdvance ? ['previous', 'close'] : ['next', 'previous', 'close'],
           nextBtnText: last ? t.done : t.next,
           prevBtnText: t.prev,
           onNextClick: () => go(index + 1),
           onPrevClick: () => go(Math.max(0, index - 1)),
         },
       });
+
+      // avança sozinho quando a tela chega ao estado seguinte (ex.: o usuário foi para a próxima etapa)
+      if (step.advanceWhen) {
+        const sel = step.advanceWhen;
+        const timer = window.setInterval(() => {
+          if (token !== runToken.current) return window.clearInterval(timer);
+          if (document.querySelector(sel)) {
+            window.clearInterval(timer);
+            detachRef.current = null;
+            go(index + 1);
+          }
+        }, 250);
+        detachRef.current = () => window.clearInterval(timer);
+      }
 
       if (clickToAdvance && el) {
         const onClick = () => {

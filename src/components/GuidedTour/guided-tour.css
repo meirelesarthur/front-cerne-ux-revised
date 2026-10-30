@@ -66,3 +66,12 @@
 .driver-popover.cerne-tour .driver-popover-arrow-side-bottom.driver-popover-arrow {
   border-color: transparent;
 }
+
+/* passos em que o usuário precisa mexer na tela: o fundo não captura cliques */
+body.cerne-tour-passthrough .driver-overlay,
+body.cerne-tour-passthrough .driver-overlay * {
+  pointer-events: none !important;
+}
+body.driver-active.cerne-tour-passthrough *:not(.driver-overlay):not(.driver-overlay *) {
+  pointer-events: auto !important;
+}

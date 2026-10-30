@@ -37,6 +37,7 @@ GuidedTour/
 - **Um passo por vez**: cada passo é um `driver().highlight(...)`. É isso que permite atravessar rotas (o Driver.js nativo assume uma página). O motor navega até `step.route`, espera o elemento aparecer (`waitMs`, padrão 4 s) e só então mostra o balão.
 - Passo com `advanceOn: 'click'` avança quando o usuário clica **no próprio elemento destacado** (o botão Próximo some). Passo `optional: true` é pulado se o elemento não existir (permissão, menu recolhido).
 - Passo sem `element` vira aviso centralizado.
+- **Passos atrelados a um estado da tela** (assistente de várias etapas): `showWhen` (seletor que precisa existir para o balão aparecer) e `advanceWhen` (seletor que, ao aparecer, avança o tutorial sozinho). Assim o balão acompanha o usuário etapa por etapa. No cadastro de fazenda, o formulário expõe `data-tour="wizard"` + `data-tour-step="<etapa>"` e `data-tour="wizard-footer"`. Nesses passos o fundo fica leve e **não bloqueia cliques** (classe `cerne-tour-passthrough`), para o usuário preencher os campos com o balão aberto.
 
 ## Como criar um fluxo novo
 1. Em `flows.ts`, acrescente um objeto em `TOUR_FLOWS` (`id` único e estável, `title`, `description`, `icon` do kit, `points`, `minutes`, `steps`).
