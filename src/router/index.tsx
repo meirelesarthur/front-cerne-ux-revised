@@ -1512,6 +1512,9 @@ const PlanejamentosList = lazy(() => import('@/pages/Operacional/Planejamentos')
 const CreateOrUpdatePlanning = lazy(
   () => import('@/pages/Operacional/Planejamentos/CreateOrUpdatePlanning')
 );
+// Visão geral da nova OS (porta "O que você precisa?" + jornada espelhando a
+// compra). Item de menu `ope-os-hub`; guarda = qualquer permissão de OS.
+const ServiceOrdersHub = lazy(() => import('@/pages/Operacional/ServiceOrdersHub'));
 const ServiceOrdersList = lazy(() => import('@/pages/Operacional/ServiceOrders'));
 const CreateOrUpdateServiceOrder = lazy(
   () => import('@/pages/Operacional/ServiceOrders/CreateOrUpdateServiceOrder')
@@ -12199,6 +12202,23 @@ export function AppRoutes() {
             nesta Tarefa). Item de menu (`ope-os-lis`) e permissão
             (`service-orders_view`) já existiam em `navigationTree.ts`/
             `navigationPermissions.ts` — NENHUMA edição neles. */}
+        {/* Operacional — Ordens de Serviço › Central (nova OS × Apontamento ×
+            Compra). Declarada antes do catch-all `/operacional/*`. */}
+        <Route
+          path="/operacional/ordens-de-servico"
+          element={
+            <RequirePermission
+              anyOf={[
+                'service-orders_view',
+                'my-service-orders_view',
+                'monitoring-service-orders_view',
+                'rating-service-orders_view',
+              ]}
+            >
+              {lazyRoute(ServiceOrdersHub)}
+            </RequirePermission>
+          }
+        />
         <Route
           path="/operacional/lista-os"
           element={

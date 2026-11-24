@@ -5,6 +5,99 @@
 import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
+  hub: {
+    pageTitle: 'Ordens de Serviço',
+    pageSubtitle: 'Escolha o que você vai lançar. Cada opção leva ao módulo certo.',
+    helpButton: 'Como funciona',
+    cardsAriaLabel: 'O que você vai lançar',
+    options: {
+      service: {
+        title: 'Contratar serviço',
+        description: 'Prestador, oficina, frete ou diarista de fora da fazenda.',
+        destination: 'Abre a solicitação de serviço',
+      },
+      internal: {
+        title: 'Registrar trabalho da equipe',
+        description: 'Pessoas e máquinas da própria fazenda.',
+        destination: 'Abre o apontamento',
+      },
+      purchase: {
+        title: 'Comprar produto',
+        description: 'Insumos e materiais que entram no estoque.',
+        destination: 'Abre a solicitação de compra',
+      },
+    },
+    help: {
+      title: 'Como funciona a Ordem de Serviço',
+      close: 'Fechar',
+      about: {
+        title: 'O que é a OS',
+        text: 'A Ordem de Serviço é para contratar alguém de fora da fazenda. Ela segue a cadeia de compras e só é paga depois que alguém da fazenda confirma o serviço. O trabalho da própria equipe é registrado no Apontamento.',
+      },
+      journey: {
+        title: 'Como a OS anda',
+        ariaLabel: 'Etapas da ordem de serviço',
+        whoLabel: 'Quem age',
+        steps: {
+          request: {
+            label: '1. Pedir',
+            who: 'Quem viu a necessidade',
+            what: 'Diz qual serviço, onde vai ser feito, até quando e quanto acha que custa.',
+            open: 'Abrir pedidos',
+          },
+          approve: {
+            label: '2. Aprovar',
+            who: 'Quem aprova os gastos',
+            what: 'Confere o valor e o motivo. Aprova, devolve com o motivo ou recusa.',
+            open: 'Abrir aprovações',
+          },
+          hire: {
+            label: '3. Contratar',
+            who: 'Quem faz as compras',
+            what: 'Pede preço a um ou mais prestadores, escolhe e envia o pedido.',
+            open: 'Abrir cotações',
+          },
+          execute: {
+            label: '4. Executar',
+            who: 'O prestador, acompanhado pelo responsável',
+            what: 'O responsável marca quando começou e quando terminou e anota algum problema.',
+            open: 'Abrir minhas OS',
+          },
+          attest: {
+            label: '5. Atestar',
+            who: 'O responsável na fazenda',
+            what: 'Confirma que o serviço foi feito, quanto foi feito e dá uma nota de 1 a 5.',
+            open: 'Abrir avaliações',
+          },
+          pay: {
+            label: '6. Pagar',
+            who: 'O financeiro',
+            what: 'Gera a conta a pagar do prestador a partir do serviço confirmado.',
+            open: 'Abrir recebimentos',
+          },
+        },
+      },
+      shortcuts: {
+        title: 'Onde acompanhar',
+        mine: {
+          title: 'Minhas OS',
+          description: 'As que estão com você para executar.',
+        },
+        all: {
+          title: 'Todas as OS',
+          description: 'Todas as ordens, em qualquer etapa.',
+        },
+        monitoring: {
+          title: 'Em execução',
+          description: 'Acompanhe o que está sendo feito agora.',
+        },
+        ratings: {
+          title: 'A avaliar',
+          description: 'Serviços terminados esperando a sua nota.',
+        },
+      },
+    },
+  },
   serviceOrder: {
     singularLabel: 'Ordem de Serviço',
     pluralLabel: 'Ordens de Serviço',
@@ -43,8 +136,9 @@ export const languageServiceOrders: ModuleServiceOrders = {
         endDate: 'Dt. fim',
       },
       emptyState: {
-        title: 'Nenhuma ordem de serviço cadastrada.',
-        description: 'Comece emitindo sua primeira ordem de serviço.',
+        title: 'Nenhuma ordem de serviço ainda.',
+        description:
+          'Ordem de serviço é para contratar gente de fora da fazenda, como um empreiteiro ou uma oficina. Se o trabalho é da sua equipe, use Apontamento.',
         titleFiltered: 'Nenhuma ordem de serviço encontrada.',
         descriptionFiltered: 'Tente ajustar os filtros ou limpar a busca.',
         cta: 'Emitir OS',

@@ -5,6 +5,87 @@
 import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
+  hub: {
+    pageTitle: 'Service Orders',
+    pageSubtitle: 'Choose what you are going to record. Each option takes you to the right module.',
+    helpButton: 'How it works',
+    cardsAriaLabel: 'What you are going to record',
+    options: {
+      service: {
+        title: 'Hire a service',
+        description: 'Contractor, repair shop, freight or day laborer from outside the farm.',
+        destination: 'Opens the service request',
+      },
+      internal: {
+        title: 'Record team work',
+        description: 'People and machines from the farm itself.',
+        destination: 'Opens the appointment',
+      },
+      purchase: {
+        title: 'Buy a product',
+        description: 'Inputs and materials that go into stock.',
+        destination: 'Opens the purchase request',
+      },
+    },
+    help: {
+      title: 'How the Service Order works',
+      close: 'Close',
+      about: {
+        title: 'What a service order is',
+        text: 'A service order is for hiring someone from outside the farm. It follows the purchasing chain and is only paid after someone on the farm confirms the service. Work done by your own team is recorded as an Appointment.',
+      },
+      journey: {
+        title: 'How a service order moves',
+        ariaLabel: 'Service order steps',
+        whoLabel: 'Who acts',
+        steps: {
+          request: {
+            label: '1. Request',
+            who: 'Whoever saw the need',
+            what: 'Says which service, where it will be done, by when and how much it may cost.',
+            open: 'Open requests',
+          },
+          approve: {
+            label: '2. Approve',
+            who: 'Whoever approves spending',
+            what: 'Checks value and reason. Approves, returns with the reason or rejects.',
+            open: 'Open approvals',
+          },
+          hire: {
+            label: '3. Hire',
+            who: 'Whoever does the purchasing',
+            what: 'Asks one or more providers for a price, chooses and sends the order.',
+            open: 'Open quotations',
+          },
+          execute: {
+            label: '4. Execute',
+            who: 'The provider, followed by the person in charge',
+            what: 'The person in charge marks when it started and finished and notes any problem.',
+            open: 'Open my service orders',
+          },
+          attest: {
+            label: '5. Confirm',
+            who: 'The person in charge on the farm',
+            what: 'Confirms the service was done, how much was done and gives a 1 to 5 rating.',
+            open: 'Open ratings',
+          },
+          pay: {
+            label: '6. Pay',
+            who: 'Finance',
+            what: 'Creates the provider payable from the confirmed service.',
+            open: 'Open receipts',
+          },
+        },
+      },
+      shortcuts: {
+        title: 'Where to follow up',
+        mine: { title: 'My service orders', description: 'The ones assigned to you.' },
+        all: { title: 'All service orders', description: 'Every order, at any step.' },
+        monitoring: { title: 'In progress', description: 'Follow what is being done now.' },
+        ratings: { title: 'To rate', description: 'Finished services waiting for your rating.' },
+      },
+    },
+  },
   serviceOrder: {
     singularLabel: 'Service Order',
     pluralLabel: 'Service Orders',
@@ -43,8 +124,9 @@ export const languageServiceOrders: ModuleServiceOrders = {
         endDate: 'End date',
       },
       emptyState: {
-        title: 'No service order registered.',
-        description: 'Start by issuing your first service order.',
+        title: 'No service orders yet.',
+        description:
+          'A service order is for hiring people from outside the farm, like a contractor or a repair shop. If your own team does the work, use Appointment.',
         titleFiltered: 'No service order found.',
         descriptionFiltered: 'Try adjusting the filters or clearing the search.',
         cta: 'Issue Service Order',

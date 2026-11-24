@@ -189,6 +189,7 @@ import type {
   RequestPurchaseForm as RequestPurchaseFormType,
 } from '@/@types/v2/RequestPurchases';
 
+import { getInitialRequestType } from './initialRequestType';
 import { attachmentsRequired, emptyAttachmentRow, emptyItemRow } from './itemRowGuards';
 import { RequestAttachmentRow } from './RequestAttachmentRow';
 import { RequestItemRow } from './RequestItemRow';
@@ -229,6 +230,7 @@ export default function CreateOrUpdateSolicitacao() {
   // É edição quando existe um GUID válido na rota ("novo" não casa com
   // `/:requestPurchaseId`).
   const isEditing = isValidGuid(requestPurchaseId);
+  const initialRequestType = getInitialRequestType(location.search, isEditing);
 
   // Guard de navegação: `requestPurchaseId` presente mas NÃO é um GUID válido
   // (URL adulterada) — redireciona para a listagem (mirror
@@ -280,7 +282,10 @@ export default function CreateOrUpdateSolicitacao() {
     resolver: requestPurchaseSchemaResolver(languageGB, { requiresAuthorizer }) as any,
     reValidateMode: 'onChange',
     defaultValues: {
-      type: null,
+      // Nova OS: `?tipo=S` (porta "O que você precisa?") pré-seleciona o tipo na criação.
+      type: initialRequestType
+        ? requestPurchaseTypeOptions.getOption(initialRequestType, languageGB)
+        : null,
       // "Data do Pedido" somente leitura, default hoje (legado FM03).
       request_date: format(new Date(), 'yyyy-MM-dd'),
       justification: '',

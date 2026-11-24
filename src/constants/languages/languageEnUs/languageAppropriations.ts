@@ -10,7 +10,8 @@ export const languageAppropriations: ModuleAppropriations = {
     pluralLabel: 'Appropriations',
     list: {
       pageTitle: 'Appropriations',
-      pageSubtitle: 'Agricultural/livestock production costing by day/area/operation/activity.',
+      pageSubtitle:
+        'Record work done by the farm team: what was done, where, who worked, machines and material used.',
       deletedToast: 'Appropriation removed successfully',
       statusLegend: {
         opened: 'Open',
@@ -49,11 +50,12 @@ export const languageAppropriations: ModuleAppropriations = {
         comingSoonHint: 'Coming soon',
       },
       emptyState: {
-        title: 'No appropriations yet.',
-        description: 'Start by adding your first appropriation.',
+        title: 'No appointments yet.',
+        description:
+          'An appointment records work by your team, like painting a fence or fertilizing a field. To hire someone from outside, use Service Order.',
         titleFiltered: 'No appropriations found.',
         descriptionFiltered: 'Try adjusting the filters or clearing the search.',
-        cta: 'Add New',
+        cta: 'Record work',
       },
     },
     form: {
@@ -259,7 +261,7 @@ export const languageAppropriations: ModuleAppropriations = {
         finish: 'Finish',
         finishConfirmTitle: 'Finish appropriation',
         finishConfirmDescription:
-          'Finishing moves stock for supply/production items. Do you want to continue?',
+          'When you finish, the material used leaves the stock and the recorded production enters the stock. The next step is to post the cost (Appropriate).',
         appropriate: 'Appropriate',
         revertStatus: 'Revert Status',
         finishedToast: 'Appropriation finished successfully',

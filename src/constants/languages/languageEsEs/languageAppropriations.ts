@@ -10,7 +10,8 @@ export const languageAppropriations: ModuleAppropriations = {
     pluralLabel: 'Apuntes',
     list: {
       pageTitle: 'Apuntes',
-      pageSubtitle: 'Costeo de producción agropecuaria por día/área/operación/actividad.',
+      pageSubtitle:
+        'Registre el trabajo hecho por el equipo de la finca: qué se hizo, dónde, quién trabajó, máquinas y material usado.',
       deletedToast: 'Apunte eliminado con éxito',
       statusLegend: {
         opened: 'Abierto',
@@ -49,11 +50,12 @@ export const languageAppropriations: ModuleAppropriations = {
         comingSoonHint: 'Disponible próximamente',
       },
       emptyState: {
-        title: 'Ningún apunte registrado.',
-        description: 'Comience agregando su primer apunte.',
+        title: 'Todavía no hay apuntes.',
+        description:
+          'El apunte registra el trabajo de su equipo, como pintar una cerca o abonar un lote. Para contratar a alguien de fuera, use Orden de Servicio.',
         titleFiltered: 'Ningún apunte encontrado.',
         descriptionFiltered: 'Intente ajustar los filtros o borrar la búsqueda.',
-        cta: 'Agregar Nuevo',
+        cta: 'Registrar trabajo',
       },
     },
     form: {
@@ -259,7 +261,7 @@ export const languageAppropriations: ModuleAppropriations = {
         finish: 'Finalizar',
         finishConfirmTitle: 'Finalizar apunte',
         finishConfirmDescription:
-          'Al finalizar, los ítems de insumo/producción mueven stock. ¿Desea continuar?',
+          'Al finalizar, el material usado sale del stock y la producción registrada entra en el stock. El siguiente paso es registrar el costo (Apropiar).',
         appropriate: 'Apropiar',
         revertStatus: 'Revertir Estado',
         finishedToast: 'Apunte finalizado con éxito',

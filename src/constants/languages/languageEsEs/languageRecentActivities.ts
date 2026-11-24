@@ -44,7 +44,7 @@ export const languageRecentActivities: ModuleRecentActivities = {
       pasture: 'Pasturas',
       dietBeat: 'Batida de dieta',
       feeding: 'Alimentación',
-      appropriation: 'Apunte agrícola',
+      appropriation: 'Apunte',
       marking: 'Marcación',
       breedingMating: 'Apareamiento',
       pregnancyDiagnosis: 'Diagnóstico de gestación',

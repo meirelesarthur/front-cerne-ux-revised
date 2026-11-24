@@ -6,6 +6,87 @@
 import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
+  hub: {
+    pageTitle: 'Órdenes de Servicio',
+    pageSubtitle: 'Elija lo que va a registrar. Cada opción lleva al módulo correcto.',
+    helpButton: 'Cómo funciona',
+    cardsAriaLabel: 'Lo que va a registrar',
+    options: {
+      service: {
+        title: 'Contratar servicio',
+        description: 'Contratista, taller, flete o jornalero de fuera de la finca.',
+        destination: 'Abre la solicitud de servicio',
+      },
+      internal: {
+        title: 'Registrar trabajo del equipo',
+        description: 'Personas y máquinas de la propia finca.',
+        destination: 'Abre el apunte',
+      },
+      purchase: {
+        title: 'Comprar producto',
+        description: 'Insumos y materiales que entran en el stock.',
+        destination: 'Abre la solicitud de compra',
+      },
+    },
+    help: {
+      title: 'Cómo funciona la Orden de Servicio',
+      close: 'Cerrar',
+      about: {
+        title: 'Qué es la OS',
+        text: 'La Orden de Servicio es para contratar a alguien de fuera de la finca. Sigue la cadena de compras y solo se paga después de que alguien de la finca confirma el servicio. El trabajo del propio equipo se registra en el Apunte.',
+      },
+      journey: {
+        title: 'Cómo avanza la OS',
+        ariaLabel: 'Etapas de la orden de servicio',
+        whoLabel: 'Quién actúa',
+        steps: {
+          request: {
+            label: '1. Pedir',
+            who: 'Quien vio la necesidad',
+            what: 'Dice qué servicio, dónde se hará, hasta cuándo y cuánto cree que cuesta.',
+            open: 'Abrir pedidos',
+          },
+          approve: {
+            label: '2. Aprobar',
+            who: 'Quien aprueba los gastos',
+            what: 'Revisa el valor y el motivo. Aprueba, devuelve con el motivo o rechaza.',
+            open: 'Abrir aprobaciones',
+          },
+          hire: {
+            label: '3. Contratar',
+            who: 'Quien hace las compras',
+            what: 'Pide precio a uno o más proveedores, elige y envía el pedido.',
+            open: 'Abrir cotizaciones',
+          },
+          execute: {
+            label: '4. Ejecutar',
+            who: 'El proveedor, acompañado por el responsable',
+            what: 'El responsable marca cuándo empezó y cuándo terminó y anota algún problema.',
+            open: 'Abrir mis OS',
+          },
+          attest: {
+            label: '5. Confirmar',
+            who: 'El responsable en la finca',
+            what: 'Confirma que el servicio se hizo, cuánto se hizo y da una nota de 1 a 5.',
+            open: 'Abrir evaluaciones',
+          },
+          pay: {
+            label: '6. Pagar',
+            who: 'Finanzas',
+            what: 'Genera la cuenta por pagar del proveedor a partir del servicio confirmado.',
+            open: 'Abrir recepciones',
+          },
+        },
+      },
+      shortcuts: {
+        title: 'Dónde seguir',
+        mine: { title: 'Mis OS', description: 'Las que están con usted para ejecutar.' },
+        all: { title: 'Todas las OS', description: 'Todas las órdenes, en cualquier etapa.' },
+        monitoring: { title: 'En ejecución', description: 'Siga lo que se está haciendo ahora.' },
+        ratings: { title: 'Por evaluar', description: 'Servicios terminados esperando su nota.' },
+      },
+    },
+  },
   serviceOrder: {
     singularLabel: 'Orden de Servicio',
     pluralLabel: 'Órdenes de Servicio',
@@ -44,8 +125,9 @@ export const languageServiceOrders: ModuleServiceOrders = {
         endDate: 'Fecha fin',
       },
       emptyState: {
-        title: 'Ninguna orden de servicio registrada.',
-        description: 'Comience emitiendo su primera orden de servicio.',
+        title: 'Todavía no hay órdenes de servicio.',
+        description:
+          'La orden de servicio es para contratar gente de fuera de la finca, como un contratista o un taller. Si el trabajo es de su equipo, use Apunte.',
         titleFiltered: 'Ninguna orden de servicio encontrada.',
         descriptionFiltered: 'Intente ajustar los filtros o limpiar la búsqueda.',
         cta: 'Emitir OS',

@@ -1160,6 +1160,23 @@ export const menuModules: NavModule[] = [
     emoji: '⚙️',
     icon: 'gauge',
     groups: [
+      // Apontamento (nova OS × Apontamento, branch feat/nova-ordem-servico-apontamento):
+      // registro do trabalho da EQUIPE da fazenda, sai de dentro de "Agricultura"
+      // porque vale para agricultura e pecuária. O id `ope-agr-apo` é mantido
+      // (permissão `appropriations_view` e trilhas existentes dependem dele).
+      {
+        id: 'ope-apontamento',
+        label: 'Apontamento',
+        icon: 'edit-line',
+        items: [
+          {
+            id: 'ope-agr-apo',
+            label: 'Apontamentos',
+            path: '/operacional/apontamentos',
+            icon: 'edit-line',
+          },
+        ],
+      },
       {
         id: 'ope-agricultura',
         label: 'Agricultura',
@@ -1170,12 +1187,6 @@ export const menuModules: NavModule[] = [
             label: 'Planejamentos',
             path: '/operacional/planejamentos',
             icon: 'clipboard-list',
-          },
-          {
-            id: 'ope-agr-apo',
-            label: 'Apontamentos',
-            path: '/operacional/apontamentos',
-            icon: 'edit-line',
           },
           { id: 'ope-agr-rom', label: 'Romaneios', path: '/operacional/romaneios', icon: 'document' },
           // Colheita de Frutas (HarvestProduct, F-040, execução 040,
@@ -2025,6 +2036,14 @@ export const menuModules: NavModule[] = [
         label: 'Ordens de Serviço',
         icon: 'clipboard-check',
         items: [
+          // Central da nova OS: três cards que levam ao módulo certo (OS × Apontamento ×
+          // Compra); a jornada fica na ajuda "Como funciona".
+          {
+            id: 'ope-os-hub',
+            label: 'Central',
+            path: '/operacional/ordens-de-servico',
+            icon: 'route',
+          },
           {
             id: 'ope-os-min',
             label: 'Minhas OS',
