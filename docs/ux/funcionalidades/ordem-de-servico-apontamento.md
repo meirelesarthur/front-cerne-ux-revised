@@ -36,6 +36,7 @@ O que o ERP tem e a ordem de compra do Cerne ainda não mostra. Itens com **back
 | Totais | Total de produtos, frete, seguro e outras despesas | Total dos itens | Resumo de totais com frete (back-end para frete e despesas) |
 | Autorizadores | Lista de autorizadores, alçada, data, situação e observação | Aprovação na tela de Autorização | Mostrar quem aprovou ou recusou e o motivo dentro da ordem (front, leitura do histórico) |
 | Reabrir e cancelar | Ações "Reabrir" e "Cancelar" na própria ordem | Voltar etapa e mudar status | Manter as ações atuais com nomes claros: "Reabrir", "Cancelar" |
+| Operação | — | Não tem; só na despesa | Campo Operação no cabeçalho, levado à despesa gerada (back-end e front; decidido em 24/11) |
 | Justificativa por item | Justificativa por produto | Justificativa geral | Manter geral; avaliar por item depois |
 | Serviço | — | Recebimento com termos de produto (NF-e, receber) | No tipo Serviço, falar "Confirmar serviço" e "Serviço feito" no Recebimento (front) |
 | Fiscal (ICMS, IPI, CBS/IBS) | Detalhe tributário por item | Fora do escopo | Fica fora: o Cerne não emite a NF da compra |
@@ -100,6 +101,28 @@ O que o ERP tem e a ordem de compra do Cerne ainda não mostra. Itens com **back
 - **Fica igual:** o status 1 do fluxo continua "Solicitação" (é a etapa, não o documento); rotas `/administrativo/solicitacao*` mantidas; API e permissões sem mudança.
 - **Como validar:** o menu não mostra mais Ordens de Serviço; `/operacional/lista-os` não abre; Operacional › Trabalho e compras › Central mostra dois cards; Suprimentos › Ordens de compra › Novo abre "Nova Ordem de Compra".
 - **App mobile:** ainda usa a OS e o mesmo banco; o ajuste equivalente está na seção "Web × App" abaixo.
+
+## Mudança no cadastro de Operações: "Tipo de serviço" no Apontamento (decisão de 24/11)
+
+**Decisão do dono:** o cadastro de Operações, que parametriza o Apontamento e a Ordem de compra, vai mudar.
+
+| Onde | Hoje | Depois |
+|------|------|--------|
+| Apontamento (web e app) | Dois campos em cascata: "Operação" e depois "Atividade" | Um campo só: **"Tipo de serviço"**, que junta operação e atividade (ex.: "Pulverização · Aplicação de herbicida") |
+| Ordem de compra | Sem operação no formulário nem no envio à API | **Campo "Operação" na própria ordem** (decidido em 24/11) |
+
+**Onde o Apontamento usa operação e atividade hoje (web):** `AppropriationHeaderFields.tsx` (cascata `operation_uuid` → `activity_uuid` pelo `operation_id`), `CreateOrUpdateAppropriation.tsx`, `FinishAppropriation.tsx`, `appropriation-form-mapper.ts`, `appropriation-schema.ts` e `appropriation-service.ts` (envio de `operation_uuid` e `activity_uuid`). No app Operação, a Etapa 1 do apontamento tem os mesmos dois seletores (FLX-064, 065, 141).
+
+**Caminho de menor impacto:** o "Tipo de serviço" pode ser só de tela no começo, listando as atividades com o nome da operação na frente e enviando à API os dois códigos de sempre. Se o cadastro ganhar um registro próprio de tipo de serviço, aí muda o contrato da API e o app junto.
+
+**Pontos em aberto:**
+- **Ordem de compra com Operação (decidido: na própria ordem):** hoje a ordem de compra não tem operação (o envio só leva tipo, datas, justificativa, prioridade, autorizador e itens). Ela passa a ter o campo **Operação** no cabeçalho, filtrado pelo uso, e a operação segue para a despesa gerada no financeiro, onde hoje é digitada de novo na apropriação. Precisa:
+  - **Back-end:** `operation_uuid` na ordem de compra (gravar, devolver no detalhe e na lista) e levar à despesa gerada.
+  - **Front:** campo Operação no formulário (`CreateOrUpdateSolicitacao.tsx`, schema e `request-purchase-service.ts`), exibição no detalhe e preenchimento da apropriação da despesa a partir da ordem.
+  - **Obrigatória** (decidido em 24/11): sem Operação a ordem não é salva. Ordens antigas, criadas sem operação, continuam abrindo e só exigem o campo ao serem editadas. A API valida o campo também.
+  - **Só Operação** (decidido em 24/11): a ordem de compra não leva Atividade. Na despesa gerada, a operação vem preenchida e a Atividade continua sendo escolhida na apropriação, como hoje.
+- **Outras telas com operação e atividade:** Pastagem, Planejamentos (operação e atividades), Rateios, Áreas, Contas a pagar e NF de entrada. Definir se todas passam a usar "Tipo de serviço" ou só o Apontamento.
+- **Uso Pecuária:** o "Tipo de serviço" precisa filtrar pelo uso (Agricultura ou Pecuária), como a operação faz hoje.
 
 ## Web × App: comparação com o catálogo de fluxos do GB CERNE APP (24/11)
 
