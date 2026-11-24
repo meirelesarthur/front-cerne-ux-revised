@@ -39,6 +39,44 @@ export interface NavGroup {
   label: string;
   icon: IconName;
   items: NavSubItem[];
+  /**
+   * Central própria do agrupador (opcional). Sem ela, clicar no rótulo do
+   * grupo abre a central genérica `/central/<id>` com os cards dos itens.
+   */
+  hubPath?: string;
+}
+
+/** Base da central genérica de agrupador (cards dos itens do 2º nível). */
+export const GROUP_HUB_BASE = '/central';
+
+/**
+ * Caminho da central de um agrupador: a própria (`hubPath`) ou a genérica.
+ * @param {NavGroup} group Agrupador do menu.
+ * @return {string} Caminho da central.
+ */
+export function getGroupHubPath(group: NavGroup): string {
+  return group.hubPath ?? `${GROUP_HUB_BASE}/${group.id}`;
+}
+
+/**
+ * Agrupador cuja central genérica é o pathname (`/central/<id>`), dentro dos
+ * módulos informados (use a árvore já podada por permissão).
+ * @param {string} pathname Pathname atual.
+ * @param {NavModule[]} modules Módulos onde procurar.
+ * @return {{ module: NavModule; group: NavGroup } | undefined} Módulo e grupo, se casar.
+ */
+export function findGroupByHubPath(
+  pathname: string,
+  modules: NavModule[]
+): { module: NavModule; group: NavGroup } | undefined {
+  const prefix = `${GROUP_HUB_BASE}/`;
+  if (!pathname.startsWith(prefix)) return undefined;
+  const groupId = pathname.slice(prefix.length).split('/')[0];
+  for (const module of modules) {
+    const group = module.groups?.find((g) => g.id === groupId);
+    if (group) return { module, group };
+  }
+  return undefined;
 }
 
 export interface NavModule {
@@ -1184,6 +1222,8 @@ export const menuModules: NavModule[] = [
         id: 'ope-apontamento',
         label: 'Trabalho e compras',
         icon: 'edit-line',
+        // Central própria (Apontamento × Ordem de compra), no lugar da genérica.
+        hubPath: '/operacional/central',
         items: [
           {
             id: 'ope-central',

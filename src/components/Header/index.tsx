@@ -12,7 +12,7 @@
 // badge), não mais no container raiz.
 
 import { useLanguage } from "@/hooks/useLanguage";
-import { findItemByPath, type NavModule } from "@/config/v2/navigationTree";
+import { findGroupByHubPath, findItemByPath, type NavModule } from "@/config/v2/navigationTree";
 import {
   Badge,
   Box,
@@ -67,6 +67,15 @@ export function Header({
 
   const { unreadCount: errorCount } = useErrorLog();
 
+  // Central genérica de agrupador (`/central/<grupo>`): o 3º nível é o grupo.
+  const hubGroup = useMemo(
+    () =>
+      expandedModule
+        ? findGroupByHubPath(location.pathname, [expandedModule])?.group
+        : undefined,
+    [location.pathname, expandedModule]
+  );
+
   const breadcrumbItems = [
     { label: "Início" },
     ...(expandedModule
@@ -74,7 +83,9 @@ export function Header({
       : []),
     ...(activeItem
       ? [{ label: languageGB.sidebar.navigation[activeItem.id] ?? activeItem.label }]
-      : []),
+      : hubGroup
+        ? [{ label: languageGB.sidebar.navigation[hubGroup.id] ?? hubGroup.label }]
+        : []),
   ];
 
   return (

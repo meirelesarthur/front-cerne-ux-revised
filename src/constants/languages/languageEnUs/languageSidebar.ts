@@ -1,6 +1,9 @@
 import { Sidebar } from '@/@types/language/sidebar';
 
+import { navDescriptions } from './languageSidebarDescriptions';
+
 export const languageSidebar: Sidebar = {
+  descriptions: navDescriptions,
   navigation: {
     painel: 'Home',
     favoritos: 'Favorites',
@@ -212,4 +215,13 @@ export const languageSidebar: Sidebar = {
   collapseSidebar: 'Collapse sidebar',
   placeholderDescription:
     'This screen is under construction. GB Cerne features will be available here soon.',
+  groupHub: {
+    subtitle: '{count} features in {module}. Pick one to open.',
+    subtitleOne: '1 feature in {module}.',
+    cardsAriaLabel: 'Group features',
+    notFoundTitle: 'Group not found',
+    notFoundDescription: 'This group does not exist or you do not have access to its features.',
+    openHub: 'Open the {group} hub',
+    toggleGroup: 'Show or hide the {group} items',
+  },
 } as const;

@@ -1516,6 +1516,7 @@ const CreateOrUpdatePlanning = lazy(
 // Visão geral da nova OS (porta "O que você precisa?" + jornada espelhando a
 // compra). Item de menu `ope-os-hub`; guarda = qualquer permissão de OS.
 const ServiceOrdersHub = lazy(() => import('@/pages/Operacional/ServiceOrdersHub'));
+const GroupHub = lazy(() => import('@/pages/GroupHub'));
 const ServiceOrdersList = lazy(() => import('@/pages/Operacional/ServiceOrders'));
 const CreateOrUpdateServiceOrder = lazy(
   () => import('@/pages/Operacional/ServiceOrders/CreateOrUpdateServiceOrder')
@@ -12214,6 +12215,10 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+        {/* Central genérica de agrupador do menu: cards dos itens do grupo. A
+            própria tela usa a árvore podada por permissão (sem guarda extra:
+            grupo sem itens visíveis mostra "Grupo não encontrado"). */}
+        <Route path="/central/:groupId" element={lazyRoute(GroupHub)} />
         {SERVICE_ORDERS_ENABLED && (
           <>
         <Route

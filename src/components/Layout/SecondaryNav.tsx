@@ -14,7 +14,12 @@ import { Icon as GbIcon } from "@/components/ui/Icon";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { Tooltip } from "@/components/ui/tooltip";
-import type { NavGroup, NavModule, NavSubItem } from "@/config/v2/navigationTree";
+import {
+  getGroupHubPath,
+  type NavGroup,
+  type NavModule,
+  type NavSubItem,
+} from "@/config/v2/navigationTree";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -53,6 +58,11 @@ function resolveActivePath(module: NavModule, pathname: string): string {
   );
   if (candidates.length === 0) return pathname;
   return candidates.reduce((best, path) => (path.length > best.length ? path : best));
+}
+
+/** A rota atual é a central do grupo (própria ou genérica `/central/<id>`). */
+export function isHubActive(group: NavGroup, pathname: string): boolean {
+  return pathname === getGroupHubPath(group);
 }
 
 function isItemActive(item: NavSubItem, activePath: string): boolean {
@@ -224,51 +234,91 @@ function NavGroupSection({
   group,
   open,
   activePath,
+  hubActive,
   onToggle,
+  onOpenHub,
   onNavigate,
 }: {
   group: NavGroup;
   open: boolean;
   activePath: string;
+  /** A rota atual é a central deste grupo. */
+  hubActive: boolean;
   onToggle: () => void;
+  /** Clique no rótulo: abre a central do grupo (cards dos itens). */
+  onOpenHub: () => void;
   onNavigate: (path: string) => void;
 }) {
   const { languageGB } = useLanguage();
   const groupLabel = languageGB.sidebar.navigation[group.id] ?? group.label;
+  const hubText = languageGB.sidebar.groupHub;
   return (
     <Box mb={1}>
+      {/* Rótulo e chevron são dois botões: o rótulo abre a central do grupo
+          (e expande os itens); o chevron só expande ou recolhe. */}
       <Flex
-        as="button"
-        onClick={onToggle}
         w="100%"
         align="center"
-        gap={1.5}
         fontSize="11px" // DS: t.font.size['2xs'] nos rótulos de grupo
-        fontWeight="medium"
-        color="sidebarSubtitleColor"
+        fontWeight={hubActive ? "semibold" : "medium"}
+        color={hubActive ? "sidebarItemActiveText" : "sidebarSubtitleColor"}
         letterSpacing="0.5px"
         textTransform="uppercase"
-        py={1.5}
-        pr={2.5}
-        pl={1}
         borderRadius="md"
-        _hover={{ bg: "sidebarItemHoverBG" }}
+        bg={hubActive ? "sidebarItemActiveBG" : "transparent"}
+        _hover={{ bg: hubActive ? "sidebarItemActiveBG" : "sidebarItemHoverBG" }}
         transition="background-color 0.1s ease"
       >
-        <Text as="span" flex="1" textAlign="left" fontSize="inherit" fontWeight="inherit" letterSpacing="inherit">
-          {groupLabel}
-        </Text>
+        <Flex
+          as="button"
+          onClick={onOpenHub}
+          aria-label={hubText.openHub.replace("{group}", groupLabel)}
+          aria-current={hubActive ? "page" : undefined}
+          flex="1"
+          minW={0}
+          align="center"
+          py={1.5}
+          pl={1}
+          pr={1}
+          borderRadius="md"
+          color="inherit"
+          // <button> não herda tipografia do pai: repete a do rótulo de grupo.
+          fontSize="inherit"
+          fontWeight="inherit"
+          letterSpacing="inherit"
+          textTransform="uppercase"
+          _hover={{ color: hubActive ? "sidebarItemActiveText" : "sidebarTextHover" }}
+        >
+          <Text as="span" flex="1" textAlign="left" lineClamp="1" fontSize="inherit" fontWeight="inherit" letterSpacing="inherit">
+            {groupLabel}
+          </Text>
+        </Flex>
         {/* Chevron padronizado (Ajustes Globais): fechado `>` (rotate 0) /
             aberto `v` (rotate 90deg) — ícone único que rotaciona. */}
-        <Box
-          as="span"
-          display="flex"
+        <Flex
+          as="button"
+          onClick={onToggle}
+          aria-label={hubText.toggleGroup.replace("{group}", groupLabel)}
+          aria-expanded={open}
+          align="center"
+          justify="center"
           flexShrink={0}
-          transform={open ? "rotate(90deg)" : "rotate(0deg)"}
-          transition="transform 0.15s ease"
+          w="24px"
+          h="24px"
+          mr={1}
+          borderRadius="md"
+          color="inherit"
+          _hover={{ color: "sidebarTextHover" }}
         >
-          <GbIcon name="chevron-right" size={11} />
-        </Box>
+          <Box
+            as="span"
+            display="flex"
+            transform={open ? "rotate(90deg)" : "rotate(0deg)"}
+            transition="transform 0.15s ease"
+          >
+            <GbIcon name="chevron-right" size={11} />
+          </Box>
+        </Flex>
       </Flex>
 
       {open && (
@@ -362,11 +412,18 @@ export function SecondaryNav({ module }: SecondaryNavProps) {
   // Estado interno do componente (não é prop pública); preserva o
   // comportamento de abrir automaticamente o grupo do item ativo.
   const [openGroupId, setOpenGroupId] = useState<string | null>(() => {
-    const activeGroup = module.groups?.find((g) =>
-      g.items.some((i) => isItemActive(i, activePath))
+    const activeGroup = module.groups?.find(
+      (g) =>
+        isHubActive(g, location.pathname) ||
+        g.items.some((i) => isItemActive(i, activePath))
     );
     return activeGroup?.id ?? null;
   });
+
+  const openHub = (group: NavGroup) => {
+    setOpenGroupId(group.id);
+    navigate(getGroupHubPath(group));
+  };
 
   // Rail colapsável (icon-only) — estado LOCAL, independente do `navCollapsed`
   // do NavRail (sidebar primária). Sem persistência: sempre reabre full ao
@@ -429,7 +486,9 @@ export function SecondaryNav({ module }: SecondaryNavProps) {
               group={group}
               open={openGroupId === group.id}
               activePath={activePath}
+              hubActive={isHubActive(group, location.pathname)}
               onToggle={() => toggleGroup(group.id)}
+              onOpenHub={() => openHub(group)}
               onNavigate={navigate}
             />
           ))

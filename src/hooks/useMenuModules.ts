@@ -16,6 +16,7 @@ import { useMemo } from "react";
 import { useContextSelector } from "use-context-selector";
 
 import {
+  findGroupByHubPath,
   getAllModuleItems,
   menuModules,
   type NavGroup,
@@ -213,6 +214,9 @@ export function useMenuModuleById(id: string | null): NavModule | undefined {
 export function useMenuModuleByPath(pathname: string): NavModule | undefined {
   const modules = useMenuModules();
   return useMemo(() => {
+    // Central genérica de agrupador (`/central/<grupo>`): o módulo é o dono do grupo.
+    const hub = findGroupByHubPath(pathname, modules);
+    if (hub) return hub.module;
     const direct = modules.find(
       (m) => m.path && (pathname === m.path || pathname.startsWith(m.path + "/"))
     );

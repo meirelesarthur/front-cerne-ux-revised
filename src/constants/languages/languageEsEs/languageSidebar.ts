@@ -1,6 +1,9 @@
 import { Sidebar } from '@/@types/language/sidebar';
 
+import { navDescriptions } from './languageSidebarDescriptions';
+
 export const languageSidebar: Sidebar = {
+  descriptions: navDescriptions,
   navigation: {
     painel: 'Inicio',
     favoritos: 'Favoritos',
@@ -212,4 +215,13 @@ export const languageSidebar: Sidebar = {
   collapseSidebar: 'Colapsar barra lateral',
   placeholderDescription:
     'Esta pantalla está en construcción. Las funcionalidades de GB Cerne estarán disponibles aquí pronto.',
+  groupHub: {
+    subtitle: '{count} funcionalidades en {module}. Elija una para abrir.',
+    subtitleOne: '1 funcionalidad en {module}.',
+    cardsAriaLabel: 'Funcionalidades del grupo',
+    notFoundTitle: 'Grupo no encontrado',
+    notFoundDescription: 'Este grupo no existe o no tiene acceso a sus funcionalidades.',
+    openHub: 'Abrir la central de {group}',
+    toggleGroup: 'Mostrar u ocultar los elementos de {group}',
+  },
 } as const;
