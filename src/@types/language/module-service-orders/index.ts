@@ -34,7 +34,7 @@ export interface ServiceOrderHubShortcut {
 }
 
 export interface ModuleServiceOrders {
-  /** Central da nova OS (fronteira OS × Apontamento × Compra). */
+  /** Central de Trabalho e compras (Apontamento × Ordem de compra; OS desligada). */
   hub: {
     pageTitle: string;
     pageSubtitle: string;
@@ -42,11 +42,10 @@ export interface ModuleServiceOrders {
     helpButton: string;
     cardsAriaLabel: string;
     options: {
-      service: ServiceOrderHubChoice;
       internal: ServiceOrderHubChoice;
       purchase: ServiceOrderHubChoice;
     };
-    /** Modal "Como funciona": o que é a OS, como ela anda e onde acompanhar. */
+    /** Modal "Como funciona": o que vai em cada um, como a ordem de compra anda e onde acompanhar. */
     help: {
       title: string;
       close: string;
@@ -60,19 +59,19 @@ export interface ModuleServiceOrders {
         whoLabel: string;
         steps: {
           request: ServiceOrderHubStep;
+          quote: ServiceOrderHubStep;
           approve: ServiceOrderHubStep;
-          hire: ServiceOrderHubStep;
-          execute: ServiceOrderHubStep;
-          attest: ServiceOrderHubStep;
+          buy: ServiceOrderHubStep;
+          receive: ServiceOrderHubStep;
           pay: ServiceOrderHubStep;
         };
       };
       shortcuts: {
         title: string;
+        appropriations: ServiceOrderHubShortcut;
+        orders: ServiceOrderHubShortcut;
         mine: ServiceOrderHubShortcut;
-        all: ServiceOrderHubShortcut;
-        monitoring: ServiceOrderHubShortcut;
-        ratings: ServiceOrderHubShortcut;
+        receipts: ServiceOrderHubShortcut;
       };
     };
   };

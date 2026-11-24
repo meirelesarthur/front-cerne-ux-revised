@@ -901,14 +901,8 @@ export const navigationPermissions: Record<string, NavPermissionRule> = {
   'ope-ven-orc': { permission: 'budgets_view' },
   'ope-ven-ped': { permission: 'orders_view' },
   'ope-ven-ven': { permission: 'sales_view' },
-  'ope-os-hub': {
-    anyOf: [
-      'service-orders_view',
-      'my-service-orders_view',
-      'monitoring-service-orders_view',
-      'rating-service-orders_view',
-    ],
-  },
+  // Central: leva ao Apontamento ou à Ordem de compra (OS desligada).
+  'ope-central': { anyOf: ['appropriations_view', 'request-purchases_view'] },
   'ope-os-min': { permission: 'my-service-orders_view' },
   'ope-os-lis': { permission: 'service-orders_view' },
   'ope-os-mon': { permission: 'monitoring-service-orders_view' },

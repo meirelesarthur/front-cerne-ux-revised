@@ -3,48 +3,41 @@ import { describe, expect, it } from 'vitest';
 import { getInitialRequestType } from '@/pages/Administrativo/Solicitacao/initialRequestType';
 
 import {
-  HUB_CHOICE_ROUTES,
+  HUB_CHOICES,
   HUB_JOURNEY_ROUTES,
   HUB_JOURNEY_STEP_KEYS,
   HUB_SHORTCUTS,
+  REQUEST_TYPE_QUERY_PARAM,
 } from './serviceOrdersHubRoutes';
 
-describe('rotas da visão geral da nova OS', () => {
-  it('serviço de fora abre a solicitação já como tipo Serviço', () => {
-    const [path, search] = HUB_CHOICE_ROUTES.service.split('?');
-    expect(path).toBe('/administrativo/solicitacao/novo');
-    expect(getInitialRequestType(`?${search}`, false)).toBe('S');
+describe('rotas da Central (Apontamento × Ordem de compra)', () => {
+  it('tem só dois caminhos: apontamento e ordem de compra', () => {
+    expect(HUB_CHOICES.map((c) => c.key)).toEqual(['internal', 'purchase']);
   });
 
   it('trabalho da equipe abre um novo apontamento', () => {
-    expect(HUB_CHOICE_ROUTES.internal).toBe('/operacional/apontamentos/novo');
+    expect(HUB_CHOICES[0].path).toBe('/operacional/apontamentos/novo');
+    expect(HUB_CHOICES[0].permission).toBe('appropriations_view');
   });
 
-  it('compra de produto abre a solicitação como tipo Produto', () => {
-    const [, search] = HUB_CHOICE_ROUTES.purchase.split('?');
-    expect(getInitialRequestType(`?${search}`, false)).toBe('P');
+  it('ordem de compra abre o formulário sem tipo; o tipo ainda pode vir pela URL', () => {
+    expect(HUB_CHOICES[1].path).toBe('/administrativo/solicitacao/novo');
+    expect(getInitialRequestType(`?${REQUEST_TYPE_QUERY_PARAM}=S`, false)).toBe('S');
   });
 
-  it('a jornada tem as 6 etapas da compra de serviço, na ordem', () => {
-    expect(HUB_JOURNEY_STEP_KEYS).toEqual([
-      'request',
-      'approve',
-      'hire',
-      'execute',
-      'attest',
-      'pay',
-    ]);
+  it('a jornada segue os status da ordem de compra, na ordem', () => {
+    expect(HUB_JOURNEY_STEP_KEYS).toEqual(['request', 'quote', 'approve', 'buy', 'receive', 'pay']);
     HUB_JOURNEY_STEP_KEYS.forEach((key) =>
-      expect(HUB_JOURNEY_ROUTES[key]).toMatch(/^\/(administrativo|operacional)\//)
+      expect(HUB_JOURNEY_ROUTES[key]).toMatch(/^\/administrativo\//)
     );
   });
 
-  it('cada atalho tem a permissão da tela que abre', () => {
-    expect(HUB_SHORTCUTS.map((s) => s.permission)).toEqual([
-      'my-service-orders_view',
-      'service-orders_view',
-      'monitoring-service-orders_view',
-      'rating-service-orders_view',
-    ]);
+  it('nenhum destino aponta para telas de OS', () => {
+    const paths = [
+      ...HUB_CHOICES.map((c) => c.path),
+      ...Object.values(HUB_JOURNEY_ROUTES),
+      ...HUB_SHORTCUTS.map((s) => s.path),
+    ];
+    paths.forEach((p) => expect(p).not.toMatch(/lista-os|minhas-os|monitoramento|avaliacoes/));
   });
 });

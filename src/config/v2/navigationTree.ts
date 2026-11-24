@@ -19,6 +19,8 @@
 
 import type { IconName } from '@/components/ui/Icon';
 
+import { SERVICE_ORDERS_ENABLED } from './serviceOrdersFeature';
+
 export interface NavSubItem {
   id: string;
   label: string;
@@ -48,6 +50,19 @@ export interface NavModule {
   groups?: NavGroup[];
   flatItems?: NavSubItem[];
 }
+
+// Grupo de Ordens de Serviço — fora do menu enquanto `SERVICE_ORDERS_ENABLED` for false.
+const SERVICE_ORDERS_GROUP: NavGroup = {
+  id: 'ope-ordens',
+  label: 'Ordens de Serviço',
+  icon: 'clipboard-check',
+  items: [
+    { id: 'ope-os-min', label: 'Minhas OS', path: '/operacional/minhas-os', icon: 'clipboard-check' },
+    { id: 'ope-os-lis', label: 'Lista de OS', path: '/operacional/lista-os', icon: 'list-checks' },
+    { id: 'ope-os-mon', label: 'Monitoramento', path: '/operacional/monitoramento', icon: 'activity' },
+    { id: 'ope-os-ava', label: 'Avaliações', path: '/operacional/avaliacoes', icon: 'star' },
+  ],
+};
 
 export const menuModules: NavModule[] = [
   { id: 'painel', label: 'Home', emoji: '🏠', icon: 'dashboard', path: '/home' },
@@ -721,7 +736,7 @@ export const menuModules: NavModule[] = [
           },
           {
             id: 'adm-sup-sol',
-            label: 'Solicitação',
+            label: 'Ordens de compra',
             path: '/administrativo/solicitacao',
             icon: 'document-add',
           },
@@ -1160,15 +1175,22 @@ export const menuModules: NavModule[] = [
     emoji: '⚙️',
     icon: 'gauge',
     groups: [
-      // Apontamento (nova OS × Apontamento, branch feat/nova-ordem-servico-apontamento):
-      // registro do trabalho da EQUIPE da fazenda, sai de dentro de "Agricultura"
+      // Trabalho e compras (fim da OS, branch feat/nova-ordem-servico-apontamento):
+      // Central que leva ao Apontamento (trabalho da EQUIPE) ou à Ordem de compra
+      // (produto ou serviço de fora), e o Apontamento, que saiu de "Agricultura"
       // porque vale para agricultura e pecuária. O id `ope-agr-apo` é mantido
       // (permissão `appropriations_view` e trilhas existentes dependem dele).
       {
         id: 'ope-apontamento',
-        label: 'Apontamento',
+        label: 'Trabalho e compras',
         icon: 'edit-line',
         items: [
+          {
+            id: 'ope-central',
+            label: 'Central',
+            path: '/operacional/central',
+            icon: 'route',
+          },
           {
             id: 'ope-agr-apo',
             label: 'Apontamentos',
@@ -2031,40 +2053,10 @@ export const menuModules: NavModule[] = [
           { id: 'ope-ven-ven', label: 'Vendas', path: '/operacional/vendas', icon: 'shopping-bag' },
         ],
       },
-      {
-        id: 'ope-ordens',
-        label: 'Ordens de Serviço',
-        icon: 'clipboard-check',
-        items: [
-          // Central da nova OS: três cards que levam ao módulo certo (OS × Apontamento ×
-          // Compra); a jornada fica na ajuda "Como funciona".
-          {
-            id: 'ope-os-hub',
-            label: 'Central',
-            path: '/operacional/ordens-de-servico',
-            icon: 'route',
-          },
-          {
-            id: 'ope-os-min',
-            label: 'Minhas OS',
-            path: '/operacional/minhas-os',
-            icon: 'clipboard-check',
-          },
-          {
-            id: 'ope-os-lis',
-            label: 'Lista de OS',
-            path: '/operacional/lista-os',
-            icon: 'list-checks',
-          },
-          {
-            id: 'ope-os-mon',
-            label: 'Monitoramento',
-            path: '/operacional/monitoramento',
-            icon: 'activity',
-          },
-          { id: 'ope-os-ava', label: 'Avaliações', path: '/operacional/avaliacoes', icon: 'star' },
-        ],
-      },
+      // Ordens de Serviço DESLIGADAS no web (`SERVICE_ORDERS_ENABLED`, decisão do dono
+      // 24/11/2026): serviço de fora entra pela Ordem de compra; trabalho da equipe,
+      // pelo Apontamento. O grupo volta trocando a chave para `true`.
+      ...(SERVICE_ORDERS_ENABLED ? [SERVICE_ORDERS_GROUP] : []),
     ],
   },
   {

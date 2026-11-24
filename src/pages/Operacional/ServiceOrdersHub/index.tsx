@@ -1,15 +1,13 @@
 // src/pages/Operacional/ServiceOrdersHub/index.tsx
 // -----------------------------------------------------------------------------
-// Central da NOVA Ordem de Serviço (branch feat/nova-ordem-servico-apontamento).
+// Central de Trabalho e compras (branch feat/nova-ordem-servico-apontamento).
 //
-// Decisão do dono: OS = contratar serviço de FORA da fazenda (análoga à compra);
-// trabalho da EQUIPE = Apontamento; produto = Compra. A tela é uma central que
-// leva ao módulo certo: três cards, cada um navega direto (sem "Continuar").
-// A explicação (o que é a OS, como ela anda e onde acompanhar) fica na ajuda
-// "Como funciona", aberta pelo botão à direita do título.
-//
-// Só front (onda 1): cada etapa leva à tela que JÁ existe. O estado "Atestado"
-// e o vínculo OS ↔ Apontamento dependem do back-end (ondas 2 e 3).
+// Decisão do dono (24/11/2026): a Ordem de Serviço acabou. Trabalho da EQUIPE
+// entra pelo Apontamento; produto OU serviço de fora entra pela Ordem de compra
+// (antiga Solicitação de compra), e o serviço é confirmado no Recebimento.
+// A tela leva ao módulo certo com dois cards, cada um navega direto. A explicação
+// (o que vai em cada um, como a ordem de compra anda e onde acompanhar) fica na
+// ajuda "Como funciona", aberta pelo botão à direita do título.
 // -----------------------------------------------------------------------------
 
 import { useMemo, useState } from 'react';
@@ -31,7 +29,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
 
 import {
-  HUB_CHOICE_ROUTES,
+  HUB_CHOICES,
   HUB_JOURNEY_ROUTES,
   HUB_JOURNEY_STEP_KEYS,
   HUB_SHORTCUTS,
@@ -39,19 +37,16 @@ import {
   type HubJourneyStepKey,
 } from './serviceOrdersHubRoutes';
 
-const CHOICE_KEYS: readonly HubChoiceKey[] = ['service', 'internal', 'purchase'];
-
 const CHOICE_ICONS: Record<HubChoiceKey, IconName> = {
-  service: 'wrench',
   internal: 'users',
   purchase: 'cart',
 };
 
 const SHORTCUT_ICONS: Record<(typeof HUB_SHORTCUTS)[number]['key'], IconName> = {
-  mine: 'user-check',
-  all: 'list-checks',
-  monitoring: 'activity',
-  ratings: 'star',
+  appropriations: 'edit-line',
+  orders: 'document-add',
+  mine: 'list-checks',
+  receipts: 'package-check',
 };
 
 export default function ServiceOrdersHub() {
@@ -70,6 +65,7 @@ export default function ServiceOrdersHub() {
   );
 
   const currentStep = help.journey.steps[step];
+  const choices = HUB_CHOICES.filter((item) => can(item.permission));
   const shortcuts = HUB_SHORTCUTS.filter((item) => can(item.permission));
 
   function go(path: string) {
@@ -93,20 +89,20 @@ export default function ServiceOrdersHub() {
         <Box
           as="nav"
           aria-label={text.cardsAriaLabel}
-          maxW="960px"
+          maxW="720px"
           mx="auto"
           mt={{ base: '24px', md: '48px' }}
           mb={{ base: '8px', md: '24px' }}
         >
-          <Grid gap="16px" templateColumns={{ base: '1fr', md: 'repeat(3, minmax(0, 1fr))' }}>
-            {CHOICE_KEYS.map((key) => (
+          <Grid gap="16px" templateColumns={{ base: '1fr', md: 'repeat(2, minmax(0, 1fr))' }}>
+            {choices.map(({ key, path }) => (
               <ModuleLinkCard
                 key={key}
                 icon={CHOICE_ICONS[key]}
                 title={text.options[key].title}
                 description={text.options[key].description}
                 tag={text.options[key].destination}
-                onClick={() => navigate(HUB_CHOICE_ROUTES[key])}
+                onClick={() => navigate(path)}
               />
             ))}
           </Grid>

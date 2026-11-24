@@ -6,94 +6,89 @@ import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
   hub: {
-    pageTitle: 'Ordens de Serviço',
+    pageTitle: 'Trabalho e compras',
     pageSubtitle: 'Escolha o que você vai lançar. Cada opção leva ao módulo certo.',
     helpButton: 'Como funciona',
     cardsAriaLabel: 'O que você vai lançar',
     options: {
-      service: {
-        title: 'Contratar serviço',
-        description: 'Prestador, oficina, frete ou diarista de fora da fazenda.',
-        destination: 'Abre a solicitação de serviço',
-      },
       internal: {
         title: 'Registrar trabalho da equipe',
         description: 'Pessoas e máquinas da própria fazenda.',
         destination: 'Abre o apontamento',
       },
       purchase: {
-        title: 'Comprar produto',
-        description: 'Insumos e materiais que entram no estoque.',
-        destination: 'Abre a solicitação de compra',
+        title: 'Fazer ordem de compra',
+        description: 'Produto ou serviço de fora da fazenda.',
+        destination: 'Abre a ordem de compra',
       },
     },
     help: {
-      title: 'Como funciona a Ordem de Serviço',
+      title: 'Como funciona',
       close: 'Fechar',
       about: {
-        title: 'O que é a OS',
-        text: 'A Ordem de Serviço é para contratar alguém de fora da fazenda. Ela segue a cadeia de compras e só é paga depois que alguém da fazenda confirma o serviço. O trabalho da própria equipe é registrado no Apontamento.',
+        title: 'Apontamento ou ordem de compra?',
+        text: 'Trabalho feito pela equipe e pelas máquinas da fazenda vai no Apontamento. Tudo o que vem de fora, produto ou serviço, vai na Ordem de compra. Na ordem de compra de serviço, o Recebimento é a confirmação de que o serviço foi feito, e só depois ele é pago.',
       },
       journey: {
-        title: 'Como a OS anda',
-        ariaLabel: 'Etapas da ordem de serviço',
+        title: 'Como a ordem de compra anda',
+        ariaLabel: 'Etapas da ordem de compra',
         whoLabel: 'Quem age',
         steps: {
           request: {
             label: '1. Pedir',
             who: 'Quem viu a necessidade',
-            what: 'Diz qual serviço, onde vai ser feito, até quando e quanto acha que custa.',
-            open: 'Abrir pedidos',
+            what: 'Abre a ordem de compra: produto ou serviço, quantidade, prazo e motivo.',
+            open: 'Abrir ordens de compra',
           },
-          approve: {
-            label: '2. Aprovar',
-            who: 'Quem aprova os gastos',
-            what: 'Confere o valor e o motivo. Aprova, devolve com o motivo ou recusa.',
-            open: 'Abrir aprovações',
-          },
-          hire: {
-            label: '3. Contratar',
+          quote: {
+            label: '2. Cotar',
             who: 'Quem faz as compras',
-            what: 'Pede preço a um ou mais prestadores, escolhe e envia o pedido.',
+            what: 'Pede preço a um ou mais fornecedores e escolhe a melhor oferta.',
             open: 'Abrir cotações',
           },
-          execute: {
-            label: '4. Executar',
-            who: 'O prestador, acompanhado pelo responsável',
-            what: 'O responsável marca quando começou e quando terminou e anota algum problema.',
-            open: 'Abrir minhas OS',
+          approve: {
+            label: '3. Aprovar',
+            who: 'Quem aprova os gastos',
+            what: 'Confere valor e motivo. Aprova ou recusa com o motivo.',
+            open: 'Abrir autorizações',
           },
-          attest: {
-            label: '5. Atestar',
+          buy: {
+            label: '4. Comprar',
+            who: 'Quem faz as compras',
+            what: 'Envia o pedido ao fornecedor e registra a compra.',
+            open: 'Abrir compras',
+          },
+          receive: {
+            label: '5. Receber',
             who: 'O responsável na fazenda',
-            what: 'Confirma que o serviço foi feito, quanto foi feito e dá uma nota de 1 a 5.',
-            open: 'Abrir avaliações',
+            what: 'Confirma o que chegou. Em serviço, confirma que o serviço foi feito.',
+            open: 'Abrir recebimentos',
           },
           pay: {
             label: '6. Pagar',
             who: 'O financeiro',
-            what: 'Gera a conta a pagar do prestador a partir do serviço confirmado.',
+            what: 'Gera a conta a pagar a partir do recebimento confirmado.',
             open: 'Abrir recebimentos',
           },
         },
       },
       shortcuts: {
         title: 'Onde acompanhar',
-        mine: {
-          title: 'Minhas OS',
-          description: 'As que estão com você para executar.',
+        appropriations: {
+          title: 'Apontamentos',
+          description: 'Trabalho registrado pela equipe.',
         },
-        all: {
-          title: 'Todas as OS',
+        orders: {
+          title: 'Ordens de compra',
           description: 'Todas as ordens, em qualquer etapa.',
         },
-        monitoring: {
-          title: 'Em execução',
-          description: 'Acompanhe o que está sendo feito agora.',
+        mine: {
+          title: 'Meus processos',
+          description: 'As ordens que estão com você.',
         },
-        ratings: {
-          title: 'A avaliar',
-          description: 'Serviços terminados esperando a sua nota.',
+        receipts: {
+          title: 'Recebimentos',
+          description: 'O que falta confirmar que chegou ou foi feito.',
         },
       },
     },

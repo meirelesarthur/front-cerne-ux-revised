@@ -13,7 +13,7 @@ export const languageRequestAuthorizers: ModuleRequestAuthorizers = {
     singularLabel: 'Authorizer',
     list: {
       pageTitle: 'Authorizers',
-      pageSubtitle: 'Manage who can approve purchase requests.',
+      pageSubtitle: 'Manage who can approve purchase orders.',
       deletedToast: 'Record deleted successfully.',
       createdToast: 'Record created successfully.',
       updatedToast: 'Record updated successfully.',
@@ -65,7 +65,7 @@ export const languageRequestAuthorizers: ModuleRequestAuthorizers = {
         view: 'View Authorizer',
       },
       subtitle: {
-        create: 'Register a new purchase request authorizer.',
+        create: 'Register a new purchase order authorizer.',
         edit: 'Update the authorizer data.',
         view: 'Review the authorizer data.',
       },

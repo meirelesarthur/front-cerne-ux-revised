@@ -1,5 +1,5 @@
 // src/constants/languages/languageEnUs/languageRequestPurchases.ts
-// EN-US translation of the "Purchase Request" module (RequestPurchase —
+// EN-US translation of the "Purchase Order" module (RequestPurchase —
 // Administrative / Procurement, pipeline 97-Esteiras/022, TASK-RP-FE-03). See
 // `@/@types/language/module-request-purchases` for the full contract.
 
@@ -7,9 +7,9 @@ import { ModuleRequestPurchases } from '@/@types/language/module-request-purchas
 
 export const languageRequestPurchases: ModuleRequestPurchases = {
   requestPurchase: {
-    singularLabel: 'Purchase Request',
-    pluralLabel: 'Purchase Requests',
-    titleModule: 'Purchase Requests',
+    singularLabel: 'Purchase Order',
+    pluralLabel: 'Purchase Orders',
+    titleModule: 'Purchase Orders',
 
     // ADDITIVE (TASK-CQ-FE-15) — see note in
     // `ModuleRequestPurchases.requestPurchase.legend`.
@@ -18,8 +18,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     },
 
     list: {
-      pageTitle: 'Purchase Requests',
-      pageSubtitle: 'Manage the farm purchase requests.',
+      pageTitle: 'Purchase Orders',
+      pageSubtitle: 'Manage the farm purchase orders.',
       table: {
         code: 'Code',
         type: 'Type',
@@ -41,9 +41,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       emptyState: {
         titleEmpty: 'No requests registered',
         titleFiltered: 'No requests found',
-        descriptionEmpty: 'Register the first Purchase Request.',
+        descriptionEmpty: 'Register the first Purchase Order.',
         descriptionFiltered: 'Adjust the filters to find what you are looking for.',
-        cta: 'New Request',
+        cta: 'New Purchase Order',
       },
       deletedToast: 'Record deleted successfully.',
       deleteConfirm: {
@@ -70,14 +70,14 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
 
     form: {
       title: {
-        create: 'New Purchase Request',
-        edit: 'Edit Purchase Request',
-        view: 'View Purchase Request',
+        create: 'New Purchase Order',
+        edit: 'Edit Purchase Order',
+        view: 'View Purchase Order',
       },
       subtitle: {
-        create: 'Register a new purchase request.',
-        edit: 'Update the purchase request data.',
-        view: 'View the purchase request data.',
+        create: 'Register a new purchase order.',
+        edit: 'Update the purchase order data.',
+        view: 'View the purchase order data.',
       },
       tabs: {
         general: 'General Data',
@@ -308,7 +308,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     myProcesses: {
       titleModule: 'My Processes',
       pageTitle: 'My Processes',
-      pageSubtitle: 'Purchase requests under your responsibility.',
+      pageSubtitle: 'Purchase orders under your responsibility.',
       emptyState: {
         titleEmpty: 'No process under your responsibility',
         descriptionEmpty: 'Requests assigned to you will show up here.',
@@ -336,7 +336,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     rejected: {
       titleModule: 'Rejected and Cancelled',
       pageTitle: 'Rejected / Cancelled',
-      pageSubtitle: 'Rejected or cancelled purchase requests.',
+      pageSubtitle: 'Rejected or cancelled purchase orders.',
       emptyState: {
         titleEmpty: 'No rejected or cancelled request',
         descriptionEmpty: 'Rejected or cancelled requests will show up here.',
@@ -351,7 +351,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inQuotation: {
       titleModule: 'Quotations',
       pageTitle: 'Quotations',
-      pageSubtitle: 'Purchase requests in quotation across the whole farm.',
+      pageSubtitle: 'Purchase orders in quotation across the whole farm.',
       emptyState: {
         titleEmpty: 'No request in quotation',
         descriptionEmpty: 'Requests in quotation will show up here.',
@@ -363,7 +363,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inPurchase: {
       titleModule: 'Purchases',
       pageTitle: 'Purchases',
-      pageSubtitle: 'Purchase requests being purchased across the whole farm.',
+      pageSubtitle: 'Purchase orders being purchased across the whole farm.',
       emptyState: {
         titleEmpty: 'No request being purchased',
         descriptionEmpty: 'Requests being purchased will show up here.',

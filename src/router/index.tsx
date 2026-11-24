@@ -30,6 +30,7 @@ import { PublicRoute } from '@/components/PublicRoute';
 import { RequirePermission } from '@/components/RequirePermission';
 import { RequireRole } from '@/components/RequireRole';
 
+import { SERVICE_ORDERS_ENABLED } from '@/config/v2/serviceOrdersFeature';
 import { ROUTES } from '@/constants/routes';
 
 // ---- Público (login) ----
@@ -12202,23 +12203,19 @@ export function AppRoutes() {
             nesta Tarefa). Item de menu (`ope-os-lis`) e permissão
             (`service-orders_view`) já existiam em `navigationTree.ts`/
             `navigationPermissions.ts` — NENHUMA edição neles. */}
-        {/* Operacional — Ordens de Serviço › Central (nova OS × Apontamento ×
-            Compra). Declarada antes do catch-all `/operacional/*`. */}
+        {/* Operacional — Central (Apontamento × Ordem de compra). A OS foi
+            desligada (`SERVICE_ORDERS_ENABLED`); declarada antes do catch-all
+            `/operacional/*`. */}
         <Route
-          path="/operacional/ordens-de-servico"
+          path="/operacional/central"
           element={
-            <RequirePermission
-              anyOf={[
-                'service-orders_view',
-                'my-service-orders_view',
-                'monitoring-service-orders_view',
-                'rating-service-orders_view',
-              ]}
-            >
+            <RequirePermission anyOf={['appropriations_view', 'request-purchases_view']}>
               {lazyRoute(ServiceOrdersHub)}
             </RequirePermission>
           }
         />
+        {SERVICE_ORDERS_ENABLED && (
+          <>
         <Route
           path="/operacional/lista-os"
           element={
@@ -12269,6 +12266,8 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+          </>
+        )}
 
         {/* Operacional / Agricultura — Rastreabilidade (Traceability +
             TraceabilityConfig, F-067, TASK-TR-FE-11, esteira 97-Esteiras/058)
@@ -12348,7 +12347,10 @@ export function AppRoutes() {
             de menu (`ope-os-ava`) e permissão já existiam em
             `navigationTree.ts`/`navigationPermissions.ts` — nenhuma edição
             neles. Sem `/novo` — `mode_matrix.criar = NAO_APLICAVEL`, a
-            rota só é alcançável com `:uuid`. */}
+            rota só é alcançável com `:uuid`. OS desligada: só com
+            `SERVICE_ORDERS_ENABLED` (vale também para Minhas OS abaixo). */}
+        {SERVICE_ORDERS_ENABLED && (
+          <>
         <Route
           path="/operacional/avaliacoes"
           element={
@@ -12393,6 +12395,8 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+          </>
+        )}
 
         {/* ---- Privado: Operacional — Transferência ABC de Animais entre
             Lotes (TransferAbcBatch, 97-Esteiras/039, TASK-FE-039-ABC-02/03).

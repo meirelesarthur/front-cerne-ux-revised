@@ -1,51 +1,50 @@
 // src/pages/Operacional/ServiceOrdersHub/serviceOrdersHubRoutes.ts
-// Destinos da visão geral da nova OS. Fonte única para a tela e para o teste.
-// Toda rota aqui JÁ existe em `src/router/index.tsx` (nenhuma rota de negócio nova).
-
-import { requestPurchaseType } from '@/constants/RequestPurchases/request-purchase-type';
-
-export type HubChoiceKey = 'service' | 'internal' | 'purchase';
+// Destinos da Central (Apontamento × Ordem de compra). Fonte única para a tela e
+// para o teste. Toda rota aqui JÁ existe em `src/router/index.tsx`.
+//
+// A Ordem de Serviço foi desligada (`SERVICE_ORDERS_ENABLED`): serviço de fora é
+// uma Ordem de compra do tipo Serviço, confirmada no Recebimento.
 
 /** Query string lida por `CreateOrUpdateSolicitacao` para pré-selecionar o tipo. */
 export const REQUEST_TYPE_QUERY_PARAM = 'tipo';
 
-export const HUB_CHOICE_ROUTES: Record<HubChoiceKey, string> = {
-  // OS = solicitação de natureza serviço (tipo S) na cadeia de compras.
-  service: `/administrativo/solicitacao/novo?${REQUEST_TYPE_QUERY_PARAM}=${requestPurchaseType.servico}`,
+export type HubChoiceKey = 'internal' | 'purchase';
+
+export const HUB_CHOICES: readonly { key: HubChoiceKey; path: string; permission: string }[] = [
   // Trabalho da equipe = Apontamento.
-  internal: '/operacional/apontamentos/novo',
-  // Produto que entra no estoque = Compra (tipo P).
-  purchase: `/administrativo/solicitacao/novo?${REQUEST_TYPE_QUERY_PARAM}=${requestPurchaseType.produto}`,
-};
+  { key: 'internal', path: '/operacional/apontamentos/novo', permission: 'appropriations_view' },
+  // Produto ou serviço de fora = Ordem de compra (o tipo é escolhido no formulário).
+  {
+    key: 'purchase',
+    path: '/administrativo/solicitacao/novo',
+    permission: 'request-purchases_view',
+  },
+];
 
 export const HUB_JOURNEY_STEP_KEYS = [
   'request',
+  'quote',
   'approve',
-  'hire',
-  'execute',
-  'attest',
+  'buy',
+  'receive',
   'pay',
 ] as const;
 
 export type HubJourneyStepKey = (typeof HUB_JOURNEY_STEP_KEYS)[number];
 
-/** Tela atual de cada etapa (onda 1: reaproveita a cadeia de compras e a execução da OS). */
+/** Tela atual de cada etapa da Ordem de compra (mesma ordem dos status do sistema). */
 export const HUB_JOURNEY_ROUTES: Record<HubJourneyStepKey, string> = {
   request: '/administrativo/solicitacao',
+  quote: '/administrativo/cotacoes',
   approve: '/administrativo/autorizacao',
-  hire: '/administrativo/cotacoes',
-  execute: '/operacional/minhas-os',
-  attest: '/operacional/avaliacoes',
+  buy: '/administrativo/compras',
+  receive: '/administrativo/recebimentos',
   pay: '/administrativo/recebimentos',
 };
 
 export const HUB_SHORTCUTS = [
-  { key: 'mine', path: '/operacional/minhas-os', permission: 'my-service-orders_view' },
-  { key: 'all', path: '/operacional/lista-os', permission: 'service-orders_view' },
-  {
-    key: 'monitoring',
-    path: '/operacional/monitoramento',
-    permission: 'monitoring-service-orders_view',
-  },
-  { key: 'ratings', path: '/operacional/avaliacoes', permission: 'rating-service-orders_view' },
+  { key: 'appropriations', path: '/operacional/apontamentos', permission: 'appropriations_view' },
+  { key: 'orders', path: '/administrativo/solicitacao', permission: 'request-purchases_view' },
+  { key: 'mine', path: '/administrativo/meus-processos', permission: 'request-purchases_view' },
+  { key: 'receipts', path: '/administrativo/recebimentos', permission: 'request-receipts_view' },
 ] as const;

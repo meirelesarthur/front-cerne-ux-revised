@@ -6,83 +6,81 @@ import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
   hub: {
-    pageTitle: 'Service Orders',
+    pageTitle: 'Work and purchasing',
     pageSubtitle: 'Choose what you are going to record. Each option takes you to the right module.',
     helpButton: 'How it works',
     cardsAriaLabel: 'What you are going to record',
     options: {
-      service: {
-        title: 'Hire a service',
-        description: 'Contractor, repair shop, freight or day laborer from outside the farm.',
-        destination: 'Opens the service request',
-      },
       internal: {
         title: 'Record team work',
         description: 'People and machines from the farm itself.',
         destination: 'Opens the appointment',
       },
       purchase: {
-        title: 'Buy a product',
-        description: 'Inputs and materials that go into stock.',
-        destination: 'Opens the purchase request',
+        title: 'Create a purchase order',
+        description: 'A product or a service from outside the farm.',
+        destination: 'Opens the purchase order',
       },
     },
     help: {
-      title: 'How the Service Order works',
+      title: 'How it works',
       close: 'Close',
       about: {
-        title: 'What a service order is',
-        text: 'A service order is for hiring someone from outside the farm. It follows the purchasing chain and is only paid after someone on the farm confirms the service. Work done by your own team is recorded as an Appointment.',
+        title: 'Appointment or purchase order?',
+        text: 'Work done by the farm team and machines goes in an Appointment. Anything that comes from outside, product or service, goes in a Purchase order. For a service purchase order, the Receipt confirms the service was done, and only then is it paid.',
       },
       journey: {
-        title: 'How a service order moves',
-        ariaLabel: 'Service order steps',
+        title: 'How a purchase order moves',
+        ariaLabel: 'Purchase order steps',
         whoLabel: 'Who acts',
         steps: {
           request: {
             label: '1. Request',
             who: 'Whoever saw the need',
-            what: 'Says which service, where it will be done, by when and how much it may cost.',
-            open: 'Open requests',
+            what: 'Opens the purchase order: product or service, quantity, deadline and reason.',
+            open: 'Open purchase orders',
           },
-          approve: {
-            label: '2. Approve',
-            who: 'Whoever approves spending',
-            what: 'Checks value and reason. Approves, returns with the reason or rejects.',
-            open: 'Open approvals',
-          },
-          hire: {
-            label: '3. Hire',
+          quote: {
+            label: '2. Quote',
             who: 'Whoever does the purchasing',
-            what: 'Asks one or more providers for a price, chooses and sends the order.',
+            what: 'Asks one or more suppliers for a price and picks the best offer.',
             open: 'Open quotations',
           },
-          execute: {
-            label: '4. Execute',
-            who: 'The provider, followed by the person in charge',
-            what: 'The person in charge marks when it started and finished and notes any problem.',
-            open: 'Open my service orders',
+          approve: {
+            label: '3. Approve',
+            who: 'Whoever approves spending',
+            what: 'Checks value and reason. Approves or rejects with the reason.',
+            open: 'Open authorizations',
           },
-          attest: {
-            label: '5. Confirm',
+          buy: {
+            label: '4. Buy',
+            who: 'Whoever does the purchasing',
+            what: 'Sends the order to the supplier and records the purchase.',
+            open: 'Open purchases',
+          },
+          receive: {
+            label: '5. Receive',
             who: 'The person in charge on the farm',
-            what: 'Confirms the service was done, how much was done and gives a 1 to 5 rating.',
-            open: 'Open ratings',
+            what: 'Confirms what arrived. For a service, confirms the service was done.',
+            open: 'Open receipts',
           },
           pay: {
             label: '6. Pay',
             who: 'Finance',
-            what: 'Creates the provider payable from the confirmed service.',
+            what: 'Creates the payable from the confirmed receipt.',
             open: 'Open receipts',
           },
         },
       },
       shortcuts: {
         title: 'Where to follow up',
-        mine: { title: 'My service orders', description: 'The ones assigned to you.' },
-        all: { title: 'All service orders', description: 'Every order, at any step.' },
-        monitoring: { title: 'In progress', description: 'Follow what is being done now.' },
-        ratings: { title: 'To rate', description: 'Finished services waiting for your rating.' },
+        appropriations: { title: 'Appointments', description: 'Work recorded by the team.' },
+        orders: { title: 'Purchase orders', description: 'Every order, at any step.' },
+        mine: { title: 'My processes', description: 'The orders that are with you.' },
+        receipts: {
+          title: 'Receipts',
+          description: 'What is still to be confirmed as arrived or done.',
+        },
       },
     },
   },

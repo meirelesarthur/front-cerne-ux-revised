@@ -7,83 +7,84 @@ import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
   hub: {
-    pageTitle: 'Órdenes de Servicio',
+    pageTitle: 'Trabajo y compras',
     pageSubtitle: 'Elija lo que va a registrar. Cada opción lleva al módulo correcto.',
     helpButton: 'Cómo funciona',
     cardsAriaLabel: 'Lo que va a registrar',
     options: {
-      service: {
-        title: 'Contratar servicio',
-        description: 'Contratista, taller, flete o jornalero de fuera de la finca.',
-        destination: 'Abre la solicitud de servicio',
-      },
       internal: {
         title: 'Registrar trabajo del equipo',
         description: 'Personas y máquinas de la propia finca.',
         destination: 'Abre el apunte',
       },
       purchase: {
-        title: 'Comprar producto',
-        description: 'Insumos y materiales que entran en el stock.',
-        destination: 'Abre la solicitud de compra',
+        title: 'Hacer orden de compra',
+        description: 'Producto o servicio de fuera de la finca.',
+        destination: 'Abre la orden de compra',
       },
     },
     help: {
-      title: 'Cómo funciona la Orden de Servicio',
+      title: 'Cómo funciona',
       close: 'Cerrar',
       about: {
-        title: 'Qué es la OS',
-        text: 'La Orden de Servicio es para contratar a alguien de fuera de la finca. Sigue la cadena de compras y solo se paga después de que alguien de la finca confirma el servicio. El trabajo del propio equipo se registra en el Apunte.',
+        title: '¿Apunte u orden de compra?',
+        text: 'El trabajo hecho por el equipo y las máquinas de la finca va en el Apunte. Todo lo que viene de fuera, producto o servicio, va en la Orden de compra. En la orden de compra de servicio, la Recepción confirma que el servicio se hizo, y solo después se paga.',
       },
       journey: {
-        title: 'Cómo avanza la OS',
-        ariaLabel: 'Etapas de la orden de servicio',
+        title: 'Cómo avanza la orden de compra',
+        ariaLabel: 'Etapas de la orden de compra',
         whoLabel: 'Quién actúa',
         steps: {
           request: {
             label: '1. Pedir',
             who: 'Quien vio la necesidad',
-            what: 'Dice qué servicio, dónde se hará, hasta cuándo y cuánto cree que cuesta.',
-            open: 'Abrir pedidos',
+            what: 'Abre la orden de compra: producto o servicio, cantidad, plazo y motivo.',
+            open: 'Abrir órdenes de compra',
           },
-          approve: {
-            label: '2. Aprobar',
-            who: 'Quien aprueba los gastos',
-            what: 'Revisa el valor y el motivo. Aprueba, devuelve con el motivo o rechaza.',
-            open: 'Abrir aprobaciones',
-          },
-          hire: {
-            label: '3. Contratar',
+          quote: {
+            label: '2. Cotizar',
             who: 'Quien hace las compras',
-            what: 'Pide precio a uno o más proveedores, elige y envía el pedido.',
+            what: 'Pide precio a uno o más proveedores y elige la mejor oferta.',
             open: 'Abrir cotizaciones',
           },
-          execute: {
-            label: '4. Ejecutar',
-            who: 'El proveedor, acompañado por el responsable',
-            what: 'El responsable marca cuándo empezó y cuándo terminó y anota algún problema.',
-            open: 'Abrir mis OS',
+          approve: {
+            label: '3. Aprobar',
+            who: 'Quien aprueba los gastos',
+            what: 'Revisa valor y motivo. Aprueba o rechaza con el motivo.',
+            open: 'Abrir autorizaciones',
           },
-          attest: {
-            label: '5. Confirmar',
+          buy: {
+            label: '4. Comprar',
+            who: 'Quien hace las compras',
+            what: 'Envía el pedido al proveedor y registra la compra.',
+            open: 'Abrir compras',
+          },
+          receive: {
+            label: '5. Recibir',
             who: 'El responsable en la finca',
-            what: 'Confirma que el servicio se hizo, cuánto se hizo y da una nota de 1 a 5.',
-            open: 'Abrir evaluaciones',
+            what: 'Confirma lo que llegó. En servicio, confirma que el servicio se hizo.',
+            open: 'Abrir recepciones',
           },
           pay: {
             label: '6. Pagar',
             who: 'Finanzas',
-            what: 'Genera la cuenta por pagar del proveedor a partir del servicio confirmado.',
+            what: 'Genera la cuenta por pagar a partir de la recepción confirmada.',
             open: 'Abrir recepciones',
           },
         },
       },
       shortcuts: {
         title: 'Dónde seguir',
-        mine: { title: 'Mis OS', description: 'Las que están con usted para ejecutar.' },
-        all: { title: 'Todas las OS', description: 'Todas las órdenes, en cualquier etapa.' },
-        monitoring: { title: 'En ejecución', description: 'Siga lo que se está haciendo ahora.' },
-        ratings: { title: 'Por evaluar', description: 'Servicios terminados esperando su nota.' },
+        appropriations: { title: 'Apuntes', description: 'Trabajo registrado por el equipo.' },
+        orders: {
+          title: 'Órdenes de compra',
+          description: 'Todas las órdenes, en cualquier etapa.',
+        },
+        mine: { title: 'Mis procesos', description: 'Las órdenes que están con usted.' },
+        receipts: {
+          title: 'Recepciones',
+          description: 'Lo que falta confirmar que llegó o se hizo.',
+        },
       },
     },
   },
