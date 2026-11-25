@@ -142,7 +142,6 @@ import {
 } from '@/components/Suprimentos/supplyActionRules';
 import { TransferResponsibleDialog } from '@/components/Suprimentos/TransferResponsibleDialog';
 import { useSupplyActionContext } from '@/components/Suprimentos/useSupplyActionContext';
-import { FormSection } from '@/components/FormSection';
 import { StatusTag } from '@/components/ui/StatusTag';
 import { toaster } from '@/components/ui/toaster';
 
@@ -198,13 +197,25 @@ import { RequestItemRow } from './RequestItemRow';
 import { RequestMovementHistory } from './RequestMovementHistory';
 import { buildAuthorizerOption } from './requestPurchaseLabels';
 import { buildRequestPurchasePayload } from './requestPurchasePayload';
-import { RequestPurchaseViewSections } from './RequestPurchaseViewSections';
+import {
+  availableViewSections,
+  RequestPurchaseViewSections,
+  type RequestPurchaseViewSection,
+} from './RequestPurchaseViewSections';
 import { RequestQuotationAuthorizerDialog } from './RequestQuotationAuthorizerDialog';
 import { RequestQuotationTab } from './RequestQuotationTab';
 
 // Mapeamento de campo → aba (0 Dados Gerais / 1 Itens / 2 Anexos) — usado só
 // pelo `onInvalid` para navegar até a 1ª aba com erro. "Histórico" (3) nunca
 // tem erro (read-only).
+// Abas extras da visualização (depois de Cotações = 4).
+const VIEW_SECTION_TAB: Record<RequestPurchaseViewSection, number> = {
+  authorization: 5,
+  receipt: 6,
+  ratio: 7,
+  children: 8,
+};
+
 const FIELD_TAB_MAP: Partial<Record<keyof RequestPurchaseFormType, number>> = {
   type: 0,
   request_date: 0,
@@ -585,6 +596,16 @@ export default function CreateOrUpdateSolicitacao() {
     });
   }
 
+  const viewSections: RequestPurchaseViewSection[] =
+    isViewRoute && requestPurchaseData ? availableViewSections(requestPurchaseData) : [];
+  const viewSectionText = text.form.viewSections;
+  const viewSectionLabel: Record<RequestPurchaseViewSection, string> = {
+    authorization: viewSectionText.authorizationTitle,
+    receipt: viewSectionText.receiptTitle,
+    ratio: viewSectionText.ratioTitle,
+    children: viewSectionText.childrenTitle,
+  };
+
   const showTramiteBar =
     isEditing &&
     !isViewRoute &&
@@ -709,10 +730,17 @@ export default function CreateOrUpdateSolicitacao() {
             cabeçalho da OC; as abas abaixo (Itens, Anexos, Histórico,
             Cotações) só trocam o conteúdo de baixo. */}
         <Box ref={generalRef} mb={6}>
-            <Flex direction="column" pt={4}>
-            <FormSection title={text.form.sections.identification}>
+            <Flex direction="column" pt={0}>
+            {/* Identificação sem título de seção (25/11): o bloco abre a tela. */}
             {/* 3 colunas: Código/Tipo/Prioridade; Data/Solicitante/Encarregado. */}
-            <SimpleGrid columns={columnsForm.threeColumns} gap={5} pt={4}>
+            {/* Visualização: 4 colunas (Código, Tipo, Prioridade, Data | Solicitante,
+                Encarregado, NF-e) — sem espaço vazio e as abas sobem. */}
+            <SimpleGrid
+              columns={isViewRoute ? columnsForm.default : columnsForm.threeColumns}
+              columnGap={5}
+              rowGap={6}
+              mb={6}
+            >
               {/* `code` — SOMENTE LEITURA em todos os modos, gerado pelo servidor
                   (fora do `useForm`/payload). Criar: código PREVISTO (hint avisa
                   que o definitivo é atribuído ao salvar); editar/visualizar:
@@ -827,16 +855,15 @@ export default function CreateOrUpdateSolicitacao() {
                 />
               )}
             </SimpleGrid>
-            </FormSection>
 
-            <FormSection title={text.form.sections.details}>
-            <SimpleGrid columns={columnsForm.threeColumns} gap={5} pt={4}>
+            {/* Descrição, Justificativa e Observação sem título de seção (25/11). */}
+            <SimpleGrid columns={columnsForm.threeColumns} columnGap={5} rowGap={6}>
               {/* Ordem de leitura: o que é pedido, por quê, e observações. */}
               <Textarea
                 label={text.form.fields.description}
                 placeholder={text.form.placeholders.description}
                 maxLength={800}
-                rows={4}
+                rows={isViewRoute ? 2 : 3}
                 {...register('description')}
                 error={errors.description?.message}
                 isRequired
@@ -848,7 +875,7 @@ export default function CreateOrUpdateSolicitacao() {
                 label={text.form.fields.justification}
                 placeholder={text.form.placeholders.justification}
                 maxLength={800}
-                rows={4}
+                rows={isViewRoute ? 2 : 3}
                 {...register('justification')}
                 error={errors.justification?.message}
                 isRequired
@@ -860,20 +887,14 @@ export default function CreateOrUpdateSolicitacao() {
                 label={text.form.fields.observation}
                 placeholder={text.form.placeholders.observation}
                 maxLength={800}
-                rows={4}
+                rows={isViewRoute ? 2 : 3}
                 {...register('observation')}
                 error={errors.observation?.message}
                 loading={isLoading}
                 disabled={!canSave}
               />
             </SimpleGrid>
-            </FormSection>
             </Flex>
-
-            {/* Visualização: campos e seções extras do legado (show.blade). */}
-            {isViewRoute && requestPurchaseData && (
-              <RequestPurchaseViewSections data={requestPurchaseData} isLoading={isLoading} />
-            )}
         </Box>
 
         {/* @ts-ignore - custom variant */}
@@ -902,6 +923,14 @@ export default function CreateOrUpdateSolicitacao() {
               // @ts-ignore
               <Tabs.Trigger value="4">{text.form.tabs.quotations}</Tabs.Trigger>
             )}
+            {/* Visualização: seções extras do legado (show.blade) como abas,
+                só as que têm dado (`RequestPurchaseViewSections`). */}
+            {viewSections.map((section) => (
+              // @ts-ignore
+              <Tabs.Trigger key={section} value={String(VIEW_SECTION_TAB[section])}>
+                {viewSectionLabel[section]}
+              </Tabs.Trigger>
+            ))}
           </Tabs.List>
 
 
@@ -953,6 +982,14 @@ export default function CreateOrUpdateSolicitacao() {
               />
             </Tabs.Content>
           )}
+
+          {requestPurchaseData &&
+            viewSections.map((section) => (
+              // @ts-ignore
+              <Tabs.Content key={section} value={String(VIEW_SECTION_TAB[section])}>
+                <RequestPurchaseViewSections data={requestPurchaseData} section={section} />
+              </Tabs.Content>
+            ))}
         </Tabs.Root>
       </Form>
 
