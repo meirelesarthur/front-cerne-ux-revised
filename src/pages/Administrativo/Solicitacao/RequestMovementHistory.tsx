@@ -29,13 +29,15 @@
 // quebrar a tela, mesmo racional de tolerância já usado no bloco fiscal de
 // `Product` para enums com dado legado).
 //
-// Visual (25/11): mesma tabela da aba Cotações (`SimpleTable`) e a situação
-// em `StatusTag`, com a cor de cada status do suprimento.
+// Visual (25/11): linha do tempo de eventos (`EventTimeline`), do mais recente
+// para o mais antigo; a situação em `StatusTag` e o ponto na cor do status do
+// suprimento; responsável e tempo gasto na linha de baixo; justificativa em
+// destaque quando houver.
 // -----------------------------------------------------------------------------
 
 import { Box, Text } from '@chakra-ui/react';
 
-import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
+import { EventTimeline, type EventTimelineItem } from '@/components/ui/EventTimeline';
 import { StatusTag } from '@/components/ui/StatusTag';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -64,32 +66,37 @@ export function RequestMovementHistory({ movements }: RequestMovementHistoryProp
   const text = languageGB.requestPurchases.requestPurchase.form;
   const historyText = text.historySection;
 
-  const columns: SimpleTableColumn[] = [
-    { key: 'date', header: historyText.columns.date },
-    { key: 'user', header: historyText.columns.user },
-    { key: 'status', header: historyText.columns.status },
-    { key: 'elapsed', header: historyText.columns.elapsed, align: 'right' },
-    { key: 'justify', header: historyText.columns.justify },
-  ];
+  // Mais recente no topo; empate de data mantém a ordem da API.
+  const ordered = movements
+    .map((movement, index) => ({ movement, index }))
+    .sort((a, b) => {
+      const diff = Date.parse(b.movement.created_at) - Date.parse(a.movement.created_at);
+      return Number.isNaN(diff) || diff === 0 ? b.index - a.index : diff;
+    })
+    .map(({ movement }) => movement);
 
-  const rows: SimpleTableRow[] = movements.map((movement) => ({
+  const items: EventTimelineItem[] = ordered.map((movement) => ({
     key: movement.uuid,
-    cells: {
-      date: (
-        <Text whiteSpace="nowrap">{formatDate(movement.created_at, 'dd/MM/yyyy HH:mm')}</Text>
-      ),
-      // `movement.user` segue opcional no tipo: fallback "—".
-      user: <Text fontWeight="medium">{movement.user?.name ?? '—'}</Text>,
-      status: (
-        <StatusTag size="sm" label={movement.status_label} color={statusToken(movement.status)} />
-      ),
-      elapsed: <Text whiteSpace="nowrap">{movement.elapsed_label ?? '—'}</Text>,
-      justify: (
-        <Text color={movement.justify ? undefined : 'fg.muted'} minW="200px">
-          {movement.justify ?? '—'}
+    color: statusToken(movement.status),
+    header: (
+      <StatusTag size="sm" label={movement.status_label} color={statusToken(movement.status)} />
+    ),
+    date: formatDate(movement.created_at, 'dd/MM/yyyy HH:mm'),
+    meta: (
+      <>
+        {/* `movement.user` segue opcional no tipo: fallback "—". */}
+        <Text as="span" color="strongText" fontWeight="medium">
+          {movement.user?.name ?? '—'}
         </Text>
-      ),
-    },
+        {movement.elapsed_label && (
+          <>
+            {' · '}
+            {historyText.columns.elapsed}: {movement.elapsed_label}
+          </>
+        )}
+      </>
+    ),
+    description: movement.justify || undefined,
   }));
 
   return (
@@ -98,7 +105,7 @@ export function RequestMovementHistory({ movements }: RequestMovementHistoryProp
       {movements.length === 0 ? (
         <RequestTabEmpty>{historyText.emptyLabel}</RequestTabEmpty>
       ) : (
-        <SimpleTable columns={columns} rows={rows} ariaLabel={text.tabs.history} />
+        <EventTimeline items={items} ariaLabel={text.tabs.history} />
       )}
     </Box>
   );

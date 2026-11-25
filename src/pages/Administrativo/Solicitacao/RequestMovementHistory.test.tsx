@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-// Execução 081, T-081-FE-05 — histórico da Solicitação: colunas do legado
-// (Data, Responsável, Status, Tempo Gasto, Descrição/Justificativa), com o
-// Responsável vindo de `movement.user` e o Tempo Gasto de `elapsed_label`
-// (calculado pela API: "< 1h", "5h", "1d 6h"; o front não calcula).
+// Execução 081, T-081-FE-05 — histórico da Solicitação, em linha do tempo
+// (25/11): um evento por movimento, do mais recente para o mais antigo, com a
+// situação, a data, o Responsável (`movement.user`), o Tempo Gasto
+// (`elapsed_label`, calculado pela API: "< 1h", "5h", "1d 6h"; o front não
+// calcula) e a justificativa.
 import { ChakraProvider } from '@chakra-ui/react';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -40,21 +41,29 @@ function renderHistory(movements: RequestMovementRow[]) {
   );
 }
 
+function isBefore(first: Node, second: Node) {
+  return !!(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING);
+}
+
 afterEach(cleanup);
 
 describe('RequestMovementHistory', () => {
-  it('mostra as colunas do legado, na ordem', () => {
-    renderHistory([movement({})]);
-    const headers = ['Data', 'Responsável', 'Status', 'Tempo Gasto', 'Descrição/Justificativa'];
-    const nodes = headers.map((header) => screen.getByText(header));
-    for (let index = 1; index < nodes.length; index += 1) {
-      expect(
-        nodes[index - 1].compareDocumentPosition(nodes[index]) & Node.DOCUMENT_POSITION_FOLLOWING
-      ).toBeTruthy();
-    }
+  it('mostra os eventos do mais recente para o mais antigo', () => {
+    renderHistory([
+      movement({ uuid: 'm-1', status_label: 'Solicitação', created_at: '2026-09-20T10:00:00Z' }),
+      movement({
+        uuid: 'm-2',
+        status: 2,
+        status_label: 'Cotação em Andamento',
+        created_at: '2026-09-22T10:00:00Z',
+      }),
+    ]);
+    expect(
+      isBefore(screen.getByText('Cotação em Andamento'), screen.getByText('Solicitação'))
+    ).toBe(true);
   });
 
-  it('exibe Responsável e Tempo Gasto vindos da API (elapsed_label)', () => {
+  it('exibe Responsável, Tempo Gasto (elapsed_label) e justificativa', () => {
     renderHistory([
       movement({
         uuid: 'm-1',
@@ -72,15 +81,16 @@ describe('RequestMovementHistory', () => {
     ]);
 
     expect(screen.getByText('Maria Souza')).toBeTruthy();
-    expect(screen.getByText('1d 6h')).toBeTruthy();
+    expect(screen.getByText(/1d 6h/)).toBeTruthy();
     expect(screen.getByText('João Lima')).toBeTruthy();
-    expect(screen.getByText('< 1h')).toBeTruthy();
+    expect(screen.getByText(/< 1h/)).toBeTruthy();
     expect(screen.getByText('Solicitação refeita.')).toBeTruthy();
   });
 
-  it('sem user/elapsed_label mostra "—", nunca quebra', () => {
+  it('sem user mostra "—" e sem elapsed_label omite o tempo, nunca quebra', () => {
     renderHistory([movement({ user: undefined, elapsed_label: undefined })]);
-    expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('—')).toBeTruthy();
+    expect(screen.queryByText(/Tempo Gasto/)).toBeNull();
   });
 
   it('lista vazia mostra o estado vazio', () => {
