@@ -13,6 +13,7 @@
  */
 
 import {
+  Columns3CogIcon,
   Activity03Icon,
   Alert02Icon,
   AlertCircleIcon,
@@ -222,6 +223,8 @@ export const icons = {
   'undo':             Undo02Icon,
   'settings':         Settings01Icon,
   'settings-sliders': Settings02Icon,
+  /** Configurar colunas de uma tabela (mostrar, ocultar, ordenar). */
+  'columns-settings': Columns3CogIcon,
   'power':            PowerIcon,
   'login':            Login01Icon,
   'logout':           Logout01Icon,

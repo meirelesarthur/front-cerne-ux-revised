@@ -15,7 +15,10 @@ import {
   IconButton,
   Portal,
 } from '@chakra-ui/react';
-import { FiColumns, FiX } from 'react-icons/fi';
+import { FiX } from 'react-icons/fi';
+
+import { Icon as UiIcon } from '@/components/ui/Icon';
+import { LIST_CONTROL_HEIGHT } from '@/components/ui/listControl';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -170,9 +173,24 @@ export function GridSettingsFloatingPanel({
       // conteúdo garante o responsivo e a altura é limitada por `maxH=80vh`.
       defaultSize={{ width: 720, height: 580 }}
     >
+      {/* Botão das colunas (25/11): ícone `columns-settings` (colunas com
+          engrenagem) e moldura igual à do "Filtros", mesma altura da busca. */}
       <FloatingPanelTrigger asChild>
-        <IconButton aria-label={triggerLabel} variant="ghost">
-          <Icon as={FiColumns} />
+        <IconButton
+          aria-label={triggerLabel}
+          title={triggerLabel}
+          variant="outline"
+          h={LIST_CONTROL_HEIGHT}
+          minW={LIST_CONTROL_HEIGHT}
+          w={LIST_CONTROL_HEIGHT}
+          borderRadius="8px"
+          borderWidth="1.5px"
+          borderColor="semanticNeutral.300"
+          bg="cardBG"
+          color="fg.default"
+          _hover={{ borderColor: 'semanticNeutral.400', bg: 'semanticNeutral.100' }}
+        >
+          <UiIcon name="columns-settings" size="sm" />
         </IconButton>
       </FloatingPanelTrigger>
 
@@ -214,7 +232,7 @@ export function GridSettingsFloatingPanel({
                     colorPalette="green"
                     flexShrink={0}
                   >
-                    <Icon as={FiColumns} boxSize={4} />
+                    <UiIcon name="columns-settings" size="xs" />
                   </Flex>
                   <FloatingPanelTitle fontSize="sm" fontWeight="semibold" lineClamp={1}>
                     {resolvedTitle}
