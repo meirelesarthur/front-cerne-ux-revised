@@ -349,6 +349,22 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       },
     },
 
+    // Pantalla única "Órdenes de compra": las listas de Suministros pasan a ser vistas (pestañas).
+    hub: {
+      pageTitle: 'Órdenes de compra',
+      pageSubtitle: 'Todas las órdenes de compra, del pedido a la recepción. Elija la vista.',
+      viewsAriaLabel: 'Vista de las órdenes de compra',
+      views: {
+        minhas: 'Creadas por mí',
+        responsabilidade: 'Bajo mi responsabilidad',
+        aprovar: 'Para que yo apruebe',
+        cotacao: 'En cotización',
+        compra: 'En compra',
+        recebimento: 'Recepción',
+        encerradas: 'Rechazadas y canceladas',
+      },
+    },
+
     // ADITIVO (TASK-CQ-FE-13) — ver nota en
     // `ModuleRequestPurchases.requestPurchase.inQuotation`.
     inQuotation: {

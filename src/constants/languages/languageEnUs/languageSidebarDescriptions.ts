@@ -89,7 +89,7 @@ export const navDescriptions: Record<string, string> = {
   // Administrative › Supplies
   'adm-sup-sla': 'Expected time for each purchase step.',
   'adm-sup-meu': 'Purchase orders under your responsibility.',
-  'adm-sup-sol': 'Request a product or service and track it.',
+  'adm-sup-sol': 'Request, approve, quote, buy and receive, in one screen.',
   'adm-sup-rej': 'Orders not approved or canceled.',
   'adm-sup-cot': 'Get quotes from suppliers.',
   'adm-sup-aut': 'Approve or reject purchase orders.',

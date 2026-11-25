@@ -19,6 +19,7 @@
 
 import type { IconName } from '@/components/ui/Icon';
 
+import { UNIFIED_PURCHASE_ORDERS_ENABLED } from './purchaseOrdersFeature';
 import { SERVICE_ORDERS_ENABLED } from './serviceOrdersFeature';
 
 export interface NavSubItem {
@@ -764,7 +765,19 @@ export const menuModules: NavModule[] = [
         id: 'adm-suprimentos',
         label: 'Suprimentos',
         icon: 'cart',
-        items: [
+        // Tela única de Ordens de compra (`UNIFIED_PURCHASE_ORDERS_ENABLED`, decisão
+        // do dono 24/11/2026): as 6 listas antigas viram abas dela e saem do menu.
+        items: UNIFIED_PURCHASE_ORDERS_ENABLED
+          ? [
+              {
+                id: 'adm-sup-sol',
+                label: 'Ordens de compra',
+                path: '/administrativo/ordens-de-compra',
+                icon: 'document-add',
+              },
+              { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: 'timer' },
+            ]
+          : [
           { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: 'timer' },
           {
             id: 'adm-sup-meu',
@@ -808,7 +821,7 @@ export const menuModules: NavModule[] = [
             path: '/administrativo/recebimentos',
             icon: 'package-check',
           },
-        ],
+            ],
       },
       {
         id: 'adm-estoque',

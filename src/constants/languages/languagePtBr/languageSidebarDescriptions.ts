@@ -90,7 +90,7 @@ export const navDescriptions: Record<string, string> = {
   // Administrativo › Suprimentos
   'adm-sup-sla': 'Prazo esperado de cada etapa da compra.',
   'adm-sup-meu': 'Ordens de compra sob sua responsabilidade.',
-  'adm-sup-sol': 'Pedir produto ou serviço e acompanhar o pedido.',
+  'adm-sup-sol': 'Pedir, aprovar, cotar, comprar e receber, numa tela só.',
   'adm-sup-rej': 'Ordens não aprovadas ou canceladas.',
   'adm-sup-cot': 'Cotar preços com fornecedores.',
   'adm-sup-aut': 'Aprovar ou recusar ordens de compra.',

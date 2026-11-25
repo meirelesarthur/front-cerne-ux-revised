@@ -172,10 +172,18 @@ As telas não diferem só pelo status: diferem pelo **escopo** (minhas, sob minh
 ## 5. Ordem sugerida
 
 1. **Front, só rótulos:** "Tipos de serviço" e "Serviços" no menu, nas telas de cadastro e no Apontamento (campo único). Sem mudar API.
-2. **Front:** lista única de Ordens de compra com as visões sobre os endpoints atuais e filtro de 1 status.
+2. **Front:** lista única de Ordens de compra com as visões sobre os endpoints atuais e filtro de 1 status. **Feito em 25/11** (ver abaixo).
 3. **Backend:** `status[]`, `scope`, `allowed_actions` e contagens; o front passa a usar o endpoint único.
 4. **Backend e front:** cadastro novo de Operações e campo obrigatório na ordem; ligação com a despesa.
 5. **App:** rótulos e campo único no apontamento; depois a ordem de compra.
+
+## Feito no front: tela única de Ordens de compra (25/11)
+
+- **Rota:** `/administrativo/ordens-de-compra?visao=<visão>`; abre com qualquer uma das 6 permissões de leitura das listas.
+- **Visões (abas), na ordem do caminho da ordem:** Criadas por mim (`/request-purchases`), Sob minha responsabilidade (`my-processes`), Para eu aprovar (`/request-authorizations`), Em cotação (`in-quotation`), Em compra (`in-purchase`), Recebimento (`/request-receipts`), Rejeitadas e canceladas (`rejected`). Cada aba só aparece para quem tem a permissão da lista de origem.
+- **Como:** cada aba é a lista atual embutida sem mudança (`components/EmbeddedList.tsx`): mesmas colunas, filtros, ações por linha e diálogos. `ContainerGrid` e `PageHeader` leem o contexto e deixam de desenhar o card e o título; fora da tela única nada muda.
+- **Menu:** Suprimentos mostra só "Ordens de compra" e "Parâmetros SLA". Chave `UNIFIED_PURCHASE_ORDERS_ENABLED` (`config/v2/purchaseOrdersFeature.ts`); com `false` volta o menu antigo. As rotas antigas seguem vivas (sino, favoritos, links).
+- **Falta (backend, item 3):** `scope` e `status[]` no `GET /request-purchases`, `allowed_actions` e contagem por visão; com isso as abas viram filtros de uma lista só e ganham o número na pílula (`QueueTabs` já aceita aba sem contagem).
 
 ## Pendências de decisão
 

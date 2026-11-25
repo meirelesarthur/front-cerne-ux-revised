@@ -31,6 +31,10 @@ import { RequirePermission } from '@/components/RequirePermission';
 import { RequireRole } from '@/components/RequireRole';
 
 import { SERVICE_ORDERS_ENABLED } from '@/config/v2/serviceOrdersFeature';
+import {
+  PURCHASE_ORDER_PERMISSIONS,
+  PURCHASE_ORDERS_PATH,
+} from '@/pages/Administrativo/OrdensCompra/purchaseOrderViews';
 import { ROUTES } from '@/constants/routes';
 
 // ---- Público (login) ----
@@ -3039,6 +3043,9 @@ const CreateOrUpdateSolicitacao = lazy(
 // (`adm-sup-com`) e permissão (`request-buy_view`, igual ao legado e à API —
 // T-081-API-03; supera o GAP-UX-CPS-01, execução 081, T-081-FE-02).
 const ComprasList = lazy(() => import('@/pages/Administrativo/Compras'));
+// Tela única "Ordens de compra" (decisão do dono 24/11/2026): as listas de
+// Suprimentos em abas. Ver `pages/Administrativo/OrdensCompra`.
+const OrdensCompraHub = lazy(() => import('@/pages/Administrativo/OrdensCompra'));
 // Hub tenant-wide "Autorização" (TASK-AUTH-FE-02, esteira 038) — reusa a
 // MESMA entidade RequestPurchase, `GET /request-authorizations`, filtro de
 // negócio `status IN (3,4,11)` (BR-01), fonte/queryKey/storageKey próprias
@@ -6504,6 +6511,17 @@ export function AppRoutes() {
             `useParams<{ requestPurchaseId }>()` em
             `CreateOrUpdateSolicitacao.tsx` (confirmado por leitura
             do componente). */}
+        {/* Tela única "Ordens de compra" — basta uma das permissões de leitura
+            das visões; cada aba só aparece para quem tem a sua. As rotas das
+            listas abaixo continuam vivas (sino, favoritos, links externos). */}
+        <Route
+          path={PURCHASE_ORDERS_PATH}
+          element={
+            <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
+              {lazyRoute(OrdensCompraHub)}
+            </RequirePermission>
+          }
+        />
         <Route
           path="/administrativo/solicitacao"
           element={

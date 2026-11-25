@@ -348,6 +348,22 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       },
     },
 
+    // Tela única "Ordens de compra": as listas de Suprimentos viram visões (abas).
+    hub: {
+      pageTitle: 'Ordens de compra',
+      pageSubtitle: 'Todas as ordens de compra, do pedido ao recebimento. Escolha a visão.',
+      viewsAriaLabel: 'Visão das ordens de compra',
+      views: {
+        minhas: 'Criadas por mim',
+        responsabilidade: 'Sob minha responsabilidade',
+        aprovar: 'Para eu aprovar',
+        cotacao: 'Em cotação',
+        compra: 'Em compra',
+        recebimento: 'Recebimento',
+        encerradas: 'Rejeitadas e canceladas',
+      },
+    },
+
     // ⚠️ ADITIVO (TASK-CQ-FE-13) — ver nota em
     // `ModuleRequestPurchases.requestPurchase.inQuotation`.
     inQuotation: {

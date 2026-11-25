@@ -346,6 +346,22 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       },
     },
 
+    // Single "Purchase orders" screen: the Supplies lists become views (tabs).
+    hub: {
+      pageTitle: 'Purchase orders',
+      pageSubtitle: 'Every purchase order, from request to receipt. Pick a view.',
+      viewsAriaLabel: 'Purchase order view',
+      views: {
+        minhas: 'Created by me',
+        responsabilidade: 'Assigned to me',
+        aprovar: 'Awaiting my approval',
+        cotacao: 'In quotation',
+        compra: 'In purchase',
+        recebimento: 'Receiving',
+        encerradas: 'Rejected and cancelled',
+      },
+    },
+
     // ADDITIVE (TASK-CQ-FE-13) — see note in
     // `ModuleRequestPurchases.requestPurchase.inQuotation`.
     inQuotation: {

@@ -10,7 +10,8 @@ const BUTTON_ATTRS = { type: 'button' } as Record<string, string>;
 export interface QueueTab<K extends string = string> {
   key: K;
   label: string;
-  count: number;
+  /** Sem contagem (ex.: a API ainda não conta por aba), a pílula não aparece. */
+  count?: number;
 }
 
 export interface QueueTabsProps<K extends string = string> {
@@ -22,7 +23,7 @@ export interface QueueTabsProps<K extends string = string> {
 
 export function QueueTabs<K extends string = string>({ tabs, value, onChange, ariaLabel }: QueueTabsProps<K>) {
   return (
-    <Flex role="tablist" aria-label={ariaLabel} gap="2px" px={3} borderBottomWidth="1px" borderColor="border.muted" overflowX="auto">
+    <Flex role="tablist" aria-label={ariaLabel} gap="2px" px={3} borderBottomWidth="1px" borderColor="border.muted" overflowX="auto" css={{ scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } }}>
       {tabs.map((tab) => {
         const active = tab.key === value;
         return (
@@ -48,6 +49,7 @@ export function QueueTabs<K extends string = string>({ tabs, value, onChange, ar
             _hover={{ color: active ? 'green.700' : 'fg.default' }}
           >
             {tab.label}
+            {tab.count !== undefined && (
             <Box
               as="span"
               px="7px"
@@ -58,6 +60,7 @@ export function QueueTabs<K extends string = string>({ tabs, value, onChange, ar
             >
               {tab.count}
             </Box>
+            )}
           </Flex>
         );
       })}
