@@ -45,8 +45,10 @@
 
 ## Infraestrutura só de desenvolvimento (NÃO portar para produção)
 
-`src/mocks/dev-api/**`, `src/services/v2/Auth/dev-auth-bypass.ts`, `scripts/dev-db/**`, `scripts/dev-mocks/**`, `scripts/ux-docs/**`.
-Só existem em `yarn dev` (`import.meta.env.DEV`) e saem do bundle no `vite build`. Flags (`.env`, nunca versionado): `VITE_DEV_AUTH_BYPASS`, `VITE_DEV_MOCKS`, `VITE_DEV_MOCKS_API_FIRST`, `VITE_DEV_MOCKS_SYNTHETIC`. Detalhes em `docs/ux/README.md`.
+`src/mocks/dev-api/**`, `src/services/v2/Auth/dev-auth-bypass.ts`, `src/config/demoMode.ts`, `.env.production`, `scripts/dev-db/**`, `scripts/dev-mocks/**`, `scripts/ux-docs/**`.
+Só existem em `yarn dev` (`import.meta.env.DEV`) e saem do bundle no `vite build` — **exceto** no deploy de revisão deste repo:
+`.env.production` liga `VITE_DEMO_MODE=true` (demo sem backend, login aberto, dados fictícios; decisão do dono em 25/11/2026).
+No front oficial, não porte `.env.production` nem `demoMode.ts`. Flags (`.env`, nunca versionado): `VITE_DEV_AUTH_BYPASS`, `VITE_DEV_MOCKS`, `VITE_DEV_MOCKS_API_FIRST`, `VITE_DEV_MOCKS_SYNTHETIC`. Detalhes em `docs/ux/README.md`.
 
 ## Comandos
 

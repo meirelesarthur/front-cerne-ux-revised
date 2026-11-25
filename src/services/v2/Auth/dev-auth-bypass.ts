@@ -14,10 +14,13 @@
 // (flag em localStorage) e some no logout.
 // -----------------------------------------------------------------------------
 
+import { DEMO_MODE } from '@/config/demoMode';
 import permissionsCatalog from '@/config/v2/permissionsCatalog.json';
 
 export const DEV_AUTH_BYPASS =
-  import.meta.env.DEV && import.meta.env.VITE_DEV_AUTH_BYPASS === 'true';
+  (import.meta.env.DEV && import.meta.env.VITE_DEV_AUTH_BYPASS === 'true') ||
+  // Build de demonstração sem backend (deploy de revisão) — ver `config/demoMode.ts`.
+  DEMO_MODE;
 
 const SESSION_KEY = 'dev-auth-bypass-session';
 const DEV_FARM_UUID = '00000000-0000-4000-8000-000000000001';
