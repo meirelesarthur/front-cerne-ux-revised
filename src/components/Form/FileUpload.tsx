@@ -91,6 +91,11 @@ export interface FileUploadProps {
   existingFileLabel?: string;
   errorTypeMessage?: string;
   errorSizeMessage?: string;
+  /**
+   * Versão de uma linha (38px, a altura de um campo) para caber em célula de
+   * tabela: sem o tamanho/rótulo do arquivo em segunda linha e botões menores.
+   */
+  compact?: boolean;
 }
 
 function fileNameFromUrl(url: string): string {
@@ -128,6 +133,7 @@ export function FileUpload({
   existingFileLabel = 'Current file',
   errorTypeMessage = 'File type not accepted.',
   errorSizeMessage = 'File exceeds the maximum size.',
+  compact = false,
 }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -213,27 +219,31 @@ export function FileUpload({
       {hasFile ? (
         <Flex
           align="center"
-          gap={3}
-          px={4}
-          py={3}
+          gap={compact ? 2 : 3}
+          px={compact ? 3 : 4}
+          py={compact ? 0 : 3}
+          minH={compact ? '38px' : undefined}
           border="1px solid"
           borderColor="border.subtle"
           borderRadius="lg"
           bg="bg.subtle"
         >
-          <Icon as={FiFileText} boxSize={5} color="fg.muted" flexShrink={0} />
+          <Icon as={FiFileText} boxSize={compact ? 4 : 5} color="fg.muted" flexShrink={0} />
           <Flex direction="column" flex={1} minW={0} gap={0}>
             <Text fontSize="sm" fontWeight="medium" lineClamp="1" title={file?.name}>
               {file?.name}
             </Text>
-            <Text fontSize="xs" color="fg.muted">
-              {file ? formatFileSize(file.size) : ''}
-            </Text>
+            {!compact && (
+              <Text fontSize="xs" color="fg.muted">
+                {file ? formatFileSize(file.size) : ''}
+              </Text>
+            )}
           </Flex>
-          <Flex gap={2} flexShrink={0}>
+          <Flex gap={2} flexShrink={0} align="center">
             <Button
               title={changeLabel}
               variant="outline"
+              size={compact ? 'xs' : undefined}
               onClick={openPicker}
               disabled={disabled}
             />
@@ -261,19 +271,22 @@ export function FileUpload({
       ) : hasExistingFile ? (
         <Flex
           align="center"
-          gap={3}
-          px={4}
-          py={3}
+          gap={compact ? 2 : 3}
+          px={compact ? 3 : 4}
+          py={compact ? 0 : 3}
+          minH={compact ? '38px' : undefined}
           border="1px solid"
           borderColor="border.subtle"
           borderRadius="lg"
           bg="bg.subtle"
         >
-          <Icon as={FiFileText} boxSize={5} color="fg.muted" flexShrink={0} />
+          <Icon as={FiFileText} boxSize={compact ? 4 : 5} color="fg.muted" flexShrink={0} />
           <Flex direction="column" flex={1} minW={0} gap={0}>
-            <Text fontSize="xs" color="fg.muted">
-              {existingFileLabel}
-            </Text>
+            {!compact && (
+              <Text fontSize="xs" color="fg.muted">
+                {existingFileLabel}
+              </Text>
+            )}
             <Link
               href={currentFileUrl ?? undefined}
               target="_blank"
@@ -288,10 +301,11 @@ export function FileUpload({
               {currentFileName ?? (currentFileUrl ? fileNameFromUrl(currentFileUrl) : '')}
             </Link>
           </Flex>
-          <Flex gap={2} flexShrink={0}>
+          <Flex gap={2} flexShrink={0} align="center">
             <Button
               title={replaceLabel}
               variant="outline"
+              size={compact ? 'xs' : undefined}
               onClick={openPicker}
               disabled={disabled}
             />
@@ -338,12 +352,13 @@ export function FileUpload({
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           display="flex"
-          flexDirection="column"
+          flexDirection={compact ? 'row' : 'column'}
           alignItems="center"
-          justifyContent="center"
+          justifyContent={compact ? 'flex-start' : 'center'}
           gap={2}
-          px={4}
-          py={6}
+          px={compact ? 3 : 4}
+          py={compact ? 0 : 6}
+          minH={compact ? '38px' : undefined}
           border="1.5px dashed"
           borderColor={displayError ? 'fg.error' : dragOver ? 'brandColorText' : 'border.subtle'}
           borderRadius="lg"
@@ -352,8 +367,14 @@ export function FileUpload({
           opacity={disabled ? 0.6 : 1}
           transition="border-color 0.2s, background 0.2s"
         >
-          <Icon as={dragOver ? FiUpload : FiFileText} boxSize={6} color="fg.muted" />
-          <Text fontSize="sm" fontWeight="medium" color="fg.default" textAlign="center">
+          <Icon as={dragOver ? FiUpload : FiFileText} boxSize={compact ? 4 : 6} color="fg.muted" />
+          <Text
+            fontSize="sm"
+            fontWeight="medium"
+            color={compact ? 'fg.muted' : 'fg.default'}
+            textAlign={compact ? 'left' : 'center'}
+            lineClamp={compact ? "1" : undefined}
+          >
             {dragOver ? dropzoneDraggingTitle : dropzoneTitle}
           </Text>
         </Box>

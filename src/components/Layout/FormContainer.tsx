@@ -114,7 +114,16 @@ export const FormContainer: React.FC<FormContainerProps> = ({
               ) : (
               <ScrollArea.Root flex="1" minH={0} width="full" type="hover">
                 <ScrollArea.Viewport>
-                  <ScrollArea.Content px={PAD} pt={PAD} pb={PAD}>
+                  {/* min-width 0: o ScrollArea grava `min-width: fit-content`
+                      inline, e conteúdo largo (tabela editável) alargava o
+                      formulário e cortava o lado direito; agora a tabela rola
+                      dentro dela. `!important` porque o valor vem inline. */}
+                  <ScrollArea.Content
+                    px={PAD}
+                    pt={PAD}
+                    pb={PAD}
+                    css={{ minWidth: '0 !important' }}
+                  >
                     {children}
                   </ScrollArea.Content>
                 </ScrollArea.Viewport>
