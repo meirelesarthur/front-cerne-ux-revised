@@ -185,6 +185,19 @@ As telas não diferem só pelo status: diferem pelo **escopo** (minhas, sob minh
 - **Menu:** Suprimentos mostra só "Ordens de compra" e "Parâmetros SLA". Chave `UNIFIED_PURCHASE_ORDERS_ENABLED` (`config/v2/purchaseOrdersFeature.ts`); com `false` volta o menu antigo. As rotas antigas seguem vivas (sino, favoritos, links).
 - **Falta (backend, item 3):** `scope` e `status[]` no `GET /request-purchases`, `allowed_actions` e contagem por visão; com isso as abas viram filtros de uma lista só e ganham o número na pílula (`QueueTabs` já aceita aba sem contagem).
 
+## Visual da Ordem de compra (25/11)
+
+Pedido do dono: a ordem de compra é complexa e a aba de cotações estava ruim; visual minimalista e funcional, no padrão do sistema.
+
+- **Faixa de situação** no topo da ordem salva: tag de situação (mesma cor da lista), código e responsável atual, sempre visível (inclusive em visualização e encerrada); as ações de trâmite (Receber, Transferir, Voltar etapa, Finalizar, Justificativa) só aparecem para quem pode executá-las.
+- **Dados Gerais** em duas seções (`FormSection`): *Identificação* (Código, Tipo, Prioridade, Data do pedido, Solicitante, Encarregado, NF-e na visualização) e *Descrição do pedido* (Descrição/Chamado, Justificativa e Observação, nessa ordem, com 4 linhas de altura).
+- **Itens:** título com contador, cada item num bloco numerado ("Item 1"), lista vazia tracejada; sem tipo escolhido, a lista diz para escolher o tipo em Dados Gerais (antes o botão só ficava desabilitado, sem explicar).
+- **Cotações:** os cartões altos viraram um **comparativo**:
+  - resumo no topo: fornecedores, respondidas ("3 de 15") e menor valor com o fornecedor;
+  - tabela (`SimpleTable`) com Fornecedor (data e quem cotou), Situação, Valor, Desconto, **Valor final** e Saving; recebidas primeiro, do menor para o maior valor final, com a marca "Menor valor"; cotação ainda não recebida mostra "—" no lugar de R$ 0,00 (regra em `quotationRanking.ts`, com teste);
+  - marcar todas no cabeçalho; "Enviar e-mail (n)" só aparece com cotação marcada;
+  - "Enviar para autorização" saiu do menu de cada cotação (ele age sobre a ordem, não sobre a cotação) e foi para o cabeçalho da aba; com ao menos uma cotação recebida ele vira a ação principal e "Adicionar fornecedor" fica secundário.
+
 ## Pendências de decisão
 
 - ~~O que a Operação da compra representa~~ — decidido: **classifica o custo**, preenchendo o rateio da autorização (ver seção 2). Falta: mais de um par categoria/centro por operação e centro de custo ausente na fazenda.

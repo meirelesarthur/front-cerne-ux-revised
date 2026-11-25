@@ -86,6 +86,13 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         history: 'History',
         quotations: 'Quotations',
       },
+      sections: {
+        identification: 'Identification',
+        details: 'Request details',
+      },
+      statusBar: {
+        responsible: 'Current owner',
+      },
       fields: {
         type: 'Type',
         requestDate: 'Order Date',
@@ -112,6 +119,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         addButton: '+ Add Item',
         removeButton: 'Remove',
         emptyLabel: 'No item added',
+        chooseTypeFirst: 'Choose the type in the General Data tab to add items.',
+        rowLabel: 'Item {n}',
         fields: {
           product: 'Product',
           quantity: 'Quantity',

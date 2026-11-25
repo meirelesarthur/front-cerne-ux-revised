@@ -86,6 +86,13 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         history: 'Histórico',
         quotations: 'Cotações',
       },
+      sections: {
+        identification: 'Identificação',
+        details: 'Descrição do pedido',
+      },
+      statusBar: {
+        responsible: 'Responsável atual',
+      },
       fields: {
         type: 'Tipo',
         requestDate: 'Data do Pedido',
@@ -112,6 +119,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         addButton: '+ Adicionar Item',
         removeButton: 'Remover',
         emptyLabel: 'Nenhum item adicionado',
+        chooseTypeFirst: 'Escolha o tipo na aba Dados Gerais para adicionar itens.',
+        rowLabel: 'Item {n}',
         fields: {
           product: 'Produto',
           quantity: 'Quantidade',

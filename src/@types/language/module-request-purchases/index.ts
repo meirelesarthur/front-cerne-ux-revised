@@ -134,6 +134,15 @@ export interface ModuleRequestPurchases {
          *  é só o RÓTULO do `Tabs.Trigger` no formulário do pai. */
         quotations: string;
       };
+      /** Seções da aba Dados Gerais (redesenho 25/11/2026). */
+      sections: {
+        identification: string;
+        details: string;
+      };
+      /** Faixa de situação no topo da ordem: "Responsável atual". */
+      statusBar: {
+        responsible: string;
+      };
       fields: {
         type: string;
         requestDate: string;
@@ -162,6 +171,10 @@ export interface ModuleRequestPurchases {
         addButton: string;
         removeButton: string;
         emptyLabel: string;
+        /** Sem tipo escolhido não dá para adicionar item: diz onde escolher. */
+        chooseTypeFirst: string;
+        /** "Item {n}" — cabeçalho de cada linha. */
+        rowLabel: string;
         fields: {
           product: string;
           quantity: string;

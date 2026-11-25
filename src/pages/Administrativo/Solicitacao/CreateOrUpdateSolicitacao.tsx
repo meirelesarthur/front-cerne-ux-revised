@@ -120,7 +120,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Badge, Flex, SimpleGrid, Tabs, useDisclosure } from '@chakra-ui/react';
+import { Flex, SimpleGrid, Tabs, Text, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Controller, useForm, type FieldErrors } from 'react-hook-form';
@@ -142,6 +142,8 @@ import {
 } from '@/components/Suprimentos/supplyActionRules';
 import { TransferResponsibleDialog } from '@/components/Suprimentos/TransferResponsibleDialog';
 import { useSupplyActionContext } from '@/components/Suprimentos/useSupplyActionContext';
+import { FormSection } from '@/components/FormSection';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { toaster } from '@/components/ui/toaster';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -165,7 +167,7 @@ import {
 import { requestPurchasePriority } from '@/constants/RequestPurchases/request-purchase-priority';
 import {
   requestPurchaseStatus,
-  requestPurchaseStatusColor,
+  requestPurchaseStatusDotToken,
 } from '@/constants/RequestPurchases/request-purchase-status';
 import type { RequestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
 
@@ -617,30 +619,41 @@ export default function CreateOrUpdateSolicitacao() {
         </>
       }
     >
-      {showTramiteBar && (
+      {/* Faixa de situação: sempre visível na ordem já salva (também em
+          visualização e encerrada); as ações de trâmite só aparecem quando
+          a pessoa pode executá-las. */}
+      {isEditing && requestPurchaseData && (
         <Flex
           gap={3}
           wrap="wrap"
           align="center"
-          mb={6}
-          p={4}
-          bg="bg.muted"
+          mb={5}
+          px={4}
+          py={3}
           border="1px solid"
-          borderColor="border.subtle"
-          borderRadius="lg"
+          borderColor="semanticNeutral.200"
+          borderRadius="xl"
+          bg="cardBG"
         >
-          <Badge
-            colorPalette={
-              requestPurchaseStatusColor[requestPurchaseData!.status as RequestPurchaseStatus] ??
-              'gray'
-            }
-            variant="subtle"
-            py={1}
-            px={3}
-          >
-            {requestPurchaseData!.status_label}
-          </Badge>
+          <StatusTag
+            label={requestPurchaseData.status_label}
+            color={requestPurchaseStatusDotToken[requestPurchaseData.status as RequestPurchaseStatus]}
+          />
+          {requestPurchaseData.code && (
+            <Text fontFamily="mono" fontSize="sm" fontWeight="medium" color="strongText">
+              {requestPurchaseData.code}
+            </Text>
+          )}
+          {requestPurchaseData.responsible?.name && (
+            <Text fontSize="sm" color="fg.muted">
+              {text.form.statusBar.responsible}:{' '}
+              <Text as="span" color="strongText" fontWeight="medium">
+                {requestPurchaseData.responsible.name}
+              </Text>
+            </Text>
+          )}
 
+          {showTramiteBar && (
           <Flex gap={2} wrap="wrap" ml="auto">
             {canReceive && (
               <Button
@@ -695,6 +708,7 @@ export default function CreateOrUpdateSolicitacao() {
               />
             )}
           </Flex>
+          )}
         </Flex>
       )}
 
@@ -732,7 +746,32 @@ export default function CreateOrUpdateSolicitacao() {
           {/* ---- ABA 1: Dados Gerais (ESTE arquivo) ---- */}
           {/* @ts-ignore */}
           <Tabs.Content value="0">
-            <SimpleGrid columns={columnsForm.default} gap={6} pt={4}>
+            <Flex direction="column" pt={4}>
+            <FormSection title={text.form.sections.identification}>
+            <SimpleGrid columns={columnsForm.default} gap={5} pt={4}>
+              {/* `code` — SOMENTE LEITURA em todos os modos, gerado pelo servidor
+                  (fora do `useForm`/payload). Criar: código PREVISTO (hint avisa
+                  que o definitivo é atribuído ao salvar); editar/visualizar:
+                  código gravado. Primeiro campo: é o que a pessoa procura. */}
+              <InputReadOnly
+                label={text.form.fields.code}
+                value={
+                  isEditing ? (requestPurchaseData?.code ?? '—') : (nextCodeQuery.data?.code ?? '—')
+                }
+                helperText={
+                  isEditing
+                    ? undefined
+                    : nextCodeQuery.isError
+                      ? text.form.hints.codePreviewUnavailable
+                      : text.form.hints.codePreview
+                }
+                loading={
+                  isEditing
+                    ? isLoading
+                    : nextCodeQuery.isPending && nextCodeQuery.fetchStatus !== 'idle'
+                }
+              />
+
               <Controller
                 name="type"
                 control={control}
@@ -757,20 +796,6 @@ export default function CreateOrUpdateSolicitacao() {
                 )}
               />
 
-              {/* "Solicitante" (somente leitura): o logado na criação, o autor na edição. */}
-              <InputReadOnly
-                label={text.form.fields.requester}
-                value={(isEditing ? requestPurchaseData?.user?.name : loggedUser?.username) ?? '—'}
-                loading={isLoading}
-              />
-
-              {/* "Data do Pedido" somente leitura (default hoje na criação). */}
-              <InputReadOnly
-                label={text.form.fields.requestDate}
-                value={formatDate(watch('request_date') ?? '')}
-                loading={isLoading}
-              />
-
               <Controller
                 name="priority"
                 control={control}
@@ -788,31 +813,20 @@ export default function CreateOrUpdateSolicitacao() {
                 )}
               />
 
-              {/* `code` — SOMENTE LEITURA em todos os modos, gerado pelo servidor
-                  (fora do `useForm`/payload). Criar: código PREVISTO (hint avisa
-                  que o definitivo é atribuído ao salvar); editar/visualizar:
-                  código gravado. */}
+              {/* "Data do Pedido" somente leitura (default hoje na criação). */}
               <InputReadOnly
-                label={text.form.fields.code}
-                value={
-                  isEditing ? (requestPurchaseData?.code ?? '—') : (nextCodeQuery.data?.code ?? '—')
-                }
-                helperText={
-                  isEditing
-                    ? undefined
-                    : nextCodeQuery.isError
-                      ? text.form.hints.codePreviewUnavailable
-                      : text.form.hints.codePreview
-                }
-                loading={
-                  isEditing
-                    ? isLoading
-                    : nextCodeQuery.isPending && nextCodeQuery.fetchStatus !== 'idle'
-                }
+                label={text.form.fields.requestDate}
+                value={formatDate(watch('request_date') ?? '')}
+                loading={isLoading}
               />
-            </SimpleGrid>
 
-            <SimpleGrid columns={columnsForm.default} gap={6} mt={6}>
+              {/* "Solicitante" (somente leitura): o logado na criação, o autor na edição. */}
+              <InputReadOnly
+                label={text.form.fields.requester}
+                value={(isEditing ? requestPurchaseData?.user?.name : loggedUser?.username) ?? '—'}
+                loading={isLoading}
+              />
+
               {/* "Encarregado": só os chefes do solicitante (authorizer-options);
                   obrigatório quando `meta.requires_authorizer`. */}
               <Controller
@@ -849,25 +863,30 @@ export default function CreateOrUpdateSolicitacao() {
                 />
               )}
             </SimpleGrid>
+            </FormSection>
 
-            <SimpleGrid columns={columnsForm.default} gap={6} mt={6}>
+            <FormSection title={text.form.sections.details}>
+            <SimpleGrid columns={columnsForm.threeColumns} gap={5} pt={4}>
+              {/* Ordem de leitura: o que é pedido, por quê, e observações. */}
               <Textarea
-                label={text.form.fields.justification}
-                placeholder={text.form.placeholders.justification}
+                label={text.form.fields.description}
+                placeholder={text.form.placeholders.description}
                 maxLength={800}
-                {...register('justification')}
-                error={errors.justification?.message}
+                rows={4}
+                {...register('description')}
+                error={errors.description?.message}
                 isRequired
                 loading={isLoading}
                 disabled={!canSave}
               />
 
               <Textarea
-                label={text.form.fields.description}
-                placeholder={text.form.placeholders.description}
+                label={text.form.fields.justification}
+                placeholder={text.form.placeholders.justification}
                 maxLength={800}
-                {...register('description')}
-                error={errors.description?.message}
+                rows={4}
+                {...register('justification')}
+                error={errors.justification?.message}
                 isRequired
                 loading={isLoading}
                 disabled={!canSave}
@@ -877,12 +896,15 @@ export default function CreateOrUpdateSolicitacao() {
                 label={text.form.fields.observation}
                 placeholder={text.form.placeholders.observation}
                 maxLength={800}
+                rows={4}
                 {...register('observation')}
                 error={errors.observation?.message}
                 loading={isLoading}
                 disabled={!canSave}
               />
             </SimpleGrid>
+            </FormSection>
+            </Flex>
 
             {/* Visualização: campos e seções extras do legado (show.blade). */}
             {isViewRoute && requestPurchaseData && (

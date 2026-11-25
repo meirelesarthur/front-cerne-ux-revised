@@ -167,11 +167,26 @@ export function RequestItemRow({
 
   return (
     <Box pt={4}>
-      <Box bg="bg.muted" border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4}>
+      <Box>
         <Flex justify="space-between" align="center" wrap="wrap" gap={3} mb={4}>
-          <Text fontSize="sm" fontWeight="semibold">
-            {text.tabs.items}
-          </Text>
+          <Flex align="center" gap={2}>
+            <Text fontSize="xl" fontWeight="semibold" color="strongText">
+              {text.tabs.items}
+            </Text>
+            {fields.length > 0 && (
+              <Box
+                as="span"
+                px="7px"
+                borderRadius="md"
+                bg="semanticNeutral.100"
+                color="fg.muted"
+                fontSize="sm"
+                fontWeight="medium"
+              >
+                {fields.length}
+              </Box>
+            )}
+          </Flex>
           <Button
             title={itemText.addButton}
             icon={FiPlus as ElementType}
@@ -190,23 +205,36 @@ export function RequestItemRow({
         )}
 
         {fields.length === 0 ? (
-          <Box py={2}>
+          <Box
+            px={4}
+            py={6}
+            borderWidth="1px"
+            borderStyle="dashed"
+            borderColor="semanticNeutral.200"
+            borderRadius="xl"
+            textAlign="center"
+          >
             <Text fontSize="sm" color="fg.muted">
-              {itemText.emptyLabel}
+              {selectedType || isDisabled ? itemText.emptyLabel : itemText.chooseTypeFirst}
             </Text>
           </Box>
         ) : (
-          <Flex direction="column" gap={4}>
+          <Flex direction="column" gap={3}>
             {fields.map((field, index) => (
-              <Flex
+              <Box
                 key={field.id}
-                gap={3}
-                align="flex-start"
-                wrap="wrap"
+                px={4}
+                pt={3}
                 pb={4}
-                borderBottom="1px solid"
-                borderColor="border.subtle"
+                borderWidth="1px"
+                borderColor="semanticNeutral.200"
+                borderRadius="xl"
+                bg="cardBG"
               >
+              <Text fontSize="sm" fontWeight="semibold" color="fg.muted" mb={2}>
+                {itemText.rowLabel.replace('{n}', String(index + 1))}
+              </Text>
+              <Flex gap={3} align="flex-start" wrap="wrap">
                 {isFieldVisible('product_uuid') && (
                   <Box flex="2" minW="260px">
                     <RequestItemProductField
@@ -516,6 +544,7 @@ export function RequestItemRow({
                   <Icon as={FiTrash2} />
                 </IconButtonTable>
               </Flex>
+              </Box>
             ))}
           </Flex>
         )}

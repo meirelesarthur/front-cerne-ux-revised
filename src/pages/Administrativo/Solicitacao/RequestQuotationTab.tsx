@@ -87,9 +87,7 @@
 import { useState } from 'react';
 
 import {
-  Badge,
   Box,
-  Card,
   EmptyState,
   Flex,
   HStack,
@@ -102,7 +100,7 @@ import {
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FaWhatsapp } from 'react-icons/fa';
-import { FiDollarSign, FiEdit, FiEye, FiSend, FiTrash2, FiUsers } from 'react-icons/fi';
+import { FiDollarSign, FiEdit, FiEye, FiTrash2, FiUsers } from 'react-icons/fi';
 
 import { Actions } from '@/components/Action';
 import { Button } from '@/components/Button';
@@ -111,7 +109,10 @@ import { IconButtonTable } from '@/components/IconButtonTable';
 import { QuotationsMapButton } from '@/components/Suprimentos/QuotationsMapButton';
 import { canSendToAuthorization } from '@/components/Suprimentos/supplyActionRules';
 import { useSupplyActionContext } from '@/components/Suprimentos/useSupplyActionContext';
+import { Badge as UiBadge } from '@/components/ui/Badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
+import { StatusTag } from '@/components/ui/StatusTag';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -120,10 +121,7 @@ import { usePermissions } from '@/hooks/usePermissions';
 import formatDate from '@/utils/formatDate';
 
 import { queryKey } from '@/constants/query-key';
-import {
-  requestQuotationStatus,
-  requestQuotationStatusColor,
-} from '@/constants/RequestQuotations/request-quotation-status';
+import { requestQuotationStatusColor } from '@/constants/RequestQuotations/request-quotation-status';
 import type { RequestQuotationStatus } from '@/constants/RequestQuotations/request-quotation-status';
 
 import { getRequestPurchase } from '@/services/v2/RequestPurchases/request-purchase-service';
@@ -136,6 +134,7 @@ import type { RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 import type { RequestQuotationData } from '@/@types/v2/RequestQuotations';
 
 import { canAddQuotation, canEditStageItems, hasItemsWithoutProduct } from './quotationGuards';
+import { rankQuotations, summarizeQuotations } from './quotationRanking';
 import { RequestQuotationAuthorizerDialog } from './RequestQuotationAuthorizerDialog';
 import { RequestQuotationDetailDialog } from './RequestQuotationDetailDialog';
 import { RequestQuotationEmailBatchModal } from './RequestQuotationEmailBatchModal';
@@ -184,6 +183,7 @@ export function RequestQuotationTab({
   const queryClient = useQueryClient();
 
   const text = languageGB.requestQuotations.requestQuotation.tab;
+  const compare = text.compare;
 
   const canView = can('request-quotation_view');
   const canEdit = can('request-quotation_edit');
@@ -385,31 +385,198 @@ export function RequestQuotationTab({
     return <Box pt={4}>{itemsPanel}</Box>;
   }
 
+  // Comparativo: recebidas do menor para o maior valor final; menor valor marcado.
+  const ranked = rankQuotations(items);
+  const summary = summarizeQuotations(ranked);
+  const allSelected = items.length > 0 && selectedUuids.length === items.length;
+
+  function toggleSelectAll() {
+    setSelectedUuids(allSelected ? [] : items.map((quotation) => quotation.uuid));
+  }
+
+  // Com cotação recebida, o próximo passo é a autorização: ela vira a ação principal.
+  const authorizationIsPrimary = canSendAuthorization && summary.received > 0;
+
+  const columns: SimpleTableColumn[] = [
+    {
+      key: 'select',
+      header: (
+        <Checkbox
+          checked={allSelected}
+          onCheckedChange={toggleSelectAll}
+          aria-label={compare.selectAllAriaLabel}
+        />
+      ),
+    },
+    { key: 'provider', header: compare.columns.provider },
+    { key: 'status', header: compare.columns.status },
+    { key: 'total', header: compare.columns.totalValue, align: 'right' },
+    { key: 'discount', header: compare.columns.discount, align: 'right' },
+    { key: 'net', header: compare.columns.netValue, align: 'right' },
+    { key: 'saving', header: compare.columns.saving, align: 'right' },
+    { key: 'actions', header: '', align: 'right' },
+  ];
+
+  const moneyOrDash = (value: number | null) =>
+    value === null ? <Text color="fg.muted">—</Text> : formatCurrencyBRL(value);
+
+  const rows: SimpleTableRow[] = ranked.map(({ quotation, netValue, isReceived, isBest }) => ({
+    key: quotation.uuid,
+    cells: {
+      select: (
+        <Checkbox
+          checked={selectedUuids.includes(quotation.uuid)}
+          onCheckedChange={() => toggleSelected(quotation.uuid)}
+          aria-label={text.card.selectAriaLabel}
+        />
+      ),
+      provider: (
+        <Box minW="180px">
+          <HStack gap={2}>
+            <Text fontWeight="semibold" color="strongText" lineClamp="1">
+              {quotation.provider?.name ?? '—'}
+            </Text>
+            {isBest && <UiBadge label={compare.bestTag} variant="success" />}
+          </HStack>
+          <Text fontSize="sm" color="fg.muted" lineClamp="1">
+            {compare.quotedOn.replace(
+              '{date}',
+              formatDate(quotation.quotation_date ?? quotation.created_at)
+            )}
+            {quotation.user?.name ? ` ${compare.quotedBy.replace('{name}', quotation.user.name)}` : ''}
+          </Text>
+        </Box>
+      ),
+      status: (
+        <StatusTag
+          label={quotation.status_label}
+          color={`${requestQuotationStatusColor[quotation.status as RequestQuotationStatus] ?? 'gray'}.500`}
+          size="sm"
+        />
+      ),
+      total: (
+        <Text fontVariantNumeric="tabular-nums" color="fg.muted">
+          {moneyOrDash(isReceived ? quotation.total_value : null)}
+        </Text>
+      ),
+      discount: (
+        <Text fontVariantNumeric="tabular-nums" color="fg.muted">
+          {moneyOrDash(isReceived && quotation.discount > 0 ? quotation.discount : isReceived ? 0 : null)}
+        </Text>
+      ),
+      net: (
+        <Text
+          fontVariantNumeric="tabular-nums"
+          fontWeight="semibold"
+          color={isBest ? 'green.700' : 'strongText'}
+        >
+          {moneyOrDash(netValue)}
+        </Text>
+      ),
+      saving: (
+        <Text fontVariantNumeric="tabular-nums" color="fg.muted">
+          {isReceived ? `${quotation.saving.toFixed(2)}%` : '—'}
+        </Text>
+      ),
+      actions: (
+        <HStack gap={1} justify="flex-end">
+          <IconButtonTable
+            aria-label={whatsAppText.buttonLabel}
+            mensegerTooltip={whatsAppText.buttonLabel}
+            variant="ghost"
+            colorPalette="green"
+            onClick={() => handleWhatsAppClick(quotation)}
+          >
+            <Icon as={FaWhatsapp} />
+          </IconButtonTable>
+          {(canView || canEdit || canDelete) && (
+            <Actions size="sm">
+              {canView && (
+                <Actions.Item icon={<Icon as={FiEye} />} onClick={() => handleViewQuotation(quotation)}>
+                  {text.card.actions.view}
+                </Actions.Item>
+              )}
+              {canEdit && (
+                <Actions.Item icon={<Icon as={FiEdit} />} onClick={() => handleEditQuotation(quotation)}>
+                  {isReceived ? text.card.actions.editObservation : text.card.actions.edit}
+                </Actions.Item>
+              )}
+              {canEdit && isReceived && (
+                <Actions.Item
+                  icon={<Icon as={FiDollarSign} />}
+                  onClick={() => handleApplySaving(quotation)}
+                >
+                  {text.card.actions.applySaving}
+                </Actions.Item>
+              )}
+              {canDelete && (
+                <Actions.Item
+                  icon={<Icon as={FiTrash2} />}
+                  onClick={() => handleDeleteClick(quotation)}
+                  tone="danger"
+                  disabled={deleteMutation.isPending}
+                >
+                  {text.card.actions.delete}
+                </Actions.Item>
+              )}
+            </Actions>
+          )}
+        </HStack>
+      ),
+    },
+  }));
+
   return (
     <Box pt={4}>
       <Flex justify="space-between" align="center" mb={4} gap={3} wrap="wrap">
-        <Text fontSize="lg" fontWeight="semibold">
-          {text.title}
-        </Text>
         <HStack gap={2}>
+          <Text fontSize="xl" fontWeight="semibold" color="strongText">
+            {text.title}
+          </Text>
+          {items.length > 0 && (
+            <Box
+              as="span"
+              px="7px"
+              borderRadius="md"
+              bg="semanticNeutral.100"
+              color="fg.muted"
+              fontSize="sm"
+              fontWeight="medium"
+            >
+              {items.length}
+            </Box>
+          )}
+        </HStack>
+        <HStack gap={2} wrap="wrap">
+          {selectedUuids.length > 0 && (
+            <Button
+              title={compare.sendEmailSelected.replace('{count}', String(selectedUuids.length))}
+              variant="outline"
+              size="sm"
+              type="button"
+              onClick={handleSendEmailBatch}
+            />
+          )}
           <QuotationsMapButton
             requestPurchaseUuid={requestPurchaseUuid}
             quotationsCount={items.length}
           />
-          <Button
-            title={text.sendEmailBatchButton}
-            variant="outline"
-            size="sm"
-            type="button"
-            onClick={handleSendEmailBatch}
-            disabled={selectedUuids.length === 0}
-          />
           {canAddProvider && (
             <Button
               title={text.addProviderButton}
+              variant={authorizationIsPrimary ? 'outline' : undefined}
               size="sm"
               type="button"
               onClick={handleAddProvider}
+            />
+          )}
+          {canSendAuthorization && (
+            <Button
+              title={compare.sendForAuthorization}
+              variant={authorizationIsPrimary ? undefined : 'outline'}
+              size="sm"
+              type="button"
+              onClick={handleSendForAuthorization}
             />
           )}
         </HStack>
@@ -417,8 +584,8 @@ export function RequestQuotationTab({
 
       {isPending || purchaseQuery.isPending ? (
         <VStack gap={3} align="stretch">
-          <Skeleton height="120px" borderRadius="lg" />
-          <Skeleton height="120px" borderRadius="lg" />
+          <Skeleton height="64px" borderRadius="xl" />
+          <Skeleton height="160px" borderRadius="xl" />
         </VStack>
       ) : isEmpty ? (
         <EmptyState.Root>
@@ -436,145 +603,60 @@ export function RequestQuotationTab({
           </EmptyState.Content>
         </EmptyState.Root>
       ) : (
-        <VStack gap={3} align="stretch">
-          {items.map((quotation) => {
-            // `status===3` (`recebida`) — CL-039: rótulo "Editar" vira
-            // "Editar Observação" e libera "Aplicar Saving" (mirror §3.1/3.4).
-            const isReceived = quotation.status === requestQuotationStatus.recebida;
-            const netValue = quotation.total_value - quotation.discount;
+        <VStack gap={4} align="stretch">
+          <SimpleGrid
+            columns={{ base: 1, sm: 3 }}
+            borderWidth="1px"
+            borderColor="semanticNeutral.200"
+            borderRadius="xl"
+            bg="cardBG"
+            divideX={{ base: '0px', sm: '1px' }}
+            divideY={{ base: '1px', sm: '0px' }}
+            divideColor="semanticNeutral.200"
+          >
+            <Box px={4} py={3}>
+              <Text fontSize="sm" color="fg.muted">
+                {compare.summary.providers}
+              </Text>
+              <Text fontSize="xl" fontWeight="semibold" color="strongText">
+                {summary.total}
+              </Text>
+            </Box>
+            <Box px={4} py={3}>
+              <Text fontSize="sm" color="fg.muted">
+                {compare.summary.answered}
+              </Text>
+              <Text fontSize="xl" fontWeight="semibold" color="strongText">
+                {compare.summary.answeredOf
+                  .replace('{received}', String(summary.received))
+                  .replace('{total}', String(summary.total))}
+              </Text>
+            </Box>
+            <Box px={4} py={3} minW={0}>
+              <Text fontSize="sm" color="fg.muted">
+                {compare.summary.bestPrice}
+              </Text>
+              {summary.best ? (
+                <HStack gap={2} align="baseline" minW={0}>
+                  <Text fontSize="xl" fontWeight="semibold" color="green.700" whiteSpace="nowrap">
+                    {formatCurrencyBRL(summary.best.netValue ?? 0)}
+                  </Text>
+                  <Text fontSize="sm" color="fg.muted" lineClamp="1">
+                    {summary.best.quotation.provider?.name}
+                  </Text>
+                </HStack>
+              ) : (
+                <Text fontSize="xl" fontWeight="semibold" color="fg.muted">
+                  {compare.summary.noAnswerYet}
+                </Text>
+              )}
+            </Box>
+          </SimpleGrid>
 
-            return (
-              <Card.Root
-                key={quotation.uuid}
-                variant="outline"
-                bg="bg.panel"
-                border="1px solid"
-                borderColor="border.subtle"
-              >
-                <Card.Body p={4}>
-                  <Flex justify="space-between" align="flex-start" gap={3} wrap="wrap">
-                    <HStack align="flex-start" gap={3}>
-                      <Box pt={1}>
-                        <Checkbox
-                          checked={selectedUuids.includes(quotation.uuid)}
-                          onCheckedChange={() => toggleSelected(quotation.uuid)}
-                          aria-label={text.card.selectAriaLabel}
-                        />
-                      </Box>
-                      <VStack align="flex-start" gap={0}>
-                        <Text fontWeight="semibold">{quotation.provider?.name ?? '—'}</Text>
-                        <Text fontSize="xs" color="fg.muted">
-                          {formatDate(quotation.quotation_date ?? quotation.created_at)}
-                        </Text>
-                      </VStack>
-                    </HStack>
-
-                    <HStack gap={2}>
-                      <Badge
-                        colorPalette={
-                          requestQuotationStatusColor[quotation.status as RequestQuotationStatus] ??
-                          'gray'
-                        }
-                        variant="subtle"
-                        py={1}
-                        px={3}
-                      >
-                        {quotation.status_label}
-                      </Badge>
-
-                      <IconButtonTable
-                        aria-label={whatsAppText.buttonLabel}
-                        mensegerTooltip={whatsAppText.buttonLabel}
-                        variant="ghost"
-                        colorPalette="green"
-                        onClick={() => handleWhatsAppClick(quotation)}
-                      >
-                        <Icon as={FaWhatsapp} />
-                      </IconButtonTable>
-
-                      {(canView || canEdit || canDelete || canSendAuthorization) && (
-                        <Actions size="sm">
-                          {canView && (
-                            <Actions.Item
-                              icon={<Icon as={FiEye} />}
-                              onClick={() => handleViewQuotation(quotation)}
-                            >
-                              {text.card.actions.view}
-                            </Actions.Item>
-                          )}
-                          {canEdit && (
-                            <Actions.Item
-                              icon={<Icon as={FiEdit} />}
-                              onClick={() => handleEditQuotation(quotation)}
-                            >
-                              {isReceived
-                                ? text.card.actions.editObservation
-                                : text.card.actions.edit}
-                            </Actions.Item>
-                          )}
-                          {canEdit && isReceived && (
-                            <Actions.Item
-                              icon={<Icon as={FiDollarSign} />}
-                              onClick={() => handleApplySaving(quotation)}
-                            >
-                              {text.card.actions.applySaving}
-                            </Actions.Item>
-                          )}
-                          {canSendAuthorization && (
-                            <Actions.Item
-                              icon={<Icon as={FiSend} />}
-                              onClick={handleSendForAuthorization}
-                            >
-                              {text.card.actions.sendForAuthorization}
-                            </Actions.Item>
-                          )}
-                          {canDelete && (
-                            <Actions.Item
-                              icon={<Icon as={FiTrash2} />}
-                              onClick={() => handleDeleteClick(quotation)}
-                              tone="danger"
-                              disabled={deleteMutation.isPending}
-                            >
-                              {text.card.actions.delete}
-                            </Actions.Item>
-                          )}
-                        </Actions>
-                      )}
-                    </HStack>
-                  </Flex>
-
-                  <SimpleGrid columns={{ base: 2, md: 4 }} gap={4} mt={4}>
-                    <Box>
-                      <Text fontSize="xs" color="fg.muted">
-                        {text.card.fields.creator}
-                      </Text>
-                      <Text fontSize="sm">{quotation.user?.name ?? '—'}</Text>
-                    </Box>
-                    <Box>
-                      <Text fontSize="xs" color="fg.muted">
-                        {text.card.fields.totalValue}
-                      </Text>
-                      <Text fontSize="sm">{formatCurrencyBRL(quotation.total_value)}</Text>
-                    </Box>
-                    <Box>
-                      <Text fontSize="xs" color="fg.muted">
-                        {text.card.fields.netValue}
-                      </Text>
-                      <Text fontSize="sm">{formatCurrencyBRL(netValue)}</Text>
-                    </Box>
-                    <Box>
-                      <Text fontSize="xs" color="fg.muted">
-                        {text.card.fields.saving}
-                      </Text>
-                      <Text fontSize="sm">{quotation.saving.toFixed(2)}%</Text>
-                    </Box>
-                  </SimpleGrid>
-                </Card.Body>
-              </Card.Root>
-            );
-          })}
+          <SimpleTable columns={columns} rows={rows} ariaLabel={text.title} />
         </VStack>
       )}
+
 
       <DeleteConfirmDialog
         isOpen={deleteDisclosure.open}

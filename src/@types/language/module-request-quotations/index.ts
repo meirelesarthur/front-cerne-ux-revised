@@ -104,6 +104,34 @@ export interface ModuleRequestQuotations {
       title: string;
       addProviderButton: string;
       sendEmailBatchButton: string;
+      /** Comparativo (redesenho 25/11/2026): resumo, colunas e ações do cabeçalho. */
+      compare: {
+        /** "Enviar e-mail ({count})" — só aparece com cotação marcada. */
+        sendEmailSelected: string;
+        sendForAuthorization: string;
+        selectAllAriaLabel: string;
+        summary: {
+          providers: string;
+          answered: string;
+          /** "{received} de {total}" */
+          answeredOf: string;
+          bestPrice: string;
+          noAnswerYet: string;
+        };
+        columns: {
+          provider: string;
+          status: string;
+          totalValue: string;
+          discount: string;
+          netValue: string;
+          saving: string;
+        };
+        bestTag: string;
+        /** "Cotado em {date}" */
+        quotedOn: string;
+        /** "por {name}" */
+        quotedBy: string;
+      };
       emptyState: {
         title: string;
         description: string;
