@@ -209,6 +209,38 @@ Pedido do dono: a ordem de compra é complexa e a aba de cotações estava ruim;
   - marcar todas no cabeçalho; "Enviar e-mail (n)" só aparece com cotação marcada;
   - "Enviar para autorização" saiu do menu de cada cotação (ele age sobre a ordem, não sobre a cotação) e foi para o cabeçalho da aba; com ao menos uma cotação recebida ele vira a ação principal e "Adicionar fornecedor" fica secundário.
 
+## Protótipo visual para apresentação (não portar)
+
+Plano: documento "Ordem de compra — protótipo visual para apresentação" (roteiro de 9 passos, 16 peças, 5 lotes), feito sobre o plano "Ordem de compra — validação e plano" (fases F0–F6). Mostra o fluxo antes de construir a API.
+
+- **Chave:** `PURCHASE_ORDER_PROTOTYPE` (`config/v2/purchaseOrderPrototype.ts`). Só liga com os dados fictícios (`yarn dev` com mocks ou build de demonstração); `VITE_PURCHASE_ORDER_PROTOTYPE=false` desliga. No front oficial é sempre `false`.
+- **Dados de demonstração** (`mocks/dev-api/handlers/purchaseOrdersDemo.ts`): 10 ordens de fazenda, uma em cada situação, com itens, movimentações, aprovador, rateio e cotações coerentes; respondem às 9 visões da lista, ao detalhe e às cotações. A ordem do roteiro é a **0012** (adubação de plantio, compra efetuada, AgroNutri). Nomes todos fictícios.
+- **Campos de protótipo** (ainda não existem na API; tipos em `Solicitacao/prototype/prototypeFields.ts`): na ordem, `flow_profile` (Simples, Padrão, Completo), `winning_provider`, `buyer`, `cancelled_at_step`, `delivery_forecast` (a mais tarde entre os itens), `delivery` (`freight_type` CIF/FOB, `place`, `carrier`, `needs_unloading`, `note`) `approvals[]` (`level`, `level_label`, `user`, `status` approved/rejected/pending, `decided_at`, `note`), `payment` (`condition`, `installments[]` com `seq`/`due_date`/`value`/`status`, `expenses` frete/seguro/outras), `invoices[]` (`issuer`, `number`, `series`, `issued_at`, `entered_at`, `value`) e `receipt_partial`; no item, `unit_price`, `received_quantity` e `cancelled`. A origem usa os campos que a API já tem (`parent`, `children`), só que hoje não vêm no detalhe.
+
+| Lote | Peça | Onde | Situação |
+|---|---|---|---|
+| 1 | Dados de demonstração | `mocks/dev-api/handlers/purchaseOrdersDemo.ts` | feito |
+| 1 | Etapas da OC no topo (Pedido → Cotação → Aprovação → Compra → Recebimento → Encerrada; puladas pelo perfil esmaecidas; parada em vermelho) | `components/ui/StepTrack.tsx` (kit, portável) + `Solicitacao/prototype/purchaseOrderSteps.ts` (regra, com teste) | feito |
+| 1 | Fornecedor e comprador no topo | `Solicitacao/prototype/PurchaseOrderProcessBar.tsx` | feito |
+| 2 | Itens com saldo na visualização: Qtde, Vlr. unitário, Vlr. total, Recebido, Saldo, Previsão e total da ordem (edição continua no `RequestItemRow`) | `Solicitacao/prototype/PrototypeItemsTable.tsx`; conta em `itemTotals` (com teste) | feito |
+| 2 | Previsão de entrega no topo, selo "Atrasada" e "Alterar" com nova data e justificativa (só na edição; muda só a tela) | `PurchaseOrderProcessBar.tsx`; regra `isDeliveryLate` (com teste) | feito |
+| 2 | Selo "Atrasada" na lista (Todas e Criadas por mim) | `Solicitacao/index.tsx`, coluna Descrição | feito |
+| 2 | Aba Entrega na visualização: frete CIF/FOB, transportadora, descarga, destino e observação | `RequestPurchaseViewSections.tsx`, seção `delivery` | feito |
+| 3 | Aprovações na aba Histórico (nível de alçada, aprovador, situação, data, parecer), acima da linha do tempo | `Solicitacao/prototype/PrototypeApprovalsTable.tsx`; campo `approvals[]` | feito |
+| 3 | Aba Vínculos na visualização: ordem de origem e derivadas, com link (no lugar de Sub Solicitações); dado de demonstração: 0022 separada da 0013 | `RequestPurchaseViewSections.tsx`, seção `links` | feito |
+| 3 | Duplicar: botão no rodapé (quem pode criar), diálogo com os itens marcáveis e "Nova ordem" preenchida (data de hoje; sem código, anexos, cotações e histórico) | `DuplicateOrderDialog.tsx`; regra `buildDuplicateState` (com teste); leitura do estado em `CreateOrUpdateSolicitacao.tsx` (por `location.key`, porque /visualizar e /novo reaproveitam a instância) | feito |
+| 4 | Aba Pagamento: condição, despesas (frete, seguro, outras), parcelas e conferência parcelas × (itens + despesas) | `Solicitacao/prototype/PrototypeFinancePanels.tsx`; regra `paymentCheck` (com teste) | feito |
+| 4 | Aba Notas fiscais: NFs da ordem com a soma ao lado do total | `PrototypeFinancePanels.tsx` | feito |
+| 4 | Registrar recebimento (compra efetuada): NF + quantidade por item (padrão = saldo); saldo cai, rótulo "Recebimento parcial", sem saldo vira recebida; NF entra na aba | `PrototypeOrderActions.tsx` (rodapé); rota simulada `/prototype/receipt` | feito |
+| 4 | Cancelar saldo (encerra se algo foi recebido, senão cancela), cancelar item (na linha) e reabrir, todos com justificativa na linha do tempo | `PrototypeOrderActions.tsx`, `PrototypeItemsTable.tsx`; rotas `/prototype/cancel-balance`, `/cancel-item`, `/reopen` | feito |
+| 5 | Tela "Fluxo da ordem de compra" (`/administrativo/ordens-de-compra/parametros`, item de menu `adm-sup-flx` em Suprimentos): perfil Simples/Padrão/Completo, categorias com os tipos atuais, cotação por faixa de valor (editável), aprovação automática e níveis de alçada; "Salvar" só avisa (protótipo) | `OrdensCompra/PurchaseOrderFlowSettings.tsx`; rota e menu só com `PURCHASE_ORDER_PROTOTYPE` | feito |
+| 5 | Diagrama do fluxo (F0): uma linha de etapas por perfil, com as puladas tracejadas, legenda do que muda e as exceções (recusa, recebimento parcial, cancelamento, reabrir) | topo da mesma tela, `StepTrack` | feito |
+| 5 | Categoria no lugar do Tipo: campo somente leitura ao lado de Tipo, derivado dele (6 categorias para os 11 tipos) | `Solicitacao/prototype/purchaseOrderCategories.ts` (com teste); `CreateOrUpdateSolicitacao.tsx` | feito |
+
+**Roteiro completo (os 9 passos do plano) navegável:** 1–2 em "Fluxo da ordem de compra"; 3 na lista (Todas, contadores, selo Atrasada); 4 na 0012 ou em Duplicar; 5 na aba Cotações; 6 em Histórico → Aprovações; 7 em Pagamento e Entrega; 8 em "Registrar recebimento"; 9 em "Cancelar saldo" e na linha do tempo.
+
+**Ações simuladas (lote 4):** chamam `/request-purchases/{uuid}/prototype/*` (`prototype/prototypeActions.ts`), rotas que só existem nos dados de demonstração. Mudam a ordem na memória do navegador e cada uma vira um evento na linha do tempo; **recarregar a página volta tudo ao estado inicial** (útil para repetir a apresentação). Com o protótipo ligado, o "Receber" original (API real) fica escondido.
+
 ### Mudanças globais que nasceram aqui
 
 - **Ícone de configurar colunas** em todas as listas: papel `columns-settings` (`Columns3CogIcon`, HugeIcons) em `design/icons.ts`; o botão do `GridSettingsFloatingPanel` ganhou a moldura e a altura do "Filtros".

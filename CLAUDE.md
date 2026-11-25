@@ -46,6 +46,10 @@
 ## Infraestrutura só de desenvolvimento (NÃO portar para produção)
 
 `src/mocks/dev-api/**`, `src/services/v2/Auth/dev-auth-bypass.ts`, `src/config/demoMode.ts`, `.env.production`, `scripts/dev-db/**`, `scripts/dev-mocks/**`, `scripts/ux-docs/**`.
+**Protótipo da Ordem de compra** (apresentação antes da API, 25/11/2026): `src/config/v2/purchaseOrderPrototype.ts`,
+`src/pages/Administrativo/Solicitacao/prototype/**`, `src/pages/Administrativo/OrdensCompra/PurchaseOrderFlowSettings.tsx` (rota
+`/administrativo/ordens-de-compra/parametros`, menu `adm-sup-flx`) e os dados de demonstração em `src/mocks/dev-api/handlers/purchaseOrdersDemo.ts`.
+Só liga com os dados fictícios; não portar enquanto a API não existir (o `StepTrack` do kit é portável).
 Só existem em `yarn dev` (`import.meta.env.DEV`) e saem do bundle no `vite build` — **exceto** no deploy de revisão deste repo:
 `.env.production` liga `VITE_DEMO_MODE=true` (demo sem backend, login aberto, dados fictícios; decisão do dono em 25/11/2026).
 No front oficial, não porte `.env.production` nem `demoMode.ts`. Flags (`.env`, nunca versionado): `VITE_DEV_AUTH_BYPASS`, `VITE_DEV_MOCKS`, `VITE_DEV_MOCKS_API_FIRST`, `VITE_DEV_MOCKS_SYNTHETIC`. Detalhes em `docs/ux/README.md`.

@@ -1,7 +1,7 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `8e0985a` · 981 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `e7448fe` · 1000 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
@@ -10,20 +10,20 @@
 | `src/pages/Operacional` | 4 | 197 | 1 |
 | `src/pages/CadastrosBase` | 0 | 171 | 1 |
 | `src/pages/BaseRegistrations` | 0 | 137 | 0 |
-| `src/pages/Administrativo` | 9 | 94 | 1 |
+| `src/pages/Administrativo` | 25 | 94 | 1 |
 | `src/constants` | 6 | 63 | 0 |
-| `src/components/ui` | 43 | 3 | 0 |
+| `src/components/ui` | 44 | 3 | 0 |
 | `src/pages/Fiscal` | 0 | 34 | 0 |
 | `src/pages/Financeiro` | 0 | 27 | 0 |
 | `docs/ux` | 24 | 0 | 0 |
 | `src/@types` | 1 | 17 | 0 |
 | `scripts/dev-db` | 13 | 0 | 0 |
 | `src/components/(raiz)` | 1 | 12 | 0 |
+| `src/mocks` | 12 | 0 | 0 |
 | `src/pages/Frota` | 0 | 12 | 0 |
-| `src/mocks` | 11 | 0 | 0 |
 | `src/pages/Planos` | 5 | 3 | 0 |
 | `src/components/GuidedTour` | 7 | 0 | 0 |
-| `src/config` | 4 | 2 | 0 |
+| `src/config` | 5 | 2 | 0 |
 | `src/pages/Configuracoes` | 0 | 6 | 0 |
 | `src/pages/Onboarding` | 6 | 0 | 0 |
 | `src/styles` | 0 | 6 | 0 |
@@ -108,6 +108,7 @@
 - `src/components/ui/StepFooter.tsx`
 - `src/components/ui/StepHeader.tsx`
 - `src/components/ui/StepIndicator.tsx`
+- `src/components/ui/StepTrack.tsx`
 - `src/components/ui/SummaryPanel.tsx`
 - `src/components/ui/ToggleCard.tsx`
 - `src/components/ui/ToggleRow.tsx`
@@ -115,6 +116,7 @@
 - `src/components/ui/listControl.ts`
 - `src/config/demoMode.ts`
 - `src/config/v2/groupHub.test.ts`
+- `src/config/v2/purchaseOrderPrototype.ts`
 - `src/config/v2/purchaseOrdersFeature.ts`
 - `src/config/v2/serviceOrdersFeature.ts`
 - `src/constants/languages/languageEnUs/languageSidebarDescriptions.ts`
@@ -132,10 +134,12 @@
 - `src/mocks/dev-api/data/reference/states.json`
 - `src/mocks/dev-api/generated/schemas.json`
 - `src/mocks/dev-api/handlers/farms.ts`
+- `src/mocks/dev-api/handlers/purchaseOrdersDemo.ts`
 - `src/mocks/dev-api/handlers/reference.ts`
 - `src/mocks/dev-api/index.ts`
 - `src/mocks/dev-api/synthetic.test.ts`
 - `src/mocks/dev-api/synthetic.ts`
+- `src/pages/Administrativo/OrdensCompra/PurchaseOrderFlowSettings.tsx`
 - `src/pages/Administrativo/OrdensCompra/index.tsx`
 - `src/pages/Administrativo/OrdensCompra/purchaseOrderViews.test.ts`
 - `src/pages/Administrativo/OrdensCompra/purchaseOrderViews.ts`
@@ -143,6 +147,21 @@
 - `src/pages/Administrativo/Solicitacao/RequestTabParts.tsx`
 - `src/pages/Administrativo/Solicitacao/initialRequestType.test.ts`
 - `src/pages/Administrativo/Solicitacao/initialRequestType.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/DuplicateOrderDialog.tsx`
+- `src/pages/Administrativo/Solicitacao/prototype/PrototypeApprovalsTable.tsx`
+- `src/pages/Administrativo/Solicitacao/prototype/PrototypeFinancePanels.tsx`
+- `src/pages/Administrativo/Solicitacao/prototype/PrototypeItemsTable.tsx`
+- `src/pages/Administrativo/Solicitacao/prototype/PrototypeOrderActions.tsx`
+- `src/pages/Administrativo/Solicitacao/prototype/PurchaseOrderProcessBar.tsx`
+- `src/pages/Administrativo/Solicitacao/prototype/duplicateOrder.test.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/duplicateOrder.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/prototypeActions.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/prototypeFields.test.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/prototypeFields.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/purchaseOrderCategories.test.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/purchaseOrderCategories.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/purchaseOrderSteps.test.ts`
+- `src/pages/Administrativo/Solicitacao/prototype/purchaseOrderSteps.ts`
 - `src/pages/Administrativo/Solicitacao/quotationRanking.test.ts`
 - `src/pages/Administrativo/Solicitacao/quotationRanking.ts`
 - `src/pages/Errors/copy.ts`
@@ -172,19 +191,19 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 
 | Componente | Arquivo | Para quê | Consumidores |
 |---|---|---|---:|
-| `toaster` | `src/components/ui/toaster.tsx` |  | 449 |
+| `toaster` | `src/components/ui/toaster.tsx` |  | 452 |
 | `PageHeader` | `src/components/ui/PageHeader.tsx` | Título de página (DS `PageHeader`): título 24px em negrito, contador opcional em pílula e | 171 |
 | `ButtonFilter` | `src/components/ButtonFilter.tsx` | Botão "Filtros" das listagens (DS `FilterButton`): borda 1.5px; com filtros ativos vira verde | 96 |
 | `ListToolbar` | `src/components/ui/ListToolbar.tsx` | Barra das listagens (DS `ListToolbar`): busca inline + botão "Filtros" na mesma linha. | 81 |
 | `switch` | `src/components/ui/switch.tsx` |  | 38 |
-| `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 32 |
-| `checkbox` | `src/components/ui/checkbox.tsx` |  | 23 |
-| `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 14 |
+| `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 37 |
+| `checkbox` | `src/components/ui/checkbox.tsx` |  | 24 |
+| `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 16 |
 | `tooltip` | `src/components/ui/tooltip.tsx` |  | 14 |
 | `FormSection` | `src/components/FormSection/index.tsx` | Adaptação Chakra v3 (não cópia) do `FormSection` do design system `cerne` | 10 |
+| `SimpleTable` | `src/components/ui/SimpleTable.tsx` | Tabela de leitura (sem paginação/ordenação): cabeçalho em caixa-alta no padrão do DS, linhas com | 9 |
 | `StepBody` | `src/components/ui/StepBody.tsx` | Corpo de uma etapa de wizard (DS): conteúdo centralizado, largura máxima 760px. | 6 |
 | `PageCard` | `src/components/ui/PageCard.tsx` | Casca visual compartilhada (bg/shadow/radius + overflow hidden), fonte única | 5 |
-| `SimpleTable` | `src/components/ui/SimpleTable.tsx` | Tabela de leitura (sem paginação/ordenação): cabeçalho em caixa-alta no padrão do DS, linhas com | 5 |
 | `ToggleRow` | `src/components/ui/ToggleRow.tsx` | Campo booleano em linha (DS `ToggleRow`): interruptor + rótulo e, opcional, ícone de ajuda com | 5 |
 | `steps` | `src/components/ui/steps.tsx` | ----------------------------------------------------------------------------- | 5 |
 | `Badge` | `src/components/ui/Badge.tsx` | Selo de status/classificação — porte fiel de `Badge.tsx` do design system `cerne`: | 4 |
@@ -199,6 +218,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | `radio` | `src/components/ui/radio.tsx` | ----------------------------------------------------------------------------- | 3 |
 | `ImageEditorDialog` | `src/components/ui/ImageEditorDialog.tsx` | Modal "Editar imagem" (referência de UX do pedido): prévia quadrada do recorte, régua de escala, | 2 |
 | `ModuleLinkCard` | `src/components/ui/ModuleLinkCard.tsx` | Card que leva a um módulo: ícone, título, uma linha de apoio e, opcionalmente, uma tag de | 2 |
+| `StepTrack` | `src/components/ui/StepTrack.tsx` | Linha de ETAPAS de um processo (ex.: Pedido → Cotação → Aprovação → …): um | 2 |
 | `SummaryPanel` | `src/components/ui/SummaryPanel.tsx` | Painel de RESUMO escuro, fixo à direita de um configurador (modelo "simulador"): título com | 2 |
 | `password-input` | `src/components/ui/password-input.tsx` |  | 2 |
 | `BandSlider` | `src/components/ui/BandSlider.tsx` | Régua deslizante dividida em faixas iguais (ex.: faixas de tamanho da fazenda): valores dos | 1 |
@@ -472,11 +492,15 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
   - `src/pages/CadastrosBase/Fazendas/steps/StepIdentificacao.tsx`
 
 ### SimpleTable (tabela simples do kit)
-5 telas.
+9 telas.
+  - `src/pages/Administrativo/OrdensCompra/PurchaseOrderFlowSettings.tsx`
   - `src/pages/Administrativo/Solicitacao/RequestAttachmentRow.tsx`
   - `src/pages/Administrativo/Solicitacao/RequestItemRow.tsx`
   - `src/pages/Administrativo/Solicitacao/RequestPurchaseViewSections.tsx`
   - `src/pages/Administrativo/Solicitacao/RequestQuotationTab.tsx`
+  - `src/pages/Administrativo/Solicitacao/prototype/PrototypeApprovalsTable.tsx`
+  - `src/pages/Administrativo/Solicitacao/prototype/PrototypeFinancePanels.tsx`
+  - `src/pages/Administrativo/Solicitacao/prototype/PrototypeItemsTable.tsx`
   - `src/pages/Planos/Contratacao/index.tsx`
 
 ## 5. Commits (ordem cronológica)
@@ -566,3 +590,9 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - 0b54da2 feat(ui): icone de configurar colunas em todas as listas
 - 6de6146 feat(suprimentos): visualizacao da ordem de compra mais compacta
 - 8e0985a feat(suprimentos): central de ordens de compra com seletor de visao
+- fee7831 feat(suprimentos): clique na linha abre a visualizacao da ordem de compra
+- f284445 docs(ux): mapa da ordem de compra atualizado e mapa de mudancas regenerado
+- 304a251 docs(ux): hash dos commits no historico da ordem de compra
+- 03a6adf feat(ui): StepTrack no kit para etapas de um processo
+- 0128201 feat(dev-api): dados de demonstracao da ordem de compra para o prototipo
+- e7448fe feat(suprimentos): prototipo visual da ordem de compra para apresentacao
