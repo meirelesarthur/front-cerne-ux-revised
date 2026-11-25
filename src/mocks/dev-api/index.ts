@@ -14,11 +14,16 @@
 
 import axios, { type AxiosAdapter, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
+import { DEMO_MODE } from '@/config/demoMode';
+
 import { farmRoutes } from './handlers/farms';
 import { referenceRoutes } from './handlers/reference';
 import { loadSynthetic, syntheticHandle } from './synthetic';
 
-export const DEV_MOCKS = import.meta.env.DEV && import.meta.env.VITE_DEV_MOCKS === 'true';
+export const DEV_MOCKS =
+  (import.meta.env.DEV && import.meta.env.VITE_DEV_MOCKS === 'true') ||
+  // Build de demonstração sem backend (deploy de revisão) — ver `config/demoMode.ts`.
+  DEMO_MODE;
 
 export interface MockRequest {
   method: string;
