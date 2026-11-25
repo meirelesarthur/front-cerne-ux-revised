@@ -220,7 +220,7 @@ Plano: documento "Ordem de compra — protótipo visual para apresentação" (ro
 | Lote | Peça | Onde | Situação |
 |---|---|---|---|
 | 1 | Dados de demonstração | `mocks/dev-api/handlers/purchaseOrdersDemo.ts` | feito |
-| 1 | Etapas da OC no topo (Pedido → Cotação → Aprovação → Compra → Recebimento → Encerrada; puladas pelo perfil esmaecidas; parada em vermelho) | `components/ui/StepTrack.tsx` (kit, portável) + `Solicitacao/prototype/purchaseOrderSteps.ts` (regra, com teste) | feito |
+| 1 | Etapas da OC no topo (Pedido → Cotação → Aprovação → Compra → Recebimento → Encerrada; a etapa que o perfil não tem não aparece e a numeração conta só as que existem; parada em vermelho) | `components/ui/StepTrack.tsx` (kit, portável) + `Solicitacao/prototype/purchaseOrderSteps.ts` (regra, com teste) | feito |
 | 1 | Fornecedor e comprador no topo | `Solicitacao/prototype/PurchaseOrderProcessBar.tsx` | feito |
 | 2 | Itens com saldo na visualização: Qtde, Vlr. unitário, Vlr. total, Recebido, Saldo, Previsão e total da ordem (edição continua no `RequestItemRow`) | `Solicitacao/prototype/PrototypeItemsTable.tsx`; conta em `itemTotals` (com teste) | feito |
 | 2 | Previsão de entrega no topo, selo "Atrasada" e "Alterar" com nova data e justificativa (só na edição; muda só a tela) | `PurchaseOrderProcessBar.tsx`; regra `isDeliveryLate` (com teste) | feito |
@@ -234,7 +234,7 @@ Plano: documento "Ordem de compra — protótipo visual para apresentação" (ro
 | 4 | Registrar recebimento (compra efetuada): NF + quantidade por item (padrão = saldo); saldo cai, rótulo "Recebimento parcial", sem saldo vira recebida; NF entra na aba | `PrototypeOrderActions.tsx` (rodapé); rota simulada `/prototype/receipt` | feito |
 | 4 | Cancelar saldo (encerra se algo foi recebido, senão cancela), cancelar item (na linha) e reabrir, todos com justificativa na linha do tempo | `PrototypeOrderActions.tsx`, `PrototypeItemsTable.tsx`; rotas `/prototype/cancel-balance`, `/cancel-item`, `/reopen` | feito |
 | 5 | Tela "Fluxo da ordem de compra" (`/administrativo/ordens-de-compra/parametros`, item de menu `adm-sup-flx` em Suprimentos): perfil Simples/Padrão/Completo, categorias com os tipos atuais, cotação por faixa de valor (editável), aprovação automática e níveis de alçada; "Salvar" só avisa (protótipo) | `OrdensCompra/PurchaseOrderFlowSettings.tsx`; rota e menu só com `PURCHASE_ORDER_PROTOTYPE` | feito |
-| 5 | Diagrama do fluxo (F0): uma linha de etapas por perfil, com as puladas tracejadas, legenda do que muda e as exceções (recusa, recebimento parcial, cancelamento, reabrir) | topo da mesma tela, `StepTrack` | feito |
+| 5 | Diagrama do fluxo (F0): uma linha de etapas por perfil, só com as etapas que o perfil tem (linhas de tamanhos diferentes), legenda do que muda e as exceções (recusa, recebimento parcial, cancelamento, reabrir) | topo da mesma tela, `StepTrack` | feito |
 | 5 | Categoria no lugar do Tipo: campo somente leitura ao lado de Tipo, derivado dele (6 categorias para os 11 tipos) | `Solicitacao/prototype/purchaseOrderCategories.ts` (com teste); `CreateOrUpdateSolicitacao.tsx` | feito |
 
 **Roteiro completo (os 9 passos do plano) navegável:** 1–2 em "Fluxo da ordem de compra"; 3 na lista (Todas, contadores, selo Atrasada); 4 na 0012 ou em Duplicar; 5 na aba Cotações; 6 em Histórico → Aprovações; 7 em Pagamento e Entrega; 8 em "Registrar recebimento"; 9 em "Cancelar saldo" e na linha do tempo.

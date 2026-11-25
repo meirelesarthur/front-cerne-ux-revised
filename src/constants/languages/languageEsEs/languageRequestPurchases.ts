@@ -257,7 +257,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           pageSubtitle: 'Cómo avanzan las órdenes en esta finca: perfil, categorías, cotización y aprobación.',
           prototypeNote: 'Prototipo para presentación: las opciones valen solo en esta pantalla.',
           flowTitle: 'Cómo avanza el flujo en cada perfil',
-          flowHint: 'Las etapas punteadas y tachadas las omite el perfil.',
+          flowHint: 'Cada perfil muestra solo las etapas por las que pasa la orden.',
           flowCaption: {
             simples: 'Omite cotización y aprobación',
             padrao: 'Cotización por rango de valor',

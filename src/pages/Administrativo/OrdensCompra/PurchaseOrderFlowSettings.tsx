@@ -1,8 +1,8 @@
 // src/pages/Administrativo/OrdensCompra/PurchaseOrderFlowSettings.tsx
 // -----------------------------------------------------------------------------
 // PROTÓTIPO (lote 5 — F0 e F2 do plano) — "Fluxo da ordem de compra":
-//   1. diagrama do fluxo: uma linha de etapas por perfil (`StepTrack`, com as
-//      puladas tracejadas) e as exceções que valem em qualquer perfil (F0);
+//   1. diagrama do fluxo: uma linha de etapas por perfil (`StepTrack`, só as
+//      etapas que o perfil tem) e as exceções que valem em qualquer perfil (F0);
 //   2. perfil do fluxo (Simples, Padrão, Completo) — o escolhido destaca a
 //      linha do diagrama;
 //   3. categorias no lugar dos 11 tipos (`purchaseOrderCategories.ts`);
@@ -73,14 +73,16 @@ export default function PurchaseOrderFlowSettings() {
   const typeLabel = new Map(requestPurchaseTypeOptions.options(languageGB).map((o) => [o.value, o.label]));
 
   // ---- 1. diagrama: o caminho completo de cada perfil (situação "finalizado").
+  // Só as etapas que o perfil tem (as puladas não aparecem).
   const flow = PROFILES.map((key) => ({
     key,
-    items: purchaseOrderSteps(requestPurchaseStatus.pedidoFinalizado, key).map((step) => ({
-      key: step.key,
-      label: steps.steps[step.key],
-      state: step.state,
-      hint: step.state === 'skipped' ? steps.stepSkipped.replace('{profile}', steps.profiles[key]) : undefined,
-    })),
+    items: purchaseOrderSteps(requestPurchaseStatus.pedidoFinalizado, key)
+      .filter((step) => step.state !== 'skipped')
+      .map((step) => ({
+        key: step.key,
+        label: steps.steps[step.key],
+        state: step.state,
+      })),
   }));
 
   const exceptions: { icon: IconName; text: string }[] = [

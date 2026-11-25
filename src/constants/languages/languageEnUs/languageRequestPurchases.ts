@@ -257,7 +257,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           pageSubtitle: 'How orders move on this farm: profile, categories, quotation and approval.',
           prototypeNote: 'Presentation prototype: choices apply to this screen only.',
           flowTitle: 'How the flow moves in each profile',
-          flowHint: 'Dashed, struck-through steps are skipped by the profile.',
+          flowHint: 'Each profile shows only the steps the order goes through.',
           flowCaption: {
             simples: 'Skips quotation and approval',
             padrao: 'Quotation by value range',

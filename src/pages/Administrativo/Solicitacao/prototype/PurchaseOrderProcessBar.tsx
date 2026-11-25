@@ -1,8 +1,8 @@
 // src/pages/Administrativo/Solicitacao/prototype/PurchaseOrderProcessBar.tsx
 // -----------------------------------------------------------------------------
 // PROTÓTIPO (só com `PURCHASE_ORDER_PROTOTYPE`) — faixa do topo da Ordem de
-// compra: as ETAPAS do processo (`StepTrack`, regra em `purchaseOrderSteps.ts`,
-// com as puladas pelo perfil de fluxo esmaecidas) e, à direita, FORNECEDOR
+// compra: as ETAPAS do processo (`StepTrack`, regra em `purchaseOrderSteps.ts`;
+// as que o perfil de fluxo pula não aparecem) e, à direita, FORNECEDOR
 // (cotação aprovada), COMPRADOR e PREVISÃO DE ENTREGA (a mais tarde entre os
 // itens; selo "Atrasada" quando vencida e "Alterar" com justificativa, que no
 // protótipo muda só esta tela). Fases F1, F2 e F3 do plano. Os campos
@@ -76,17 +76,15 @@ export function PurchaseOrderProcessBar({ data, canChangeForecast = false }: Pur
   const [justification, setJustification] = useState('');
   const late = isDeliveryLate(forecast, data.status);
 
-  const items: StepTrackItem[] = purchaseOrderSteps(data.status, profile, data.cancelled_at_step).map(
-    (step) => ({
+  // Etapa que o perfil não tem NÃO aparece (decisão do dono, 25/11): nada de
+  // etapa riscada; a numeração conta só as que existem.
+  const items: StepTrackItem[] = purchaseOrderSteps(data.status, profile, data.cancelled_at_step)
+    .filter((step) => step.state !== 'skipped')
+    .map((step) => ({
       key: step.key,
       label: text.steps[step.key],
       state: step.state,
-      hint:
-        step.state === 'skipped'
-          ? text.stepSkipped.replace('{profile}', text.profiles[profile])
-          : undefined,
-    })
-  );
+    }));
 
   function openDialog() {
     setNewDate(forecast?.slice(0, 10) ?? '');

@@ -257,7 +257,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           pageSubtitle: 'Como as ordens andam nesta fazenda: perfil, categorias, cotação e aprovação.',
           prototypeNote: 'Protótipo para apresentação: as escolhas valem só nesta tela.',
           flowTitle: 'Como o fluxo anda em cada perfil',
-          flowHint: 'Etapas tracejadas e riscadas são puladas pelo perfil.',
+          flowHint: 'Cada perfil mostra só as etapas por que a ordem passa.',
           flowCaption: {
             simples: 'Pula cotação e aprovação',
             padrao: 'Cotação pela faixa de valor',
