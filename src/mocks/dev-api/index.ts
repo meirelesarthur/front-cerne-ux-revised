@@ -16,7 +16,10 @@ import axios, { type AxiosAdapter, type AxiosInstance, type InternalAxiosRequest
 
 import { DEMO_MODE } from '@/config/demoMode';
 
+import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
+
 import { farmRoutes } from './handlers/farms';
+import { purchaseOrderDemoRoutes } from './handlers/purchaseOrdersDemo';
 import { referenceRoutes } from './handlers/reference';
 import { loadSynthetic, syntheticHandle } from './synthetic';
 
@@ -39,7 +42,13 @@ export interface MockRoute {
   handler: (req: MockRequest) => { status?: number; body?: unknown; meta?: unknown };
 }
 
-const routes: MockRoute[] = [...farmRoutes, ...referenceRoutes];
+// Protótipo da Ordem de compra: dados de demonstração de fazenda nas rotas da OC
+// (antes do sintético). Ver `config/v2/purchaseOrderPrototype.ts`.
+const routes: MockRoute[] = [
+  ...(PURCHASE_ORDER_PROTOTYPE ? purchaseOrderDemoRoutes : []),
+  ...farmRoutes,
+  ...referenceRoutes,
+];
 
 const LATENCY_MS = 250;
 
