@@ -748,7 +748,8 @@ export default function CreateOrUpdateSolicitacao() {
           <Tabs.Content value="0">
             <Flex direction="column" pt={4}>
             <FormSection title={text.form.sections.identification}>
-            <SimpleGrid columns={columnsForm.default} gap={5} pt={4}>
+            {/* 3 colunas: Código/Tipo/Prioridade; Data/Solicitante/Encarregado. */}
+            <SimpleGrid columns={columnsForm.threeColumns} gap={5} pt={4}>
               {/* `code` — SOMENTE LEITURA em todos os modos, gerado pelo servidor
                   (fora do `useForm`/payload). Criar: código PREVISTO (hint avisa
                   que o definitivo é atribuído ao salvar); editar/visualizar:

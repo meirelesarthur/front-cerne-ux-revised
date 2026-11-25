@@ -17,7 +17,7 @@
 
 import { useState } from 'react';
 
-import { Icon, IconButton, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Icon, IconButton, useDisclosure } from '@chakra-ui/react';
 import { useController } from 'react-hook-form';
 import { FiEdit, FiPlus } from 'react-icons/fi';
 
@@ -41,6 +41,8 @@ interface RequestItemProductFieldProps {
   disabled: boolean;
   /** `true` em P/M/U (botão +/lápis com `ProductFormModal`); `false` em F/E. */
   withProductModal: boolean;
+  /** Em célula de tabela: sem rótulo (vai no cabeçalho) e +/lápis ao lado do campo. */
+  hideLabel?: boolean;
 }
 
 export function RequestItemProductField({
@@ -48,6 +50,7 @@ export function RequestItemProductField({
   index,
   disabled,
   withProductModal,
+  hideLabel = false,
 }: RequestItemProductFieldProps) {
   const { languageGB } = useLanguage();
   const { can } = usePermissions();
@@ -67,46 +70,65 @@ export function RequestItemProductField({
     setOptionsCacheKey((key) => key + 1);
   }
 
+  const productAction = withProductModal ? (
+    <IconButton
+      aria-label={actionLabel}
+      title={actionLabel}
+      variant="ghost"
+      size="2xs"
+      minH="0"
+      h="20px"
+      w="20px"
+      minW="0"
+      p="0"
+      disabled={disabled || !canManageProduct}
+      onClick={productModal.onOpen}
+    >
+      <Icon as={hasProduct ? FiEdit : FiPlus} boxSize="16px" color="primaryMain" />
+    </IconButton>
+  ) : undefined;
+
+  const select = (
+    <SelectAsyncPaginate
+      name={field.name}
+      label={hideLabel ? undefined : text.itemsSection.fields.product}
+      aria-label={hideLabel ? text.itemsSection.fields.product : undefined}
+      service={listProductOptions}
+      mapOptions={(item: { uuid: string; code: string; description: string }) => ({
+        label: `${item.code} — ${item.description}`,
+        value: item.uuid,
+      })}
+      findParams={(search: string | { search: string }) => ({
+        search: typeof search === 'string' ? search : search.search,
+      })}
+      value={field.value ?? undefined}
+      onChange={(option: any) => field.onChange(option ?? null)}
+      error={fieldState.error?.message}
+      isDisabled={disabled}
+      cacheUniqs={[optionsCacheKey]}
+      menuPortalTarget={document.body}
+      menuPosition="fixed"
+      labelActionTooltip={!hideLabel && withProductModal ? actionLabel : undefined}
+      labelAction={hideLabel ? undefined : productAction}
+    />
+  );
+
   return (
     <>
-      <SelectAsyncPaginate
-        name={field.name}
-        label={text.itemsSection.fields.product}
-        service={listProductOptions}
-        mapOptions={(item: { uuid: string; code: string; description: string }) => ({
-          label: `${item.code} — ${item.description}`,
-          value: item.uuid,
-        })}
-        findParams={(search: string | { search: string }) => ({
-          search: typeof search === 'string' ? search : search.search,
-        })}
-        value={field.value ?? undefined}
-        onChange={(option: any) => field.onChange(option ?? null)}
-        error={fieldState.error?.message}
-        isDisabled={disabled}
-        cacheUniqs={[optionsCacheKey]}
-        menuPortalTarget={document.body}
-        menuPosition="fixed"
-        labelActionTooltip={withProductModal ? actionLabel : undefined}
-        labelAction={
-          withProductModal ? (
-            <IconButton
-              aria-label={actionLabel}
-              variant="ghost"
-              size="2xs"
-              minH="0"
-              h="20px"
-              w="20px"
-              minW="0"
-              p="0"
-              disabled={disabled || !canManageProduct}
-              onClick={productModal.onOpen}
-            >
-              <Icon as={hasProduct ? FiEdit : FiPlus} boxSize="16px" color="primaryMain" />
-            </IconButton>
-          ) : undefined
-        }
-      />
+      {hideLabel ? (
+        <Flex align="flex-start" gap={1}>
+          <Box flex="1" minW={0}>
+            {select}
+          </Box>
+          {productAction && (
+            <Flex h="38px" align="center" flexShrink={0}>
+              {productAction}
+            </Flex>
+          )}
+        </Flex>
+      ) : (
+        select
+      )}
 
       {withProductModal && (
         <ProductFormModal

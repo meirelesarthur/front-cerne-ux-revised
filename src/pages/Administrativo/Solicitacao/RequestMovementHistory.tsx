@@ -28,27 +28,35 @@
 // fallback `gray` abaixo (dado histórico fora do domínio do enum não deve
 // quebrar a tela, mesmo racional de tolerância já usado no bloco fiscal de
 // `Product` para enums com dado legado).
+//
+// Visual (25/11): mesma tabela da aba Cotações (`SimpleTable`) e a situação
+// em `StatusTag`, com a cor de cada status do suprimento.
 // -----------------------------------------------------------------------------
 
-import { Badge, Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
+
+import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
+import { StatusTag } from '@/components/ui/StatusTag';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
 import formatDate from '@/utils/formatDate';
 
 import {
-  requestPurchaseStatusColor,
+  requestPurchaseStatusDotToken,
   RequestPurchaseStatus,
 } from '@/constants/RequestPurchases/request-purchase-status';
 
 import type { RequestMovementRow } from '@/@types/v2/RequestPurchases';
 
+import { RequestTabEmpty, RequestTabHeader } from './RequestTabParts';
+
 export interface RequestMovementHistoryProps {
   movements: RequestMovementRow[];
 }
 
-function statusColorPalette(status: number): string {
-  return requestPurchaseStatusColor[status as RequestPurchaseStatus] ?? 'gray';
+function statusToken(status: number): string {
+  return requestPurchaseStatusDotToken[status as RequestPurchaseStatus] ?? 'semanticNeutral.500';
 }
 
 export function RequestMovementHistory({ movements }: RequestMovementHistoryProps) {
@@ -56,86 +64,42 @@ export function RequestMovementHistory({ movements }: RequestMovementHistoryProp
   const text = languageGB.requestPurchases.requestPurchase.form;
   const historyText = text.historySection;
 
+  const columns: SimpleTableColumn[] = [
+    { key: 'date', header: historyText.columns.date },
+    { key: 'user', header: historyText.columns.user },
+    { key: 'status', header: historyText.columns.status },
+    { key: 'elapsed', header: historyText.columns.elapsed, align: 'right' },
+    { key: 'justify', header: historyText.columns.justify },
+  ];
+
+  const rows: SimpleTableRow[] = movements.map((movement) => ({
+    key: movement.uuid,
+    cells: {
+      date: (
+        <Text whiteSpace="nowrap">{formatDate(movement.created_at, 'dd/MM/yyyy HH:mm')}</Text>
+      ),
+      // `movement.user` segue opcional no tipo: fallback "—".
+      user: <Text fontWeight="medium">{movement.user?.name ?? '—'}</Text>,
+      status: (
+        <StatusTag size="sm" label={movement.status_label} color={statusToken(movement.status)} />
+      ),
+      elapsed: <Text whiteSpace="nowrap">{movement.elapsed_label ?? '—'}</Text>,
+      justify: (
+        <Text color={movement.justify ? undefined : 'fg.muted'} minW="200px">
+          {movement.justify ?? '—'}
+        </Text>
+      ),
+    },
+  }));
+
   return (
     <Box pt={4}>
-      <Box bg="bg.muted" border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4}>
-        {movements.length === 0 ? (
-          <Box py={2}>
-            <Text fontSize="sm" color="fg.muted">
-              {historyText.emptyLabel}
-            </Text>
-          </Box>
-        ) : (
-          <Flex direction="column" gap={0}>
-            <Flex
-              gap={3}
-              px={2}
-              py={2}
-              borderBottom="1px solid"
-              borderColor="border.subtle"
-              display={{ base: 'none', md: 'flex' }}
-            >
-              <Box flex="1" minW="140px">
-                <Text fontSize="xs" fontWeight="semibold" color="fg.muted">
-                  {historyText.columns.date}
-                </Text>
-              </Box>
-              <Box flex="1" minW="160px">
-                <Text fontSize="xs" fontWeight="semibold" color="fg.muted">
-                  {historyText.columns.user}
-                </Text>
-              </Box>
-              <Box flex="1" minW="140px">
-                <Text fontSize="xs" fontWeight="semibold" color="fg.muted">
-                  {historyText.columns.status}
-                </Text>
-              </Box>
-              <Box w="110px">
-                <Text fontSize="xs" fontWeight="semibold" color="fg.muted">
-                  {historyText.columns.elapsed}
-                </Text>
-              </Box>
-              <Box flex="2" minW="220px">
-                <Text fontSize="xs" fontWeight="semibold" color="fg.muted">
-                  {historyText.columns.justify}
-                </Text>
-              </Box>
-            </Flex>
-
-            {movements.map((movement) => (
-              <Flex
-                key={movement.uuid}
-                gap={3}
-                px={2}
-                py={3}
-                borderBottom="1px solid"
-                borderColor="border.subtle"
-                wrap="wrap"
-                align="center"
-              >
-                <Box flex="1" minW="140px">
-                  <Text fontSize="sm">{formatDate(movement.created_at, 'dd/MM/yyyy HH:mm')}</Text>
-                </Box>
-                <Box flex="1" minW="160px">
-                  {/* `movement.user` segue opcional no tipo: fallback "—". */}
-                  <Text fontSize="sm">{movement.user?.name ?? '—'}</Text>
-                </Box>
-                <Box flex="1" minW="140px">
-                  <Badge colorPalette={statusColorPalette(movement.status)} variant="subtle">
-                    {movement.status_label}
-                  </Badge>
-                </Box>
-                <Box w="110px">
-                  <Text fontSize="sm">{movement.elapsed_label ?? '—'}</Text>
-                </Box>
-                <Box flex="2" minW="220px">
-                  <Text fontSize="sm">{movement.justify ?? '--'}</Text>
-                </Box>
-              </Flex>
-            ))}
-          </Flex>
-        )}
-      </Box>
+      <RequestTabHeader title={text.tabs.history} count={movements.length} />
+      {movements.length === 0 ? (
+        <RequestTabEmpty>{historyText.emptyLabel}</RequestTabEmpty>
+      ) : (
+        <SimpleTable columns={columns} rows={rows} ariaLabel={text.tabs.history} />
+      )}
     </Box>
   );
 }

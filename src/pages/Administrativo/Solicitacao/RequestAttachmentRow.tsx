@@ -59,7 +59,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Box, Flex, Icon, Text } from '@chakra-ui/react';
+import { Box, Icon, Text } from '@chakra-ui/react';
 import { Controller, useFieldArray } from 'react-hook-form';
 import { FiTrash2 } from 'react-icons/fi';
 
@@ -68,6 +68,7 @@ import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { FileUpload } from '@/components/Form/FileUpload';
 import { Input } from '@/components/Form/Input';
 import { IconButtonTable } from '@/components/IconButtonTable';
+import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -86,6 +87,7 @@ import {
   emptyAttachmentRow,
   isAttachmentRowIncomplete,
 } from './itemRowGuards';
+import { RequestTabEmpty, RequestTabHeader } from './RequestTabParts';
 
 import type { Control, FieldErrors, UseFormWatch } from 'react-hook-form';
 
@@ -164,71 +166,62 @@ export function RequestAttachmentRow({
     setIndexToRemove(null);
   }
 
-  return (
-    <Box pt={4}>
-      <Box bg="bg.muted" border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4}>
-        <Flex justify="space-between" align="center" wrap="wrap" gap={3} mb={4}>
-          <Text fontSize="sm" fontWeight="semibold">
-            {text.tabs.attachments}
-          </Text>
-          <Button
-            title={attachmentText.addButton}
-            variant="outline"
-            size="sm"
-            type="button"
-            onClick={handleAdd}
-            disabled={isDisabled}
-          />
-        </Flex>
+  const requiredMark = (label: string) => (isRequired ? `${label} *` : label);
 
-        {(errors.attachments?.message as string | undefined) && (
-          <Text fontSize="xs" color="fg.error" mb={4}>
-            {errors.attachments?.message as string}
-          </Text>
-        )}
+  const columns: SimpleTableColumn[] = [
+    { key: 'index', header: '#' },
+    { key: 'name', header: requiredMark(attachmentText.fields.name) },
+    { key: 'file', header: requiredMark(attachmentText.fields.file) },
+    { key: 'actions', header: '', align: 'right' },
+  ];
 
-        {fields.length === 0 ? (
-          <Box py={2}>
-            <Text fontSize="sm" color="fg.muted">
-              {attachmentText.emptyLabel}
-            </Text>
+  const rows: SimpleTableRow[] = fields.map((field, index) => {
+    // `attachment_uuid`/`name` lidos via `watch` (não `field` do
+    // useFieldArray direto) para refletir edições ao vivo do próprio
+    // Controller de `name` na resolução do `currentFileName` abaixo — mesma
+    // técnica de `EquipamentoAnexosTab`.
+    const rowAttachmentUuid = watch(`attachments.${index}.attachment_uuid`);
+    const rowName = watch(`attachments.${index}.name`);
+    const currentFileUrl = rowAttachmentUuid
+      ? (persistedFileUrlByUuid[rowAttachmentUuid] ?? null)
+      : null;
+
+    return {
+      key: field.id,
+      cells: {
+        index: (
+          <Text color="fg.muted" fontWeight="medium">
+            {index + 1}
+          </Text>
+        ),
+        name: (
+          <Box minW="220px">
+            <Controller
+              name={`attachments.${index}.name`}
+              control={control}
+              render={({ field: nameField, fieldState }) => (
+                <Input
+                  aria-label={attachmentText.fields.name}
+                  name={nameField.name}
+                  maxLength={ATTACHMENT_NAME_MAX}
+                  value={nameField.value ?? ''}
+                  onChange={(event) => nameField.onChange(event.target.value)}
+                  error={fieldState.error?.message}
+                  disabled={isDisabled}
+                />
+              )}
+            />
           </Box>
-        ) : (
-          <Flex direction="column" gap={4}>
-            {fields.map((field, index) => {
-              // `attachment_uuid`/`name` lidos via `watch` (não `field` do
-              // useFieldArray direto) para refletir edições ao vivo do
-              // próprio Controller de `name` na resolução do
-              // `currentFileName` abaixo — mesma técnica de
-              // `EquipamentoAnexosTab`.
-              const rowAttachmentUuid = watch(`attachments.${index}.attachment_uuid`);
-              const rowName = watch(`attachments.${index}.name`);
-              const currentFileUrl = rowAttachmentUuid
-                ? (persistedFileUrlByUuid[rowAttachmentUuid] ?? null)
-                : null;
-
-              return (
-                <Flex
-                  key={field.id}
-                  gap={3}
-                  align="flex-end"
-                  wrap="wrap"
-                  pb={4}
-                  borderBottom="1px solid"
-                  borderColor="border.subtle"
-                >
-                  <Box flex="2" minW="260px">
-                    <Controller
-                      name={`attachments.${index}.file`}
-                      control={control}
-                      render={({ field: fileField, fieldState: fileState }) => (
-                        <FileUpload
-                          label={
-                            isRequired
-                              ? `${attachmentText.fields.file} *`
-                              : attachmentText.fields.file
-                          }
-                          error={fileState.error?.message}
+        ),
+        file: (
+          <Box minW="280px">
+            <Controller
+              name={`attachments.${index}.file`}
+              control={control}
+              render={({ field: fileField, fieldState: fileState }) => (
+                <FileUpload
+                  compact
+                  error={fileState.error?.message}
                           file={fileField.value ?? null}
                           onFileSelected={(file) => fileField.onChange(file)}
                           onRemove={() => fileField.onChange(null)}
@@ -243,49 +236,54 @@ export function RequestAttachmentRow({
                           replaceLabel={fileUploadText.replaceFileLabel}
                           existingFileLabel={fileUploadText.existingFileLabel}
                           errorTypeMessage={fileUploadText.errorTypeMessage}
-                          errorSizeMessage={fileUploadText.errorSizeMessage}
-                        />
-                      )}
-                    />
-                  </Box>
+                  errorSizeMessage={fileUploadText.errorSizeMessage}
+                />
+              )}
+            />
+          </Box>
+        ),
+        actions: (
+          <IconButtonTable
+            aria-label={attachmentText.removeButton}
+            mensegerTooltip={attachmentText.removeButton}
+            size="sm"
+            color="red.500"
+            variant="ghost"
+            type="button"
+            disabled={isDisabled}
+            onClick={() => handleRemoveRequest(index)}
+          >
+            <Icon as={FiTrash2} />
+          </IconButtonTable>
+        ),
+      },
+    };
+  });
 
-                  <Box flex="1" minW="220px">
-                    <Controller
-                      name={`attachments.${index}.name`}
-                      control={control}
-                      render={({ field: nameField, fieldState }) => (
-                        <Input
-                          label={attachmentText.fields.name}
-                          name={nameField.name}
-                          maxLength={ATTACHMENT_NAME_MAX}
-                          isRequired={isRequired}
-                          value={nameField.value ?? ''}
-                          onChange={(event) => nameField.onChange(event.target.value)}
-                          error={fieldState.error?.message}
-                          disabled={isDisabled}
-                        />
-                      )}
-                    />
-                  </Box>
+  return (
+    <Box pt={4}>
+      <RequestTabHeader title={text.tabs.attachments} count={fields.length}>
+        <Button
+          title={attachmentText.addButton}
+          variant="outline"
+          size="sm"
+          type="button"
+          onClick={handleAdd}
+          disabled={isDisabled}
+        />
+      </RequestTabHeader>
 
-                  <IconButtonTable
-                    aria-label={attachmentText.removeButton}
-                    mensegerTooltip={attachmentText.removeButton}
-                    size="sm"
-                    color="red.500"
-                    variant="ghost"
-                    type="button"
-                    disabled={isDisabled}
-                    onClick={() => handleRemoveRequest(index)}
-                  >
-                    <Icon as={FiTrash2} />
-                  </IconButtonTable>
-                </Flex>
-              );
-            })}
-          </Flex>
-        )}
-      </Box>
+      {(errors.attachments?.message as string | undefined) && (
+        <Text fontSize="xs" color="fg.error" mb={4}>
+          {errors.attachments?.message as string}
+        </Text>
+      )}
+
+      {fields.length === 0 ? (
+        <RequestTabEmpty>{attachmentText.emptyLabel}</RequestTabEmpty>
+      ) : (
+        <SimpleTable columns={columns} rows={rows} ariaLabel={text.tabs.attachments} />
+      )}
 
       <DeleteConfirmDialog
         isOpen={indexToRemove !== null}
