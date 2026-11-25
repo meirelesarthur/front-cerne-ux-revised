@@ -8,9 +8,9 @@
 // (`RequestPurchase-FrontEnd-contrato.md §4`) — wiring real de rota é
 // `TASK-RP-FE-10` (NÃO tocado aqui).
 //
-// 5 abas (`Tabs.Root`, `useCustomSearch(0)` — mirror
-// `get_pwa_complex_screen_compositions_pattern` Pattern 11): 0 "Dados Gerais"
-// (ESTE arquivo, inline), 1 "Itens" (`RequestItemRow`, TASK-RP-FE-07), 2
+// Dados Gerais (ESTE arquivo, inline) fica FIXO acima das abas (25/11); as
+// abas (`Tabs.Root`, `useCustomSearch(1)`, valores mantidos para não quebrar
+// `?tab=`): 1 "Itens" (`RequestItemRow`, TASK-RP-FE-07), 2
 // "Anexos" (`RequestAttachmentRow`, TASK-RP-FE-07), 3 "Histórico"
 // (`RequestMovementHistory`, TASK-RP-FE-07), 4 "Cotações"
 // (`RequestQuotationTab`, Pattern 12 — Cards em Tab, TASK-CQ-FE-03) — as
@@ -118,9 +118,9 @@
 // - Visualização: seções extras em `RequestPurchaseViewSections`.
 // -----------------------------------------------------------------------------
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Flex, SimpleGrid, Tabs, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid, Tabs, Text, useDisclosure } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Controller, useForm, type FieldErrors } from 'react-hook-form';
@@ -331,7 +331,11 @@ export default function CreateOrUpdateSolicitacao() {
 
   // Abas (`useCustomSearch(0)`, mandato explícito da Tarefa) — 0 Dados
   // Gerais / 1 Itens / 2 Anexos / 3 Histórico (só em edição).
-  const { tabIndex, handleTabsChange } = useCustomSearch(0);
+  const { tabIndex, handleTabsChange } = useCustomSearch(1);
+  // Dados Gerais saiu das abas (fica fixo acima delas): `?tab=0` ou ausente
+  // abre Itens, a 1ª aba.
+  const activeTab = tabIndex === 0 ? 1 : tabIndex;
+  const generalRef = useRef<HTMLDivElement>(null);
 
   function fillForm(data: RequestPurchaseData, resetForce?: boolean) {
     if (!isEmpty(dirtyFields) || resetForce) {
@@ -452,12 +456,18 @@ export default function CreateOrUpdateSolicitacao() {
     const erroredFieldNames = Object.keys(formErrors) as (keyof RequestPurchaseFormType)[];
     if (erroredFieldNames.length === 0) return;
 
-    const erroredTab = erroredFieldNames
-      .map((field) => FIELD_TAB_MAP[field])
-      .find((tab): tab is number => tab !== undefined && tab !== tabIndex);
+    const erroredTabs = erroredFieldNames.map((field) => FIELD_TAB_MAP[field]);
 
-    if (erroredTab !== undefined) {
-      handleTabsChange(erroredTab);
+    // 0 = Dados Gerais, fixo acima das abas: rola até ele em vez de trocar aba.
+    if (erroredTabs.includes(0)) {
+      generalRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      const erroredTab = erroredTabs.find(
+        (tab): tab is number => tab !== undefined && tab !== activeTab
+      );
+      if (erroredTab !== undefined) {
+        handleTabsChange(erroredTab);
+      }
     }
 
     const firstErrorMessage = Object.values(formErrors).find(
@@ -598,6 +608,32 @@ export default function CreateOrUpdateSolicitacao() {
             ? text.form.subtitle.edit
             : text.form.subtitle.create
       }
+      // Situação, código e responsável na linha do título (sem faixa própria).
+      headerActions={
+        isEditing && requestPurchaseData ? (
+          <Flex gap={3} align="center" wrap="wrap" justify="flex-end">
+            {requestPurchaseData.responsible?.name && (
+              <Text fontSize="sm" color="fg.muted" display={{ base: 'none', md: 'block' }}>
+                {text.form.statusBar.responsible}:{' '}
+                <Text as="span" color="strongText" fontWeight="medium">
+                  {requestPurchaseData.responsible.name}
+                </Text>
+              </Text>
+            )}
+            {requestPurchaseData.code && (
+              <Text fontFamily="mono" fontSize="sm" fontWeight="medium" color="strongText">
+                {requestPurchaseData.code}
+              </Text>
+            )}
+            <StatusTag
+              label={requestPurchaseData.status_label}
+              color={requestPurchaseStatusDotToken[requestPurchaseData.status as RequestPurchaseStatus]}
+            />
+          </Flex>
+        ) : undefined
+      }
+      // Rodapé no padrão dos formulários: Cancelar à esquerda; à direita as
+      // ações de trâmite (quando a pessoa pode executá-las) e Salvar.
       footer={
         <>
           <Button
@@ -607,145 +643,72 @@ export default function CreateOrUpdateSolicitacao() {
             onClick={() => navigate(-1)}
             disabled={isSubmitting}
           />
-          {canSave && (
-            <Button
-              title={languageGB.defaltStrings.save}
-              type="submit"
-              form="request-purchase-form"
-              loading={isSubmitting}
-              disabled={isSubmitting || isLoading}
-            />
-          )}
-        </>
-      }
-    >
-      {/* Faixa de situação: sempre visível na ordem já salva (também em
-          visualização e encerrada); as ações de trâmite só aparecem quando
-          a pessoa pode executá-las. */}
-      {isEditing && requestPurchaseData && (
-        <Flex
-          gap={3}
-          wrap="wrap"
-          align="center"
-          mb={5}
-          px={4}
-          py={3}
-          border="1px solid"
-          borderColor="semanticNeutral.200"
-          borderRadius="xl"
-          bg="cardBG"
-        >
-          <StatusTag
-            label={requestPurchaseData.status_label}
-            color={requestPurchaseStatusDotToken[requestPurchaseData.status as RequestPurchaseStatus]}
-          />
-          {requestPurchaseData.code && (
-            <Text fontFamily="mono" fontSize="sm" fontWeight="medium" color="strongText">
-              {requestPurchaseData.code}
-            </Text>
-          )}
-          {requestPurchaseData.responsible?.name && (
-            <Text fontSize="sm" color="fg.muted">
-              {text.form.statusBar.responsible}:{' '}
-              <Text as="span" color="strongText" fontWeight="medium">
-                {requestPurchaseData.responsible.name}
-              </Text>
-            </Text>
-          )}
-
-          {showTramiteBar && (
-          <Flex gap={2} wrap="wrap" ml="auto">
-            {canReceive && (
+          <Flex gap={2} wrap="wrap" justify="flex-end">
+            {showTramiteBar && canReceive && (
               <Button
                 title={text.actions.receiveButton}
                 variant="outline"
-                size="sm"
                 type="button"
                 onClick={() => receiveMutation.mutate(undefined)}
                 loading={receiveMutation.isPending}
                 disabled={anyActionPending}
               />
             )}
-            {canTransfer && (
+            {showTramiteBar && canTransfer && (
               <Button
                 title={text.actions.transferButton}
                 variant="outline"
-                size="sm"
                 type="button"
                 onClick={transferDisclosure.onOpen}
                 disabled={anyActionPending}
               />
             )}
-            {canStepBackAction && (
+            {showTramiteBar && canStepBackAction && (
               <Button
                 title={text.actions.changeStatusButton}
                 variant="outline"
-                size="sm"
                 type="button"
                 onClick={changeStatusDisclosure.onOpen}
                 disabled={anyActionPending}
               />
             )}
-            {canEdit && (
+            {showTramiteBar && canQuotationJustification && (
+              <Button
+                title={text.actions.quotationJustificationButton}
+                variant="outline"
+                type="button"
+                onClick={quotationJustificationDisclosure.onOpen}
+                disabled={anyActionPending}
+              />
+            )}
+            {showTramiteBar && canEdit && (
               <Button
                 title={text.actions.finishButton}
                 variant="outline"
-                size="sm"
                 type="button"
                 onClick={() => finishMutation.mutate(undefined)}
                 loading={finishMutation.isPending}
                 disabled={anyActionPending}
               />
             )}
-            {canQuotationJustification && (
+            {canSave && (
               <Button
-                title={text.actions.quotationJustificationButton}
-                variant="outline"
-                size="sm"
-                type="button"
-                onClick={quotationJustificationDisclosure.onOpen}
-                disabled={anyActionPending}
+                title={languageGB.defaltStrings.save}
+                type="submit"
+                form="request-purchase-form"
+                loading={isSubmitting}
+                disabled={isSubmitting || isLoading}
               />
             )}
           </Flex>
-          )}
-        </Flex>
-      )}
-
+        </>
+      }
+    >
       <Form id="request-purchase-form" onSubmit={handleSubmit(onSubmit, onInvalid)} noPadding>
-        {/* @ts-ignore - custom variant */}
-        <Tabs.Root
-          value={String(tabIndex)}
-          onValueChange={(details: { value: string }) => handleTabsChange(Number(details.value))}
-          variant="outline"
-        >
-          {/* @ts-ignore - Tab List sticky no topo do body: abas sempre visíveis, só o conteúdo rola. */}
-          <Tabs.List position="sticky" top="0" zIndex={1} bg="formBG">
-            {/* @ts-ignore */}
-            <Tabs.Trigger value="0">{text.form.tabs.general}</Tabs.Trigger>
-            {/* @ts-ignore */}
-            <Tabs.Trigger value="1">{text.form.tabs.items}</Tabs.Trigger>
-            {/* @ts-ignore */}
-            <Tabs.Trigger value="2">{text.form.tabs.attachments}</Tabs.Trigger>
-            {/* Histórico — AUSENTE em modo criação (Modelo C Regra 1,
-                `get_pwa_complex_screen_compositions_pattern`): não existe
-                `movements[]` antes do 1º `POST`. */}
-            {isEditing && (
-              // @ts-ignore
-              <Tabs.Trigger value="3">{text.form.tabs.history}</Tabs.Trigger>
-            )}
-            {/* Cotações (`RequestQuotationTab`, TASK-CQ-FE-03) — AUSENTE em
-                modo criação, mesma regra de "Histórico": uma `RequestQuotation`
-                só existe amarrada a uma `RequestPurchase` já persistida. */}
-            {isEditing && (
-              // @ts-ignore
-              <Tabs.Trigger value="4">{text.form.tabs.quotations}</Tabs.Trigger>
-            )}
-          </Tabs.List>
-
-          {/* ---- ABA 1: Dados Gerais (ESTE arquivo) ---- */}
-          {/* @ts-ignore */}
-          <Tabs.Content value="0">
+        {/* Dados Gerais FIXO acima das abas (25/11): sempre visível como
+            cabeçalho da OC; as abas abaixo (Itens, Anexos, Histórico,
+            Cotações) só trocam o conteúdo de baixo. */}
+        <Box ref={generalRef} mb={6}>
             <Flex direction="column" pt={4}>
             <FormSection title={text.form.sections.identification}>
             {/* 3 colunas: Código/Tipo/Prioridade; Data/Solicitante/Encarregado. */}
@@ -911,7 +874,36 @@ export default function CreateOrUpdateSolicitacao() {
             {isViewRoute && requestPurchaseData && (
               <RequestPurchaseViewSections data={requestPurchaseData} isLoading={isLoading} />
             )}
-          </Tabs.Content>
+        </Box>
+
+        {/* @ts-ignore - custom variant */}
+        <Tabs.Root
+          value={String(activeTab)}
+          onValueChange={(details: { value: string }) => handleTabsChange(Number(details.value))}
+          variant="outline"
+        >
+          {/* @ts-ignore - Tab List sticky no topo do body: abas sempre visíveis, só o conteúdo rola. */}
+          <Tabs.List position="sticky" top="0" zIndex={1} bg="formBG">
+            {/* @ts-ignore */}
+            <Tabs.Trigger value="1">{text.form.tabs.items}</Tabs.Trigger>
+            {/* @ts-ignore */}
+            <Tabs.Trigger value="2">{text.form.tabs.attachments}</Tabs.Trigger>
+            {/* Histórico — AUSENTE em modo criação (Modelo C Regra 1,
+                `get_pwa_complex_screen_compositions_pattern`): não existe
+                `movements[]` antes do 1º `POST`. */}
+            {isEditing && (
+              // @ts-ignore
+              <Tabs.Trigger value="3">{text.form.tabs.history}</Tabs.Trigger>
+            )}
+            {/* Cotações (`RequestQuotationTab`, TASK-CQ-FE-03) — AUSENTE em
+                modo criação, mesma regra de "Histórico": uma `RequestQuotation`
+                só existe amarrada a uma `RequestPurchase` já persistida. */}
+            {isEditing && (
+              // @ts-ignore
+              <Tabs.Trigger value="4">{text.form.tabs.quotations}</Tabs.Trigger>
+            )}
+          </Tabs.List>
+
 
           {/* ---- ABA 2: Itens (`RequestItemRow`, TASK-RP-FE-07) ---- */}
           {/* @ts-ignore */}
