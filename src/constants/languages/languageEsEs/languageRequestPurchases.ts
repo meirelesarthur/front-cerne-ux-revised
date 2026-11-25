@@ -1,5 +1,5 @@
 // src/constants/languages/languageEsEs/languageRequestPurchases.ts
-// Traducción es-ES del módulo "Solicitud de Compra" (RequestPurchase —
+// Traducción es-ES del módulo "Orden de Compra" (RequestPurchase —
 // Administrativo / Suministros, esteira 97-Esteiras/022, TASK-RP-FE-03). Ver
 // `@/@types/language/module-request-purchases` para el contrato completo.
 
@@ -7,9 +7,9 @@ import { ModuleRequestPurchases } from '@/@types/language/module-request-purchas
 
 export const languageRequestPurchases: ModuleRequestPurchases = {
   requestPurchase: {
-    singularLabel: 'Solicitud de Compra',
-    pluralLabel: 'Solicitudes de Compra',
-    titleModule: 'Solicitudes de Compra',
+    singularLabel: 'Orden de Compra',
+    pluralLabel: 'Órdenes de Compra',
+    titleModule: 'Órdenes de Compra',
 
     // ADITIVO (TASK-CQ-FE-15) — ver nota en
     // `ModuleRequestPurchases.requestPurchase.legend`.
@@ -18,8 +18,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     },
 
     list: {
-      pageTitle: 'Solicitudes de Compra',
-      pageSubtitle: 'Gestione las solicitudes de compra de la finca.',
+      pageTitle: 'Órdenes de Compra',
+      pageSubtitle: 'Gestione las órdenes de compra de la finca.',
       table: {
         code: 'Código',
         type: 'Tipo',
@@ -41,9 +41,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       emptyState: {
         titleEmpty: 'Ninguna solicitud registrada',
         titleFiltered: 'Ninguna solicitud encontrada',
-        descriptionEmpty: 'Registre la primera Solicitud de Compra.',
+        descriptionEmpty: 'Registre la primera Orden de Compra.',
         descriptionFiltered: 'Ajuste los filtros para encontrar lo que busca.',
-        cta: 'Nueva Solicitud',
+        cta: 'Nueva Orden de Compra',
       },
       deletedToast: 'Registro eliminado con éxito.',
       deleteConfirm: {
@@ -70,14 +70,14 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
 
     form: {
       title: {
-        create: 'Nueva Solicitud de Compra',
-        edit: 'Editar Solicitud de Compra',
-        view: 'Visualizar Solicitud de Compra',
+        create: 'Nueva Orden de Compra',
+        edit: 'Editar Orden de Compra',
+        view: 'Visualizar Orden de Compra',
       },
       subtitle: {
-        create: 'Registre una nueva solicitud de compra.',
-        edit: 'Actualice los datos de la solicitud de compra.',
-        view: 'Visualice los datos de la solicitud de compra.',
+        create: 'Registre una nueva orden de compra.',
+        edit: 'Actualice los datos de la orden de compra.',
+        view: 'Visualice los datos de la orden de compra.',
       },
       tabs: {
         general: 'Datos Generales',
@@ -311,7 +311,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     myProcesses: {
       titleModule: 'Mis Procesos',
       pageTitle: 'Mis Procesos',
-      pageSubtitle: 'Solicitudes de compra bajo su responsabilidad.',
+      pageSubtitle: 'Órdenes de compra bajo su responsabilidad.',
       emptyState: {
         titleEmpty: 'Ningún proceso bajo su responsabilidad',
         descriptionEmpty: 'Las solicitudes asignadas a usted aparecerán aquí.',
@@ -339,7 +339,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     rejected: {
       titleModule: 'Rechazados y Cancelados',
       pageTitle: 'Rechazados / Cancelados',
-      pageSubtitle: 'Solicitudes de compra rechazadas o canceladas.',
+      pageSubtitle: 'Órdenes de compra rechazadas o canceladas.',
       emptyState: {
         titleEmpty: 'Ninguna solicitud rechazada o cancelada',
         descriptionEmpty: 'Las solicitudes rechazadas o canceladas aparecerán aquí.',
@@ -349,12 +349,28 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       },
     },
 
+    // Pantalla única "Órdenes de compra": las listas de Suministros pasan a ser vistas (pestañas).
+    hub: {
+      pageTitle: 'Órdenes de compra',
+      pageSubtitle: 'Todas las órdenes de compra, del pedido a la recepción. Elija la vista.',
+      viewsAriaLabel: 'Vista de las órdenes de compra',
+      views: {
+        minhas: 'Creadas por mí',
+        responsabilidade: 'Bajo mi responsabilidad',
+        aprovar: 'Para que yo apruebe',
+        cotacao: 'En cotización',
+        compra: 'En compra',
+        recebimento: 'Recepción',
+        encerradas: 'Rechazadas y canceladas',
+      },
+    },
+
     // ADITIVO (TASK-CQ-FE-13) — ver nota en
     // `ModuleRequestPurchases.requestPurchase.inQuotation`.
     inQuotation: {
       titleModule: 'Cotizaciones',
       pageTitle: 'Cotizaciones',
-      pageSubtitle: 'Solicitudes de compra en cotización en toda la finca.',
+      pageSubtitle: 'Órdenes de compra en cotización en toda la finca.',
       emptyState: {
         titleEmpty: 'Ninguna solicitud en cotización',
         descriptionEmpty: 'Las solicitudes en cotización aparecerán aquí.',
@@ -366,7 +382,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inPurchase: {
       titleModule: 'Compras',
       pageTitle: 'Compras',
-      pageSubtitle: 'Solicitudes de compra en compra en toda la finca.',
+      pageSubtitle: 'Órdenes de compra en compra en toda la finca.',
       emptyState: {
         titleEmpty: 'Ninguna solicitud en compra',
         descriptionEmpty: 'Las solicitudes en compra aparecerán aquí.',

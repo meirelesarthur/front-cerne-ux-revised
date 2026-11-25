@@ -5,6 +5,85 @@
 import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
+  hub: {
+    pageTitle: 'Work and purchasing',
+    pageSubtitle: 'Choose what you are going to record. Each option takes you to the right module.',
+    helpButton: 'How it works',
+    cardsAriaLabel: 'What you are going to record',
+    options: {
+      internal: {
+        title: 'Record team work',
+        description: 'People and machines from the farm itself.',
+        destination: 'Opens the appointment',
+      },
+      purchase: {
+        title: 'Create a purchase order',
+        description: 'A product or a service from outside the farm.',
+        destination: 'Opens the purchase order',
+      },
+    },
+    help: {
+      title: 'How it works',
+      close: 'Close',
+      about: {
+        title: 'Appointment or purchase order?',
+        text: 'Work done by the farm team and machines goes in an Appointment. Anything that comes from outside, product or service, goes in a Purchase order. For a service purchase order, the Receipt confirms the service was done, and only then is it paid.',
+      },
+      journey: {
+        title: 'How a purchase order moves',
+        ariaLabel: 'Purchase order steps',
+        whoLabel: 'Who acts',
+        steps: {
+          request: {
+            label: '1. Request',
+            who: 'Whoever saw the need',
+            what: 'Opens the purchase order: product or service, quantity, deadline and reason.',
+            open: 'Open purchase orders',
+          },
+          quote: {
+            label: '2. Quote',
+            who: 'Whoever does the purchasing',
+            what: 'Asks one or more suppliers for a price and picks the best offer.',
+            open: 'Open quotations',
+          },
+          approve: {
+            label: '3. Approve',
+            who: 'Whoever approves spending',
+            what: 'Checks value and reason. Approves or rejects with the reason.',
+            open: 'Open authorizations',
+          },
+          buy: {
+            label: '4. Buy',
+            who: 'Whoever does the purchasing',
+            what: 'Sends the order to the supplier and records the purchase.',
+            open: 'Open purchases',
+          },
+          receive: {
+            label: '5. Receive',
+            who: 'The person in charge on the farm',
+            what: 'Confirms what arrived. For a service, confirms the service was done.',
+            open: 'Open receipts',
+          },
+          pay: {
+            label: '6. Pay',
+            who: 'Finance',
+            what: 'Creates the payable from the confirmed receipt.',
+            open: 'Open receipts',
+          },
+        },
+      },
+      shortcuts: {
+        title: 'Where to follow up',
+        appropriations: { title: 'Appointments', description: 'Work recorded by the team.' },
+        orders: { title: 'Purchase orders', description: 'Every order, at any step.' },
+        mine: { title: 'My processes', description: 'The orders that are with you.' },
+        receipts: {
+          title: 'Receipts',
+          description: 'What is still to be confirmed as arrived or done.',
+        },
+      },
+    },
+  },
   serviceOrder: {
     singularLabel: 'Service Order',
     pluralLabel: 'Service Orders',
@@ -43,8 +122,9 @@ export const languageServiceOrders: ModuleServiceOrders = {
         endDate: 'End date',
       },
       emptyState: {
-        title: 'No service order registered.',
-        description: 'Start by issuing your first service order.',
+        title: 'No service orders yet.',
+        description:
+          'A service order is for hiring people from outside the farm, like a contractor or a repair shop. If your own team does the work, use Appointment.',
         titleFiltered: 'No service order found.',
         descriptionFiltered: 'Try adjusting the filters or clearing the search.',
         cta: 'Issue Service Order',

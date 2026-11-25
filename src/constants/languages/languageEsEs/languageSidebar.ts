@@ -1,6 +1,9 @@
 import { Sidebar } from '@/@types/language/sidebar';
 
+import { navDescriptions } from './languageSidebarDescriptions';
+
 export const languageSidebar: Sidebar = {
+  descriptions: navDescriptions,
   navigation: {
     painel: 'Inicio',
     favoritos: 'Favoritos',
@@ -81,7 +84,7 @@ export const languageSidebar: Sidebar = {
     'adm-suprimentos': 'Suministros',
     'adm-sup-sla': 'Parámetros SLA',
     'adm-sup-meu': 'Mis Procesos',
-    'adm-sup-sol': 'Solicitud',
+    'adm-sup-sol': 'Órdenes de compra',
     'adm-sup-rej': 'Rechazados / Cancelados',
     'adm-sup-cot': 'Cotizaciones',
     'adm-sup-aut': 'Autorización',
@@ -113,9 +116,10 @@ export const languageSidebar: Sidebar = {
     'adm-sistema': 'Sistema',
     'adm-sis-log': 'Logs del Sistema',
     operacional: 'Operativo',
+    'ope-apontamento': 'Trabajo y compras',
     'ope-agricultura': 'Agricultura',
     'ope-agr-pla': 'Planificaciones',
-    'ope-agr-apo': 'Apuntes de Campo',
+    'ope-agr-apo': 'Apuntes',
     'ope-agr-rom': 'Romaneos',
     'ope-agr-car': 'Cargamento',
     'ope-agr-ras': 'Trazabilidad',
@@ -141,10 +145,11 @@ export const languageSidebar: Sidebar = {
     'ope-ven-ped': 'Pedidos',
     'ope-ven-ven': 'Ventas',
     'ope-ordens': 'Órdenes de Servicio',
+    'ope-central': 'Central',
     'ope-os-min': 'Mis Órdenes de Servicio',
-    'ope-os-lis': 'Lista de Órdenes de Servicio',
-    'ope-os-mon': 'Monitoreo',
-    'ope-os-ava': 'Evaluaciones',
+    'ope-os-lis': 'Todas las Órdenes de Servicio',
+    'ope-os-mon': 'En ejecución',
+    'ope-os-ava': 'Por evaluar',
     financeiro: 'Financiero',
     'fin-principal': 'Financiero',
     'fin-pag': 'Cuentas por Pagar',
@@ -210,4 +215,13 @@ export const languageSidebar: Sidebar = {
   collapseSidebar: 'Colapsar barra lateral',
   placeholderDescription:
     'Esta pantalla está en construcción. Las funcionalidades de GB Cerne estarán disponibles aquí pronto.',
+  groupHub: {
+    subtitle: '{count} funcionalidades en {module}. Elija una para abrir.',
+    subtitleOne: '1 funcionalidad en {module}.',
+    cardsAriaLabel: 'Funcionalidades del grupo',
+    notFoundTitle: 'Grupo no encontrado',
+    notFoundDescription: 'Este grupo no existe o no tiene acceso a sus funcionalidades.',
+    openHub: 'Abrir la central de {group}',
+    toggleGroup: 'Mostrar u ocultar los elementos de {group}',
+  },
 } as const;

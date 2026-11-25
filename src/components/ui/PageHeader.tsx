@@ -4,6 +4,8 @@
 
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 
+import { useIsEmbeddedList } from '@/components/EmbeddedList';
+
 export interface PageHeaderProps {
   title: string;
   description?: string;
@@ -12,6 +14,9 @@ export interface PageHeaderProps {
 }
 
 export function PageHeader({ title, description, count }: PageHeaderProps) {
+  // Lista embutida em outra tela: o título é o da tela hospedeira.
+  if (useIsEmbeddedList()) return null;
+
   return (
     <Box minW={0}>
       <Flex align="center" gap="8px">

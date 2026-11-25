@@ -10,7 +10,8 @@ export const languageAppropriations: ModuleAppropriations = {
     pluralLabel: 'Apontamentos',
     list: {
       pageTitle: 'Apontamentos',
-      pageSubtitle: 'Custeio de produção agropecuária por dia/área/operação/atividade.',
+      pageSubtitle:
+        'Registre o trabalho feito pela equipe da fazenda: o que foi feito, onde, quem trabalhou, máquinas e material usado.',
       deletedToast: 'Apontamento removido com sucesso',
       statusLegend: {
         opened: 'Aberto',
@@ -49,11 +50,12 @@ export const languageAppropriations: ModuleAppropriations = {
         comingSoonHint: 'Disponível em breve',
       },
       emptyState: {
-        title: 'Nenhum apontamento cadastrado.',
-        description: 'Comece adicionando seu primeiro apontamento.',
+        title: 'Nenhum apontamento ainda.',
+        description:
+          'Apontamento é o registro do trabalho da sua equipe, como pintar uma cerca ou adubar um talhão. Se for comprar um produto ou contratar um serviço de fora, use a Ordem de compra.',
         titleFiltered: 'Nenhum apontamento encontrado.',
         descriptionFiltered: 'Tente ajustar os filtros ou limpar a busca.',
-        cta: 'Adicionar Novo',
+        cta: 'Registrar trabalho',
       },
     },
     form: {
@@ -259,7 +261,7 @@ export const languageAppropriations: ModuleAppropriations = {
         finish: 'Finalizar',
         finishConfirmTitle: 'Finalizar apontamento',
         finishConfirmDescription:
-          'Ao finalizar, os itens de insumo/produção movimentam estoque. Deseja continuar?',
+          'Ao finalizar, o material usado sai do estoque e a produção registrada entra no estoque. O próximo passo é lançar o custo (Apropriar).',
         appropriate: 'Apropriar',
         revertStatus: 'Voltar Status',
         finishedToast: 'Apontamento finalizado com sucesso',

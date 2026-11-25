@@ -1,6 +1,9 @@
 import { Sidebar } from '@/@types/language/sidebar';
 
+import { navDescriptions } from './languageSidebarDescriptions';
+
 export const languageSidebar: Sidebar = {
+  descriptions: navDescriptions,
   navigation: {
     painel: 'Home',
     favoritos: 'Favoritos',
@@ -81,7 +84,7 @@ export const languageSidebar: Sidebar = {
     'adm-suprimentos': 'Suprimentos',
     'adm-sup-sla': 'Parâmetros SLA',
     'adm-sup-meu': 'Meus Processos',
-    'adm-sup-sol': 'Solicitação',
+    'adm-sup-sol': 'Ordens de compra',
     'adm-sup-rej': 'Rejeitados / Cancelados',
     'adm-sup-cot': 'Cotações',
     'adm-sup-aut': 'Autorização',
@@ -113,6 +116,7 @@ export const languageSidebar: Sidebar = {
     'adm-sistema': 'Sistema',
     'adm-sis-log': 'Logs do Sistema',
     operacional: 'Operacional',
+    'ope-apontamento': 'Trabalho e compras',
     'ope-agricultura': 'Agricultura',
     'ope-agr-pla': 'Planejamentos',
     'ope-agr-apo': 'Apontamentos',
@@ -141,10 +145,11 @@ export const languageSidebar: Sidebar = {
     'ope-ven-ped': 'Pedidos',
     'ope-ven-ven': 'Vendas',
     'ope-ordens': 'Ordens de Serviço',
+    'ope-central': 'Central',
     'ope-os-min': 'Minhas OS',
-    'ope-os-lis': 'Lista de OS',
-    'ope-os-mon': 'Monitoramento',
-    'ope-os-ava': 'Avaliações',
+    'ope-os-lis': 'Todas as OS',
+    'ope-os-mon': 'Em execução',
+    'ope-os-ava': 'A avaliar',
     financeiro: 'Financeiro',
     'fin-principal': 'Financeiro',
     'fin-pag': 'Contas a Pagar',
@@ -210,4 +215,13 @@ export const languageSidebar: Sidebar = {
   collapseSidebar: 'Colapsar sidebar',
   placeholderDescription:
     'Esta tela está em construção. Em breve as funcionalidades do GB Cerne estarão disponíveis aqui.',
+  groupHub: {
+    subtitle: '{count} funcionalidades em {module}. Escolha uma para abrir.',
+    subtitleOne: '1 funcionalidade em {module}.',
+    cardsAriaLabel: 'Funcionalidades do grupo',
+    notFoundTitle: 'Grupo não encontrado',
+    notFoundDescription: 'Este grupo não existe ou você não tem acesso às funcionalidades dele.',
+    openHub: 'Abrir a central de {group}',
+    toggleGroup: 'Mostrar ou esconder os itens de {group}',
+  },
 } as const;

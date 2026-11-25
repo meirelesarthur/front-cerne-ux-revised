@@ -26,6 +26,10 @@
 // Isto é UX, não segurança — o enforcement real é do backend (middleware
 // `permission:` + `authorize()` dos Form Requests).
 
+import { PURCHASE_ORDER_PERMISSIONS } from '@/pages/Administrativo/OrdensCompra/purchaseOrderViews';
+
+import { UNIFIED_PURCHASE_ORDERS_ENABLED } from './purchaseOrdersFeature';
+
 export interface NavPermissionRule {
   permission?: string;
   anyOf?: string[];
@@ -277,7 +281,11 @@ export const navigationPermissions: Record<string, NavPermissionRule> = {
   'cfg-pln': { permission: 'plan_view' },
   'adm-sup-sla': { permission: 'supply-status-sla_view' },
   'adm-sup-meu': { permission: 'request-purchases_view' },
-  'adm-sup-sol': { permission: 'request-purchases_view' },
+  // Tela única de Ordens de compra (`UNIFIED_PURCHASE_ORDERS_ENABLED`): basta uma
+  // das permissões de leitura das visões; cada aba confere a sua.
+  'adm-sup-sol': UNIFIED_PURCHASE_ORDERS_ENABLED
+    ? { anyOf: PURCHASE_ORDER_PERMISSIONS }
+    : { permission: 'request-purchases_view' },
   // Rejeitados/Cancelados: `rejected-requests_view`, igual ao legado (tela Blade
   // `rejected-requests`, papel próprio) e ao que `GET /request-purchases/rejected`
   // passou a exigir (T-081-API-03). Supera o GAP-UX-CPS-01 (execução 036), que
@@ -901,6 +909,8 @@ export const navigationPermissions: Record<string, NavPermissionRule> = {
   'ope-ven-orc': { permission: 'budgets_view' },
   'ope-ven-ped': { permission: 'orders_view' },
   'ope-ven-ven': { permission: 'sales_view' },
+  // Central: leva ao Apontamento ou à Ordem de compra (OS desligada).
+  'ope-central': { anyOf: ['appropriations_view', 'request-purchases_view'] },
   'ope-os-min': { permission: 'my-service-orders_view' },
   'ope-os-lis': { permission: 'service-orders_view' },
   'ope-os-mon': { permission: 'monitoring-service-orders_view' },

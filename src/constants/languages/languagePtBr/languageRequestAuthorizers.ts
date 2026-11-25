@@ -15,7 +15,7 @@ export const languageRequestAuthorizers: ModuleRequestAuthorizers = {
     singularLabel: 'Autorizador',
     list: {
       pageTitle: 'Autorizadores',
-      pageSubtitle: 'Administre quem pode aprovar solicitações de compra.',
+      pageSubtitle: 'Administre quem pode aprovar ordens de compra.',
       deletedToast: 'Registro deletado com sucesso.',
       createdToast: 'Registro criado com sucesso.',
       updatedToast: 'Registro atualizado com sucesso.',
@@ -67,7 +67,7 @@ export const languageRequestAuthorizers: ModuleRequestAuthorizers = {
         view: 'Visualizar Autorizador',
       },
       subtitle: {
-        create: 'Cadastre um novo autorizador de solicitações de compra.',
+        create: 'Cadastre um novo autorizador de ordens de compra.',
         edit: 'Atualize os dados do autorizador.',
         view: 'Consulte os dados do autorizador.',
       },

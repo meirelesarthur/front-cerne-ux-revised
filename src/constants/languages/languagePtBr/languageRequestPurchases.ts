@@ -1,5 +1,5 @@
 // src/constants/languages/languagePtBr/languageRequestPurchases.ts
-// Tradução pt-BR do módulo "Solicitação de Compras" (RequestPurchase —
+// Tradução pt-BR do módulo "Ordens de Compra" (RequestPurchase —
 // Administrativo / Suprimentos, esteira 97-Esteiras/022, TASK-RP-FE-03). Ver
 // `@/@types/language/module-request-purchases` para o contrato completo.
 
@@ -7,9 +7,9 @@ import { ModuleRequestPurchases } from '@/@types/language/module-request-purchas
 
 export const languageRequestPurchases: ModuleRequestPurchases = {
   requestPurchase: {
-    singularLabel: 'Solicitação de Compra',
-    pluralLabel: 'Solicitações de Compra',
-    titleModule: 'Solicitação de Compras',
+    singularLabel: 'Ordem de Compra',
+    pluralLabel: 'Ordens de Compra',
+    titleModule: 'Ordens de Compra',
 
     // ⚠️ ADITIVO (TASK-CQ-FE-15) — ver nota em
     // `ModuleRequestPurchases.requestPurchase.legend`.
@@ -18,8 +18,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     },
 
     list: {
-      pageTitle: 'Solicitações de Compra',
-      pageSubtitle: 'Gerencie as solicitações de compra da fazenda.',
+      pageTitle: 'Ordens de Compra',
+      pageSubtitle: 'Gerencie as ordens de compra da fazenda.',
       table: {
         code: 'Código',
         type: 'Tipo',
@@ -39,11 +39,11 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         },
       },
       emptyState: {
-        titleEmpty: 'Nenhuma solicitação cadastrada',
-        titleFiltered: 'Nenhuma solicitação encontrada',
-        descriptionEmpty: 'Cadastre a primeira Solicitação de Compra.',
+        titleEmpty: 'Nenhuma ordem de compra cadastrada',
+        titleFiltered: 'Nenhuma ordem de compra encontrada',
+        descriptionEmpty: 'Cadastre a primeira Ordem de Compra.',
         descriptionFiltered: 'Ajuste os filtros para encontrar o que procura.',
-        cta: 'Nova Solicitação',
+        cta: 'Nova Ordem de Compra',
       },
       deletedToast: 'Registro deletado com sucesso.',
       deleteConfirm: {
@@ -70,14 +70,14 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
 
     form: {
       title: {
-        create: 'Nova Solicitação de Compra',
-        edit: 'Editar Solicitação de Compra',
-        view: 'Visualizar Solicitação de Compra',
+        create: 'Nova Ordem de Compra',
+        edit: 'Editar Ordem de Compra',
+        view: 'Visualizar Ordem de Compra',
       },
       subtitle: {
-        create: 'Cadastre uma nova solicitação de compra.',
-        edit: 'Atualize os dados da solicitação de compra.',
-        view: 'Visualize os dados da solicitação de compra.',
+        create: 'Cadastre uma nova ordem de compra.',
+        edit: 'Atualize os dados da ordem de compra.',
+        view: 'Visualize os dados da ordem de compra.',
       },
       tabs: {
         general: 'Dados Gerais',
@@ -101,8 +101,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       },
       placeholders: {
         type: 'Selecione o tipo',
-        justification: 'Descreva o motivo da solicitação',
-        description: 'Descreva os detalhes da solicitação',
+        justification: 'Descreva o motivo da ordem de compra',
+        description: 'Descreva os detalhes da ordem de compra',
         authorizer: 'Selecione o encarregado',
         harvest: 'Busque uma safra',
         nfe: 'Número da nota fiscal',
@@ -198,31 +198,31 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       // `@/@types/language/module-request-purchases`.
       hints: {
         typeLockedOnEdit:
-          'O tipo não pode ser alterado após a criação da solicitação (regra de negócio, não é falta de permissão).',
+          'O tipo não pode ser alterado após a criação da ordem de compra (regra de negócio, não é falta de permissão).',
         authorizerLoadError: 'Não foi possível carregar os encarregados.',
         codePreview: 'Código previsto; o definitivo é atribuído ao salvar.',
         codePreviewUnavailable: 'Não foi possível calcular o código previsto.',
       },
       validation: {
         typeRequired: 'Tipo é obrigatório',
-        requestDateRequired: 'Data da Solicitação é obrigatória',
+        requestDateRequired: 'Data da Ordem de Compra é obrigatória',
         justificationRequired: 'Justificativa é obrigatória',
         justificationMaxLength: 'Justificativa deve ter no máximo 800 caracteres',
         descriptionRequired: 'Descrição é obrigatória',
         descriptionMaxLength: 'Descrição deve ter no máximo 800 caracteres',
         itemsMinOne: 'Adicione ao menos um item',
-        productRequiredForType: 'Produto é obrigatório para este tipo de solicitação',
-        quantityRequiredForType: 'Quantidade é obrigatória para este tipo de solicitação',
-        amountRequiredForType: 'Valor é obrigatório para este tipo de solicitação',
-        nameRequiredForType: 'Nome é obrigatório para este tipo de solicitação',
-        nifRequiredForType: 'NIF é obrigatório para este tipo de solicitação',
-        phoneRequiredForType: 'Telefone é obrigatório para este tipo de solicitação',
-        descriptionRequiredForType: 'Descrição é obrigatória para este tipo de solicitação',
+        productRequiredForType: 'Produto é obrigatório para este tipo de ordem de compra',
+        quantityRequiredForType: 'Quantidade é obrigatória para este tipo de ordem de compra',
+        amountRequiredForType: 'Valor é obrigatório para este tipo de ordem de compra',
+        nameRequiredForType: 'Nome é obrigatório para este tipo de ordem de compra',
+        nifRequiredForType: 'NIF é obrigatório para este tipo de ordem de compra',
+        phoneRequiredForType: 'Telefone é obrigatório para este tipo de ordem de compra',
+        descriptionRequiredForType: 'Descrição é obrigatória para este tipo de ordem de compra',
         serviceDescriptionRequiredForType:
-          'Descrição do Serviço é obrigatória para este tipo de solicitação',
+          'Descrição do Serviço é obrigatória para este tipo de ordem de compra',
         dailyQuantityRequiredForType:
-          'Quantidade de Diárias é obrigatória para este tipo de solicitação',
-        attachmentFileRequiredForType: 'Arquivo é obrigatório para este tipo de solicitação',
+          'Quantidade de Diárias é obrigatória para este tipo de ordem de compra',
+        attachmentFileRequiredForType: 'Arquivo é obrigatório para este tipo de ordem de compra',
         attachmentNameRequiredWithFile: 'Descrição do Anexo é obrigatória quando há arquivo',
         nifMaxLength: 'NIF deve ter no máximo 20 caracteres',
         phoneMaxLength: 'Telefone deve ter no máximo 15 caracteres',
@@ -233,17 +233,17 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         itemObservationMaxLength: 'Observação do item deve ter no máximo 90 caracteres',
         authorizerRequired: 'Informe o Encarregado',
         attachmentsMinOne: 'Adicione ao menos um anexo',
-        attachmentNameRequiredForType: 'Descrição do Anexo é obrigatória para este tipo de solicitação',
+        attachmentNameRequiredForType: 'Descrição do Anexo é obrigatória para este tipo de ordem de compra',
         attachmentNameMaxLength: 'Descrição do Anexo deve ter no máximo 120 caracteres',
       },
     },
 
     actions: {
-      receiveToast: 'Solicitação recebida com sucesso.',
-      transferToast: 'Solicitação transferida com sucesso.',
+      receiveToast: 'Ordem de compra recebida com sucesso.',
+      transferToast: 'Ordem de compra transferida com sucesso.',
       changeStatusToast: 'Status alterado com sucesso.',
-      finishToast: 'Solicitação finalizada com sucesso.',
-      createdWithCodeToast: 'Solicitação {code} criada com sucesso.',
+      finishToast: 'Ordem de compra finalizada com sucesso.',
+      createdWithCodeToast: 'Ordem de compra {code} criada com sucesso.',
       quotationJustificationToast: 'Justificativa de cotação adicionada com sucesso.',
       transferJustifyRequired: 'Justificativa é obrigatória para transferir',
       changeStatusRequired: 'Selecione o novo status',
@@ -254,9 +254,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       changeStatusButton: 'Voltar Etapa',
       finishButton: 'Finalizar',
       quotationJustificationButton: 'Justificativa de Cotação',
-      transferDialogTitle: 'Transferir Solicitação',
+      transferDialogTitle: 'Transferir Ordem de Compra',
       transferJustifyLabel: 'Justificativa da Transferência',
-      changeStatusDialogTitle: 'Mudar Status da Solicitação',
+      changeStatusDialogTitle: 'Mudar Status da Ordem de Compra',
       changeStatusNewStatusLabel: 'Novo Status',
       changeStatusJustifyLabel: 'Justificativa',
       quotationJustificationDialogTitle: 'Adicionar Justificativa de Cotação',
@@ -310,7 +310,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     myProcesses: {
       titleModule: 'Meus Processos',
       pageTitle: 'Meus Processos',
-      pageSubtitle: 'Solicitações de compra sob sua responsabilidade.',
+      pageSubtitle: 'Ordens de compra sob sua responsabilidade.',
       emptyState: {
         titleEmpty: 'Nenhum processo sob sua responsabilidade',
         descriptionEmpty: 'Solicitações atribuídas a você aparecerão aqui.',
@@ -338,13 +338,29 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     rejected: {
       titleModule: 'Rejeitados e Cancelados',
       pageTitle: 'Rejeitados / Cancelados',
-      pageSubtitle: 'Solicitações de compra rejeitadas ou canceladas.',
+      pageSubtitle: 'Ordens de compra rejeitadas ou canceladas.',
       emptyState: {
-        titleEmpty: 'Nenhuma solicitação rejeitada ou cancelada',
+        titleEmpty: 'Nenhuma ordem de compra rejeitada ou cancelada',
         descriptionEmpty: 'Solicitações rejeitadas ou canceladas aparecerão aqui.',
       },
       actions: {
         slaReport: 'Relatório SLA',
+      },
+    },
+
+    // Tela única "Ordens de compra": as listas de Suprimentos viram visões (abas).
+    hub: {
+      pageTitle: 'Ordens de compra',
+      pageSubtitle: 'Todas as ordens de compra, do pedido ao recebimento. Escolha a visão.',
+      viewsAriaLabel: 'Visão das ordens de compra',
+      views: {
+        minhas: 'Criadas por mim',
+        responsabilidade: 'Sob minha responsabilidade',
+        aprovar: 'Para eu aprovar',
+        cotacao: 'Em cotação',
+        compra: 'Em compra',
+        recebimento: 'Recebimento',
+        encerradas: 'Rejeitadas e canceladas',
       },
     },
 
@@ -353,9 +369,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inQuotation: {
       titleModule: 'Cotações',
       pageTitle: 'Cotações',
-      pageSubtitle: 'Solicitações de compra em cotação em toda a fazenda.',
+      pageSubtitle: 'Ordens de compra em cotação em toda a fazenda.',
       emptyState: {
-        titleEmpty: 'Nenhuma solicitação em cotação',
+        titleEmpty: 'Nenhuma ordem de compra em cotação',
         descriptionEmpty: 'Solicitações em cotação aparecerão aqui.',
       },
     },
@@ -365,29 +381,29 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inPurchase: {
       titleModule: 'Compras',
       pageTitle: 'Compras',
-      pageSubtitle: 'Solicitações de compra em compra em toda a fazenda.',
+      pageSubtitle: 'Ordens de compra em compra em toda a fazenda.',
       emptyState: {
-        titleEmpty: 'Nenhuma solicitação em compra',
+        titleEmpty: 'Nenhuma ordem de compra em compra',
         descriptionEmpty: 'Solicitações em compra aparecerão aqui.',
       },
       table: {
         duration: 'Duração',
       },
       actions: {
-        view: 'Ver Solicitação',
+        view: 'Ver Ordem de Compra',
         whatsapp: 'Enviar por WhatsApp',
         email: 'Enviar por E-mail',
         downloadPdf: 'Baixar PDF',
         sendOrder: 'Enviar pedido de compras.',
         informStatus: 'Informar Status',
-        createSubRequest: 'Criar Sub Solicitação',
+        createSubRequest: 'Criar Sub Ordem de Compra',
         // ADITIVO (TASK-CPS-FE-06) — dialog reaproveita `actions.changeStatus*`.
         changeStatus: 'Voltar Etapa',
       },
       dialogs: {
         // ADITIVO (TASK-CPS-FE-06) — só o estado vazio é próprio desta fila.
         changeStatus: {
-          noTransitions: 'Nenhuma transição de status disponível para esta solicitação.',
+          noTransitions: 'Nenhuma transição de status disponível para esta ordem de compra.',
         },
         informStatus: {
           title: 'Informar Status da Compra',
@@ -398,7 +414,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
             itemDeliveryDates: 'Datas de Previsão dos Itens',
             code: 'Código',
             responsible: 'Responsável',
-            itemsTitle: 'Itens da Solicitação',
+            itemsTitle: 'Itens da Ordem de Compra',
             itemColumns: {
               item: 'Item',
               quantity: 'Quantidade',
@@ -417,13 +433,13 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           },
         },
         separate: {
-          title: 'Criar Sub Solicitação',
-          subtitle: 'Selecione a cotação e os produtos/serviços que irão para a sub solicitação.',
+          title: 'Criar Sub Ordem de Compra',
+          subtitle: 'Selecione a cotação e os produtos/serviços que irão para a sub ordem de compra.',
           selectAll: 'Selecionar todos',
           deselectAll: 'Desmarcar todos',
           selectedCount: 'itens selecionados',
           itemsMinError: 'Selecione ao menos um item',
-          confirmButton: 'Criar Sub Solicitação',
+          confirmButton: 'Criar Sub Ordem de Compra',
           headerTitle: 'Informação do Pedido',
           observation: 'Observações',
           finalizationNote: 'Observação Final',
@@ -433,7 +449,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       },
       toasts: {
         informStatusSuccess: 'Registro atualizado com sucesso.',
-        separateSuccess: 'Sub solicitação criada com sucesso.',
+        separateSuccess: 'Sub ordem de compra criada com sucesso.',
         whatsappGenerating: 'Gerando link do WhatsApp...',
         emailQueued: 'E-mail enfileirado para envio.',
         pdfReady: 'PDF pronto para download.',
@@ -484,7 +500,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         slaReport: 'Relatório SLA',
         edit: 'Editar',
         delete: 'Excluir',
-        receive: 'Receber Solicitação',
+        receive: 'Receber Ordem de Compra',
         transfer: 'Transferir Responsável',
         stepBack: 'Voltar Etapa',
         quote: 'Cotar Pedido',
@@ -492,7 +508,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         authorize: 'Autorizar',
         acknowledge: 'Acusar ciência',
         informStatus: 'Informar Status',
-        createSub: 'Criar Sub Solicitação',
+        createSub: 'Criar Sub Ordem de Compra',
         downloadFile: 'Download Arquivo',
         confirmReceipt: 'Confirmar Recebimento',
         generateFinancial: 'Gerar Financeiro',
@@ -508,10 +524,10 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         noUsers: 'Nenhum usuário disponível',
         loadError: 'Não foi possível carregar os usuários.',
         retry: 'Tentar novamente',
-        success: 'Solicitação alterada com sucesso.',
+        success: 'Ordem de compra alterada com sucesso.',
       },
       stepBackDialog: {
-        title: 'Voltar Etapa da Solicitação',
+        title: 'Voltar Etapa da Ordem de Compra',
         code: 'Código',
         requestDate: 'Dt. Pedido',
         duration: 'Duração',
@@ -522,16 +538,16 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         newStatusPlaceholder: 'Selecione',
         justify: 'Justificativa',
         justifyRequired: 'A justificativa deve ser preenchida.',
-        noTransitions: 'Nenhuma etapa anterior disponível para esta solicitação.',
+        noTransitions: 'Nenhuma etapa anterior disponível para esta ordem de compra.',
         loadError: 'Não foi possível carregar os usuários.',
         retry: 'Tentar novamente',
         success: 'Status atualizado com sucesso!',
-        error: 'Ocorreu um erro ao atualizar status da solicitação!',
+        error: 'Ocorreu um erro ao atualizar status da ordem de compra!',
         cancel: 'Cancelar',
         save: 'Salvar',
       },
       deniedModal: {
-        title: 'Sua(s) solicitação(ões) foram negada(s):',
+        title: 'Sua(s) ordem(ns) de compra foram negada(s):',
         link: 'Clique aqui para ver',
         close: 'Fechar',
       },

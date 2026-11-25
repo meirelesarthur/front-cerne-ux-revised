@@ -8,7 +8,73 @@
 // TASK-FE-2003 (visualização/show read-only) → TASK-FE-2004/2005 (form
 // create/edit, D-FRONT-01 RESOLVIDA — bloco `form` abaixo).
 
+/** Etapa da jornada da nova OS (contratação de serviço de terceiro). */
+export interface ServiceOrderHubStep {
+  label: string;
+  /** Quem age nesta etapa, na fala do produtor. */
+  who: string;
+  /** O que a pessoa faz nesta etapa. */
+  what: string;
+  /** Rótulo do botão que abre a tela atual desta etapa. */
+  open: string;
+}
+
+/** Card da central (OS × Apontamento × Compra). */
+export interface ServiceOrderHubChoice {
+  title: string;
+  /** Uma linha: quem faz ou o que entra. */
+  description: string;
+  /** Tag verde com o destino ("Abre a solicitação de serviço"). */
+  destination: string;
+}
+
+export interface ServiceOrderHubShortcut {
+  title: string;
+  description: string;
+}
+
 export interface ModuleServiceOrders {
+  /** Central de Trabalho e compras (Apontamento × Ordem de compra; OS desligada). */
+  hub: {
+    pageTitle: string;
+    pageSubtitle: string;
+    /** Botão à direita do título que abre a ajuda. */
+    helpButton: string;
+    cardsAriaLabel: string;
+    options: {
+      internal: ServiceOrderHubChoice;
+      purchase: ServiceOrderHubChoice;
+    };
+    /** Modal "Como funciona": o que vai em cada um, como a ordem de compra anda e onde acompanhar. */
+    help: {
+      title: string;
+      close: string;
+      about: {
+        title: string;
+        text: string;
+      };
+      journey: {
+        title: string;
+        ariaLabel: string;
+        whoLabel: string;
+        steps: {
+          request: ServiceOrderHubStep;
+          quote: ServiceOrderHubStep;
+          approve: ServiceOrderHubStep;
+          buy: ServiceOrderHubStep;
+          receive: ServiceOrderHubStep;
+          pay: ServiceOrderHubStep;
+        };
+      };
+      shortcuts: {
+        title: string;
+        appropriations: ServiceOrderHubShortcut;
+        orders: ServiceOrderHubShortcut;
+        mine: ServiceOrderHubShortcut;
+        receipts: ServiceOrderHubShortcut;
+      };
+    };
+  };
   serviceOrder: {
     singularLabel: string;
     pluralLabel: string;

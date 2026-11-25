@@ -19,6 +19,9 @@
 
 import type { IconName } from '@/components/ui/Icon';
 
+import { UNIFIED_PURCHASE_ORDERS_ENABLED } from './purchaseOrdersFeature';
+import { SERVICE_ORDERS_ENABLED } from './serviceOrdersFeature';
+
 export interface NavSubItem {
   id: string;
   label: string;
@@ -37,6 +40,44 @@ export interface NavGroup {
   label: string;
   icon: IconName;
   items: NavSubItem[];
+  /**
+   * Central própria do agrupador (opcional). Sem ela, clicar no rótulo do
+   * grupo abre a central genérica `/central/<id>` com os cards dos itens.
+   */
+  hubPath?: string;
+}
+
+/** Base da central genérica de agrupador (cards dos itens do 2º nível). */
+export const GROUP_HUB_BASE = '/central';
+
+/**
+ * Caminho da central de um agrupador: a própria (`hubPath`) ou a genérica.
+ * @param {NavGroup} group Agrupador do menu.
+ * @return {string} Caminho da central.
+ */
+export function getGroupHubPath(group: NavGroup): string {
+  return group.hubPath ?? `${GROUP_HUB_BASE}/${group.id}`;
+}
+
+/**
+ * Agrupador cuja central genérica é o pathname (`/central/<id>`), dentro dos
+ * módulos informados (use a árvore já podada por permissão).
+ * @param {string} pathname Pathname atual.
+ * @param {NavModule[]} modules Módulos onde procurar.
+ * @return {{ module: NavModule; group: NavGroup } | undefined} Módulo e grupo, se casar.
+ */
+export function findGroupByHubPath(
+  pathname: string,
+  modules: NavModule[]
+): { module: NavModule; group: NavGroup } | undefined {
+  const prefix = `${GROUP_HUB_BASE}/`;
+  if (!pathname.startsWith(prefix)) return undefined;
+  const groupId = pathname.slice(prefix.length).split('/')[0];
+  for (const module of modules) {
+    const group = module.groups?.find((g) => g.id === groupId);
+    if (group) return { module, group };
+  }
+  return undefined;
 }
 
 export interface NavModule {
@@ -48,6 +89,19 @@ export interface NavModule {
   groups?: NavGroup[];
   flatItems?: NavSubItem[];
 }
+
+// Grupo de Ordens de Serviço — fora do menu enquanto `SERVICE_ORDERS_ENABLED` for false.
+const SERVICE_ORDERS_GROUP: NavGroup = {
+  id: 'ope-ordens',
+  label: 'Ordens de Serviço',
+  icon: 'clipboard-check',
+  items: [
+    { id: 'ope-os-min', label: 'Minhas OS', path: '/operacional/minhas-os', icon: 'clipboard-check' },
+    { id: 'ope-os-lis', label: 'Lista de OS', path: '/operacional/lista-os', icon: 'list-checks' },
+    { id: 'ope-os-mon', label: 'Monitoramento', path: '/operacional/monitoramento', icon: 'activity' },
+    { id: 'ope-os-ava', label: 'Avaliações', path: '/operacional/avaliacoes', icon: 'star' },
+  ],
+};
 
 export const menuModules: NavModule[] = [
   { id: 'painel', label: 'Home', emoji: '🏠', icon: 'dashboard', path: '/home' },
@@ -711,7 +765,19 @@ export const menuModules: NavModule[] = [
         id: 'adm-suprimentos',
         label: 'Suprimentos',
         icon: 'cart',
-        items: [
+        // Tela única de Ordens de compra (`UNIFIED_PURCHASE_ORDERS_ENABLED`, decisão
+        // do dono 24/11/2026): as 6 listas antigas viram abas dela e saem do menu.
+        items: UNIFIED_PURCHASE_ORDERS_ENABLED
+          ? [
+              {
+                id: 'adm-sup-sol',
+                label: 'Ordens de compra',
+                path: '/administrativo/ordens-de-compra',
+                icon: 'document-add',
+              },
+              { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: 'timer' },
+            ]
+          : [
           { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: 'timer' },
           {
             id: 'adm-sup-meu',
@@ -721,7 +787,7 @@ export const menuModules: NavModule[] = [
           },
           {
             id: 'adm-sup-sol',
-            label: 'Solicitação',
+            label: 'Ordens de compra',
             path: '/administrativo/solicitacao',
             icon: 'document-add',
           },
@@ -755,7 +821,7 @@ export const menuModules: NavModule[] = [
             path: '/administrativo/recebimentos',
             icon: 'package-check',
           },
-        ],
+            ],
       },
       {
         id: 'adm-estoque',
@@ -1160,6 +1226,32 @@ export const menuModules: NavModule[] = [
     emoji: '⚙️',
     icon: 'gauge',
     groups: [
+      // Trabalho e compras (fim da OS, branch feat/nova-ordem-servico-apontamento):
+      // Central que leva ao Apontamento (trabalho da EQUIPE) ou à Ordem de compra
+      // (produto ou serviço de fora), e o Apontamento, que saiu de "Agricultura"
+      // porque vale para agricultura e pecuária. O id `ope-agr-apo` é mantido
+      // (permissão `appropriations_view` e trilhas existentes dependem dele).
+      {
+        id: 'ope-apontamento',
+        label: 'Trabalho e compras',
+        icon: 'edit-line',
+        // Central própria (Apontamento × Ordem de compra), no lugar da genérica.
+        hubPath: '/operacional/central',
+        items: [
+          {
+            id: 'ope-central',
+            label: 'Central',
+            path: '/operacional/central',
+            icon: 'route',
+          },
+          {
+            id: 'ope-agr-apo',
+            label: 'Apontamentos',
+            path: '/operacional/apontamentos',
+            icon: 'edit-line',
+          },
+        ],
+      },
       {
         id: 'ope-agricultura',
         label: 'Agricultura',
@@ -1170,12 +1262,6 @@ export const menuModules: NavModule[] = [
             label: 'Planejamentos',
             path: '/operacional/planejamentos',
             icon: 'clipboard-list',
-          },
-          {
-            id: 'ope-agr-apo',
-            label: 'Apontamentos',
-            path: '/operacional/apontamentos',
-            icon: 'edit-line',
           },
           { id: 'ope-agr-rom', label: 'Romaneios', path: '/operacional/romaneios', icon: 'document' },
           // Colheita de Frutas (HarvestProduct, F-040, execução 040,
@@ -2020,32 +2106,10 @@ export const menuModules: NavModule[] = [
           { id: 'ope-ven-ven', label: 'Vendas', path: '/operacional/vendas', icon: 'shopping-bag' },
         ],
       },
-      {
-        id: 'ope-ordens',
-        label: 'Ordens de Serviço',
-        icon: 'clipboard-check',
-        items: [
-          {
-            id: 'ope-os-min',
-            label: 'Minhas OS',
-            path: '/operacional/minhas-os',
-            icon: 'clipboard-check',
-          },
-          {
-            id: 'ope-os-lis',
-            label: 'Lista de OS',
-            path: '/operacional/lista-os',
-            icon: 'list-checks',
-          },
-          {
-            id: 'ope-os-mon',
-            label: 'Monitoramento',
-            path: '/operacional/monitoramento',
-            icon: 'activity',
-          },
-          { id: 'ope-os-ava', label: 'Avaliações', path: '/operacional/avaliacoes', icon: 'star' },
-        ],
-      },
+      // Ordens de Serviço DESLIGADAS no web (`SERVICE_ORDERS_ENABLED`, decisão do dono
+      // 24/11/2026): serviço de fora entra pela Ordem de compra; trabalho da equipe,
+      // pelo Apontamento. O grupo volta trocando a chave para `true`.
+      ...(SERVICE_ORDERS_ENABLED ? [SERVICE_ORDERS_GROUP] : []),
     ],
   },
   {

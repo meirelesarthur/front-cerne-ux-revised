@@ -462,6 +462,24 @@ export interface ModuleRequestPurchases {
       };
     };
 
+    // Tela única "Ordens de compra" (decisão do dono 24/11/2026): as listas de
+    // Suprimentos viram visões (abas) de uma tela só. Ver
+    // `pages/Administrativo/OrdensCompra`.
+    hub: {
+      pageTitle: string;
+      pageSubtitle: string;
+      viewsAriaLabel: string;
+      views: {
+        minhas: string;
+        responsabilidade: string;
+        aprovar: string;
+        cotacao: string;
+        compra: string;
+        recebimento: string;
+        encerradas: string;
+      };
+    };
+
     // ============================================
     // "COTAÇÕES" (`TASK-CQ-FE-13`) — hub `/administrativo/cotacoes`,
     // TENANT-WIDE (não user-scoped como `list`), filtro `status IN [1,2]`

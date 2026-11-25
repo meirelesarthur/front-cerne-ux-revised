@@ -1,6 +1,9 @@
 import { Sidebar } from '@/@types/language/sidebar';
 
+import { navDescriptions } from './languageSidebarDescriptions';
+
 export const languageSidebar: Sidebar = {
+  descriptions: navDescriptions,
   navigation: {
     painel: 'Home',
     favoritos: 'Favorites',
@@ -81,7 +84,7 @@ export const languageSidebar: Sidebar = {
     'adm-suprimentos': 'Procurement',
     'adm-sup-sla': 'SLA Parameters',
     'adm-sup-meu': 'My Processes',
-    'adm-sup-sol': 'Request',
+    'adm-sup-sol': 'Purchase orders',
     'adm-sup-rej': 'Rejected / Cancelled',
     'adm-sup-cot': 'Quotations',
     'adm-sup-aut': 'Authorization',
@@ -113,9 +116,10 @@ export const languageSidebar: Sidebar = {
     'adm-sistema': 'System',
     'adm-sis-log': 'System Logs',
     operacional: 'Operations',
+    'ope-apontamento': 'Work and purchasing',
     'ope-agricultura': 'Farming',
     'ope-agr-pla': 'Planning',
-    'ope-agr-apo': 'Field Records',
+    'ope-agr-apo': 'Appointments',
     'ope-agr-rom': 'Delivery Notes',
     'ope-agr-car': 'Loading',
     'ope-agr-ras': 'Traceability',
@@ -141,10 +145,11 @@ export const languageSidebar: Sidebar = {
     'ope-ven-ped': 'Orders',
     'ope-ven-ven': 'Sales',
     'ope-ordens': 'Work Orders',
+    'ope-central': 'Hub',
     'ope-os-min': 'My Work Orders',
-    'ope-os-lis': 'Work Order List',
-    'ope-os-mon': 'Monitoring',
-    'ope-os-ava': 'Evaluations',
+    'ope-os-lis': 'All Work Orders',
+    'ope-os-mon': 'In progress',
+    'ope-os-ava': 'To rate',
     financeiro: 'Finance',
     'fin-principal': 'Finance',
     'fin-pag': 'Accounts Payable',
@@ -210,4 +215,13 @@ export const languageSidebar: Sidebar = {
   collapseSidebar: 'Collapse sidebar',
   placeholderDescription:
     'This screen is under construction. GB Cerne features will be available here soon.',
+  groupHub: {
+    subtitle: '{count} features in {module}. Pick one to open.',
+    subtitleOne: '1 feature in {module}.',
+    cardsAriaLabel: 'Group features',
+    notFoundTitle: 'Group not found',
+    notFoundDescription: 'This group does not exist or you do not have access to its features.',
+    openHub: 'Open the {group} hub',
+    toggleGroup: 'Show or hide the {group} items',
+  },
 } as const;

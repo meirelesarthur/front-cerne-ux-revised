@@ -30,6 +30,11 @@ import { PublicRoute } from '@/components/PublicRoute';
 import { RequirePermission } from '@/components/RequirePermission';
 import { RequireRole } from '@/components/RequireRole';
 
+import { SERVICE_ORDERS_ENABLED } from '@/config/v2/serviceOrdersFeature';
+import {
+  PURCHASE_ORDER_PERMISSIONS,
+  PURCHASE_ORDERS_PATH,
+} from '@/pages/Administrativo/OrdensCompra/purchaseOrderViews';
 import { ROUTES } from '@/constants/routes';
 
 // ---- Público (login) ----
@@ -1512,6 +1517,10 @@ const PlanejamentosList = lazy(() => import('@/pages/Operacional/Planejamentos')
 const CreateOrUpdatePlanning = lazy(
   () => import('@/pages/Operacional/Planejamentos/CreateOrUpdatePlanning')
 );
+// Visão geral da nova OS (porta "O que você precisa?" + jornada espelhando a
+// compra). Item de menu `ope-os-hub`; guarda = qualquer permissão de OS.
+const ServiceOrdersHub = lazy(() => import('@/pages/Operacional/ServiceOrdersHub'));
+const GroupHub = lazy(() => import('@/pages/GroupHub'));
 const ServiceOrdersList = lazy(() => import('@/pages/Operacional/ServiceOrders'));
 const CreateOrUpdateServiceOrder = lazy(
   () => import('@/pages/Operacional/ServiceOrders/CreateOrUpdateServiceOrder')
@@ -3034,6 +3043,9 @@ const CreateOrUpdateSolicitacao = lazy(
 // (`adm-sup-com`) e permissão (`request-buy_view`, igual ao legado e à API —
 // T-081-API-03; supera o GAP-UX-CPS-01, execução 081, T-081-FE-02).
 const ComprasList = lazy(() => import('@/pages/Administrativo/Compras'));
+// Tela única "Ordens de compra" (decisão do dono 24/11/2026): as listas de
+// Suprimentos em abas. Ver `pages/Administrativo/OrdensCompra`.
+const OrdensCompraHub = lazy(() => import('@/pages/Administrativo/OrdensCompra'));
 // Hub tenant-wide "Autorização" (TASK-AUTH-FE-02, esteira 038) — reusa a
 // MESMA entidade RequestPurchase, `GET /request-authorizations`, filtro de
 // negócio `status IN (3,4,11)` (BR-01), fonte/queryKey/storageKey próprias
@@ -6499,6 +6511,17 @@ export function AppRoutes() {
             `useParams<{ requestPurchaseId }>()` em
             `CreateOrUpdateSolicitacao.tsx` (confirmado por leitura
             do componente). */}
+        {/* Tela única "Ordens de compra" — basta uma das permissões de leitura
+            das visões; cada aba só aparece para quem tem a sua. As rotas das
+            listas abaixo continuam vivas (sino, favoritos, links externos). */}
+        <Route
+          path={PURCHASE_ORDERS_PATH}
+          element={
+            <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
+              {lazyRoute(OrdensCompraHub)}
+            </RequirePermission>
+          }
+        />
         <Route
           path="/administrativo/solicitacao"
           element={
@@ -12199,6 +12222,23 @@ export function AppRoutes() {
             nesta Tarefa). Item de menu (`ope-os-lis`) e permissão
             (`service-orders_view`) já existiam em `navigationTree.ts`/
             `navigationPermissions.ts` — NENHUMA edição neles. */}
+        {/* Operacional — Central (Apontamento × Ordem de compra). A OS foi
+            desligada (`SERVICE_ORDERS_ENABLED`); declarada antes do catch-all
+            `/operacional/*`. */}
+        <Route
+          path="/operacional/central"
+          element={
+            <RequirePermission anyOf={['appropriations_view', 'request-purchases_view']}>
+              {lazyRoute(ServiceOrdersHub)}
+            </RequirePermission>
+          }
+        />
+        {/* Central genérica de agrupador do menu: cards dos itens do grupo. A
+            própria tela usa a árvore podada por permissão (sem guarda extra:
+            grupo sem itens visíveis mostra "Grupo não encontrado"). */}
+        <Route path="/central/:groupId" element={lazyRoute(GroupHub)} />
+        {SERVICE_ORDERS_ENABLED && (
+          <>
         <Route
           path="/operacional/lista-os"
           element={
@@ -12249,6 +12289,8 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+          </>
+        )}
 
         {/* Operacional / Agricultura — Rastreabilidade (Traceability +
             TraceabilityConfig, F-067, TASK-TR-FE-11, esteira 97-Esteiras/058)
@@ -12328,7 +12370,10 @@ export function AppRoutes() {
             de menu (`ope-os-ava`) e permissão já existiam em
             `navigationTree.ts`/`navigationPermissions.ts` — nenhuma edição
             neles. Sem `/novo` — `mode_matrix.criar = NAO_APLICAVEL`, a
-            rota só é alcançável com `:uuid`. */}
+            rota só é alcançável com `:uuid`. OS desligada: só com
+            `SERVICE_ORDERS_ENABLED` (vale também para Minhas OS abaixo). */}
+        {SERVICE_ORDERS_ENABLED && (
+          <>
         <Route
           path="/operacional/avaliacoes"
           element={
@@ -12373,6 +12418,8 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+          </>
+        )}
 
         {/* ---- Privado: Operacional — Transferência ABC de Animais entre
             Lotes (TransferAbcBatch, 97-Esteiras/039, TASK-FE-039-ABC-02/03).

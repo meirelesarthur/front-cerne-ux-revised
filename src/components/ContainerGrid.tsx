@@ -11,7 +11,23 @@ import { ReactNode, forwardRef } from 'react';
 
 import { Box, useMediaQuery } from '@chakra-ui/react';
 
+import { useIsEmbeddedList } from './EmbeddedList';
 import { PageCard } from './ui/PageCard';
+
+// Mesma cadeia flex do card, sem card nem respiro: a lista embutida ocupa o
+// espaço que a tela hospedeira entrega (ver `EmbeddedList.tsx`).
+const flexChainCss = {
+  '& > :last-child': {
+    flex: '0 1 auto',
+    minHeight: 0,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  '& > :last-child > :last-child': {
+    flex: '0 1 auto',
+    minHeight: 0,
+  },
+} as const;
 
 interface ContainerProps {
   children: ReactNode;
@@ -21,6 +37,15 @@ interface ContainerProps {
 export const ContainerGrid = forwardRef<HTMLDivElement, ContainerProps>(
   ({ children, form }, ref) => {
     const [isMobile] = useMediaQuery(['(max-width: 850px)']);
+    const embedded = useIsEmbeddedList();
+
+    if (embedded && !form) {
+      return (
+        <Box ref={ref} display="flex" flexDirection="column" flex="1" minH={0} css={flexChainCss}>
+          {children}
+        </Box>
+      );
+    }
 
     // Telas de formulário usam `FormContainer` (casca própria) — aqui só o markup bare.
     if (form) {
@@ -49,18 +74,7 @@ export const ContainerGrid = forwardRef<HTMLDivElement, ContainerProps>(
             paddingX={isMobile ? '4' : '6'}
             paddingTop="6"
             paddingBottom={isMobile ? '4' : '6'}
-            css={{
-              '& > :last-child': {
-                flex: '0 1 auto',
-                minHeight: 0,
-                display: 'flex',
-                flexDirection: 'column',
-              },
-              '& > :last-child > :last-child': {
-                flex: '0 1 auto',
-                minHeight: 0,
-              },
-            }}
+            css={flexChainCss}
           >
             {children}
           </Box>

@@ -6,6 +6,88 @@
 import { ModuleServiceOrders } from '@/@types/language/module-service-orders';
 
 export const languageServiceOrders: ModuleServiceOrders = {
+  hub: {
+    pageTitle: 'Trabajo y compras',
+    pageSubtitle: 'Elija lo que va a registrar. Cada opción lleva al módulo correcto.',
+    helpButton: 'Cómo funciona',
+    cardsAriaLabel: 'Lo que va a registrar',
+    options: {
+      internal: {
+        title: 'Registrar trabajo del equipo',
+        description: 'Personas y máquinas de la propia finca.',
+        destination: 'Abre el apunte',
+      },
+      purchase: {
+        title: 'Hacer orden de compra',
+        description: 'Producto o servicio de fuera de la finca.',
+        destination: 'Abre la orden de compra',
+      },
+    },
+    help: {
+      title: 'Cómo funciona',
+      close: 'Cerrar',
+      about: {
+        title: '¿Apunte u orden de compra?',
+        text: 'El trabajo hecho por el equipo y las máquinas de la finca va en el Apunte. Todo lo que viene de fuera, producto o servicio, va en la Orden de compra. En la orden de compra de servicio, la Recepción confirma que el servicio se hizo, y solo después se paga.',
+      },
+      journey: {
+        title: 'Cómo avanza la orden de compra',
+        ariaLabel: 'Etapas de la orden de compra',
+        whoLabel: 'Quién actúa',
+        steps: {
+          request: {
+            label: '1. Pedir',
+            who: 'Quien vio la necesidad',
+            what: 'Abre la orden de compra: producto o servicio, cantidad, plazo y motivo.',
+            open: 'Abrir órdenes de compra',
+          },
+          quote: {
+            label: '2. Cotizar',
+            who: 'Quien hace las compras',
+            what: 'Pide precio a uno o más proveedores y elige la mejor oferta.',
+            open: 'Abrir cotizaciones',
+          },
+          approve: {
+            label: '3. Aprobar',
+            who: 'Quien aprueba los gastos',
+            what: 'Revisa valor y motivo. Aprueba o rechaza con el motivo.',
+            open: 'Abrir autorizaciones',
+          },
+          buy: {
+            label: '4. Comprar',
+            who: 'Quien hace las compras',
+            what: 'Envía el pedido al proveedor y registra la compra.',
+            open: 'Abrir compras',
+          },
+          receive: {
+            label: '5. Recibir',
+            who: 'El responsable en la finca',
+            what: 'Confirma lo que llegó. En servicio, confirma que el servicio se hizo.',
+            open: 'Abrir recepciones',
+          },
+          pay: {
+            label: '6. Pagar',
+            who: 'Finanzas',
+            what: 'Genera la cuenta por pagar a partir de la recepción confirmada.',
+            open: 'Abrir recepciones',
+          },
+        },
+      },
+      shortcuts: {
+        title: 'Dónde seguir',
+        appropriations: { title: 'Apuntes', description: 'Trabajo registrado por el equipo.' },
+        orders: {
+          title: 'Órdenes de compra',
+          description: 'Todas las órdenes, en cualquier etapa.',
+        },
+        mine: { title: 'Mis procesos', description: 'Las órdenes que están con usted.' },
+        receipts: {
+          title: 'Recepciones',
+          description: 'Lo que falta confirmar que llegó o se hizo.',
+        },
+      },
+    },
+  },
   serviceOrder: {
     singularLabel: 'Orden de Servicio',
     pluralLabel: 'Órdenes de Servicio',
@@ -44,8 +126,9 @@ export const languageServiceOrders: ModuleServiceOrders = {
         endDate: 'Fecha fin',
       },
       emptyState: {
-        title: 'Ninguna orden de servicio registrada.',
-        description: 'Comience emitiendo su primera orden de servicio.',
+        title: 'Todavía no hay órdenes de servicio.',
+        description:
+          'La orden de servicio es para contratar gente de fuera de la finca, como un contratista o un taller. Si el trabajo es de su equipo, use Apunte.',
         titleFiltered: 'Ninguna orden de servicio encontrada.',
         descriptionFiltered: 'Intente ajustar los filtros o limpiar la búsqueda.',
         cta: 'Emitir OS',
