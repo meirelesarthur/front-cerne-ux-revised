@@ -363,13 +363,15 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       pageSubtitle: 'Todas as ordens de compra, do pedido ao recebimento. Escolha a visão.',
       viewsAriaLabel: 'Visão das ordens de compra',
       views: {
+        todas: 'Todas',
         minhas: 'Criadas por mim',
-        responsabilidade: 'Sob minha responsabilidade',
+        responsabilidade: 'Comigo',
         aprovar: 'Para eu aprovar',
         cotacao: 'Em cotação',
         compra: 'Em compra',
         recebimento: 'Recebimento',
-        encerradas: 'Rejeitadas e canceladas',
+        rejeitadas: 'Rejeitadas',
+        canceladas: 'Canceladas',
       },
     },
 

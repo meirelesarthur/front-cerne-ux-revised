@@ -5,14 +5,18 @@
 // tem `scope` e `status[]` no `GET /request-purchases`, a visão é o escopo.
 // Mapa de impacto: docs/ux/funcionalidades/ordem-de-compra-unica-e-tipos-de-servico.md §3.
 
+import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
+
 export type PurchaseOrderViewKey =
+  | 'todas'
   | 'minhas'
   | 'responsabilidade'
   | 'aprovar'
   | 'cotacao'
   | 'compra'
   | 'recebimento'
-  | 'encerradas';
+  | 'rejeitadas'
+  | 'canceladas';
 
 export interface PurchaseOrderView {
   key: PurchaseOrderViewKey;
@@ -20,18 +24,45 @@ export interface PurchaseOrderView {
   permission: string;
   /** Rota antiga da mesma lista, mantida para links do sino e do app. */
   legacyPath: string;
+  /** Filtro que a visão impõe à lista de origem (ex.: situação, escopo). */
+  fixedFilter?: { status?: number; scope?: 'all' };
 }
 
-/** Ordem das abas: o caminho da ordem (pedir → aprovar → cotar → comprar → receber → encerrar). */
+/**
+ * Ordem das visões: "Todas" (padrão, decisão do dono 25/11) e depois o caminho
+ * da ordem (pedir → aprovar → cotar → comprar → receber → encerrar).
+ */
 export const PURCHASE_ORDER_VIEWS: readonly PurchaseOrderView[] = [
+  // Mesma lista de "Criadas por mim" com `scope=all` (depende da API).
+  {
+    key: 'todas',
+    permission: 'request-purchases_view',
+    legacyPath: '/administrativo/solicitacao',
+    fixedFilter: { scope: 'all' },
+  },
   { key: 'minhas', permission: 'request-purchases_view', legacyPath: '/administrativo/solicitacao' },
   { key: 'responsabilidade', permission: 'request-purchases_view', legacyPath: '/administrativo/meus-processos' },
   { key: 'aprovar', permission: 'request-authorization_view', legacyPath: '/administrativo/autorizacao' },
   { key: 'cotacao', permission: 'request-quotation_view', legacyPath: '/administrativo/cotacoes' },
   { key: 'compra', permission: 'request-buy_view', legacyPath: '/administrativo/compras' },
   { key: 'recebimento', permission: 'request-receipts_view', legacyPath: '/administrativo/recebimentos' },
-  { key: 'encerradas', permission: 'rejected-requests_view', legacyPath: '/administrativo/rejeitados' },
+  // A lista de rejeitados traz as duas situações; a visão fixa uma (25/11).
+  {
+    key: 'rejeitadas',
+    permission: 'rejected-requests_view',
+    legacyPath: '/administrativo/rejeitados',
+    fixedFilter: { status: requestPurchaseStatus.pedidoNaoAprovado },
+  },
+  {
+    key: 'canceladas',
+    permission: 'rejected-requests_view',
+    legacyPath: '/administrativo/rejeitados',
+    fixedFilter: { status: requestPurchaseStatus.pedidoCancelado },
+  },
 ];
+
+/** Visões antigas que ainda podem chegar pela URL (favoritos, sino). */
+const VIEW_ALIASES: Record<string, PurchaseOrderViewKey> = { encerradas: 'rejeitadas' };
 
 /** Todas as permissões que abrem a tela única (basta uma). */
 export const PURCHASE_ORDER_PERMISSIONS: string[] = Array.from(
@@ -55,7 +86,8 @@ export function resolvePurchaseOrderView(
   requested: string | null | undefined,
   visible: PurchaseOrderView[]
 ): PurchaseOrderViewKey | undefined {
-  const match = visible.find((view) => view.key === requested);
+  const key = (requested && VIEW_ALIASES[requested]) || requested;
+  const match = visible.find((view) => view.key === key);
   return (match ?? visible[0])?.key;
 }
 

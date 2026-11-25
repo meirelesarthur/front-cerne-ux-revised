@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ButtonAdd } from '@/components/ButtonAdd';
+import { useIsEmbeddedList } from '@/components/EmbeddedList';
 import { GridSettingsFloatingPanel } from '@/components/GridSettings/GridSettingsFloatingPanel';
 import type { GridSettingsFloatingPanelProps } from '@/components/GridSettings/GridSettingsFloatingPanel';
 
@@ -48,9 +49,12 @@ export function HeaderTable({
     }
   }, [table?.getSelectedRowModel()?.rows[0]?.original]);
 
+  // Na tela única de Ordens de compra o "Novo" é da tela (fixo em toda visão).
+  const isEmbedded = useIsEmbeddedList();
+
   return (
     <>
-      {can('request-purchases_create') && (
+      {!isEmbedded && can('request-purchases_create') && (
         <ButtonAdd
           onClick={() => navigate(`/administrativo/solicitacao/novo`)}
           languageGB={languageGB}

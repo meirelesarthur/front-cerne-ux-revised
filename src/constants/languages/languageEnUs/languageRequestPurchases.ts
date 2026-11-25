@@ -361,13 +361,15 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       pageSubtitle: 'Every purchase order, from request to receipt. Pick a view.',
       viewsAriaLabel: 'Purchase order view',
       views: {
+        todas: 'All',
         minhas: 'Created by me',
-        responsabilidade: 'Assigned to me',
+        responsabilidade: 'With me',
         aprovar: 'Awaiting my approval',
         cotacao: 'In quotation',
         compra: 'In purchase',
         recebimento: 'Receiving',
-        encerradas: 'Rejected and cancelled',
+        rejeitadas: 'Rejected',
+        canceladas: 'Cancelled',
       },
     },
 

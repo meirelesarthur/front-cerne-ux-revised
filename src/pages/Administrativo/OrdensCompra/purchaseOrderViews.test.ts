@@ -11,9 +11,26 @@ import {
 const canOnly = (...perms: string[]) => (permission: string) => perms.includes(permission);
 
 describe('purchaseOrderViews', () => {
-  it('cobre as 7 listas atuais, cada uma uma vez', () => {
-    expect(PURCHASE_ORDER_VIEWS).toHaveLength(7);
+  it('cobre as 7 listas atuais em 9 visões (Todas + rejeitadas e canceladas separadas)', () => {
+    expect(PURCHASE_ORDER_VIEWS).toHaveLength(9);
     expect(new Set(PURCHASE_ORDER_VIEWS.map((v) => v.legacyPath)).size).toBe(7);
+  });
+
+  it('abre em "Todas" por padrão, que pede o escopo completo', () => {
+    const visible = visiblePurchaseOrderViews(() => true);
+    expect(resolvePurchaseOrderView(null, visible)).toBe('todas');
+    expect(PURCHASE_ORDER_VIEWS.at(0)?.fixedFilter).toEqual({ scope: 'all' });
+  });
+
+  it('rejeitadas e canceladas fixam a situação na mesma lista', () => {
+    const byKey = Object.fromEntries(PURCHASE_ORDER_VIEWS.map((v) => [v.key, v]));
+    expect(byKey.rejeitadas.fixedFilter).toEqual({ status: 5 });
+    expect(byKey.canceladas.fixedFilter).toEqual({ status: 10 });
+  });
+
+  it('link antigo ?visao=encerradas abre Rejeitadas', () => {
+    const visible = visiblePurchaseOrderViews(() => true);
+    expect(resolvePurchaseOrderView('encerradas', visible)).toBe('rejeitadas');
   });
 
   it('abre a tela com qualquer uma das 6 permissões de leitura', () => {
@@ -34,7 +51,7 @@ describe('purchaseOrderViews', () => {
 
   it('request-purchases_view libera "Criadas por mim" e "Sob minha responsabilidade"', () => {
     const visible = visiblePurchaseOrderViews(canOnly('request-purchases_view'));
-    expect(visible.map((v) => v.key)).toEqual(['minhas', 'responsabilidade']);
+    expect(visible.map((v) => v.key)).toEqual(['todas', 'minhas', 'responsabilidade']);
   });
 
   it('respeita a visão da URL quando permitida', () => {

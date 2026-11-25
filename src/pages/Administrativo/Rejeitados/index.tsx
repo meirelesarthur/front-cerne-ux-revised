@@ -65,6 +65,7 @@ import {
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { useEmbeddedList } from '@/components/EmbeddedList';
 import { ListToolbar } from '@/components/ui/ListToolbar';
 import { useListSearch } from '@/hooks/useListSearch';
 
@@ -106,13 +107,21 @@ export default function RejeitadosList() {
     [paginatedQuery.filter]
   );
 
+  // Na tela única de Ordens de compra, as visões Rejeitadas e Canceladas fixam
+  // a situação (`fixedFilter`); chave de cache própria para não se misturarem.
+  const fixedFilter = useEmbeddedList()?.fixedFilter;
   const rejectedList = useCustomGridQuery<RequestPurchaseListItem, RequestPurchaseFilterForm>({
     asyncFunction: listRejectedRequestPurchases,
-    queryKey: queryKey.requestPurchases.rejectedList,
+    queryKey: fixedFilter
+      ? `${queryKey.requestPurchases.rejectedList}:${JSON.stringify(fixedFilter)}`
+      : queryKey.requestPurchases.rejectedList,
     paginatedQuery,
     setPaginatedQuery: handlePaginatedQuery,
     filterQuery: [],
-    filter: paginatedQuery.filter ?? ({} as RequestPurchaseFilterForm),
+    filter: {
+      ...(paginatedQuery.filter ?? {}),
+      ...(fixedFilter ?? {}),
+    } as RequestPurchaseFilterForm,
   });
 
   const defaultColumns = useMemo(

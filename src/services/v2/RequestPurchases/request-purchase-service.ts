@@ -108,7 +108,12 @@ import type {
 } from '@/@types/v2/RequestPurchases';
 
 export interface ListRequestPurchasesParams
-  extends PaginationQueryParams, RequestPurchaseFilterRequest {}
+  extends PaginationQueryParams, RequestPurchaseFilterRequest {
+  /** Visão "Todas" da tela única (25/11): pede todas as ordens que a pessoa
+   *  pode ver, não só as dela. Depende da API aceitar `scope=all` no `index()`
+   *  (hoje restrito ao `user_id`); sem isso, a API ignora e devolve as dela. */
+  scope?: 'all';
+}
 
 async function listRequestPurchases(
   params: ListRequestPurchasesParams
@@ -116,6 +121,7 @@ async function listRequestPurchases(
   const { data } = await api.V2.get<RequestPurchasesListEnvelope>('/request-purchases', {
     page: params.page,
     per_page: params.per_page,
+    scope: params.scope || undefined,
     search: params.search || undefined,
     type: params.type || undefined,
     status: params.status ?? undefined,

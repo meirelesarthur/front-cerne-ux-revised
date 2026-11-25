@@ -11,20 +11,28 @@
 // - A visão aberta fica na URL (`?visao=compra`); os demais parâmetros (ex.:
 //   `?search=` vindo do sino) seguem para a lista embutida.
 // - As rotas antigas continuam vivas (links do sino, favoritos, app).
+// - 25/11: as visões viraram um SELETOR único (`ViewSelect`: ícone + nome +
+//   contador, menu com todas) no início da linha da busca; os botões da lista
+//   e o "Novo" (fixo em toda visão) ficam na mesma linha (`EmbeddedList`).
+//   Rejeitadas e Canceladas são visões separadas da mesma lista (situação
+//   fixa). O contador é o total da própria lista (`usePurchaseOrderViewCounts`).
 // - Próximo passo, no backend: `scope` e `status[]` no `GET /request-purchases`,
-//   `allowed_actions` e contagem por visão (pílula da aba). Ver
+//   `allowed_actions` e contagem por visão (um pedido só). Ver
 //   docs/ux/funcionalidades/ordem-de-compra-unica-e-tipos-de-servico.md §3.
 // -----------------------------------------------------------------------------
 
 import { type ComponentType, type LazyExoticComponent, Suspense, lazy, useMemo } from 'react';
 
 import { Box, Flex, Spinner } from '@chakra-ui/react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { ButtonAdd } from '@/components/ButtonAdd';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { EmbeddedListProvider } from '@/components/EmbeddedList';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { QueueTabs } from '@/components/ui/QueueTabs';
+import { ViewSelect } from '@/components/ui/ViewSelect';
+
+import type { IconName } from '@/design/icons';
 
 import { useLanguage } from '@/hooks/useLanguage';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -35,15 +43,31 @@ import {
   resolvePurchaseOrderView,
   visiblePurchaseOrderViews,
 } from './purchaseOrderViews';
+import { usePurchaseOrderViewCounts } from './usePurchaseOrderViewCounts';
+
+// Ícone de cada visão nas tags (papéis de `src/design/icons.ts`).
+const VIEW_ICONS: Record<PurchaseOrderViewKey, IconName> = {
+  todas: 'list',
+  minhas: 'document-add',
+  responsabilidade: 'user-check',
+  aprovar: 'shield-check',
+  cotacao: 'currency',
+  compra: 'cart',
+  recebimento: 'package-check',
+  rejeitadas: 'error',
+  canceladas: 'close',
+};
 
 const VIEW_COMPONENTS: Record<PurchaseOrderViewKey, LazyExoticComponent<ComponentType>> = {
+  todas: lazy(() => import('@/pages/Administrativo/Solicitacao')),
   minhas: lazy(() => import('@/pages/Administrativo/Solicitacao')),
   responsabilidade: lazy(() => import('@/pages/Administrativo/MeusProcessos')),
   aprovar: lazy(() => import('@/pages/Administrativo/Autorizacao')),
   cotacao: lazy(() => import('@/pages/Administrativo/Cotacoes')),
   compra: lazy(() => import('@/pages/Administrativo/Compras')),
   recebimento: lazy(() => import('@/pages/Administrativo/Recebimentos')),
-  encerradas: lazy(() => import('@/pages/Administrativo/Rejeitados')),
+  rejeitadas: lazy(() => import('@/pages/Administrativo/Rejeitados')),
+  canceladas: lazy(() => import('@/pages/Administrativo/Rejeitados')),
 };
 
 export default function OrdensCompraHub() {
@@ -51,14 +75,19 @@ export default function OrdensCompraHub() {
   const text = languageGB.requestPurchases.requestPurchase.hub;
   const { can } = usePermissions();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const visible = useMemo(() => visiblePurchaseOrderViews(can), [can]);
   const active = resolvePurchaseOrderView(searchParams.get(VIEW_PARAM), visible);
 
-  const tabs = useMemo(
-    () => visible.map((view) => ({ key: view.key, label: text.views[view.key] })),
-    [visible, text]
-  );
+  const counts = usePurchaseOrderViewCounts(visible);
+  const options = visible.map((view) => ({
+    key: view.key,
+    label: text.views[view.key],
+    icon: VIEW_ICONS[view.key],
+    count: counts[view.key],
+  }));
+  const activeView = visible.find((view) => view.key === active);
 
   function handleChangeView(key: PurchaseOrderViewKey) {
     // Troca de visão limpa os parâmetros da visão anterior (ex.: `?search=`).
@@ -73,20 +102,29 @@ export default function OrdensCompraHub() {
         <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
       </Box>
 
-      {active && (
-        <Box mx={-3} mb={4}>
-          <QueueTabs
-            tabs={tabs}
-            value={active}
-            onChange={handleChangeView}
-            ariaLabel={text.viewsAriaLabel}
-          />
-        </Box>
-      )}
-
       <Box role="tabpanel" aria-label={active ? text.views[active] : undefined}>
-        {ActiveList && (
-          <EmbeddedListProvider>
+        {ActiveList && active && (
+          <EmbeddedListProvider
+            key={active}
+            toolbarStart={
+              <ViewSelect
+                options={options}
+                value={active}
+                onChange={handleChangeView}
+                ariaLabel={text.viewsAriaLabel}
+              />
+            }
+            toolbarEnd={
+              // "Novo" é da tela: fixo em qualquer visão (decisão do dono, 25/11).
+              can('request-purchases_create') ? (
+                <ButtonAdd
+                  onClick={() => navigate('/administrativo/solicitacao/novo')}
+                  languageGB={languageGB}
+                />
+              ) : undefined
+            }
+            fixedFilter={activeView?.fixedFilter}
+          >
             <Suspense
               fallback={
                 <Flex justify="center" py={10}>

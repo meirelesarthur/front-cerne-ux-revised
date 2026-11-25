@@ -17,6 +17,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
 import { CustomDialog } from '@/components/CustomDialog';
+import { useIsEmbeddedList } from '@/components/EmbeddedList';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -34,7 +35,11 @@ interface DeniedRequestsModalProps {
 export function DeniedRequestsModal({ enabled = true }: DeniedRequestsModalProps) {
   const { languageGB } = useLanguage();
   const modalText = languageGB.requestPurchases.requestPurchase.supply.deniedModal;
-  const { isOpen, items, close } = useDeniedRequestsModal({ enabled });
+  // 25/11 (decisão do dono): na tela única de Ordens de compra o modal NÃO
+  // abre — as negadas ficam na tag "Rejeitadas e canceladas", com contador.
+  // Sem consultar, as notificações também não são marcadas como lidas.
+  const isEmbedded = useIsEmbeddedList();
+  const { isOpen, items, close } = useDeniedRequestsModal({ enabled: enabled && !isEmbedded });
 
   return (
     <CustomDialog

@@ -483,13 +483,15 @@ export interface ModuleRequestPurchases {
       pageSubtitle: string;
       viewsAriaLabel: string;
       views: {
+        todas: string;
         minhas: string;
         responsabilidade: string;
         aprovar: string;
         cotacao: string;
         compra: string;
         recebimento: string;
-        encerradas: string;
+        rejeitadas: string;
+        canceladas: string;
       };
     };
 

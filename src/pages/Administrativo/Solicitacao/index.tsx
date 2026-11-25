@@ -108,6 +108,7 @@ import { HeaderTable } from './HeaderTable';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 
+import { useEmbeddedList } from '@/components/EmbeddedList';
 import { ListToolbar } from '@/components/ui/ListToolbar';
 import { StatusTag } from '@/components/ui/StatusTag';
 import { useListSearch } from '@/hooks/useListSearch';
@@ -170,16 +171,25 @@ export default function SolicitacaoList() {
   // ---- Voltar Etapa (diálogo compartilhado) ---------------------------------
   const [stepBackUuid, setStepBackUuid] = useState<string | null>(null);
 
+  // Na tela única de Ordens de compra, a visão "Todas" usa esta lista com
+  // `scope=all` (`fixedFilter`); chave de cache própria para não se misturar
+  // com "Criadas por mim".
+  const fixedFilter = useEmbeddedList()?.fixedFilter;
   const requestPurchasesList = useCustomGridQuery<
     RequestPurchaseListItem,
     RequestPurchaseFilterForm
   >({
     asyncFunction: listRequestPurchases,
-    queryKey: queryKey.requestPurchases.requestPurchasesList,
+    queryKey: fixedFilter
+      ? `${queryKey.requestPurchases.requestPurchasesList}:${JSON.stringify(fixedFilter)}`
+      : queryKey.requestPurchases.requestPurchasesList,
     paginatedQuery,
     setPaginatedQuery: handlePaginatedQuery,
     filterQuery: [],
-    filter: paginatedQuery.filter ?? ({} as RequestPurchaseFilterForm),
+    filter: {
+      ...(paginatedQuery.filter ?? {}),
+      ...(fixedFilter ?? {}),
+    } as RequestPurchaseFilterForm,
   });
 
   const deleteMutation = useRequest({

@@ -103,6 +103,22 @@ import { InformRequestPurchaseStatusDialog } from '../Compras/InformRequestPurch
 import { SeparateRequestPurchaseDialog } from '../Compras/SeparateRequestPurchaseDialog';
 
 import { PageHeader } from '@/components/ui/PageHeader';
+import { ListToolbar } from '@/components/ui/ListToolbar';
+import { useListSearch } from '@/hooks/useListSearch';
+
+import {
+  FilterSideSolicitacao,
+  type SolicitacaoFilterField,
+} from '../Solicitacao/FilterSideSolicitacao';
+
+// Filtros que a API `my-processes` aceita (busca, tipo, situação e datas).
+const MY_PROCESSES_FILTER_FIELDS: SolicitacaoFilterField[] = [
+  'search',
+  'type',
+  'status',
+  'date_from',
+  'date_to',
+];
 import { StatusTag } from '@/components/ui/StatusTag';
 
 export default function MeusProcessosList() {
@@ -123,8 +139,20 @@ export default function MeusProcessosList() {
     []
   );
 
-  const { paginatedQuery, handlePaginatedQuery } =
+  const { paginatedQuery, handlePaginatedQuery, handleFilterChange, handleResetFilter } =
     userPaginatedQuery<RequestPurchaseFilterForm>(defaultQueryOptions);
+
+  // Busca e filtros (25/11): a API `my-processes` aceita busca, tipo, situação
+  // e datas — mesma barra e mesmo painel das outras listas de Suprimentos.
+  const listSearch = useListSearch(paginatedQuery.filter, handleFilterChange);
+  const { open: isFilterOpen, onOpen: onOpenFilter, onClose: onCloseFilter } = useDisclosure();
+  const filtersApplied = useMemo(
+    () =>
+      Object.values(paginatedQuery.filter ?? {}).filter(
+        (v) => v !== undefined && v !== null && v !== '' && v !== false
+      ).length,
+    [paginatedQuery.filter]
+  );
 
   // ---- Diálogos por linha (uuid da linha selecionada) -------------------------
   const [stepBackUuid, setStepBackUuid] = useState<string | null>(null);
@@ -515,8 +543,15 @@ export default function MeusProcessosList() {
           <PageHeader title={text.myProcesses.pageTitle} description={text.myProcesses.pageSubtitle} />
         </HeaderGrid>
 
+        <ListToolbar
+          search={listSearch.value}
+          onSearch={listSearch.onChange}
+          searchPlaceholder={languageGB.defaltStrings.searchList}
+          onOpenFilter={onOpenFilter}
+          filtersApplied={filtersApplied - (paginatedQuery.filter?.search ? 1 : 0)}
+        />
 
-        <Box mt={6}>
+        <Box>
           <Table
             isLoading={isLoading}
             getRowHighlight={emergencyRowHighlight}
@@ -574,6 +609,16 @@ export default function MeusProcessosList() {
         isOpen={separateUuid !== null}
         onClose={() => setSeparateUuid(null)}
         requestPurchaseUuid={separateUuid}
+      />
+
+      <FilterSideSolicitacao
+        isOpen={isFilterOpen}
+        onClose={onCloseFilter}
+        handleFilterChange={handleFilterChange}
+        handleReset={handleResetFilter}
+        filter={paginatedQuery.filter}
+        languageGB={languageGB}
+        visibleFields={MY_PROCESSES_FILTER_FIELDS}
       />
 
       {/* Solicitações negadas: abre uma vez e marca as notificações como lidas. */}
