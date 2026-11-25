@@ -1,52 +1,58 @@
 # Mapa de mudanças desde o baseline (gerado)
 
 > **Gerado por `scripts/ux-docs/gen-change-map.mjs`** — não edite à mão; rode o script.
-> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `6e9cf2d` · 888 arquivos alterados.
+> Baseline: tag `ux-baseline` (`a61fdffc20`) · HEAD: `8e0985a` · 981 arquivos alterados.
 > Para ver qualquer mudança: `git diff ux-baseline HEAD -- <arquivo>`. Guia de aplicação: [PORTING.md](PORTING.md).
 
 ## 1. Diff por área
 | Área | Novos | Alterados | Removidos |
 |---|---:|---:|---:|
-| `src/pages/Operacional` | 0 | 197 | 1 |
+| `src/pages/Operacional` | 4 | 197 | 1 |
 | `src/pages/CadastrosBase` | 0 | 171 | 1 |
 | `src/pages/BaseRegistrations` | 0 | 137 | 0 |
-| `src/pages/Administrativo` | 0 | 87 | 1 |
-| `src/components/ui` | 39 | 3 | 0 |
-| `src/constants` | 3 | 33 | 0 |
+| `src/pages/Administrativo` | 9 | 94 | 1 |
+| `src/constants` | 6 | 63 | 0 |
+| `src/components/ui` | 43 | 3 | 0 |
 | `src/pages/Fiscal` | 0 | 34 | 0 |
 | `src/pages/Financeiro` | 0 | 27 | 0 |
-| `docs/ux` | 20 | 0 | 0 |
-| `src/@types` | 1 | 13 | 0 |
+| `docs/ux` | 24 | 0 | 0 |
+| `src/@types` | 1 | 17 | 0 |
 | `scripts/dev-db` | 13 | 0 | 0 |
+| `src/components/(raiz)` | 1 | 12 | 0 |
 | `src/pages/Frota` | 0 | 12 | 0 |
 | `src/mocks` | 11 | 0 | 0 |
-| `src/components/(raiz)` | 0 | 9 | 0 |
 | `src/pages/Planos` | 5 | 3 | 0 |
+| `src/components/GuidedTour` | 7 | 0 | 0 |
+| `src/config` | 4 | 2 | 0 |
 | `src/pages/Configuracoes` | 0 | 6 | 0 |
 | `src/pages/Onboarding` | 6 | 0 | 0 |
 | `src/styles` | 0 | 6 | 0 |
+| `src/components/Form` | 0 | 5 | 0 |
 | `src/pages/Integracoes` | 0 | 5 | 0 |
 | `src/pages/Invoices` | 0 | 5 | 0 |
-| `src/components/Form` | 0 | 4 | 0 |
-| `src/services` | 1 | 3 | 0 |
+| `src/services` | 1 | 4 | 0 |
+| `scripts/ux-docs` | 3 | 0 | 0 |
 | `src/components/Layout` | 0 | 3 | 0 |
 | `src/pages/Incomes` | 0 | 3 | 0 |
 | `scripts/dev-mocks` | 2 | 0 | 0 |
 | `src/components/Header` | 0 | 2 | 0 |
+| `src/components/Suprimentos` | 0 | 2 | 0 |
+| `src/hooks` | 1 | 1 | 0 |
 | `src/pages/Errors` | 2 | 0 | 0 |
+| `src/pages/GroupHub` | 2 | 0 | 0 |
 | `src/pages/Login` | 1 | 1 | 0 |
 | `.env.example` | 0 | 1 | 0 |
+| `.env.production` | 1 | 0 | 0 |
 | `.gitignore` | 0 | 1 | 0 |
 | `CLAUDE.md` | 1 | 0 | 0 |
 | `chakra.config.ts` | 0 | 1 | 0 |
 | `package.json` | 0 | 1 | 0 |
-| `scripts/ux-docs` | 1 | 0 | 0 |
 | `src/assets` | 1 | 0 | 0 |
+| `src/components/GridSettings` | 0 | 1 | 0 |
 | `src/components/MovementAllocationEditor` | 0 | 1 | 0 |
 | `src/components/NotFound` | 0 | 1 | 0 |
-| `src/config` | 0 | 1 | 0 |
 | `src/design` | 1 | 0 | 0 |
-| `src/hooks` | 1 | 0 | 0 |
+| `src/layouts` | 0 | 1 | 0 |
 | `src/pages/Dashboards` | 0 | 1 | 0 |
 | `src/pages/Home` | 0 | 1 | 0 |
 | `src/router` | 0 | 1 | 0 |
@@ -56,6 +62,14 @@
 ### Arquivos novos em `src/`
 - `src/@types/language/module-subscription/index.ts`
 - `src/assets/error-cow.png`
+- `src/components/EmbeddedList.tsx`
+- `src/components/GuidedTour/GuidedTourContext.tsx`
+- `src/components/GuidedTour/TourHelper.tsx`
+- `src/components/GuidedTour/flows.ts`
+- `src/components/GuidedTour/guided-tour.css`
+- `src/components/GuidedTour/index.ts`
+- `src/components/GuidedTour/storage.ts`
+- `src/components/GuidedTour/types.ts`
 - `src/components/ui/Badge.tsx`
 - `src/components/ui/BandSlider.tsx`
 - `src/components/ui/BreadcrumbTrail.tsx`
@@ -65,13 +79,16 @@
 - `src/components/ui/ConfidenceMeter.tsx`
 - `src/components/ui/DashedActionButton.tsx`
 - `src/components/ui/ErrorStatusPage.tsx`
+- `src/components/ui/EventTimeline.tsx`
 - `src/components/ui/FormSurface.tsx`
 - `src/components/ui/GiaTierCard.tsx`
 - `src/components/ui/Icon.tsx`
 - `src/components/ui/ImageEditorDialog.tsx`
 - `src/components/ui/ListToolbar.tsx`
 - `src/components/ui/MatchCandidateCard.tsx`
+- `src/components/ui/ModuleLinkCard.tsx`
 - `src/components/ui/PageHeader.tsx`
+- `src/components/ui/PaymentSuccessOverlay.tsx`
 - `src/components/ui/PlanCompareStrip.tsx`
 - `src/components/ui/PlanOptionCard.tsx`
 - `src/components/ui/PlanTierCard.tsx`
@@ -94,9 +111,17 @@
 - `src/components/ui/SummaryPanel.tsx`
 - `src/components/ui/ToggleCard.tsx`
 - `src/components/ui/ToggleRow.tsx`
+- `src/components/ui/ViewSelect.tsx`
 - `src/components/ui/listControl.ts`
+- `src/config/demoMode.ts`
+- `src/config/v2/groupHub.test.ts`
+- `src/config/v2/purchaseOrdersFeature.ts`
+- `src/config/v2/serviceOrdersFeature.ts`
+- `src/constants/languages/languageEnUs/languageSidebarDescriptions.ts`
 - `src/constants/languages/languageEnUs/languageSubscription.ts`
+- `src/constants/languages/languageEsEs/languageSidebarDescriptions.ts`
 - `src/constants/languages/languageEsEs/languageSubscription.ts`
+- `src/constants/languages/languagePtBr/languageSidebarDescriptions.ts`
 - `src/constants/languages/languagePtBr/languageSubscription.ts`
 - `src/design/icons.ts`
 - `src/hooks/useListSearch.ts`
@@ -111,8 +136,19 @@
 - `src/mocks/dev-api/index.ts`
 - `src/mocks/dev-api/synthetic.test.ts`
 - `src/mocks/dev-api/synthetic.ts`
+- `src/pages/Administrativo/OrdensCompra/index.tsx`
+- `src/pages/Administrativo/OrdensCompra/purchaseOrderViews.test.ts`
+- `src/pages/Administrativo/OrdensCompra/purchaseOrderViews.ts`
+- `src/pages/Administrativo/OrdensCompra/usePurchaseOrderViewCounts.ts`
+- `src/pages/Administrativo/Solicitacao/RequestTabParts.tsx`
+- `src/pages/Administrativo/Solicitacao/initialRequestType.test.ts`
+- `src/pages/Administrativo/Solicitacao/initialRequestType.ts`
+- `src/pages/Administrativo/Solicitacao/quotationRanking.test.ts`
+- `src/pages/Administrativo/Solicitacao/quotationRanking.ts`
 - `src/pages/Errors/copy.ts`
 - `src/pages/Errors/index.tsx`
+- `src/pages/GroupHub/index.test.tsx`
+- `src/pages/GroupHub/index.tsx`
 - `src/pages/Login/slides.ts`
 - `src/pages/Onboarding/index.tsx`
 - `src/pages/Onboarding/steps/StepAccount.tsx`
@@ -120,6 +156,10 @@
 - `src/pages/Onboarding/steps/StepDone.tsx`
 - `src/pages/Onboarding/steps/StepPayment.tsx`
 - `src/pages/Onboarding/types.ts`
+- `src/pages/Operacional/ServiceOrdersHub/index.test.tsx`
+- `src/pages/Operacional/ServiceOrdersHub/index.tsx`
+- `src/pages/Operacional/ServiceOrdersHub/serviceOrdersHubRoutes.test.ts`
+- `src/pages/Operacional/ServiceOrdersHub/serviceOrdersHubRoutes.ts`
 - `src/pages/Planos/Contratacao/catalog.ts`
 - `src/pages/Planos/Contratacao/index.tsx`
 - `src/pages/Planos/Contratacao/order.ts`
@@ -133,58 +173,62 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 | Componente | Arquivo | Para quê | Consumidores |
 |---|---|---|---:|
 | `toaster` | `src/components/ui/toaster.tsx` |  | 449 |
-| `PageHeader` | `src/components/ui/PageHeader.tsx` | Título de página (DS `PageHeader`): título 24px em negrito, contador opcional em pílula e | 168 |
-| `ButtonFilter` | `src/components/ButtonFilter.tsx` | Botão "Filtros" das listagens (DS `FilterButton`): borda 1.5px; com filtros ativos vira verde | 96 |
-| `ListToolbar` | `src/components/ui/ListToolbar.tsx` | Barra das listagens (DS `ListToolbar`): busca inline + botão "Filtros" na mesma linha. | 80 |
+| `PageHeader` | `src/components/ui/PageHeader.tsx` | Título de página (DS `PageHeader`): título 24px em negrito, contador opcional em pílula e | 171 |
+| `ButtonFilter` | `src/components/ButtonFilter.tsx` | Botão "Filtros" das listagens (DS `FilterButton`): borda 1.5px; com filtros ativos vira verde | 96 |
+| `ListToolbar` | `src/components/ui/ListToolbar.tsx` | Barra das listagens (DS `ListToolbar`): busca inline + botão "Filtros" na mesma linha. | 81 |
 | `switch` | `src/components/ui/switch.tsx` |  | 38 |
-| `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 28 |
+| `StatusTag` | `src/components/ui/StatusTag.tsx` | Tag de SITUAÇÃO para a própria linha da tabela: pílula com o fundo na cor da situação e o texto | 32 |
 | `checkbox` | `src/components/ui/checkbox.tsx` |  | 23 |
+| `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 14 |
 | `tooltip` | `src/components/ui/tooltip.tsx` |  | 14 |
-| `Icon` | `src/components/ui/Icon.tsx` | Ícone do sistema — porte fiel de `Icon.tsx` do design system `cerne`. Única forma de | 10 |
-| `FormSection` | `src/components/FormSection/index.tsx` | Adaptação Chakra v3 (não cópia) do `FormSection` do design system `cerne` | 10 |
-| `StepBody` | `src/components/ui/StepBody.tsx` | Corpo de uma etapa de wizard (DS): conteúdo centralizado, largura máxima 760px. | 6 |
-| `ToggleRow` | `src/components/ui/ToggleRow.tsx` | Campo booleano em linha (DS `ToggleRow`): interruptor + rótulo e, opcional, ícone de ajuda com | 5 |
-| `steps` | `src/components/ui/steps.tsx` | Wrapper sobre o `Steps` nativo do Chakra UI v3. RESKIN (execução 024, | 5 |
-| `DashboardGrid` | `src/components/ui/DashboardGrid.tsx` | Casca canônica de Dashboards (Regra G do design system `cerne`, `GB.Cerne.UX` | 4 |
-| `StepFooter` | `src/components/ui/StepFooter.tsx` | Rodapé padrão de formulário multi-etapas — porte fiel de `StepFooter.tsx` do | 4 |
-| `StepHeader` | `src/components/ui/StepHeader.tsx` | Cabeçalho de etapa de wizard — porte fiel de `StepHeader.tsx` do design system | 4 |
-| `FormSurface` | `src/components/ui/FormSurface.tsx` | Superfície de formulário que pode ser MODAL (`dialog`, o `CustomDialog` de sempre) ou PAINEL | 3 |
-| `PageCard` | `src/components/ui/PageCard.tsx` | Casca visual compartilhada (bg/shadow/radius + overflow hidden), fonte única | 3 |
-| `RepeaterList` | `src/components/ui/RepeaterList.tsx` | Lista dinâmica (adicionar/remover linhas) — DS `RepeaterList`. A moldura (vazio tracejado, | 3 |
-| `SegmentedControl` | `src/components/ui/SegmentedControl.tsx` | Controle segmentado (2–4 opções mutuamente exclusivas, uma sempre ativa). Ex.: Vincular a | 3 |
-| `dialog` | `src/components/ui/dialog.tsx` |  | 3 |
-| `radio` | `src/components/ui/radio.tsx` | Wrapper Chakra UI v3 para Radio/RadioGroup — mirror ESTRUTURAL de | 3 |
-| `Badge` | `src/components/ui/Badge.tsx` | Selo de status/classificação — porte fiel de `Badge.tsx` do design system `cerne`: | 2 |
-| `ImageEditorDialog` | `src/components/ui/ImageEditorDialog.tsx` | Modal "Editar imagem" (referência de UX do pedido): prévia quadrada do recorte, régua de escala, | 2 |
-| `StepIndicator` | `src/components/ui/StepIndicator.tsx` | Indicador de etapas de configurador (estilo "simulador"): quadradinho numerado + rótulo, | 2 |
-| `SummaryPanel` | `src/components/ui/SummaryPanel.tsx` | Painel de RESUMO escuro, fixo à direita de um configurador (modelo "simulador"): título com | 2 |
+| `FormSection` | `src/components/FormSection/index.tsx` | Adaptação Chakra v3 (não cópia) do `FormSection` do design system `cerne` | 10 |
+| `StepBody` | `src/components/ui/StepBody.tsx` | Corpo de uma etapa de wizard (DS): conteúdo centralizado, largura máxima 760px. | 6 |
+| `PageCard` | `src/components/ui/PageCard.tsx` | Casca visual compartilhada (bg/shadow/radius + overflow hidden), fonte única | 5 |
+| `SimpleTable` | `src/components/ui/SimpleTable.tsx` | Tabela de leitura (sem paginação/ordenação): cabeçalho em caixa-alta no padrão do DS, linhas com | 5 |
+| `ToggleRow` | `src/components/ui/ToggleRow.tsx` | Campo booleano em linha (DS `ToggleRow`): interruptor + rótulo e, opcional, ícone de ajuda com | 5 |
+| `steps` | `src/components/ui/steps.tsx` | ----------------------------------------------------------------------------- | 5 |
+| `Badge` | `src/components/ui/Badge.tsx` | Selo de status/classificação — porte fiel de `Badge.tsx` do design system `cerne`: | 4 |
+| `DashboardGrid` | `src/components/ui/DashboardGrid.tsx` | ----------------------------------------------------------------------------- | 4 |
+| `StepFooter` | `src/components/ui/StepFooter.tsx` | Rodapé padrão de formulário multi-etapas — porte fiel de `StepFooter.tsx` do | 4 |
+| `StepHeader` | `src/components/ui/StepHeader.tsx` | Cabeçalho de etapa de wizard — porte fiel de `StepHeader.tsx` do design system | 4 |
+| `dialog` | `src/components/ui/dialog.tsx` |  | 4 |
+| `FormSurface` | `src/components/ui/FormSurface.tsx` | Superfície de formulário que pode ser MODAL (`dialog`, o `CustomDialog` de sempre) ou PAINEL | 3 |
+| `RepeaterList` | `src/components/ui/RepeaterList.tsx` | Lista dinâmica (adicionar/remover linhas) — DS `RepeaterList`. A moldura (vazio tracejado, | 3 |
+| `SegmentedControl` | `src/components/ui/SegmentedControl.tsx` | Controle segmentado (2–4 opções mutuamente exclusivas, uma sempre ativa). Ex.: Vincular a | 3 |
+| `StepIndicator` | `src/components/ui/StepIndicator.tsx` | Indicador de etapas de configurador (estilo "simulador"): quadradinho numerado + rótulo, | 3 |
+| `radio` | `src/components/ui/radio.tsx` | ----------------------------------------------------------------------------- | 3 |
+| `ImageEditorDialog` | `src/components/ui/ImageEditorDialog.tsx` | Modal "Editar imagem" (referência de UX do pedido): prévia quadrada do recorte, régua de escala, | 2 |
+| `ModuleLinkCard` | `src/components/ui/ModuleLinkCard.tsx` | Card que leva a um módulo: ícone, título, uma linha de apoio e, opcionalmente, uma tag de | 2 |
+| `SummaryPanel` | `src/components/ui/SummaryPanel.tsx` | Painel de RESUMO escuro, fixo à direita de um configurador (modelo "simulador"): título com | 2 |
 | `password-input` | `src/components/ui/password-input.tsx` |  | 2 |
-| `BandSlider` | `src/components/ui/BandSlider.tsx` | Régua deslizante dividida em faixas iguais (ex.: faixas de tamanho da fazenda): valores dos | 1 |
-| `BreadcrumbTrail` | `src/components/ui/BreadcrumbTrail.tsx` | Trilha de navegação — porte fiel de `Breadcrumb.tsx` do design system `cerne`: | 1 |
-| `BulkActionBar` | `src/components/ui/BulkActionBar.tsx` | Barra de ações em lote (DS `BulkActionBar`): aparece quando há itens selecionados, mostra a | 1 |
-| `CheckOptionRow` | `src/components/ui/CheckOptionRow.tsx` | Linha de opção com caixa de marcar: ícone, nome + descrição e valor em selo à direita. | 1 |
-| `ChoiceCardGroup` | `src/components/ui/ChoiceCardGroup.tsx` | Grupo de cartões de escolha única (rádio): título, valor e descrição curta por opção. | 1 |
-| `ConfidenceMeter` | `src/components/ui/ConfidenceMeter.tsx` | Medidor de confiança (0–100) por FAIXA: alta ≥90 (verde), média 60–89 (âmbar), baixa <60 | 1 |
-| `DashedActionButton` | `src/components/ui/DashedActionButton.tsx` | Ação secundária em contorno tracejado, com seta à direita (ex.: "Copiar resumo da proposta →"), | 1 |
-| `ErrorStatusPage` | `src/components/ui/ErrorStatusPage.tsx` | Tela cheia de ERRO por status HTTP (design "404" do Figma GB-CERNE, nó 54212:6543): barra com | 1 |
-| `GiaTierCard` | `src/components/ui/GiaTierCard.tsx` | Cartão de um nível da GIA (assistente de IA): nome do nível e plano onde vem, métricas (janela de | 1 |
-| `MatchCandidateCard` | `src/components/ui/MatchCandidateCard.tsx` | Cartão de candidato de conciliação: título + subtítulo, MOTIVOS do casamento (✓ atendido, | 1 |
-| `PlanCompareStrip` | `src/components/ui/PlanCompareStrip.tsx` | Faixa de comparação rápida entre planos para a MESMA configuração: um botão por plano com o | 1 |
-| `PlanOptionCard` | `src/components/ui/PlanOptionCard.tsx` | Cartão selecionável de plano (Pro / Deluxe / Enterprise): nome na cor do plano, | 1 |
-| `PlanTierCard` | `src/components/ui/PlanTierCard.tsx` | Cartão de um plano na "escada" de planos (visão de resumo): faixa de cor no topo, nome e | 1 |
-| `QuantityStepper` | `src/components/ui/QuantityStepper.tsx` | Seletor de quantidade: régua (opcional) e − [número] + (campo editável) na mesma linha. | 1 |
-| `QueueTabs` | `src/components/ui/QueueTabs.tsx` | Abas de "fila de trabalho" com contador por aba (ex.: Para revisar 8 · Sugestões 3). | 1 |
-| `ReconciliationDetailPanel` | `src/components/ui/ReconciliationDetailPanel.tsx` | Painel de detalhe da transação selecionada (lado direito do workspace): cabeçalho com | 1 |
-| `ReconciliationRow` | `src/components/ui/ReconciliationRow.tsx` | Linha de transação bancária na fila de conciliação: ícone de direção (entrada/saída), | 1 |
-| `ReconciliationSummary` | `src/components/ui/ReconciliationSummary.tsx` | Faixa de resumo da conciliação: indicadores em R$ (com dica) + anel de progresso. | 1 |
-| `ReconciliationWorkspace` | `src/components/ui/ReconciliationWorkspace.tsx` | Casca mestre–detalhe da conciliação (evolução do `ReconciliationWorkspace` do DS, que | 1 |
-| `RemainingBalance` | `src/components/ui/RemainingBalance.tsx` | Indicador "ao vivo" de saldo de uma divisão (rateio): mostra quanto já foi distribuído do | 1 |
-| `SimpleTable` | `src/components/ui/SimpleTable.tsx` | Tabela de leitura (sem paginação/ordenação): cabeçalho em caixa-alta no padrão do DS, linhas com | 1 |
-| `ToggleCard` | `src/components/ui/ToggleCard.tsx` | Cartão de seleção (DS `ToggleSection variant="card"`): ícone + caixa de marcar no topo, título e | 1 |
-| `ProgressRing` | `src/components/ui/ProgressRing.tsx` | Anel de progresso (0–100) com o percentual no centro. Puro CSS (conic-gradient): | 0 |
+| `BandSlider` | `src/components/ui/BandSlider.tsx` | Régua deslizante dividida em faixas iguais (ex.: faixas de tamanho da fazenda): valores dos | 1 |
+| `BreadcrumbTrail` | `src/components/ui/BreadcrumbTrail.tsx` | Trilha de navegação — porte fiel de `Breadcrumb.tsx` do design system `cerne`: | 1 |
+| `BulkActionBar` | `src/components/ui/BulkActionBar.tsx` | Barra de ações em lote (DS `BulkActionBar`): aparece quando há itens selecionados, mostra a | 1 |
+| `CheckOptionRow` | `src/components/ui/CheckOptionRow.tsx` | Linha de opção com caixa de marcar: ícone, nome + descrição e valor em selo à direita. | 1 |
+| `ChoiceCardGroup` | `src/components/ui/ChoiceCardGroup.tsx` | Grupo de cartões de escolha única (rádio): título, valor e descrição curta por opção. | 1 |
+| `ConfidenceMeter` | `src/components/ui/ConfidenceMeter.tsx` | Medidor de confiança (0–100) por FAIXA: alta ≥90 (verde), média 60–89 (âmbar), baixa <60 | 1 |
+| `DashedActionButton` | `src/components/ui/DashedActionButton.tsx` | Ação secundária em contorno tracejado, com seta à direita (ex.: "Copiar resumo da proposta →"), | 1 |
+| `ErrorStatusPage` | `src/components/ui/ErrorStatusPage.tsx` | Tela cheia de ERRO por status HTTP (design "404" do Figma GB-CERNE, nó 54212:6543): barra com | 1 |
+| `EventTimeline` | `src/components/ui/EventTimeline.tsx` | Linha do tempo de EVENTOS (histórico, trâmite, auditoria): um ponto colorido | 1 |
+| `GiaTierCard` | `src/components/ui/GiaTierCard.tsx` | Cartão de um nível da GIA (assistente de IA): nome do nível e plano onde vem, métricas (janela de | 1 |
+| `MatchCandidateCard` | `src/components/ui/MatchCandidateCard.tsx` | Cartão de candidato de conciliação: título + subtítulo, MOTIVOS do casamento (✓ atendido, | 1 |
+| `PaymentSuccessOverlay` | `src/components/ui/PaymentSuccessOverlay.tsx` | Celebração de pagamento confirmado, em TELA CHEIA: um círculo verde nasce no centro e cresce até | 1 |
+| `PlanCompareStrip` | `src/components/ui/PlanCompareStrip.tsx` | Faixa de comparação rápida entre planos para a MESMA configuração: um botão por plano com o | 1 |
+| `PlanOptionCard` | `src/components/ui/PlanOptionCard.tsx` | Cartão selecionável de plano (Pro / Deluxe / Enterprise): nome na cor do plano, | 1 |
+| `PlanTierCard` | `src/components/ui/PlanTierCard.tsx` | Cartão de um plano na "escada" de planos (visão de resumo): faixa de cor no topo, nome e | 1 |
+| `ProgressRing` | `src/components/ui/ProgressRing.tsx` | Anel de progresso (0–100) com o percentual no centro. Puro CSS (conic-gradient): | 1 |
+| `QuantityStepper` | `src/components/ui/QuantityStepper.tsx` | Seletor de quantidade: régua (opcional) e − [número] + (campo editável) na mesma linha. | 1 |
+| `QueueTabs` | `src/components/ui/QueueTabs.tsx` | Abas de "fila de trabalho" com contador por aba (ex.: Para revisar 8 · Sugestões 3). | 1 |
+| `ReconciliationDetailPanel` | `src/components/ui/ReconciliationDetailPanel.tsx` | Painel de detalhe da transação selecionada (lado direito do workspace): cabeçalho com | 1 |
+| `ReconciliationRow` | `src/components/ui/ReconciliationRow.tsx` | Linha de transação bancária na fila de conciliação: ícone de direção (entrada/saída), | 1 |
+| `ReconciliationSummary` | `src/components/ui/ReconciliationSummary.tsx` | Faixa de resumo da conciliação: indicadores em R$ (com dica) + anel de progresso. | 1 |
+| `ReconciliationWorkspace` | `src/components/ui/ReconciliationWorkspace.tsx` | Casca mestre–detalhe da conciliação (evolução do `ReconciliationWorkspace` do DS, que | 1 |
+| `RemainingBalance` | `src/components/ui/RemainingBalance.tsx` | Indicador "ao vivo" de saldo de uma divisão (rateio): mostra quanto já foi distribuído do | 1 |
+| `ToggleCard` | `src/components/ui/ToggleCard.tsx` | Cartão de seleção (DS `ToggleSection variant="card"`): ícone + caixa de marcar no topo, título e | 1 |
+| `ViewSelect` | `src/components/ui/ViewSelect.tsx` | Seletor de VISÃO de uma lista: um botão só, na linha da busca (mesma altura), | 1 |
 | `provider` | `src/components/ui/provider.tsx` |  | 0 |
 | `toaster-original-chakra` | `src/components/ui/toaster-original-chakra.tsx` |  | 0 |
-| `Pagination` | `src/components/Pagination.tsx` | Paginação ligada à tabela (`useTable`). Visual fiel ao `Pagination.tsx` do design | 0 |
+| `Pagination` | `src/components/Pagination.tsx` | Paginação ligada à tabela (`useTable`). Visual fiel ao `Pagination.tsx` do design | 0 |
 | `SelectPagination` | `src/components/SelectPagination.tsx` |  | 0 |
 
 ## 3. Tokens de tema novos (semânticos)
@@ -193,7 +237,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 
 ## 4. Telas migradas por padrão
 ### PageHeader (título/descrição de listagem do DS)
-168 telas.
+171 telas.
   - `src/pages/Administrativo/Adiantamento/index.tsx`
   - `src/pages/Administrativo/AtividadesRecentes/index.tsx`
   - `src/pages/Administrativo/Autorizacao/index.tsx`
@@ -210,6 +254,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
   - `src/pages/Administrativo/FuncionarioXEventos/index.tsx`
   - `src/pages/Administrativo/Funcoes/index.tsx`
   - `src/pages/Administrativo/MeusProcessos/index.tsx`
+  - `src/pages/Administrativo/OrdensCompra/index.tsx`
   - `src/pages/Administrativo/Recebimentos/index.tsx`
   - `src/pages/Administrativo/RegistroEventos/index.tsx`
   - `src/pages/Administrativo/Rejeitados/index.tsx`
@@ -253,11 +298,10 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
   - `src/pages/BaseRegistrations/ReversalExpenses/index.tsx`
   - `src/pages/BaseRegistrations/ServiceExpenses/index.tsx`
   - `src/pages/BaseRegistrations/SystemUpdates/index.tsx`
-  - `src/pages/BaseRegistrations/TaxRules/index.tsx`
-  - … (+108; use `git grep -l "from '@/components/ui/PageHeader'" src/pages`)
+  - … (+111; use `git grep -l "from '@/components/ui/PageHeader'" src/pages`)
 
 ### ListToolbar (busca inline + Filtros)
-80 telas.
+81 telas.
   - `src/pages/Administrativo/Autorizacao/index.tsx`
   - `src/pages/Administrativo/Compras/index.tsx`
   - `src/pages/Administrativo/Cotacoes/index.tsx`
@@ -266,6 +310,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
   - `src/pages/Administrativo/Fabrica/index.tsx`
   - `src/pages/Administrativo/FuncionarioXEventos/index.tsx`
   - `src/pages/Administrativo/Funcoes/index.tsx`
+  - `src/pages/Administrativo/MeusProcessos/index.tsx`
   - `src/pages/Administrativo/Recebimentos/index.tsx`
   - `src/pages/Administrativo/Rejeitados/index.tsx`
   - `src/pages/Administrativo/SaldoEstoque/index.tsx`
@@ -317,8 +362,7 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
   - `src/pages/CadastrosBase/Fornecedores/index.tsx`
   - `src/pages/CadastrosBase/Funcionarios/index.tsx`
   - `src/pages/CadastrosBase/Inventario/index.tsx`
-  - `src/pages/CadastrosBase/NaturezaOperacao/index.tsx`
-  - … (+20; use `git grep -l "from '@/components/ui/ListToolbar'" src/pages`)
+  - … (+21; use `git grep -l "from '@/components/ui/ListToolbar'" src/pages`)
 
 ### ButtonFilter (botão Filtros do DS)
 92 telas.
@@ -428,7 +472,11 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
   - `src/pages/CadastrosBase/Fazendas/steps/StepIdentificacao.tsx`
 
 ### SimpleTable (tabela simples do kit)
-1 telas.
+5 telas.
+  - `src/pages/Administrativo/Solicitacao/RequestAttachmentRow.tsx`
+  - `src/pages/Administrativo/Solicitacao/RequestItemRow.tsx`
+  - `src/pages/Administrativo/Solicitacao/RequestPurchaseViewSections.tsx`
+  - `src/pages/Administrativo/Solicitacao/RequestQuotationTab.tsx`
   - `src/pages/Planos/Contratacao/index.tsx`
 
 ## 5. Commits (ordem cronológica)
@@ -495,3 +543,26 @@ Ordenado por nº de consumidores. Antes de criar componente novo, procure aqui (
 - de7d1b5 feat(contratacao): piso de acessos por plano, cobranca a direita, resumo enxuto (modulos/consult so quando houver, sem GIA), regua mista em 2 linhas, botao Continuar
 - 3fb2a50 feat(contratacao): GIA conforme documento atualizado (suporte e consulta em todos os planos, 137 msg/dia por pessoa, R$ 0,00146 por mensagem)
 - 6e9cf2d feat(ui): tela de erro por status HTTP (design 404 do Figma) com exemplos das faixas 4xx e 5xx em /erro/:code e /erros
+- 7ba4aff feat(onboarding): checkout sem validacao e etapas livres, celebracao de pagamento em tela cheia, entrada automatica e tutorial guiado (driver.js) com Primeiros passos para contas vindas do Criar conta
+- cbc367b fix(tour): balao acompanha cada etapa do assistente de fazenda (showWhen/advanceWhen) e nao bloqueia o preenchimento
+- 09c9877 feat(tour): botao Pausar nos passos de preenchimento, barra de tutorial pausado e retomada na etapa certa
+- 0e8b939 feat(tour): foco no formulario, botao Continuar no balao e Pular tutorial fixo no canto inferior esquerdo
+- 9671054 fix(tour): barrinha de tutorial pausado no canto superior direito, cobrindo o X de fechar do formulario
+- c455ebb fix(ui): rodape do assistente de fazenda volta a ocupar toda a largura (contador a esquerda, botoes a direita)
+- c379b48 feat(tour): barrinha de pausa vira balao apontando para o icone de ajuda e cobre o X do formulario
+- 0e32c3b feat(os): central da nova ordem de servico e grupo proprio de apontamento
+- 521ead7 feat(os): fim da ordem de servico; apontamento e ordem de compra no lugar
+- f9e02ae docs(ux): tipo de servico no apontamento e operacao obrigatoria na ordem de compra
+- ce57040 docs(ux): mapa de impacto da ordem de compra unica e dos tipos de servico
+- 3f2b0db feat(ui): central de agrupador com cards e descricao das funcionalidades
+- ea4dc50 feat(suprimentos): tela unica de ordens de compra com as listas em abas
+- aaff7d0 Merge pull request #1 from meirelesarthur/feat/nova-ordem-servico-apontamento
+- b4c3c09 fix(deploy): modo demo sem backend no build de revisao (login dava 405)
+- fb9b2f0 feat(suprimentos): ordem de compra mais limpa e cotacoes em comparativo
+- 8b172b4 fix(ui): formulario nao alarga com conteudo largo e upload compacto
+- c07d122 feat(suprimentos): itens, anexos e historico da ordem de compra em tabela
+- 0ab63c3 feat(ui): historico da ordem de compra em linha do tempo
+- efa2b97 feat(suprimentos): dados gerais fixos e acoes da ordem de compra no rodape
+- 0b54da2 feat(ui): icone de configurar colunas em todas as listas
+- 6de6146 feat(suprimentos): visualizacao da ordem de compra mais compacta
+- 8e0985a feat(suprimentos): central de ordens de compra com seletor de visao

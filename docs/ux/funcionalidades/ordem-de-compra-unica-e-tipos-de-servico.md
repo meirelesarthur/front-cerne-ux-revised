@@ -177,26 +177,58 @@ As telas não diferem só pelo status: diferem pelo **escopo** (minhas, sob minh
 4. **Backend e front:** cadastro novo de Operações e campo obrigatório na ordem; ligação com a despesa.
 5. **App:** rótulos e campo único no apontamento; depois a ordem de compra.
 
-## Feito no front: tela única de Ordens de compra (25/11)
+## Feito no front: tela única de Ordens de compra (estado em 25/11)
 
-- **Rota:** `/administrativo/ordens-de-compra?visao=<visão>`; abre com qualquer uma das 6 permissões de leitura das listas.
-- **Visões (abas), na ordem do caminho da ordem:** Criadas por mim (`/request-purchases`), Sob minha responsabilidade (`my-processes`), Para eu aprovar (`/request-authorizations`), Em cotação (`in-quotation`), Em compra (`in-purchase`), Recebimento (`/request-receipts`), Rejeitadas e canceladas (`rejected`). Cada aba só aparece para quem tem a permissão da lista de origem.
-- **Como:** cada aba é a lista atual embutida sem mudança (`components/EmbeddedList.tsx`): mesmas colunas, filtros, ações por linha e diálogos. `ContainerGrid` e `PageHeader` leem o contexto e deixam de desenhar o card e o título; fora da tela única nada muda.
+- **Rota:** `/administrativo/ordens-de-compra?visao=<visão>`; abre com qualquer uma das 6 permissões de leitura das listas. Sem `?visao`, abre em **Todas**.
+- **Visões**, num **seletor único** (`components/ui/ViewSelect.tsx`: ícone + nome + contador; menu com todas e check na atual): Todas (`/request-purchases?scope=all`), Criadas por mim (`/request-purchases`), Comigo (`my-processes`), Para eu aprovar (`/request-authorizations`), Em cotação (`in-quotation`), Em compra (`in-purchase`), Recebimento (`/request-receipts`), Rejeitadas (`rejected?status=5`) e Canceladas (`rejected?status=10`). Cada visão só aparece para quem tem a permissão da lista de origem; `?visao=encerradas` (link antigo) abre Rejeitadas.
+- **Linha única de controles:** busca e, à direita dela, o seletor; no outro extremo, configurar colunas, Filtros e **Novo** (fixo em toda visão, para quem pode criar). Toda visão tem busca e Filtros ("Comigo" ganhou os dois).
+- **Contador** de cada visão: o `pagination.total` da própria lista, pedido com 1 item (`OrdensCompra/usePurchaseOrderViewCounts.ts`); atualiza junto com a lista.
+- **Clique na linha** abre a ordem: em "Para eu aprovar", a tela de autorização; nas demais, a **visualização**. Na rota antiga de "Criadas por mim" o clique também passou a abrir a visualização (antes abria a edição).
+- **Aviso de ordens negadas** (`DeniedRequestsModal`) não abre na tela única; continua nas rotas antigas.
+- **Como:** cada visão é a lista atual embutida (`components/EmbeddedList.tsx`), com mesmas colunas, filtros, ações por linha e diálogos. O contexto agora leva: `toolbarStart`/`toolbarEnd` (seletor e Novo na linha da busca), `fixedFilter` (situação ou escopo imposto pela visão), `onRowOpen` (clique na linha) e o ponto `actionsTarget`, para onde o `HeaderGrid` manda os botões da lista. Leem o contexto: `ContainerGrid`, `PageHeader`, `HeaderGrid`, `ListToolbar`, `Table` e `DeniedRequestsModal`; fora da tela única nada muda.
 - **Menu:** Suprimentos mostra só "Ordens de compra" e "Parâmetros SLA". Chave `UNIFIED_PURCHASE_ORDERS_ENABLED` (`config/v2/purchaseOrdersFeature.ts`); com `false` volta o menu antigo. As rotas antigas seguem vivas (sino, favoritos, links).
-- **Falta (backend, item 3):** `scope` e `status[]` no `GET /request-purchases`, `allowed_actions` e contagem por visão; com isso as abas viram filtros de uma lista só e ganham o número na pílula (`QueueTabs` já aceita aba sem contagem).
+- **Depende da API** (confirmado no código do backend, develop 27fcb49cc):
+  - **Todas:** `ListRequestPurchasesAction` restringe ao `user_id`; falta aceitar `scope=all`. Até lá, Todas = Criadas por mim.
+  - **Rejeitadas × Canceladas:** `listRejected` não aplica `status`; até lá, as duas mostram as situações 5 e 10.
+  - **Comigo:** `listMyProcesses` não chama `applyListFilters`; até lá, busca e Filtros não têm efeito.
+  - Contagem por visão num pedido só (hoje são 9 pedidos).
 
-## Visual da Ordem de compra (25/11)
+## Visual da Ordem de compra (estado em 25/11)
 
 Pedido do dono: a ordem de compra é complexa e a aba de cotações estava ruim; visual minimalista e funcional, no padrão do sistema.
 
-- **Faixa de situação** no topo da ordem salva: tag de situação (mesma cor da lista), código e responsável atual, sempre visível (inclusive em visualização e encerrada); as ações de trâmite (Receber, Transferir, Voltar etapa, Finalizar, Justificativa) só aparecem para quem pode executá-las.
-- **Dados Gerais** em duas seções (`FormSection`): *Identificação* (Código, Tipo, Prioridade, Data do pedido, Solicitante, Encarregado, NF-e na visualização) e *Descrição do pedido* (Descrição/Chamado, Justificativa e Observação, nessa ordem, com 4 linhas de altura).
-- **Itens:** título com contador, cada item num bloco numerado ("Item 1"), lista vazia tracejada; sem tipo escolhido, a lista diz para escolher o tipo em Dados Gerais (antes o botão só ficava desabilitado, sem explicar).
+- **Topo:** situação (tag com a cor da lista), código e responsável atual na linha do título, sem faixa própria.
+- **Ações de trâmite** (Receber, Transferir, Voltar etapa, Justificativa da cotação, Finalizar) no **rodapé**, à direita, antes de Salvar; só aparecem para quem pode executá-las.
+- **Dados Gerais fixos acima das abas**, sem títulos de seção: Código, Tipo, Prioridade, Data do pedido, Solicitante, Encarregado (e NF-e na visualização), depois Descrição/Chamado, Justificativa e Observação. Edição em 3 colunas e áreas de texto com 3 linhas; visualização em 4 colunas e 2 linhas, para as abas aparecerem na primeira tela (1366×768).
+- **Abas** abaixo: Itens, Anexos, Histórico, Cotações e, só na visualização e quando há dado, Autorização, Recebimento, Rateio e Sub Solicitações (`RequestPurchaseViewSections.tsx`, uma seção por aba; Responsável, Prioridade, Tipo e Mapa de cotações não se repetem). `?tab=0` antigo abre Itens; erro de validação em Dados Gerais rola até eles.
+- **Itens, Anexos e Rateio/Sub Solicitações em tabela** (`SimpleTable`), com cabeçalho "título + contador + ação" e vazio tracejado (`Solicitacao/RequestTabParts.tsx`). Itens editáveis na própria linha; **todo item tem Valor (R$) e Descrição** (obrigatórios só onde o schema exige; o envio já manda os dois). Anexos com upload compacto (`FileUpload compact`).
+- **Histórico em linha do tempo** (`components/ui/EventTimeline.tsx`): do mais recente para o mais antigo, ponto na cor da situação, data, responsável, tempo gasto e justificativa.
 - **Cotações:** os cartões altos viraram um **comparativo**:
   - resumo no topo: fornecedores, respondidas ("3 de 15") e menor valor com o fornecedor;
   - tabela (`SimpleTable`) com Fornecedor (data e quem cotou), Situação, Valor, Desconto, **Valor final** e Saving; recebidas primeiro, do menor para o maior valor final, com a marca "Menor valor"; cotação ainda não recebida mostra "—" no lugar de R$ 0,00 (regra em `quotationRanking.ts`, com teste);
   - marcar todas no cabeçalho; "Enviar e-mail (n)" só aparece com cotação marcada;
   - "Enviar para autorização" saiu do menu de cada cotação (ele age sobre a ordem, não sobre a cotação) e foi para o cabeçalho da aba; com ao menos uma cotação recebida ele vira a ação principal e "Adicionar fornecedor" fica secundário.
+
+### Mudanças globais que nasceram aqui
+
+- **Ícone de configurar colunas** em todas as listas: papel `columns-settings` (`Columns3CogIcon`, HugeIcons) em `design/icons.ts`; o botão do `GridSettingsFloatingPanel` ganhou a moldura e a altura do "Filtros".
+- **`FormContainer`:** a área de rolagem não alarga mais com conteúdo largo (`min-width: 0`); tabelas largas rolam dentro delas.
+- **`Table`:** aceita "abrir linha" vindo do `EmbeddedList` (`onRowOpen`), sem mudar as outras telas.
+
+### Histórico de entregas (25/11)
+
+| Commit | O que mudou |
+|---|---|
+| `ea4dc50` | Tela única de Ordens de compra com as listas embutidas |
+| `fb9b2f0` | Comparativo de cotações; Dados Gerais em seções |
+| `c07d122` | Itens, Anexos e Histórico em tabela; Valor (R$) e Descrição em todo item |
+| `8b172b4` | `FormContainer` sem alargar; `FileUpload compact` |
+| `0ab63c3` | Histórico em linha do tempo (`EventTimeline`) |
+| `efa2b97` | Dados Gerais fixos acima das abas; ações no rodapé |
+| `0b54da2` | Ícone de colunas global |
+| `6de6146` | Visualização compacta; seções extras viram abas |
+| `8e0985a` | Seletor de visão, Todas, Rejeitadas × Canceladas, Novo fixo, busca em Comigo |
+| (este) | Clique na linha abre a visualização; documentação atualizada |
 
 ## Pendências de decisão
 
