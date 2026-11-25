@@ -124,6 +124,16 @@ export default function OrdensCompraHub() {
               ) : undefined
             }
             fixedFilter={activeView?.fixedFilter}
+            // Clique na linha abre a ordem (decisão do dono, 25/11): em "Para eu
+            // aprovar", a tela de autorização; nas demais, a visualização.
+            onRowOpen={(row) => {
+              if (!row.uuid) return;
+              navigate(
+                active === 'aprovar'
+                  ? `/administrativo/autorizacao/${row.uuid}`
+                  : `/administrativo/solicitacao/${row.uuid}/visualizar`
+              );
+            }}
           >
             <Suspense
               fallback={

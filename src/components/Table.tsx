@@ -35,6 +35,7 @@ import { getCellTooltipText } from '@/utils/tableCellTooltip';
 
 import { Button } from './Button';
 import { HeadingTextGrid } from './HeadingTextGrid';
+import { useEmbeddedList } from './EmbeddedList';
 import { IconButtonTable } from './IconButtonTable';
 import { Pagination } from './Pagination';
 import { QueryErrorState } from './QueryErrorState';
@@ -252,6 +253,7 @@ export function Table({
   const { table, pagination, onSelectPage, hasFooter } = useTable();
   const { languageGB } = useLanguage();
   const [isMobile, isMobileSx] = useMediaQuery(['(max-width: 680px)', '(max-width: 360px)']);
+  const embeddedList = useEmbeddedList();
 
   // Boundary de estado só ativa quando a tela passa `isError`/`isEmpty`
   // (as ~60 telas legadas que só usam `isLoading` não passam por aqui —
@@ -532,7 +534,11 @@ export function Table({
                             cell.column.id === 'pdf' ||
                             cell.column.id === 'select'
                               ? null!
-                              : row.getToggleSelectedHandler()
+                              : // Lista embutida com `onRowOpen` (ex.: tela única de
+                                // Ordens de compra): o clique abre o registro.
+                                embeddedList?.onRowOpen
+                                ? () => embeddedList.onRowOpen?.(row.original)
+                                : row.getToggleSelectedHandler()
                           }
                           opacity={row.original.enabled === false ? '0.5' : '1'}
                           textDecoration={row.original.enabled === false ? 'line-through' : ''}

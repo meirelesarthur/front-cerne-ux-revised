@@ -19,6 +19,8 @@ interface EmbeddedListValue {
   toolbarStart?: ReactNode;
   toolbarEnd?: ReactNode;
   fixedFilter?: Record<string, unknown>;
+  /** Clique na linha da tabela (fora das colunas de ação) abre o registro. */
+  onRowOpen?: (row: { uuid?: string }) => void;
   actionsTarget: HTMLElement | null;
   setActionsTarget: (element: HTMLElement | null) => void;
 }
@@ -30,16 +32,18 @@ export function EmbeddedListProvider({
   toolbarStart,
   toolbarEnd,
   fixedFilter,
+  onRowOpen,
 }: {
   children: ReactNode;
   toolbarStart?: ReactNode;
   toolbarEnd?: ReactNode;
   fixedFilter?: Record<string, unknown>;
+  onRowOpen?: (row: { uuid?: string }) => void;
 }) {
   const [actionsTarget, setActionsTarget] = useState<HTMLElement | null>(null);
   const value = useMemo(
-    () => ({ toolbarStart, toolbarEnd, fixedFilter, actionsTarget, setActionsTarget }),
-    [toolbarStart, toolbarEnd, fixedFilter, actionsTarget]
+    () => ({ toolbarStart, toolbarEnd, fixedFilter, onRowOpen, actionsTarget, setActionsTarget }),
+    [toolbarStart, toolbarEnd, fixedFilter, onRowOpen, actionsTarget]
   );
   return <EmbeddedListContext.Provider value={value}>{children}</EmbeddedListContext.Provider>;
 }

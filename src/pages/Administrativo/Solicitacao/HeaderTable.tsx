@@ -41,11 +41,12 @@ export function HeaderTable({
   const { can } = usePermissions();
   const { table } = useTable();
 
-  // Ao selecionar uma linha da grid, navega para a edição (padrão do projeto).
+  // Ao selecionar uma linha da grid, abre a VISUALIZAÇÃO da ordem (decisão do
+  // dono, 25/11); editar fica na ação "Editar" da linha.
   useEffect(() => {
     const selected = table?.getSelectedRowModel()?.rows[0]?.original as any;
     if (selected?.uuid) {
-      navigate(`/administrativo/solicitacao/${selected.uuid}`);
+      navigate(`/administrativo/solicitacao/${selected.uuid}/visualizar`);
     }
   }, [table?.getSelectedRowModel()?.rows[0]?.original]);
 
