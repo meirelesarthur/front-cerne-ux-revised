@@ -228,7 +228,8 @@ Pedido do dono: a ordem de compra é complexa e a aba de cotações estava ruim;
 | `0b54da2` | Ícone de colunas global |
 | `6de6146` | Visualização compacta; seções extras viram abas |
 | `8e0985a` | Seletor de visão, Todas, Rejeitadas × Canceladas, Novo fixo, busca em Comigo |
-| (este) | Clique na linha abre a visualização; documentação atualizada |
+| `fee7831` | Clique na linha abre a visualização |
+| `f284445` | Documentação desta funcionalidade e mapa de mudanças atualizados |
 
 ## Pendências de decisão
 
