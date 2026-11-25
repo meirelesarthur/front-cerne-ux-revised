@@ -142,6 +142,204 @@ export interface ModuleRequestPurchases {
       /** Faixa de situação no topo da ordem: "Responsável atual". */
       statusBar: {
         responsible: string;
+        /** Protótipo da OC (etapas, fornecedor e comprador no topo). */
+        stepsAriaLabel: string;
+        steps: {
+          pedido: string;
+          cotacao: string;
+          aprovacao: string;
+          compra: string;
+          recebimento: string;
+          encerrada: string;
+        };
+        stepSkipped: string;
+        profiles: { simples: string; padrao: string; completo: string };
+        provider: string;
+        buyer: string;
+        notDefined: string;
+      };
+      /** Protótipo da OC, lote 2 (itens com saldo, previsão de entrega, entrega). */
+      prototype: {
+        items: {
+          product: string;
+          quantity: string;
+          unitPrice: string;
+          total: string;
+          received: string;
+          balance: string;
+          forecast: string;
+          orderTotal: string;
+        };
+        forecast: {
+          label: string;
+          late: string;
+          change: string;
+          dialogTitle: string;
+          newDate: string;
+          justification: string;
+          justificationPlaceholder: string;
+          confirm: string;
+          cancel: string;
+          toastTitle: string;
+          toastDescription: string;
+        };
+        delivery: {
+          tab: string;
+          freightType: string;
+          cif: string;
+          fob: string;
+          place: string;
+          carrier: string;
+          unloading: string;
+          yes: string;
+          no: string;
+          note: string;
+          empty: string;
+        };
+        approvals: {
+          title: string;
+          level: string;
+          approver: string;
+          status: string;
+          date: string;
+          note: string;
+          approved: string;
+          rejected: string;
+          pending: string;
+        };
+        links: {
+          tab: string;
+          origin: string;
+          derived: string;
+          code: string;
+          justification: string;
+          noOrigin: string;
+          noDerived: string;
+        };
+        duplicate: {
+          button: string;
+          dialogTitle: string;
+          description: string;
+          items: string;
+          confirm: string;
+          cancel: string;
+          toastTitle: string;
+          toastDescription: string;
+        };
+        payment: {
+          tab: string;
+          condition: string;
+          installments: string;
+          seq: string;
+          dueDate: string;
+          value: string;
+          status: string;
+          open: string;
+          paid: string;
+          expenses: string;
+          freight: string;
+          insurance: string;
+          other: string;
+          itemsTotal: string;
+          expected: string;
+          scheduled: string;
+          matches: string;
+          missing: string;
+          over: string;
+          empty: string;
+        };
+        invoices: {
+          tab: string;
+          issuer: string;
+          number: string;
+          series: string;
+          issuedAt: string;
+          enteredAt: string;
+          value: string;
+          total: string;
+          orderTotal: string;
+          empty: string;
+        };
+        receipt: {
+          button: string;
+          dialogTitle: string;
+          description: string;
+          invoiceNumber: string;
+          series: string;
+          issuedAt: string;
+          value: string;
+          items: string;
+          balance: string;
+          confirm: string;
+          cancel: string;
+          toastTitle: string;
+        };
+        actions: {
+          cancelBalance: string;
+          cancelBalanceTitle: string;
+          cancelBalanceDescription: string;
+          cancelItem: string;
+          cancelItemTitle: string;
+          cancelItemDescription: string;
+          reopen: string;
+          reopenTitle: string;
+          reopenDescription: string;
+          justification: string;
+          justificationPlaceholder: string;
+          confirm: string;
+          cancel: string;
+          toastDone: string;
+          cancelled: string;
+        };
+        categories: {
+          label: string;
+          names: {
+            insumos: string;
+            manutencao: string;
+            servicos: string;
+            adiantamento: string;
+            despesasFixas: string;
+            frete: string;
+          };
+        };
+        settings: {
+          pageTitle: string;
+          pageSubtitle: string;
+          prototypeNote: string;
+          flowTitle: string;
+          flowHint: string;
+          flowCaption: { simples: string; padrao: string; completo: string };
+          exceptionsTitle: string;
+          exceptions: { rejected: string; partial: string; cancel: string; reopen: string };
+          profileTitle: string;
+          profileHint: string;
+          profiles: { simples: string; padrao: string; completo: string };
+          selected: string;
+          categoriesTitle: string;
+          categoriesHint: string;
+          categoryColumn: string;
+          typesColumn: string;
+          quotesTitle: string;
+          quotesHint: string;
+          rangeColumn: string;
+          quotesColumn: string;
+          upTo: string;
+          between: string;
+          above: string;
+          noQuote: string;
+          approvalTitle: string;
+          autoApprove: string;
+          autoApproveHint: string;
+          levelsTitle: string;
+          levelColumn: string;
+          whoColumn: string;
+          whenColumn: string;
+          levels: { encarregado: string; diretoria: string; ciencia: string };
+          levelWhen: { encarregado: string; diretoria: string; ciencia: string };
+          save: string;
+          toastTitle: string;
+          toastDescription: string;
+        };
       };
       fields: {
         type: string;

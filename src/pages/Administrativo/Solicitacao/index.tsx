@@ -109,6 +109,9 @@ import { HeaderTable } from './HeaderTable';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 import { useEmbeddedList } from '@/components/EmbeddedList';
+import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
+
+import { isDeliveryLate, type PurchaseOrderPrototypeFields } from './prototype/prototypeFields';
 import { ListToolbar } from '@/components/ui/ListToolbar';
 import { StatusTag } from '@/components/ui/StatusTag';
 import { useListSearch } from '@/hooks/useListSearch';
@@ -300,6 +303,18 @@ export default function SolicitacaoList() {
             <Text fontWeight="medium" lineClamp="1">
               {row.original.description ?? '—'}
             </Text>
+            {/* PROTÓTIPO: selo "Atrasada" pela previsão de entrega (dados de demonstração). */}
+            {PURCHASE_ORDER_PROTOTYPE &&
+              isDeliveryLate(
+                (row.original as RequestPurchaseListItem & PurchaseOrderPrototypeFields).delivery_forecast,
+                row.original.status
+              ) && (
+                <StatusTag
+                  size="sm"
+                  label={languageGB.requestPurchases.requestPurchase.form.prototype.forecast.late}
+                  color="red.600"
+                />
+              )}
           </Flex>
         ),
         meta: { gridLabel: languageGB.requestPurchases.requestPurchase.list.table.justification },

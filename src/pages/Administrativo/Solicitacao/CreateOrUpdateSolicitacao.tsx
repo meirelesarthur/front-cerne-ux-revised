@@ -204,6 +204,15 @@ import {
 } from './RequestPurchaseViewSections';
 import { RequestQuotationAuthorizerDialog } from './RequestQuotationAuthorizerDialog';
 import { RequestQuotationTab } from './RequestQuotationTab';
+import { PurchaseOrderProcessBar } from './prototype/PurchaseOrderProcessBar';
+import { PrototypeItemsTable } from './prototype/PrototypeItemsTable';
+import { PrototypeApprovalsTable } from './prototype/PrototypeApprovalsTable';
+import { DuplicateOrderDialog } from './prototype/DuplicateOrderDialog';
+import { PrototypeOrderActions } from './prototype/PrototypeOrderActions';
+import { categoryOfType } from './prototype/purchaseOrderCategories';
+import { isDuplicateOrderState } from './prototype/duplicateOrder';
+import type { PrototypePurchaseOrder } from './prototype/prototypeFields';
+import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
 
 // Mapeamento de campo → aba (0 Dados Gerais / 1 Itens / 2 Anexos) — usado só
 // pelo `onInvalid` para navegar até a 1ª aba com erro. "Histórico" (3) nunca
@@ -214,6 +223,10 @@ const VIEW_SECTION_TAB: Record<RequestPurchaseViewSection, number> = {
   receipt: 6,
   ratio: 7,
   children: 8,
+  delivery: 9, // protótipo
+  links: 10, // protótipo
+  payment: 11, // protótipo
+  invoices: 12, // protótipo
 };
 
 const FIELD_TAB_MAP: Partial<Record<keyof RequestPurchaseFormType, number>> = {
@@ -289,6 +302,7 @@ export default function CreateOrUpdateSolicitacao() {
     reset,
     watch,
     setValue,
+    getValues,
     formState: { errors, dirtyFields },
   } = useForm<RequestPurchaseFormType>({
     mode: 'onChange',
@@ -394,6 +408,23 @@ export default function CreateOrUpdateSolicitacao() {
       });
     }
   }
+
+  // PROTÓTIPO — Duplicar: na CRIAÇÃO, vem preenchida com o estado de navegação
+  // montado pelo `DuplicateOrderDialog` (`buildDuplicateState`); o estado é
+  // limpo em seguida para não reaplicar ao recarregar. Roda a cada navegação
+  // (`location.key`): a rota /visualizar e a /novo reaproveitam esta instância.
+  const [isDuplicateOpen, setDuplicateOpen] = useState(false);
+  useEffect(() => {
+    if (!PURCHASE_ORDER_PROTOTYPE || isEditing || !isDuplicateOrderState(location.state)) return;
+    const { values, duplicateOf } = location.state;
+    reset({ ...getValues(), ...values });
+    toaster.info({
+      title: text.form.prototype.duplicate.toastTitle,
+      description: text.form.prototype.duplicate.toastDescription.replace('{code}', duplicateOf.code ?? '—'),
+    });
+    navigate(location.pathname + location.search, { replace: true, state: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
 
   const requestPurchaseQuery = useCustomFormQueryByGuid<RequestPurchaseData>({
     registrationId: isEditing ? requestPurchaseId : undefined,
@@ -600,6 +631,10 @@ export default function CreateOrUpdateSolicitacao() {
     isViewRoute && requestPurchaseData ? availableViewSections(requestPurchaseData) : [];
   const viewSectionText = text.form.viewSections;
   const viewSectionLabel: Record<RequestPurchaseViewSection, string> = {
+    delivery: text.form.prototype.delivery.tab,
+    links: text.form.prototype.links.tab,
+    payment: text.form.prototype.payment.tab,
+    invoices: text.form.prototype.invoices.tab,
     authorization: viewSectionText.authorizationTitle,
     receipt: viewSectionText.receiptTitle,
     ratio: viewSectionText.ratioTitle,
@@ -665,7 +700,21 @@ export default function CreateOrUpdateSolicitacao() {
             disabled={isSubmitting}
           />
           <Flex gap={2} wrap="wrap" justify="flex-end">
-            {showTramiteBar && canReceive && (
+            {/* PROTÓTIPO: Duplicar a ordem (itens escolhidos), para quem pode criar. */}
+            {PURCHASE_ORDER_PROTOTYPE && isEditing && requestPurchaseData && canCreate && (
+              <Button
+                title={text.form.prototype.duplicate.button}
+                variant="outline"
+                type="button"
+                onClick={() => setDuplicateOpen(true)}
+                disabled={anyActionPending}
+              />
+            )}
+            {/* PROTÓTIPO (lote 4): registrar recebimento, cancelar saldo, reabrir. */}
+            {PURCHASE_ORDER_PROTOTYPE && isEditing && requestPurchaseData && (
+              <PrototypeOrderActions data={requestPurchaseData as PrototypePurchaseOrder} />
+            )}
+            {showTramiteBar && canReceive && !PURCHASE_ORDER_PROTOTYPE && (
               <Button
                 title={text.actions.receiveButton}
                 variant="outline"
@@ -725,6 +774,12 @@ export default function CreateOrUpdateSolicitacao() {
         </>
       }
     >
+      {/* PROTÓTIPO (só com dados de demonstração): etapas do processo,
+          fornecedor e comprador no topo da ordem já salva. */}
+      {PURCHASE_ORDER_PROTOTYPE && isEditing && requestPurchaseData && (
+        <PurchaseOrderProcessBar data={requestPurchaseData} canChangeForecast={!isViewRoute} />
+      )}
+
       <Form id="request-purchase-form" onSubmit={handleSubmit(onSubmit, onInvalid)} noPadding>
         {/* Dados Gerais FIXO acima das abas (25/11): sempre visível como
             cabeçalho da OC; as abas abaixo (Itens, Anexos, Histórico,
@@ -787,6 +842,18 @@ export default function CreateOrUpdateSolicitacao() {
                   />
                 )}
               />
+
+              {/* PROTÓTIPO (lote 5): Categoria no lugar do Tipo, derivada dele. */}
+              {PURCHASE_ORDER_PROTOTYPE && (
+                <InputReadOnly
+                  label={text.form.prototype.categories.label}
+                  value={(() => {
+                    const category = categoryOfType(watch('type')?.value);
+                    return category ? text.form.prototype.categories.names[category] : '—';
+                  })()}
+                  loading={isLoading}
+                />
+              )}
 
               <Controller
                 name="priority"
@@ -937,13 +1004,18 @@ export default function CreateOrUpdateSolicitacao() {
           {/* ---- ABA 2: Itens (`RequestItemRow`, TASK-RP-FE-07) ---- */}
           {/* @ts-ignore */}
           <Tabs.Content value="1">
-            <RequestItemRow
-              control={control}
-              errors={errors}
-              watch={watch}
-              isLoading={!!isLoading}
-              canSave={canSave}
-            />
+            {/* PROTÓTIPO: na visualização, itens com unitário, recebido e saldo. */}
+            {PURCHASE_ORDER_PROTOTYPE && isViewRoute && requestPurchaseData ? (
+              <PrototypeItemsTable data={requestPurchaseData as PrototypePurchaseOrder} />
+            ) : (
+              <RequestItemRow
+                control={control}
+                errors={errors}
+                watch={watch}
+                isLoading={!!isLoading}
+                canSave={canSave}
+              />
+            )}
           </Tabs.Content>
 
           {/* ---- ABA 3: Anexos (`RequestAttachmentRow`, TASK-RP-FE-07) ---- */}
@@ -964,6 +1036,13 @@ export default function CreateOrUpdateSolicitacao() {
           {isEditing && (
             // @ts-ignore
             <Tabs.Content value="3">
+              {/* PROTÓTIPO: aprovações por nível de alçada, acima da linha do tempo. */}
+              {PURCHASE_ORDER_PROTOTYPE &&
+                !!(requestPurchaseData as PrototypePurchaseOrder | undefined)?.approvals?.length && (
+                  <PrototypeApprovalsTable
+                    approvals={(requestPurchaseData as PrototypePurchaseOrder).approvals ?? []}
+                  />
+                )}
               <RequestMovementHistory movements={requestPurchaseData?.movements ?? []} />
             </Tabs.Content>
           )}
@@ -1052,6 +1131,15 @@ export default function CreateOrUpdateSolicitacao() {
           isOpen={quotationAuthorizerDisclosure.open}
           onClose={quotationAuthorizerDisclosure.onClose}
           requestPurchaseUuid={requestPurchaseId}
+        />
+      )}
+
+      {/* PROTÓTIPO: Duplicar ordem (escolha dos itens). */}
+      {PURCHASE_ORDER_PROTOTYPE && requestPurchaseData && (
+        <DuplicateOrderDialog
+          isOpen={isDuplicateOpen}
+          onClose={() => setDuplicateOpen(false)}
+          data={requestPurchaseData}
         />
       )}
     </FormContainer>

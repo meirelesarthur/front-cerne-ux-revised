@@ -89,6 +89,7 @@ export const navDescriptions: Record<string, string> = {
   'cad-ger-par': 'Ajustes gerais de funcionamento do sistema.',
   // Administrativo › Suprimentos
   'adm-sup-sla': 'Prazo esperado de cada etapa da compra.',
+  'adm-sup-flx': 'Perfil do fluxo, categorias, cotação por valor e alçada.',
   'adm-sup-meu': 'Ordens de compra sob sua responsabilidade.',
   'adm-sup-sol': 'Pedir, aprovar, cotar, comprar e receber, numa tela só.',
   'adm-sup-rej': 'Ordens não aprovadas ou canceladas.',

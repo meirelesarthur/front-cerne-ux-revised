@@ -31,19 +31,40 @@ import { columnsForm } from '@/constants/coluns-form';
 
 import type { RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 
+import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
+
+import { PrototypeInvoicesPanel, PrototypePaymentPanel } from './prototype/PrototypeFinancePanels';
+import type { PrototypePurchaseOrder, PurchaseOrderPrototypeFields } from './prototype/prototypeFields';
 import { classificationLabel, showReceiptSection } from './requestPurchaseViewRules';
-import { RequestTabHeader } from './RequestTabParts';
+import { RequestTabEmpty, RequestTabHeader } from './RequestTabParts';
 
 const EMPTY = '—';
 
-export type RequestPurchaseViewSection = 'authorization' | 'receipt' | 'ratio' | 'children';
+export type RequestPurchaseViewSection =
+  | 'delivery'
+  | 'payment'
+  | 'invoices'
+  | 'authorization'
+  | 'receipt'
+  | 'ratio'
+  | 'children'
+  | 'links';
 
 /** Abas extras da visualização, na ordem de exibição, só as que têm dado. */
 export function availableViewSections(data: RequestPurchaseData): RequestPurchaseViewSection[] {
-  const sections: RequestPurchaseViewSection[] = ['authorization'];
+  // PROTÓTIPO: aba Entrega (frete, destino, descarga) com dados de demonstração.
+  // PROTÓTIPO (lote 4): abas Pagamento e Notas fiscais.
+  const sections: RequestPurchaseViewSection[] = PURCHASE_ORDER_PROTOTYPE
+    ? ['delivery', 'payment', 'invoices', 'authorization']
+    : ['authorization'];
   if (showReceiptSection(data.status)) sections.push('receipt');
   if ((data.ratio ?? []).length > 0) sections.push('ratio');
-  if ((data.children ?? []).length > 0) sections.push('children');
+  if (PURCHASE_ORDER_PROTOTYPE) {
+    // PROTÓTIPO: "Vínculos" mostra a origem E as derivadas (no lugar de Sub Solicitações).
+    if (data.parent || (data.children ?? []).length > 0) sections.push('links');
+  } else if ((data.children ?? []).length > 0) {
+    sections.push('children');
+  }
   return sections;
 }
 
@@ -55,6 +76,85 @@ interface RequestPurchaseViewSectionsProps {
 export function RequestPurchaseViewSections({ data, section }: RequestPurchaseViewSectionsProps) {
   const { languageGB } = useLanguage();
   const labels = languageGB.requestPurchases.requestPurchase.form.viewSections;
+
+  if (section === 'delivery') {
+    const deliveryText = languageGB.requestPurchases.requestPurchase.form.prototype.delivery;
+    const delivery = (data as RequestPurchaseData & PurchaseOrderPrototypeFields).delivery;
+    return (
+      <Box pt={4}>
+        <RequestTabHeader title={deliveryText.tab} />
+        {!delivery ? (
+          <RequestTabEmpty>{deliveryText.empty}</RequestTabEmpty>
+        ) : (
+          <>
+            <SimpleGrid columns={columnsForm.threeColumns} columnGap={5} rowGap={6}>
+              <InputReadOnly
+                label={deliveryText.freightType}
+                value={delivery.freight_type === 'CIF' ? deliveryText.cif : deliveryText.fob}
+              />
+              <InputReadOnly label={deliveryText.carrier} value={delivery.carrier || EMPTY} />
+              <InputReadOnly
+                label={deliveryText.unloading}
+                value={delivery.needs_unloading ? deliveryText.yes : deliveryText.no}
+              />
+            </SimpleGrid>
+            <SimpleGrid columns={columnsForm.twoColumns} columnGap={5} rowGap={6} mt={6}>
+              <InputReadOnly label={deliveryText.place} value={delivery.place} />
+              <InputReadOnly label={deliveryText.note} value={delivery.note || EMPTY} />
+            </SimpleGrid>
+          </>
+        )}
+      </Box>
+    );
+  }
+
+  if (section === 'payment') {
+    return <PrototypePaymentPanel data={data as PrototypePurchaseOrder} />;
+  }
+
+  if (section === 'invoices') {
+    return <PrototypeInvoicesPanel data={data as PrototypePurchaseOrder} />;
+  }
+
+  if (section === 'links') {
+    const linksText = languageGB.requestPurchases.requestPurchase.form.prototype.links;
+    const linkColumns: SimpleTableColumn[] = [
+      { key: 'code', header: linksText.code },
+      { key: 'justification', header: linksText.justification },
+    ];
+    const toRow = (ref: { uuid: string; code?: string | null; justification?: string | null }) => ({
+      key: ref.uuid,
+      cells: {
+        code: (
+          <Link to={`/administrativo/solicitacao/${ref.uuid}/visualizar`}>
+            <Text as="span" fontFamily="mono" color="primaryMain" textDecoration="underline">
+              {ref.code ?? EMPTY}
+            </Text>
+          </Link>
+        ),
+        justification: ref.justification ?? EMPTY,
+      },
+    });
+    const derived = data.children ?? [];
+    return (
+      <Box pt={4}>
+        <RequestTabHeader title={linksText.origin} />
+        {data.parent ? (
+          <SimpleTable columns={linkColumns} rows={[toRow(data.parent)]} ariaLabel={linksText.origin} />
+        ) : (
+          <RequestTabEmpty>{linksText.noOrigin}</RequestTabEmpty>
+        )}
+        <Box mt={6}>
+          <RequestTabHeader title={linksText.derived} count={derived.length} />
+          {derived.length ? (
+            <SimpleTable columns={linkColumns} rows={derived.map(toRow)} ariaLabel={linksText.derived} />
+          ) : (
+            <RequestTabEmpty>{linksText.noDerived}</RequestTabEmpty>
+          )}
+        </Box>
+      </Box>
+    );
+  }
 
   if (section === 'authorization') {
     return (

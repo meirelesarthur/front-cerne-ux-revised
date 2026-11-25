@@ -30,6 +30,7 @@ import { PublicRoute } from '@/components/PublicRoute';
 import { RequirePermission } from '@/components/RequirePermission';
 import { RequireRole } from '@/components/RequireRole';
 
+import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
 import { SERVICE_ORDERS_ENABLED } from '@/config/v2/serviceOrdersFeature';
 import {
   PURCHASE_ORDER_PERMISSIONS,
@@ -3046,6 +3047,9 @@ const ComprasList = lazy(() => import('@/pages/Administrativo/Compras'));
 // Tela única "Ordens de compra" (decisão do dono 24/11/2026): as listas de
 // Suprimentos em abas. Ver `pages/Administrativo/OrdensCompra`.
 const OrdensCompraHub = lazy(() => import('@/pages/Administrativo/OrdensCompra'));
+const PurchaseOrderFlowSettings = lazy(
+  () => import('@/pages/Administrativo/OrdensCompra/PurchaseOrderFlowSettings')
+);
 // Hub tenant-wide "Autorização" (TASK-AUTH-FE-02, esteira 038) — reusa a
 // MESMA entidade RequestPurchase, `GET /request-authorizations`, filtro de
 // negócio `status IN (3,4,11)` (BR-01), fonte/queryKey/storageKey próprias
@@ -6522,6 +6526,17 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+        {/* Protótipo (apresentação, só com dados de demonstração): fluxo da OC. */}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path={`${PURCHASE_ORDERS_PATH}/parametros`}
+            element={
+              <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
+                {lazyRoute(PurchaseOrderFlowSettings)}
+              </RequirePermission>
+            }
+          />
+        )}
         <Route
           path="/administrativo/solicitacao"
           element={

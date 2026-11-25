@@ -286,6 +286,8 @@ export const navigationPermissions: Record<string, NavPermissionRule> = {
   'adm-sup-sol': UNIFIED_PURCHASE_ORDERS_ENABLED
     ? { anyOf: PURCHASE_ORDER_PERMISSIONS }
     : { permission: 'request-purchases_view' },
+  // Protótipo "Fluxo da ordem de compra" (só com dados de demonstração).
+  'adm-sup-flx': { anyOf: PURCHASE_ORDER_PERMISSIONS },
   // Rejeitados/Cancelados: `rejected-requests_view`, igual ao legado (tela Blade
   // `rejected-requests`, papel próprio) e ao que `GET /request-purchases/rejected`
   // passou a exigir (T-081-API-03). Supera o GAP-UX-CPS-01 (execução 036), que

@@ -19,6 +19,7 @@
 
 import type { IconName } from '@/components/ui/Icon';
 
+import { PURCHASE_ORDER_PROTOTYPE } from './purchaseOrderPrototype';
 import { UNIFIED_PURCHASE_ORDERS_ENABLED } from './purchaseOrdersFeature';
 import { SERVICE_ORDERS_ENABLED } from './serviceOrdersFeature';
 
@@ -775,6 +776,17 @@ export const menuModules: NavModule[] = [
                 path: '/administrativo/ordens-de-compra',
                 icon: 'document-add',
               },
+              // Protótipo (apresentação): perfil, categorias, cotação e alçada.
+              ...(PURCHASE_ORDER_PROTOTYPE
+                ? [
+                    {
+                      id: 'adm-sup-flx',
+                      label: 'Fluxo da ordem de compra',
+                      path: '/administrativo/ordens-de-compra/parametros',
+                      icon: 'settings-sliders' as IconName,
+                    },
+                  ]
+                : []),
               { id: 'adm-sup-sla', label: 'Parâmetros SLA', path: '/administrativo/sla', icon: 'timer' },
             ]
           : [
