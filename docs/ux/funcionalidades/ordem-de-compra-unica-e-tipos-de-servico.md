@@ -254,8 +254,12 @@ Plano: documento "Ordem de compra — protótipo visual para apresentação" (ro
 
 **Ordem avulsa pela tela (26/11):** botão "Nova ordem avulsa" na lista abre `/administrativo/ordens-de-compra/ordens/nova`: fornecedor (um só), fazenda, previsão de entrega da ordem (opcional), **categoria** (as 4 de 25/11, obrigatória) e **marcação** (Nenhuma, Urgência ou Regularização) e os itens (descrição, quantidade inteira e valor unitário; "Adicionar item"/"Remover item" pelo `RepeaterList`), com o total na hora. Validação na ordem da tela (fornecedor, fazenda, categoria, ao menos um item completo; linha em branco é ignorada). Ao criar, abre o detalhe da nova ordem ("Aguardando a Compra", origem "começou sozinha"). O detalhe mostra também **Categoria · marcação** (na ordem gerada, vem do tipo da Solicitação). Arquivos: `OrdensCompra/prototype/standaloneOrder.ts` (regra, com teste), `PurchaseOrderStandaloneForm.tsx`; rotas simuladas `GET /prototype/purchase-orders/options` e `POST /prototype/purchase-orders`.
 
+**Entrega e pagamento na Ordem avulsa (26/11):** o formulário ganhou as seções **Entrega** (frete CIF/FOB, local, transportadora, observação e "precisa de descarga" com `ToggleRow`; só grava se tiver o local) e **Pagamento** (condição, nº de parcelas, 1º vencimento, dias entre parcelas e despesas de frete, seguro e outras; só grava se tiver a condição). As parcelas são iguais sobre **itens + despesas**, em centavos, e a última absorve o arredondamento; a prévia "N parcela(s) de R$ X — total R$ Y" aparece na hora. Com condição e sem nº de parcelas ou 1º vencimento, não salva. Regra `buildInstallments`/`standaloneOrderPayable` em `standaloneOrder.ts` (com teste).
+
+**Trilha do topo (26/11):** `findItemByPath` (`config/v2/navigationTree.ts`) passou a escolher o caminho **mais específico** quando não há item exato; antes, as telas da Ordem (`/ordens-de-compra/ordens/...`) mostravam "Solicitações de compra".
+
 **A fazer (Solicitação × Ordem, 26/11):**
-- [ ] front: entrega e pagamento ao criar a Ordem avulsa (hoje nascem vazios).
+- [ ] produto: editar entrega e pagamento depois de criada a Ordem (hoje só na criação da avulsa; na gerada, vêm da Solicitação).
 - [ ] produto: pagamento e entrega da Ordem nascem de onde quando ela vem de uma Solicitação (na demonstração, a 1ª ordem herda os da Solicitação).
 - [ ] produto: em que etapa a Solicitação gera as ordens (depois da cotação? da aprovação?) e o que acontece com o status dela quando tudo está em ordem.
 - [ ] backend: entidade Ordem de compra (fornecedor único, itens com `request_item_uuid`) e a rota de gerar ordens.

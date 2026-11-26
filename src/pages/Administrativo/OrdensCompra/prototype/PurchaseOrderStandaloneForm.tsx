@@ -2,8 +2,10 @@
 // -----------------------------------------------------------------------------
 // PROTÓTIPO (26/11/2026) — "Nova ordem de compra" AVULSA (sem Solicitação):
 // fornecedor (um só), fazenda, categoria (as 4 de 25/11) e marcação opcional,
-// previsão de entrega da ordem e os itens (descrição, quantidade inteira e
-// valor unitário). Regra em `standaloneOrder.ts` (com teste). Ao salvar, abre o
+// previsão de entrega da ordem, os itens (descrição, quantidade inteira e
+// valor unitário) e, opcionais, a ENTREGA (frete, local, transportadora,
+// descarga) e o PAGAMENTO (condição, parcelas iguais a partir do 1º
+// vencimento, despesas de frete/seguro/outras). Regra em `standaloneOrder.ts` (com teste). Ao salvar, abre o
 // detalhe da Ordem. Rota `/administrativo/ordens-de-compra/ordens/nova`.
 // -----------------------------------------------------------------------------
 
@@ -20,6 +22,7 @@ import { NumberInput } from '@/components/Form/NumberInput';
 import { Select } from '@/components/Form/Select';
 import { FormContainer } from '@/components/Layout/FormContainer';
 import { RepeaterList } from '@/components/ui/RepeaterList';
+import { ToggleRow } from '@/components/ui/ToggleRow';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -44,11 +47,13 @@ import {
   purchaseOrderEntityQueryKey,
 } from './purchaseOrderEntity';
 import {
+  buildInstallments,
   buildStandaloneOrderPayload,
   emptyStandaloneOrder,
   newStandaloneItem,
   type StandaloneOrderForm,
   type StandaloneOrderItemForm,
+  standaloneOrderPayable,
   standaloneOrderTotal,
   validateStandaloneOrder,
 } from './standaloneOrder';
@@ -78,8 +83,23 @@ export default function PurchaseOrderStandaloneForm() {
     ...PURCHASE_ORDER_MARKS.map((m) => ({ label: proto.marks.names[m.key], value: m.key })),
   ];
 
+  const freightOptions = [
+    { label: proto.delivery.cif, value: 'CIF' },
+    { label: proto.delivery.fob, value: 'FOB' },
+  ];
+
   const error = validateStandaloneOrder(form);
+  const installments = buildInstallments(
+    standaloneOrderPayable(form),
+    form.payment.installments ?? 0,
+    form.payment.first_due,
+    form.payment.interval_days ?? 30
+  );
   const set = (patch: Partial<StandaloneOrderForm>) => setForm((current) => ({ ...current, ...patch }));
+  const setDelivery = (patch: Partial<StandaloneOrderForm['delivery']>) =>
+    setForm((current) => ({ ...current, delivery: { ...current.delivery, ...patch } }));
+  const setPayment = (patch: Partial<StandaloneOrderForm['payment']>) =>
+    setForm((current) => ({ ...current, payment: { ...current.payment, ...patch } }));
   const setItem = (key: string, patch: Partial<StandaloneOrderItemForm>) =>
     setForm((current) => ({
       ...current,
@@ -213,6 +233,118 @@ export default function PurchaseOrderStandaloneForm() {
             {text.total}: {formatCurrencyBRL(standaloneOrderTotal(form))}
           </Text>
         </Flex>
+      </Box>
+
+      {/* Entrega combinada com o fornecedor (opcional: vai se tiver o local). */}
+      <Box mt={8}>
+        <RequestTabHeader title={proto.delivery.tab} />
+        <Text fontSize="sm" color="fg.muted" mt={-2} mb={4}>
+          {text.deliveryHint}
+        </Text>
+        <SimpleGrid columns={columnsForm.threeColumns} columnGap={5} rowGap={6}>
+          <Select
+            name="freight_type"
+            label={proto.delivery.freightType}
+            options={freightOptions}
+            value={freightOptions.find((o) => o.value === form.delivery.freight_type) ?? null}
+            onChange={(option) => setDelivery({ freight_type: (option?.value as 'CIF' | 'FOB') ?? 'CIF' })}
+            noClearable
+          />
+          <Input
+            name="delivery_place"
+            label={proto.delivery.place}
+            value={form.delivery.place}
+            onChange={(event) => setDelivery({ place: event.target.value })}
+          />
+          <Input
+            name="delivery_carrier"
+            label={proto.delivery.carrier}
+            value={form.delivery.carrier}
+            onChange={(event) => setDelivery({ carrier: event.target.value })}
+          />
+          <Input
+            name="delivery_note"
+            label={proto.delivery.note}
+            value={form.delivery.note}
+            onChange={(event) => setDelivery({ note: event.target.value })}
+          />
+        </SimpleGrid>
+        <Box mt={4}>
+          <ToggleRow
+            label={proto.delivery.unloading}
+            checked={form.delivery.needs_unloading}
+            onChange={(value) => setDelivery({ needs_unloading: value })}
+          />
+        </Box>
+      </Box>
+
+      {/* Pagamento (opcional: vai se tiver a condição); parcelas iguais sobre itens + despesas. */}
+      <Box mt={8}>
+        <RequestTabHeader title={proto.payment.tab} />
+        <Text fontSize="sm" color="fg.muted" mt={-2} mb={4}>
+          {text.paymentHint}
+        </Text>
+        <SimpleGrid columns={columnsForm.threeColumns} columnGap={5} rowGap={6}>
+          <Input
+            name="payment_condition"
+            label={proto.payment.condition}
+            value={form.payment.condition}
+            onChange={(event) => setPayment({ condition: event.target.value })}
+          />
+          <NumberInput
+            name="payment_installments"
+            label={text.installmentsCount}
+            value={form.payment.installments}
+            onValueChange={(v) => setPayment({ installments: v })}
+            min={1}
+          />
+          <Input
+            name="payment_first_due"
+            label={text.firstDue}
+            type="date"
+            value={form.payment.first_due}
+            onChange={(event) => setPayment({ first_due: event.target.value })}
+          />
+          <NumberInput
+            name="payment_interval"
+            label={text.intervalDays}
+            value={form.payment.interval_days}
+            onValueChange={(v) => setPayment({ interval_days: v })}
+            min={0}
+          />
+          <MaskedInput
+            kind="currency"
+            name="payment_freight"
+            label={proto.payment.freight}
+            value={form.payment.freight}
+            onValueChange={(v) => setPayment({ freight: v })}
+            min={0}
+          />
+          <MaskedInput
+            kind="currency"
+            name="payment_insurance"
+            label={proto.payment.insurance}
+            value={form.payment.insurance}
+            onValueChange={(v) => setPayment({ insurance: v })}
+            min={0}
+          />
+          <MaskedInput
+            kind="currency"
+            name="payment_other"
+            label={proto.payment.other}
+            value={form.payment.other}
+            onValueChange={(v) => setPayment({ other: v })}
+            min={0}
+          />
+        </SimpleGrid>
+        {form.payment.condition.trim() && installments.length > 0 && (
+          <Text fontSize="sm" fontWeight="semibold" mt={4}>
+            {text.installmentsPreview
+              .replace('{count}', String(installments.length))
+              .replace('{value}', formatCurrencyBRL(installments[0].value))
+              .replace('{total}', formatCurrencyBRL(standaloneOrderPayable(form)))}
+          </Text>
+        )}
       </Box>
     </FormContainer>
   );

@@ -290,7 +290,20 @@ export interface ModuleRequestPurchases {
           create: string;
           created: string;
           categoryMark: string;
-          errors: { provider: string; farm: string; category: string; items: string; itemIncomplete: string };
+          deliveryHint: string;
+          paymentHint: string;
+          installmentsCount: string;
+          firstDue: string;
+          intervalDays: string;
+          installmentsPreview: string;
+          errors: {
+            provider: string;
+            farm: string;
+            category: string;
+            items: string;
+            itemIncomplete: string;
+            paymentIncomplete: string;
+          };
         };
         duplicate: {
           button: string;

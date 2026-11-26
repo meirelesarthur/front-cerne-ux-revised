@@ -19,6 +19,26 @@ export interface StandaloneOrderItemForm {
   unit_price: number | null;
 }
 
+/** Entrega combinada com o fornecedor (opcional: só vai se tiver o local). */
+export interface StandaloneDeliveryForm {
+  freight_type: 'CIF' | 'FOB';
+  place: string;
+  carrier: string;
+  needs_unloading: boolean;
+  note: string;
+}
+
+/** Pagamento (opcional: só vai se tiver a condição): parcelas iguais a partir do 1º vencimento. */
+export interface StandalonePaymentForm {
+  condition: string;
+  installments: number | null;
+  first_due: string;
+  interval_days: number | null;
+  freight: number | null;
+  insurance: number | null;
+  other: number | null;
+}
+
 export interface StandaloneOrderForm {
   provider_uuid: string | null;
   farm_uuid: string | null;
@@ -26,6 +46,15 @@ export interface StandaloneOrderForm {
   mark: PurchaseOrderMarkKey | null;
   delivery_forecast: string;
   items: StandaloneOrderItemForm[];
+  delivery: StandaloneDeliveryForm;
+  payment: StandalonePaymentForm;
+}
+
+export interface InstallmentRow {
+  seq: number;
+  due_date: string;
+  value: number;
+  status: 'open';
 }
 
 export interface StandaloneOrderPayload {
@@ -35,9 +64,53 @@ export interface StandaloneOrderPayload {
   mark: PurchaseOrderMarkKey | null;
   delivery_forecast: string | null;
   items: { description: string; quantity: number; unit_price: number }[];
+  delivery: {
+    freight_type: 'CIF' | 'FOB';
+    place: string;
+    carrier: string | null;
+    needs_unloading: boolean;
+    note: string | null;
+  } | null;
+  payment: {
+    condition: string;
+    installments: InstallmentRow[];
+    expenses: { freight: number; insurance: number; other: number };
+  } | null;
 }
 
-export type StandaloneOrderError = 'provider' | 'farm' | 'category' | 'items' | 'itemIncomplete';
+export type StandaloneOrderError =
+  | 'provider'
+  | 'farm'
+  | 'category'
+  | 'items'
+  | 'itemIncomplete'
+  | 'paymentIncomplete';
+
+/** Soma `days` dias a uma data `yyyy-MM-dd` (sem fuso). */
+function addDays(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number);
+  const next = new Date(Date.UTC(y, m - 1, d + days));
+  return next.toISOString().slice(0, 10);
+}
+
+/** Parcelas iguais (centavos), a última absorve o arredondamento. */
+export function buildInstallments(total: number, count: number, firstDue: string, intervalDays: number): InstallmentRow[] {
+  if (count <= 0 || !firstDue) return [];
+  const cents = Math.round(total * 100);
+  const base = Math.floor(cents / count);
+  return Array.from({ length: count }, (_, i) => ({
+    seq: i + 1,
+    due_date: addDays(firstDue, i * intervalDays),
+    value: (i === count - 1 ? cents - base * (count - 1) : base) / 100,
+    status: 'open' as const,
+  }));
+}
+
+const expensesOf = (p: StandalonePaymentForm) => ({
+  freight: p.freight ?? 0,
+  insurance: p.insurance ?? 0,
+  other: p.other ?? 0,
+});
 
 let seq = 0;
 export const newStandaloneItem = (): StandaloneOrderItemForm => ({
@@ -54,6 +127,8 @@ export const emptyStandaloneOrder = (): StandaloneOrderForm => ({
   mark: null,
   delivery_forecast: '',
   items: [newStandaloneItem()],
+  delivery: { freight_type: 'CIF', place: '', carrier: '', needs_unloading: false, note: '' },
+  payment: { condition: '', installments: 1, first_due: '', interval_days: 30, freight: null, insurance: null, other: null },
 });
 
 const isBlank = (item: StandaloneOrderItemForm) => !item.description.trim() && !item.quantity && !item.unit_price;
@@ -68,7 +143,16 @@ export function validateStandaloneOrder(form: StandaloneOrderForm): StandaloneOr
   const filled = form.items.filter((item) => !isBlank(item));
   if (filled.length === 0) return 'items';
   if (filled.some((item) => !isComplete(item))) return 'itemIncomplete';
+  // Com condição de pagamento, precisa de nº de parcelas e 1º vencimento.
+  const p = form.payment;
+  if (p.condition.trim() && (!(p.installments ?? 0) || !p.first_due)) return 'paymentIncomplete';
   return null;
+}
+
+/** Valor a parcelar: itens + despesas (frete, seguro, outras). */
+export function standaloneOrderPayable(form: StandaloneOrderForm): number {
+  const e = expensesOf(form.payment);
+  return standaloneOrderTotal(form) + e.freight + e.insurance + e.other;
 }
 
 /** Total da ordem (só linhas completas). */
@@ -90,5 +174,26 @@ export function buildStandaloneOrderPayload(form: StandaloneOrderForm): Standalo
       quantity: item.quantity as number,
       unit_price: item.unit_price as number,
     })),
+    delivery: form.delivery.place.trim()
+      ? {
+          freight_type: form.delivery.freight_type,
+          place: form.delivery.place.trim(),
+          carrier: form.delivery.carrier.trim() || null,
+          needs_unloading: form.delivery.needs_unloading,
+          note: form.delivery.note.trim() || null,
+        }
+      : null,
+    payment: form.payment.condition.trim()
+      ? {
+          condition: form.payment.condition.trim(),
+          installments: buildInstallments(
+            standaloneOrderPayable(form),
+            form.payment.installments ?? 1,
+            form.payment.first_due,
+            form.payment.interval_days ?? 30
+          ),
+          expenses: expensesOf(form.payment),
+        }
+      : null,
   };
 }

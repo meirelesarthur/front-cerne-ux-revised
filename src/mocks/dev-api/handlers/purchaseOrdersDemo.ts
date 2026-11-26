@@ -1139,6 +1139,17 @@ const purchaseOrderRoutes: MockRoute[] = [
         category: input.category ?? null,
         mark: input.mark ?? null,
         forecast: input.delivery_forecast || undefined,
+        // Entrega e pagamento combinados com o fornecedor (opcionais no formulário).
+        delivery: input.delivery
+          ? {
+              freight_type: input.delivery.freight_type,
+              place: String(input.delivery.place),
+              carrier: input.delivery.carrier ?? undefined,
+              needs_unloading: !!input.delivery.needs_unloading,
+              note: input.delivery.note ?? undefined,
+            }
+          : undefined,
+        payment: input.payment ?? undefined,
         items: (input.items ?? []).map((item: { description: string; quantity: number; unit_price: number }) => ({
           description: String(item.description),
           quantity: Number(item.quantity),
