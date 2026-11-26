@@ -23,15 +23,50 @@ import { columnsForm } from '@/constants/coluns-form';
 
 import { RequestTabEmpty, RequestTabHeader } from '../RequestTabParts';
 
-import { paymentCheck, type PrototypePurchaseOrder } from './prototypeFields';
+import {
+  paymentCheck,
+  type PurchaseOrderDelivery,
+  type PurchaseOrderInvoice,
+  type PurchaseOrderPayment,
+} from './prototypeFields';
 
-const itemsTotalOf = (data: PrototypePurchaseOrder) =>
-  data.items.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+// 26/11: entrega, pagamento e NFs são da ORDEM de compra (fornecedor único);
+// os painéis recebem os dados soltos e o total dos itens da ordem.
 
-export function PrototypePaymentPanel({ data }: { data: PrototypePurchaseOrder }) {
+export function PrototypeDeliveryPanel({ delivery }: { delivery: PurchaseOrderDelivery | null | undefined }) {
+  const { languageGB } = useLanguage();
+  const text = languageGB.requestPurchases.requestPurchase.form.prototype.delivery;
+  return (
+    <Box pt={4}>
+      <RequestTabHeader title={text.tab} />
+      {!delivery ? (
+        <RequestTabEmpty>{text.empty}</RequestTabEmpty>
+      ) : (
+        <>
+          <SimpleGrid columns={columnsForm.threeColumns} columnGap={5} rowGap={6}>
+            <InputReadOnly label={text.freightType} value={delivery.freight_type === 'CIF' ? text.cif : text.fob} />
+            <InputReadOnly label={text.carrier} value={delivery.carrier || '—'} />
+            <InputReadOnly label={text.unloading} value={delivery.needs_unloading ? text.yes : text.no} />
+          </SimpleGrid>
+          <SimpleGrid columns={columnsForm.twoColumns} columnGap={5} rowGap={6} mt={6}>
+            <InputReadOnly label={text.place} value={delivery.place} />
+            <InputReadOnly label={text.note} value={delivery.note || '—'} />
+          </SimpleGrid>
+        </>
+      )}
+    </Box>
+  );
+}
+
+export function PrototypePaymentPanel({
+  payment,
+  itemsTotal,
+}: {
+  payment: PurchaseOrderPayment | null | undefined;
+  itemsTotal: number;
+}) {
   const { languageGB } = useLanguage();
   const text = languageGB.requestPurchases.requestPurchase.form.prototype.payment;
-  const payment = data.payment;
 
   if (!payment) {
     return (
@@ -42,7 +77,7 @@ export function PrototypePaymentPanel({ data }: { data: PrototypePurchaseOrder }
     );
   }
 
-  const check = paymentCheck(itemsTotalOf(data), payment);
+  const check = paymentCheck(itemsTotal, payment);
   const columns: SimpleTableColumn[] = [
     { key: 'seq', header: text.seq },
     { key: 'due', header: text.dueDate },
@@ -108,10 +143,15 @@ export function PrototypePaymentPanel({ data }: { data: PrototypePurchaseOrder }
   );
 }
 
-export function PrototypeInvoicesPanel({ data }: { data: PrototypePurchaseOrder }) {
+export function PrototypeInvoicesPanel({
+  invoices = [],
+  itemsTotal,
+}: {
+  invoices: PurchaseOrderInvoice[] | undefined;
+  itemsTotal: number;
+}) {
   const { languageGB } = useLanguage();
   const text = languageGB.requestPurchases.requestPurchase.form.prototype.invoices;
-  const invoices = data.invoices ?? [];
 
   const columns: SimpleTableColumn[] = [
     { key: 'issuer', header: text.issuer },
@@ -135,7 +175,7 @@ export function PrototypeInvoicesPanel({ data }: { data: PrototypePurchaseOrder 
   }));
   if (invoices.length) {
     rows.push({ key: 'total', kind: 'total', cells: { issuer: text.total, value: formatCurrencyBRL(total) } });
-    rows.push({ key: 'order', cells: { issuer: <Text color="fg.muted">{text.orderTotal}</Text>, value: <Text color="fg.muted">{formatCurrencyBRL(itemsTotalOf(data))}</Text> } });
+    rows.push({ key: 'order', cells: { issuer: <Text color="fg.muted">{text.orderTotal}</Text>, value: <Text color="fg.muted">{formatCurrencyBRL(itemsTotal)}</Text> } });
   }
 
   return (

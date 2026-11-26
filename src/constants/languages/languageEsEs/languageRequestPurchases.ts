@@ -166,6 +166,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           noOrigin: 'Esta solicitud no vino de otra.',
           noDerived: 'No se generó ninguna solicitud a partir de esta.',
           ordersTitle: 'Órdenes de compra generadas',
+          noneShort: 'Ninguna aún',
           provider: 'Proveedor',
           status: 'Situación',
           itemsCount: 'Ítems',

@@ -216,6 +216,7 @@ export interface ModuleRequestPurchases {
           noOrigin: string;
           noDerived: string;
           ordersTitle: string;
+          noneShort: string;
           provider: string;
           status: string;
           itemsCount: string;

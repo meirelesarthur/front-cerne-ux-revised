@@ -247,9 +247,14 @@ Plano: documento "Ordem de compra — protótipo visual para apresentação" (ro
 - Na Solicitação, o código de cada ordem gerada (aba Vínculos) abre o detalhe da Ordem.
 - Arquivos: `OrdensCompra/prototype/purchaseOrderEntity.ts` (tipos, chamadas e regras `filterPurchaseOrders`/`countPurchaseOrderViews`, com teste), `PurchaseOrderEntityList.tsx`, `PurchaseOrderEntityDetail.tsx`; rotas no `router/index.tsx` só com `PURCHASE_ORDER_PROTOTYPE`; dados em `purchaseOrdersDemo.ts` (rotas `/prototype/purchase-orders*`: ordens geradas pelas Solicitações + 2 avulsas, OC-0031 e OC-0029). Kit usado: `PageHeader`, `ViewSelect`, `ListToolbar`, `SimpleTable`, `StatusTag`, `FormContainer`, `InputReadOnly`, `CustomDialog`.
 
+**O que é da Ordem saiu da Solicitação (26/11):**
+- **Ordem** (detalhe) ganhou abas **Itens** (com Recebido e Saldo; "Cancelado" no item com saldo cancelado), **Entrega**, **Pagamento** (parcelas e conferência com o total da ordem) e **Notas fiscais**, e no rodapé **Registrar recebimento** (NF + quantidade por item; parcial deixa a ordem em "Compra Efetuada", sem saldo vira "Compra Recebida"; abre a aba Notas fiscais) e **Cancelar saldo** (com justificativa; encerra como "Compra Recebida").
+- **Solicitação** perdeu as abas Entrega, Pagamento e Notas fiscais, os botões "Registrar recebimento" e "Cancelar saldo" e o "Cancelar item"; na faixa do topo saíram Fornecedor e Previsão de entrega (ficaram Comprador e "Ordens de compra geradas"); a tabela de itens troca Recebido/Saldo por **Em ordem / Sem ordem**. Ficaram na Solicitação: Cotações (é onde se escolhe os fornecedores), Autorização, Rateio, Vínculos, "Gerar ordens de compra", "Duplicar" e "Reabrir".
+- Arquivos: `PrototypeFinancePanels.tsx` (`PrototypeDeliveryPanel`, `PrototypePaymentPanel` e `PrototypeInvoicesPanel` recebem os dados soltos e o total), `PrototypeOrderActions.tsx` (`PrototypeReceiptDialog` reaproveitável), `PurchaseOrderEntityDetail.tsx`, `PurchaseOrderProcessBar.tsx`, `PrototypeItemsTable.tsx`, `RequestPurchaseViewSections.tsx`; rotas simuladas `/prototype/purchase-orders/{uuid}/receipt` e `/cancel-balance`.
+
 **A fazer (Solicitação × Ordem, 26/11):**
-- [ ] front: levar para a Ordem o que hoje ainda aparece na Solicitação do protótipo e é da Ordem (cotação vencedora, pagamento, notas fiscais, recebimento, previsão no topo).
 - [ ] front: criar uma Ordem avulsa pela tela (hoje as avulsas vêm só dos dados de demonstração).
+- [ ] produto: pagamento e entrega da Ordem nascem de onde quando ela vem de uma Solicitação (na demonstração, a 1ª ordem herda os da Solicitação).
 - [ ] produto: em que etapa a Solicitação gera as ordens (depois da cotação? da aprovação?) e o que acontece com o status dela quando tudo está em ordem.
 - [ ] backend: entidade Ordem de compra (fornecedor único, itens com `request_item_uuid`) e a rota de gerar ordens.
 

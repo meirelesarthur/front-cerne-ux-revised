@@ -166,6 +166,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           noOrigin: 'This request did not come from another one.',
           noDerived: 'No request was created from this one.',
           ordersTitle: 'Generated purchase orders',
+          noneShort: 'None yet',
           provider: 'Supplier',
           status: 'Status',
           itemsCount: 'Items',

@@ -6,6 +6,8 @@ import {
   countPurchaseOrderViews,
   filterPurchaseOrders,
   purchaseOrderEntityPath,
+  purchaseOrderHasBalance,
+  purchaseOrderItemBalance,
   type PurchaseOrderSummary,
   purchaseOrderStatusColor,
 } from './purchaseOrderEntity';
@@ -50,6 +52,15 @@ describe('ordem de compra (entidade própria)', () => {
 
   it('conta as visões', () => {
     expect(countPurchaseOrderViews(orders)).toEqual({ abertas: 2, recebidas: 1, todas: 3 });
+  });
+
+  it('saldo do item e se a ordem ainda tem o que receber', () => {
+    const item = { uuid: 'i', description: 'x', product: null, quantity: 10, unit_price: 1, total: 10, received_quantity: 4, cancelled: false, request_item_uuid: null };
+    expect(purchaseOrderItemBalance(item)).toBe(6);
+    expect(purchaseOrderItemBalance({ ...item, cancelled: true })).toBe(0);
+    expect(purchaseOrderHasBalance({ status: 7, items: [item] })).toBe(true);
+    expect(purchaseOrderHasBalance({ status: 8, items: [item] })).toBe(false);
+    expect(purchaseOrderHasBalance({ status: 7, items: [{ ...item, received_quantity: 10 }] })).toBe(false);
   });
 
   it('caminho e cor da situação', () => {

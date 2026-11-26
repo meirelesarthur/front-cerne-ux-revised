@@ -32,12 +32,8 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 
 import { isFullyOrdered, itemCoverage } from './generateOrders';
 import { GenerateOrdersDialog } from './GenerateOrdersDialog';
-import {
-  cancelPrototypeBalance,
-  registerPrototypeReceipt,
-  reopenPrototypeOrder,
-} from './prototypeActions';
-import { itemTotals, type PrototypePurchaseOrder } from './prototypeFields';
+import { type PrototypeReceiptPayload, reopenPrototypeOrder } from './prototypeActions';
+import type { PrototypePurchaseOrder } from './prototypeFields';
 
 /** Recarrega a ordem depois de uma ação simulada. */
 export function useRefreshPurchaseOrder(uuid: string) {
@@ -105,23 +101,28 @@ export function PrototypeJustifyDialog({ isOpen, onClose, title, description, on
   );
 }
 
-function ReceiptDialog({
+/** Item que ainda tem saldo a receber (nome e saldo já calculados por quem chama). */
+export interface PrototypeReceiptItem {
+  uuid: string;
+  name: string;
+  balance: number;
+}
+
+/** "Registrar recebimento": NF + quantidade por item (padrão = saldo). Desde 26/11 é ação da ORDEM. */
+export function PrototypeReceiptDialog({
   isOpen,
   onClose,
-  data,
-  onDone,
+  items,
+  onSubmit,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  data: PrototypePurchaseOrder;
-  onDone: () => void;
+  items: PrototypeReceiptItem[];
+  onSubmit: (payload: PrototypeReceiptPayload) => Promise<unknown>;
 }) {
   const { languageGB } = useLanguage();
   const text = languageGB.requestPurchases.requestPurchase.form.prototype.receipt;
-  const pending = data.items.filter((item) => {
-    const t = itemTotals(item);
-    return t.balance !== null && t.balance > 0;
-  });
+  const pending = items.filter((item) => item.balance > 0);
 
   const [number, setNumber] = useState('');
   const [series, setSeries] = useState('1');
@@ -136,7 +137,7 @@ function ReceiptDialog({
     setSeries('1');
     setIssuedAt(format(new Date(), 'yyyy-MM-dd'));
     setValue(null);
-    setQuantities(Object.fromEntries(pending.map((item) => [item.uuid, itemTotals(item).balance])));
+    setQuantities(Object.fromEntries(pending.map((item) => [item.uuid, item.balance])));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
@@ -145,12 +146,11 @@ function ReceiptDialog({
   async function confirm() {
     setBusy(true);
     try {
-      await registerPrototypeReceipt(data.uuid, {
+      await onSubmit({
         invoice: { number, series, issued_at: issuedAt, value: value ?? 0 },
         items: pending.map((item) => ({ item_uuid: item.uuid, quantity: quantities[item.uuid] ?? 0 })),
       });
       toaster.success({ title: text.toastTitle });
-      onDone();
       onClose();
     } finally {
       setBusy(false);
@@ -190,7 +190,6 @@ function ReceiptDialog({
       </Text>
       <Flex direction="column" gap={2}>
         {pending.map((item) => {
-          const t = itemTotals(item);
           return (
             <Flex
               key={item.uuid}
@@ -204,10 +203,10 @@ function ReceiptDialog({
             >
               <Box flex="1" minW={0}>
                 <Text fontWeight="medium" lineClamp="1">
-                  {item.product?.description ?? item.description}
+                  {item.name}
                 </Text>
                 <Text fontSize="sm" color="fg.muted">
-                  {`${text.balance}: ${(t.balance ?? 0).toLocaleString('pt-BR')}`}
+                  {`${text.balance}: ${item.balance.toLocaleString('pt-BR')}`}
                 </Text>
               </Box>
               <Box w="140px">
@@ -217,7 +216,7 @@ function ReceiptDialog({
                   aria-label={text.items}
                   value={quantities[item.uuid] ?? null}
                   onValueChange={(q) =>
-                    setQuantities((current) => ({ ...current, [item.uuid]: Math.min(q ?? 0, t.balance ?? 0) }))
+                    setQuantities((current) => ({ ...current, [item.uuid]: Math.min(q ?? 0, item.balance) }))
                   }
                   min={0}
                 />
@@ -235,7 +234,9 @@ export function PrototypeOrderActions({ data }: { data: PrototypePurchaseOrder }
   const { languageGB } = useLanguage();
   const proto = languageGB.requestPurchases.requestPurchase.form.prototype;
   const refresh = useRefreshPurchaseOrder(data.uuid);
-  const [open, setOpen] = useState<'receipt' | 'cancelBalance' | 'reopen' | 'generate' | null>(null);
+  // 26/11: "Registrar recebimento" e "Cancelar saldo" são da ORDEM (tela própria);
+  // aqui ficam "Gerar ordens de compra" e "Reabrir".
+  const [open, setOpen] = useState<'reopen' | 'generate' | null>(null);
 
   // Solicitação gera Ordens (26/11): enquanto houver item sem ordem e a Solicitação não estiver encerrada.
   const coverage = itemCoverage(data.items ?? [], data.generated_orders ?? []);
@@ -245,36 +246,19 @@ export function PrototypeOrderActions({ data }: { data: PrototypePurchaseOrder }
     data.status !== requestPurchaseStatus.pedidoFinalizado &&
     data.status !== requestPurchaseStatus.pedidoCancelado;
 
-  const hasBalance = data.items.some((item) => (itemTotals(item).balance ?? 0) > 0);
-  const canReceive = data.status === requestPurchaseStatus.compraEfetuada && hasBalance;
   const canReopen =
     data.status === requestPurchaseStatus.pedidoFinalizado ||
     data.status === requestPurchaseStatus.pedidoCancelado;
 
   return (
     <>
-      {canReceive && (
-        <Button title={proto.actions.cancelBalance} variant="outline" type="button" onClick={() => setOpen('cancelBalance')} />
-      )}
       {canReopen && <Button title={proto.actions.reopen} variant="outline" type="button" onClick={() => setOpen('reopen')} />}
-      {canReceive && <Button title={proto.receipt.button} type="button" onClick={() => setOpen('receipt')} />}
       {canGenerate && (
         <Button title={proto.generateOrders.button} variant="outline" type="button" onClick={() => setOpen('generate')} />
       )}
 
       <GenerateOrdersDialog isOpen={open === 'generate'} onClose={() => setOpen(null)} data={data} onDone={refresh} />
 
-      <ReceiptDialog isOpen={open === 'receipt'} onClose={() => setOpen(null)} data={data} onDone={refresh} />
-      <PrototypeJustifyDialog
-        isOpen={open === 'cancelBalance'}
-        onClose={() => setOpen(null)}
-        title={proto.actions.cancelBalanceTitle}
-        description={proto.actions.cancelBalanceDescription}
-        onConfirm={async (justify) => {
-          await cancelPrototypeBalance(data.uuid, justify);
-          await refresh();
-        }}
-      />
       <PrototypeJustifyDialog
         isOpen={open === 'reopen'}
         onClose={() => setOpen(null)}

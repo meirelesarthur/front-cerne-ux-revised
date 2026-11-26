@@ -10,6 +10,12 @@
 
 import api from '@/services/api';
 
+import type { PrototypeReceiptPayload } from '../../Solicitacao/prototype/prototypeActions';
+import type {
+  PurchaseOrderDelivery,
+  PurchaseOrderInvoice,
+  PurchaseOrderPayment,
+} from '../../Solicitacao/prototype/prototypeFields';
 import { PURCHASE_ORDERS_PATH } from '../purchaseOrderViews';
 
 /** Lista e detalhe da Ordem de compra (a lista de Solicitações segue em `PURCHASE_ORDERS_PATH`). */
@@ -39,12 +45,28 @@ export interface PurchaseOrderEntityItem {
   quantity: number;
   unit_price: number;
   total: number;
+  received_quantity: number;
+  cancelled: boolean;
   request_item_uuid: string | null;
 }
 
+/** Entrega, pagamento, NFs e recebimento são da ORDEM (fornecedor único), 26/11. */
 export interface PurchaseOrderEntity extends PurchaseOrderSummary {
   provider_contact: { email: string; phone: string };
+  delivery: PurchaseOrderDelivery | null;
+  payment: PurchaseOrderPayment | null;
+  invoices: PurchaseOrderInvoice[];
   items: PurchaseOrderEntityItem[];
+}
+
+/** Saldo do item: o que falta receber (0 quando cancelado). */
+export function purchaseOrderItemBalance(item: PurchaseOrderEntityItem): number {
+  return item.cancelled ? 0 : Math.max(0, item.quantity - item.received_quantity);
+}
+
+/** Ainda há o que receber? (para "Registrar recebimento" e "Cancelar saldo"). */
+export function purchaseOrderHasBalance(order: Pick<PurchaseOrderEntity, 'items' | 'status'>): boolean {
+  return [6, 7].includes(order.status) && order.items.some((item) => purchaseOrderItemBalance(item) > 0);
 }
 
 export const purchaseOrderEntityQueryKey = {
@@ -65,6 +87,14 @@ export async function fetchPurchaseOrder(uuid: string): Promise<PurchaseOrderEnt
 
 export function setPurchaseOrderForecast(uuid: string, date: string) {
   return api.V2.post(`/prototype/purchase-orders/${uuid}/forecast`, { date });
+}
+
+export function registerPurchaseOrderReceipt(uuid: string, payload: PrototypeReceiptPayload) {
+  return api.V2.post(`/prototype/purchase-orders/${uuid}/receipt`, payload);
+}
+
+export function cancelPurchaseOrderBalance(uuid: string, justify: string) {
+  return api.V2.post(`/prototype/purchase-orders/${uuid}/cancel-balance`, { justify });
 }
 
 /** Visões da lista: abertas (aguardando ou compra efetuada), recebidas e todas. */

@@ -919,20 +919,34 @@ interface DemoPurchaseOrderItem {
   requestItemUuid?: string;
 }
 
+/** Estado que muda com as ações da Ordem (avulsa ou entrada em `generated`). */
+interface DemoPurchaseOrderState {
+  forecast?: string;
+  status?: number;
+  /** Recebido por índice do item. */
+  received?: Record<number, number>;
+  /** Índices dos itens cancelados. */
+  cancelled?: number[];
+  invoices?: DemoInvoice[];
+}
+
 interface DemoPurchaseOrder {
   uuid: string;
   code: string;
   provider: keyof typeof PROVIDERS;
-  status: number;
   date: string;
   farm: { uuid: string; description: string };
-  /** Onde a previsão fica gravada (a ordem avulsa ou a entrada em `generated`). */
-  target: { forecast?: string };
+  /** Onde o estado da ordem fica gravado (a ordem avulsa ou a entrada em `generated`). */
+  target: DemoPurchaseOrderState;
   request?: DemoOrder;
+  delivery?: DemoDelivery;
+  payment?: DemoPayment;
   items: DemoPurchaseOrderItem[];
 }
 
-const STANDALONE_ORDERS: (Omit<DemoPurchaseOrder, 'target'> & { forecast?: string })[] = [
+type DemoStandaloneOrder = Omit<DemoPurchaseOrder, 'target'> & DemoPurchaseOrderState;
+
+const STANDALONE_ORDERS: DemoStandaloneOrder[] = [
   {
     uuid: 'demo-oc-avulsa-0031',
     code: 'OC-0031',
@@ -941,6 +955,12 @@ const STANDALONE_ORDERS: (Omit<DemoPurchaseOrder, 'target'> & { forecast?: strin
     date: '2026-11-24',
     farm: SANTA_RITA,
     forecast: '2026-11-29',
+    delivery: { freight_type: 'CIF', place: 'Fazenda Santa Rita — tanque de combustível', carrier: 'Posto Estrada Real', needs_unloading: false },
+    payment: {
+      condition: '28 dias da entrega',
+      installments: installments([31350], '2026-12-27', 30),
+      expenses: { freight: 0, insurance: 0, other: 0 },
+    },
     items: [{ description: 'Óleo diesel S10 (L)', product: 'Diesel S10', quantity: 5000, unitPrice: 6.27 }],
   },
   {
@@ -951,6 +971,19 @@ const STANDALONE_ORDERS: (Omit<DemoPurchaseOrder, 'target'> & { forecast?: strin
     date: '2026-11-17',
     farm: BOA_VISTA,
     forecast: '2026-11-21',
+    received: { 0: 4, 1: 4 },
+    delivery: { freight_type: 'FOB', place: 'Retirada na TratorMaq (Uberlândia)', needs_unloading: false },
+    invoices: [
+      {
+        uuid: 'demo-nf-oc-0029-1',
+        issuer: 'TratorMaq Peças Agrícolas',
+        number: '48213',
+        series: '1',
+        issued_at: '2026-11-20',
+        entered_at: '2026-11-21',
+        value: 1300,
+      },
+    ],
     items: [
       { description: 'Filtro de óleo do motor', product: 'Filtro JD RE504836', quantity: 4, unitPrice: 180 },
       { description: 'Filtro de combustível', product: 'Filtro JD RE533026', quantity: 4, unitPrice: 145 },
@@ -965,11 +998,14 @@ function purchaseOrders(): DemoPurchaseOrder[] {
       uuid: `${uuidOf(o.n)}-oc${index + 1}`,
       code: `OC-${o.code}-${index + 1}`,
       provider: g.provider,
-      status: g.status ?? 6,
       date: g.date ?? o.date,
       farm: o.farm,
       target: g,
       request: o,
+      // Entrega e pagamento combinados com o fornecedor; na demonstração, os da Solicitação
+      // vão para a 1ª ordem (a 0012 tem uma só).
+      delivery: o.delivery,
+      payment: index === 0 ? o.payment : undefined,
       items: g.items.map((row) => {
         const item = o.items[row.index];
         return {
@@ -985,13 +1021,17 @@ function purchaseOrders(): DemoPurchaseOrder[] {
   return [...generated, ...standalone];
 }
 
+const poStatus = (po: DemoPurchaseOrder) => po.target.status ?? 6;
+const poReceived = (po: DemoPurchaseOrder, index: number) => po.target.received?.[index] ?? 0;
+const poCancelled = (po: DemoPurchaseOrder, index: number) => (po.target.cancelled ?? []).includes(index);
+
 function purchaseOrderSummary(po: DemoPurchaseOrder) {
   return {
     uuid: po.uuid,
     code: po.code,
     provider: { uuid: PROVIDERS[po.provider].uuid, name: PROVIDERS[po.provider].name },
-    status: po.status,
-    status_label: STATUS_LABEL[po.status],
+    status: poStatus(po),
+    status_label: STATUS_LABEL[poStatus(po)],
     date: po.date,
     farm: po.farm,
     delivery_forecast: po.target.forecast ?? null,
@@ -1007,6 +1047,11 @@ function purchaseOrderDetail(po: DemoPurchaseOrder) {
   return {
     ...purchaseOrderSummary(po),
     provider_contact: { email: PROVIDERS[po.provider].email, phone: PROVIDERS[po.provider].cellphone },
+    delivery: po.delivery
+      ? { ...po.delivery, carrier: po.delivery.carrier ?? null, note: po.delivery.note ?? null }
+      : null,
+    payment: po.payment ?? null,
+    invoices: po.target.invoices ?? [],
     items: po.items.map((item, index) => ({
       uuid: `${po.uuid}-it${index}`,
       description: item.description,
@@ -1014,22 +1059,71 @@ function purchaseOrderDetail(po: DemoPurchaseOrder) {
       quantity: item.quantity,
       unit_price: item.unitPrice,
       total: item.quantity * item.unitPrice,
+      received_quantity: poReceived(po, index),
+      cancelled: poCancelled(po, index),
       request_item_uuid: item.requestItemUuid ?? null,
     })),
   };
 }
 
-const purchaseOrderRoutes: MockRoute[] = [
-  {
+const poItemIndex = (po: DemoPurchaseOrder, itemUuid: string) =>
+  po.items.findIndex((_, index) => `${po.uuid}-it${index}` === itemUuid);
+
+/** Sem saldo (tudo recebido ou cancelado) e algo recebido ⇒ Compra Recebida (8). */
+function settlePurchaseOrder(po: DemoPurchaseOrder) {
+  const open = po.items.some((item, index) => !poCancelled(po, index) && poReceived(po, index) < item.quantity);
+  if (!open) po.target.status = po.items.some((_, index) => poReceived(po, index) > 0) ? 8 : 10;
+}
+
+function purchaseOrderAction(action: string, run: (po: DemoPurchaseOrder, body: Record<string, any>) => void): MockRoute {
+  return {
     method: 'post',
-    pattern: /^\/prototype\/purchase-orders\/([^/]+)\/forecast$/,
+    pattern: new RegExp(`^/prototype/purchase-orders/([^/]+)/${action}$`),
     handler: ({ match, body }) => {
       const po = purchaseOrders().find((row) => row.uuid === match[1]);
       if (!po) return { status: 404, body: null };
-      po.target.forecast = String(parseBody(body).date ?? '') || undefined;
+      run(po, parseBody(body));
       return { body: purchaseOrderDetail(po) };
     },
-  },
+  };
+}
+
+const purchaseOrderRoutes: MockRoute[] = [
+  purchaseOrderAction('forecast', (po, body) => {
+    po.target.forecast = String(body.date ?? '') || undefined;
+  }),
+  // Recebimento (parcial ou total) com a NF: soma ao recebido, liga a NF e, sem saldo, conclui.
+  purchaseOrderAction('receipt', (po, body) => {
+    const invoice = body.invoice ?? {};
+    const received = { ...(po.target.received ?? {}) };
+    (body.items ?? []).forEach((row: { item_uuid: string; quantity: number }) => {
+      const index = poItemIndex(po, row.item_uuid);
+      if (index < 0) return;
+      received[index] = Math.min(po.items[index].quantity, (received[index] ?? 0) + Number(row.quantity || 0));
+    });
+    po.target.received = received;
+    po.target.invoices = [
+      ...(po.target.invoices ?? []),
+      {
+        uuid: `demo-nf-${po.uuid}-${(po.target.invoices?.length ?? 0) + 1}`,
+        issuer: PROVIDERS[po.provider].name,
+        number: String(invoice.number ?? ''),
+        series: String(invoice.series ?? '1'),
+        issued_at: String(invoice.issued_at ?? new Date().toISOString().slice(0, 10)),
+        entered_at: new Date().toISOString().slice(0, 10),
+        value: Number(invoice.value ?? 0),
+      },
+    ];
+    if (poStatus(po) === 6) po.target.status = 7;
+    settlePurchaseOrder(po);
+  }),
+  // Cancelar saldo: o que falta deixa de ser esperado.
+  purchaseOrderAction('cancel-balance', (po) => {
+    po.target.cancelled = po.items
+      .map((item, index) => (poReceived(po, index) < item.quantity ? index : -1))
+      .filter((index) => index >= 0);
+    settlePurchaseOrder(po);
+  }),
   {
     method: 'get',
     pattern: /^\/prototype\/purchase-orders\/([^/]+)$/,

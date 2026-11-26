@@ -33,7 +33,6 @@ import type { RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 
 import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
 
-import { PrototypeInvoicesPanel, PrototypePaymentPanel } from './prototype/PrototypeFinancePanels';
 import { PrototypeGeneratedOrders } from './prototype/PrototypeGeneratedOrders';
 import type { PrototypePurchaseOrder, PurchaseOrderPrototypeFields } from './prototype/prototypeFields';
 import { classificationLabel, showReceiptSection } from './requestPurchaseViewRules';
@@ -53,11 +52,9 @@ export type RequestPurchaseViewSection =
 
 /** Abas extras da visualização, na ordem de exibição, só as que têm dado. */
 export function availableViewSections(data: RequestPurchaseData): RequestPurchaseViewSection[] {
-  // PROTÓTIPO: aba Entrega (frete, destino, descarga) com dados de demonstração.
-  // PROTÓTIPO (lote 4): abas Pagamento e Notas fiscais.
-  const sections: RequestPurchaseViewSection[] = PURCHASE_ORDER_PROTOTYPE
-    ? ['delivery', 'payment', 'invoices', 'authorization']
-    : ['authorization'];
+  // 26/11: Entrega, Pagamento e Notas fiscais saíram da Solicitação — são da
+  // ORDEM de compra (fornecedor único), na tela própria dela.
+  const sections: RequestPurchaseViewSection[] = ['authorization'];
   if (showReceiptSection(data.status)) sections.push('receipt');
   if ((data.ratio ?? []).length > 0) sections.push('ratio');
   if (PURCHASE_ORDER_PROTOTYPE) {
@@ -80,44 +77,8 @@ export function RequestPurchaseViewSections({ data, section }: RequestPurchaseVi
   const { languageGB } = useLanguage();
   const labels = languageGB.requestPurchases.requestPurchase.form.viewSections;
 
-  if (section === 'delivery') {
-    const deliveryText = languageGB.requestPurchases.requestPurchase.form.prototype.delivery;
-    const delivery = (data as RequestPurchaseData & PurchaseOrderPrototypeFields).delivery;
-    return (
-      <Box pt={4}>
-        <RequestTabHeader title={deliveryText.tab} />
-        {!delivery ? (
-          <RequestTabEmpty>{deliveryText.empty}</RequestTabEmpty>
-        ) : (
-          <>
-            <SimpleGrid columns={columnsForm.threeColumns} columnGap={5} rowGap={6}>
-              <InputReadOnly
-                label={deliveryText.freightType}
-                value={delivery.freight_type === 'CIF' ? deliveryText.cif : deliveryText.fob}
-              />
-              <InputReadOnly label={deliveryText.carrier} value={delivery.carrier || EMPTY} />
-              <InputReadOnly
-                label={deliveryText.unloading}
-                value={delivery.needs_unloading ? deliveryText.yes : deliveryText.no}
-              />
-            </SimpleGrid>
-            <SimpleGrid columns={columnsForm.twoColumns} columnGap={5} rowGap={6} mt={6}>
-              <InputReadOnly label={deliveryText.place} value={delivery.place} />
-              <InputReadOnly label={deliveryText.note} value={delivery.note || EMPTY} />
-            </SimpleGrid>
-          </>
-        )}
-      </Box>
-    );
-  }
-
-  if (section === 'payment') {
-    return <PrototypePaymentPanel data={data as PrototypePurchaseOrder} />;
-  }
-
-  if (section === 'invoices') {
-    return <PrototypeInvoicesPanel data={data as PrototypePurchaseOrder} />;
-  }
+  // Entrega, Pagamento e NFs agora vivem na Ordem (`PurchaseOrderEntityDetail`); não são mais listadas aqui.
+  if (section === 'delivery' || section === 'payment' || section === 'invoices') return null;
 
   if (section === 'links') {
     const linksText = languageGB.requestPurchases.requestPurchase.form.prototype.links;
