@@ -11,6 +11,8 @@
 
 import api from '@/services/api';
 
+import type { GenerateOrdersPayload } from './generateOrders';
+
 export interface PrototypeReceiptPayload {
   invoice: { number: string; series: string; issued_at: string; value: number };
   items: { item_uuid: string; quantity: number }[];
@@ -28,6 +30,11 @@ export function cancelPrototypeBalance(uuid: string, justify: string) {
 
 export function cancelPrototypeItem(uuid: string, itemUuid: string, justify: string) {
   return api.V2.post(`${base(uuid)}/cancel-item`, { item_uuid: itemUuid, justify });
+}
+
+/** Solicitação gera Ordens de compra, uma por fornecedor (26/11). */
+export function generatePrototypeOrders(uuid: string, payload: GenerateOrdersPayload) {
+  return api.V2.post(`${base(uuid)}/generate-orders`, payload);
 }
 
 export function reopenPrototypeOrder(uuid: string, justify: string) {

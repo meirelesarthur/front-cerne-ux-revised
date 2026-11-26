@@ -10,6 +10,7 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 
 import type { RequestItemRow, RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 
+import type { GeneratedOrder } from './generateOrders';
 import type { PurchaseOrderFlowProfile, PurchaseOrderStepKey } from './purchaseOrderSteps';
 
 export interface PurchaseOrderDelivery {
@@ -73,9 +74,13 @@ export interface PurchaseOrderPrototypeFields {
   buyer?: { uuid: string; name: string } | null;
   /** Etapa em que a ordem foi cancelada (situação 10). */
   cancelled_at_step?: PurchaseOrderStepKey;
-  /** Previsão de entrega da ordem: a mais tarde entre os itens. */
+  /** Previsão de entrega da ORDEM: uma data só, porque o fornecedor é único (26/11); não há previsão por item. */
   delivery_forecast?: string | null;
   delivery?: PurchaseOrderDelivery | null;
+  /** Ordens de compra geradas por esta Solicitação, uma por fornecedor (26/11). */
+  generated_orders?: GeneratedOrder[];
+  /** Fornecedores que podem receber uma Ordem (só nos dados de demonstração). */
+  provider_options?: { uuid: string; name: string }[];
 }
 
 /** Campos de protótipo no item. */

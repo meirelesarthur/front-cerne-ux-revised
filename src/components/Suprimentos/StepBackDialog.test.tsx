@@ -109,7 +109,7 @@ describe('StepBackDialog — execução 081, T-081-FE-01', () => {
     getRequestPurchaseMock.mockResolvedValue({ data: detail });
     renderDialog();
 
-    expect(screen.getByText('Voltar Etapa da Ordem de Compra')).toBeTruthy();
+    expect(screen.getByText('Voltar Etapa da Solicitação')).toBeTruthy();
     await waitFor(() => screen.getByText('Maria Solicitante'));
     expect(screen.getByText('1234')).toBeTruthy();
     expect(screen.getByText('01/09/2026')).toBeTruthy();
@@ -161,7 +161,7 @@ describe('StepBackDialog — execução 081, T-081-FE-01', () => {
     });
     renderDialog();
     await waitFor(() =>
-      screen.getByText('Nenhuma etapa anterior disponível para esta ordem de compra.')
+      screen.getByText('Nenhuma etapa anterior disponível para esta solicitação.')
     );
     expect((screen.getByText('Salvar').closest('button') as HTMLButtonElement).disabled).toBe(true);
   });

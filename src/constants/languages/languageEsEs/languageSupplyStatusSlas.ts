@@ -14,7 +14,7 @@ export const languageSupplyStatusSlas: ModuleSupplyStatusSlas = {
     list: {
       pageTitle: 'Parámetros SLA',
       pageSubtitle:
-        'Configure el tiempo máximo tolerado, en horas, para cada estado de la orden de compra.',
+        'Configure el tiempo máximo tolerado, en horas, para cada estado de la solicitud de compra.',
       table: {
         statusLabel: 'Estado',
         maxHours: 'Tiempo máximo (horas)',

@@ -10,7 +10,7 @@ export const languageRequestAuthorizations: ModuleRequestAuthorizations = {
     pluralLabel: 'Autorizaciones',
     titleModule: 'Autorización',
     pageTitle: 'Autorización',
-    pageSubtitle: 'Órdenes de compra a la espera de aprobación o acuse.',
+    pageSubtitle: 'Solicitudes de compra a la espera de aprobación o acuse.',
 
     list: {
       table: {

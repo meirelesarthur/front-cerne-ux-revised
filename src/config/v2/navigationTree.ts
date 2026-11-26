@@ -772,13 +772,20 @@ export const menuModules: NavModule[] = [
           ? [
               {
                 id: 'adm-sup-sol',
-                label: 'Ordens de compra',
+                label: 'Solicitações de compra',
                 path: '/administrativo/ordens-de-compra',
                 icon: 'document-add',
               },
               // Protótipo (apresentação): perfil, categorias, cotação e alçada.
               ...(PURCHASE_ORDER_PROTOTYPE
                 ? [
+                    // 26/11: Ordem de compra (uma por fornecedor), entidade própria.
+                    {
+                      id: 'adm-sup-oc',
+                      label: 'Ordens de compra',
+                      path: '/administrativo/ordens-de-compra/ordens',
+                      icon: 'cart' as IconName,
+                    },
                     {
                       id: 'adm-sup-flx',
                       label: 'Fluxo da ordem de compra',
@@ -799,7 +806,7 @@ export const menuModules: NavModule[] = [
           },
           {
             id: 'adm-sup-sol',
-            label: 'Ordens de compra',
+            label: 'Solicitações de compra',
             path: '/administrativo/solicitacao',
             icon: 'document-add',
           },
@@ -4196,8 +4203,13 @@ export function findItemByPath(pathname: string, module?: NavModule): NavSubItem
   const owningModule = module ?? findModuleByPath(pathname);
   if (!owningModule) return undefined;
   const allItems = flattenWithChildren(getAllModuleItems(owningModule));
+  // Sem item exato, vale o prefixo MAIS LONGO (o mais específico): com
+  // `/administrativo/ordens-de-compra` (Solicitações) e `.../ordens` (Ordens de
+  // compra) no mesmo módulo, `/ordens/:uuid` é da Ordem, não da Solicitação (26/11).
   return (
     allItems.find((i) => pathname === i.path) ??
-    allItems.find((i) => pathname.startsWith(i.path + '/'))
+    allItems
+      .filter((i) => i.path && pathname.startsWith(i.path + '/'))
+      .sort((a, b) => (b.path?.length ?? 0) - (a.path?.length ?? 0))[0]
   );
 }

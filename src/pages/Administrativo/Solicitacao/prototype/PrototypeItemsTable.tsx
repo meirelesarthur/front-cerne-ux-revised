@@ -1,32 +1,25 @@
 // src/pages/Administrativo/Solicitacao/prototype/PrototypeItemsTable.tsx
 // -----------------------------------------------------------------------------
-// PROTÓTIPO (lote 2, item 1 do plano — F1) — Itens da Ordem de compra na
-// VISUALIZAÇÃO, com Qtde, Vlr. unitário, Vlr. total, Recebido, Saldo e
-// Previsão, e o total da ordem no rodapé. `unit_price` e `received_quantity`
-// ainda não existem na API (vêm dos dados de demonstração); a conta está em
-// `itemTotals` (`prototypeFields.ts`, com teste). Edição continua no
+// PROTÓTIPO (lote 2, item 1 do plano — F1) — Itens da SOLICITAÇÃO na
+// VISUALIZAÇÃO, com Qtde, Vlr. unitário, Vlr. total e, desde 26/11, quanto de
+// cada item já está EM ORDEM e quanto está SEM ORDEM (`itemCoverage`, com
+// teste). Recebido, Saldo, "Cancelar item" e Previsão saíram daqui: são da
+// ORDEM de compra (fornecedor único, tela própria). Edição continua no
 // `RequestItemRow`.
 // -----------------------------------------------------------------------------
-
-import { useState } from 'react';
 
 import { Box, Text } from '@chakra-ui/react';
 
 import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
-import { StatusTag } from '@/components/ui/StatusTag';
-
-import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
 import formatCurrencyBRL from '@/utils/formatCurrencyBRL';
-import formatDate from '@/utils/formatDate';
 
 import { RequestTabEmpty, RequestTabHeader } from '../RequestTabParts';
 
-import { cancelPrototypeItem } from './prototypeActions';
+import { itemCoverage } from './generateOrders';
 import { itemTotals, type PrototypePurchaseOrder } from './prototypeFields';
-import { PrototypeJustifyDialog, useRefreshPurchaseOrder } from './PrototypeOrderActions';
 
 const qty = (value: number | null) =>
   value === null ? '—' : value.toLocaleString('pt-BR', { maximumFractionDigits: 3 });
@@ -35,14 +28,8 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
   const { languageGB } = useLanguage();
   const form = languageGB.requestPurchases.requestPurchase.form;
   const text = form.prototype.items;
-  const actionsText = form.prototype.actions;
-  const refresh = useRefreshPurchaseOrder(data.uuid);
-  const [cancelUuid, setCancelUuid] = useState<string | null>(null);
-
-  // Lote 4: "Cancelar item" enquanto a compra está aguardando ou efetuada.
-  const canCancelItems =
-    data.status === requestPurchaseStatus.aguardandoCompra ||
-    data.status === requestPurchaseStatus.compraEfetuada;
+  const linksText = form.prototype.links;
+  const coverage = itemCoverage(data.items ?? [], data.generated_orders ?? []);
 
   const columns: SimpleTableColumn[] = [
     { key: 'index', header: '#' },
@@ -50,16 +37,15 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
     { key: 'quantity', header: text.quantity, align: 'right' },
     { key: 'unit', header: text.unitPrice, align: 'right' },
     { key: 'total', header: text.total, align: 'right' },
-    { key: 'received', header: text.received, align: 'right' },
-    { key: 'balance', header: text.balance, align: 'right' },
-    { key: 'forecast', header: text.forecast },
-    ...(canCancelItems ? [{ key: 'actions', header: '', align: 'right' as const }] : []),
+    { key: 'ordered', header: linksText.ordered, align: 'right' },
+    { key: 'pending', header: linksText.pending, align: 'right' },
   ];
 
-  let orderTotal = 0;
+  let requestTotal = 0;
   const rows: SimpleTableRow[] = data.items.map((item, index) => {
     const t = itemTotals(item);
-    orderTotal += t.total;
+    const c = coverage[item.uuid];
+    requestTotal += t.total;
     return {
       key: item.uuid,
       cells: {
@@ -83,33 +69,15 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
         quantity: qty(t.quantity),
         unit: formatCurrencyBRL(t.unit),
         total: <Text fontWeight="semibold">{formatCurrencyBRL(t.total)}</Text>,
-        received: qty(t.quantity === null ? null : t.received),
-        balance: t.cancelled ? (
-          <StatusTag size="sm" label={actionsText.cancelled} color="semanticNeutral.400" />
-        ) : (
-          <Text
-            fontWeight="semibold"
-            color={t.balance === null ? 'fg.muted' : t.balance > 0 ? 'orange.600' : 'green.700'}
-          >
-            {qty(t.balance)}
-          </Text>
-        ),
-        forecast: item.forecast_delivery_date ? formatDate(item.forecast_delivery_date) : '—',
-        actions:
-          canCancelItems && !t.cancelled && (t.balance ?? 0) > 0 ? (
-            <Box
-              as="button"
-              {...({ type: 'button' } as Record<string, string>)}
-              onClick={() => setCancelUuid(item.uuid)}
-              fontSize="sm"
-              fontWeight="semibold"
-              color="feedBack.errorMain"
-              whiteSpace="nowrap"
-              _hover={{ textDecoration: 'underline' }}
-            >
-              {actionsText.cancelItem}
-            </Box>
-          ) : null,
+        ordered: qty(t.quantity === null ? null : (c?.ordered ?? 0)),
+        pending:
+          t.quantity === null ? (
+            '—'
+          ) : (
+            <Text fontWeight="semibold" color={(c?.pending ?? 0) > 0 ? 'orange.600' : 'green.700'}>
+              {qty(c?.pending ?? 0)}
+            </Text>
+          ),
       },
     };
   });
@@ -120,7 +88,7 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
       kind: 'total',
       cells: {
         product: text.orderTotal,
-        total: formatCurrencyBRL(orderTotal),
+        total: formatCurrencyBRL(requestTotal),
       },
     });
   }
@@ -133,18 +101,6 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
       ) : (
         <SimpleTable columns={columns} rows={rows} ariaLabel={form.tabs.items} />
       )}
-
-      <PrototypeJustifyDialog
-        isOpen={cancelUuid !== null}
-        onClose={() => setCancelUuid(null)}
-        title={actionsText.cancelItemTitle}
-        description={actionsText.cancelItemDescription}
-        onConfirm={async (justify) => {
-          if (!cancelUuid) return;
-          await cancelPrototypeItem(data.uuid, cancelUuid, justify);
-          await refresh();
-        }}
-      />
     </Box>
   );
 }

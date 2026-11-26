@@ -1,40 +1,28 @@
 // src/pages/Administrativo/Solicitacao/prototype/PurchaseOrderProcessBar.tsx
 // -----------------------------------------------------------------------------
 // PROTÓTIPO (só com `PURCHASE_ORDER_PROTOTYPE`) — faixa do topo da Ordem de
-// compra: as ETAPAS do processo (`StepTrack`, regra em `purchaseOrderSteps.ts`;
-// as que o perfil de fluxo pula não aparecem) e, à direita, FORNECEDOR
-// (cotação aprovada), COMPRADOR e PREVISÃO DE ENTREGA (a mais tarde entre os
-// itens; selo "Atrasada" quando vencida e "Alterar" com justificativa, que no
-// protótipo muda só esta tela). Fases F1, F2 e F3 do plano. Os campos
-// `flow_profile`, `winning_provider`, `buyer` e `delivery_forecast` ainda não
-// existem na API: vêm dos dados de demonstração
-// (`mocks/dev-api/handlers/purchaseOrdersDemo.ts`).
+// SOLICITAÇÃO: as ETAPAS do processo (`StepTrack`, regra em
+// `purchaseOrderSteps.ts`; as que o perfil de fluxo pula não aparecem) e, à
+// direita, COMPRADOR e quantas ORDENS de compra a Solicitação já gerou.
+// 26/11: Fornecedor e Previsão de entrega saíram daqui — são da Ordem (uma por
+// fornecedor, tela própria). `flow_profile` e `buyer` ainda não existem na API:
+// vêm dos dados de demonstração (`mocks/dev-api/handlers/purchaseOrdersDemo.ts`).
 // -----------------------------------------------------------------------------
-
-import { useState } from 'react';
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 
-import { Button } from '@/components/Button';
-import { CustomDialog } from '@/components/CustomDialog';
-import { Input } from '@/components/Form/Input';
-import { Textarea } from '@/components/Form/Textarea';
-import { StatusTag } from '@/components/ui/StatusTag';
 import { StepTrack, type StepTrackItem } from '@/components/ui/StepTrack';
-import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
-
-import formatDate from '@/utils/formatDate';
 
 import type { RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 
 import { purchaseOrderSteps } from './purchaseOrderSteps';
-import { isDeliveryLate, type PurchaseOrderPrototypeFields } from './prototypeFields';
+import type { PurchaseOrderPrototypeFields } from './prototypeFields';
 
 interface PurchaseOrderProcessBarProps {
   data: RequestPurchaseData & PurchaseOrderPrototypeFields;
-  /** Permite "Alterar" a previsão (fora da visualização somente leitura). */
+  /** Sem uso desde 26/11 (a previsão é da Ordem); mantido para não mudar quem chama. */
   canChangeForecast?: boolean;
 }
 
@@ -63,18 +51,12 @@ function Party({ label, value, empty }: { label: string; value?: string | null; 
   );
 }
 
-export function PurchaseOrderProcessBar({ data, canChangeForecast = false }: PurchaseOrderProcessBarProps) {
+export function PurchaseOrderProcessBar({ data }: PurchaseOrderProcessBarProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.requestPurchases.requestPurchase.form.statusBar;
-  const forecastText = languageGB.requestPurchases.requestPurchase.form.prototype.forecast;
+  const ordersText = languageGB.requestPurchases.requestPurchase.form.prototype.links;
   const profile = data.flow_profile ?? 'padrao';
-
-  // Protótipo: a alteração vale só nesta tela (não há API para gravar).
-  const [forecast, setForecast] = useState<string | null>(data.delivery_forecast ?? null);
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [newDate, setNewDate] = useState('');
-  const [justification, setJustification] = useState('');
-  const late = isDeliveryLate(forecast, data.status);
+  const ordersCount = (data.generated_orders ?? []).length;
 
   // Etapa que o perfil não tem NÃO aparece (decisão do dono, 25/11): nada de
   // etapa riscada; a numeração conta só as que existem.
@@ -85,18 +67,6 @@ export function PurchaseOrderProcessBar({ data, canChangeForecast = false }: Pur
       label: text.steps[step.key],
       state: step.state,
     }));
-
-  function openDialog() {
-    setNewDate(forecast?.slice(0, 10) ?? '');
-    setJustification('');
-    setDialogOpen(true);
-  }
-
-  function confirmChange() {
-    setForecast(newDate);
-    setDialogOpen(false);
-    toaster.success({ title: forecastText.toastTitle, description: forecastText.toastDescription });
-  }
 
   return (
     <Flex
@@ -123,78 +93,15 @@ export function PurchaseOrderProcessBar({ data, canChangeForecast = false }: Pur
         w={{ base: 'full', lg: 'auto' }}
         maxW={{ lg: '560px' }}
       >
-        <Party label={text.provider} value={data.winning_provider?.name} empty={text.notDefined} />
+        {/* 26/11: Fornecedor e Previsão de entrega são da ORDEM (uma por fornecedor);
+            a Solicitação mostra o comprador e quantas ordens já gerou. */}
         <Party label={text.buyer} value={data.buyer?.name} empty={text.notDefined} />
-        <Box minW={0}>
-          <PartyLabel>{forecastText.label}</PartyLabel>
-          <Flex align="center" gap={2} wrap="wrap">
-            <Text
-              fontSize="base"
-              fontWeight={forecast ? 'semibold' : 'medium'}
-              color={late ? 'red.600' : forecast ? 'strongText' : 'fg.muted'}
-              whiteSpace="nowrap"
-            >
-              {forecast ? formatDate(forecast) : text.notDefined}
-            </Text>
-            {late && <StatusTag size="sm" label={forecastText.late} color="red.600" />}
-            {canChangeForecast && (
-              <Box
-                as="button"
-                {...({ type: 'button' } as Record<string, string>)}
-                onClick={openDialog}
-                fontSize="sm"
-                fontWeight="semibold"
-                color="green.700"
-                _hover={{ textDecoration: 'underline' }}
-              >
-                {forecastText.change}
-              </Box>
-            )}
-          </Flex>
-        </Box>
+        <Party
+          label={ordersText.ordersTitle}
+          value={ordersCount ? String(ordersCount) : undefined}
+          empty={ordersText.noneShort}
+        />
       </Flex>
-
-      <CustomDialog
-        isOpen={isDialogOpen}
-        onClose={() => setDialogOpen(false)}
-        title={forecastText.dialogTitle}
-        size="sm"
-        footer={
-          <Flex gap={3}>
-            <Button
-              title={forecastText.cancel}
-              variant="secondary"
-              type="button"
-              onClick={() => setDialogOpen(false)}
-            />
-            <Button
-              title={forecastText.confirm}
-              type="button"
-              onClick={confirmChange}
-              disabled={!newDate || !justification.trim()}
-            />
-          </Flex>
-        }
-      >
-        <Flex direction="column" gap={4}>
-          <Input
-            label={forecastText.newDate}
-            type="date"
-            value={newDate}
-            onChange={(event) => setNewDate(event.target.value)}
-            isRequired
-          />
-          <Textarea
-            name="forecast_justification"
-            label={forecastText.justification}
-            placeholder={forecastText.justificationPlaceholder}
-            value={justification}
-            onChange={(event) => setJustification(event.target.value)}
-            rows={3}
-            isRequired
-          />
-        </Flex>
-      </CustomDialog>
     </Flex>
   );
 }

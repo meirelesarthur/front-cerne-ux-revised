@@ -1,5 +1,5 @@
 // src/constants/languages/languageEsEs/languageRequestPurchases.ts
-// Traducción es-ES del módulo "Orden de Compra" (RequestPurchase —
+// Traducción es-ES del módulo "Solicitud de Compra" (RequestPurchase —
 // Administrativo / Suministros, esteira 97-Esteiras/022, TASK-RP-FE-03). Ver
 // `@/@types/language/module-request-purchases` para el contrato completo.
 
@@ -7,9 +7,9 @@ import { ModuleRequestPurchases } from '@/@types/language/module-request-purchas
 
 export const languageRequestPurchases: ModuleRequestPurchases = {
   requestPurchase: {
-    singularLabel: 'Orden de Compra',
-    pluralLabel: 'Órdenes de Compra',
-    titleModule: 'Órdenes de Compra',
+    singularLabel: 'Solicitud de Compra',
+    pluralLabel: 'Solicitudes de Compra',
+    titleModule: 'Solicitudes de Compra',
 
     // ADITIVO (TASK-CQ-FE-15) — ver nota en
     // `ModuleRequestPurchases.requestPurchase.legend`.
@@ -18,8 +18,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     },
 
     list: {
-      pageTitle: 'Órdenes de Compra',
-      pageSubtitle: 'Gestione las órdenes de compra de la finca.',
+      pageTitle: 'Solicitudes de Compra',
+      pageSubtitle: 'Gestione las solicitudes de compra de la finca.',
       table: {
         code: 'Código',
         type: 'Tipo',
@@ -41,9 +41,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       emptyState: {
         titleEmpty: 'Ninguna solicitud registrada',
         titleFiltered: 'Ninguna solicitud encontrada',
-        descriptionEmpty: 'Registre la primera Orden de Compra.',
+        descriptionEmpty: 'Registre la primera Solicitud de Compra.',
         descriptionFiltered: 'Ajuste los filtros para encontrar lo que busca.',
-        cta: 'Nueva Orden de Compra',
+        cta: 'Nueva Solicitud',
       },
       deletedToast: 'Registro eliminado con éxito.',
       deleteConfirm: {
@@ -70,14 +70,14 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
 
     form: {
       title: {
-        create: 'Nueva Orden de Compra',
-        edit: 'Editar Orden de Compra',
-        view: 'Visualizar Orden de Compra',
+        create: 'Nueva Solicitud de Compra',
+        edit: 'Editar Solicitud de Compra',
+        view: 'Visualizar Solicitud de Compra',
       },
       subtitle: {
-        create: 'Registre una nueva orden de compra.',
-        edit: 'Actualice los datos de la orden de compra.',
-        view: 'Visualice los datos de la orden de compra.',
+        create: 'Registre una nueva solicitud de compra.',
+        edit: 'Actualice los datos de la solicitud de compra.',
+        view: 'Visualice los datos de la solicitud de compra.',
       },
       tabs: {
         general: 'Datos Generales',
@@ -118,7 +118,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           received: 'Recibido',
           balance: 'Saldo',
           forecast: 'Previsión',
-          orderTotal: 'Total de la orden',
+          orderTotal: 'Total de la solicitud',
         },
         forecast: {
           label: 'Previsión de entrega',
@@ -159,12 +159,106 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         },
         links: {
           tab: 'Vínculos',
-          origin: 'Orden de origen',
-          derived: 'Órdenes derivadas',
+          origin: 'Solicitud de origen',
+          derived: 'Solicitudes derivadas',
           code: 'Código',
           justification: 'Justificación',
-          noOrigin: 'Esta orden no vino de otra.',
-          noDerived: 'No se generó ninguna orden a partir de esta.',
+          noOrigin: 'Esta solicitud no vino de otra.',
+          noDerived: 'No se generó ninguna solicitud a partir de esta.',
+          ordersTitle: 'Órdenes de compra generadas',
+          noneShort: 'Ninguna aún',
+          provider: 'Proveedor',
+          status: 'Situación',
+          itemsCount: 'Ítems',
+          forecast: 'Previsión de entrega',
+          forecastPending: 'A definir en la orden',
+          noOrders: 'No se generó ninguna orden de compra a partir de esta solicitud.',
+          coverageTitle: 'Ítems en orden',
+          item: 'Ítem',
+          requested: 'Pedido',
+          ordered: 'En orden',
+          pending: 'Sin orden',
+        },
+        generateOrders: {
+          button: 'Generar órdenes de compra',
+          dialogTitle: 'Generar órdenes de compra',
+          description:
+            'Cada orden es de un único proveedor. Elija el proveedor de cada ítem; use "Dividir" cuando un proveedor no tenga toda la cantidad. La solicitud sigue abierta y vinculada a las órdenes.',
+          quantity: 'Cantidad',
+          provider: 'Proveedor',
+          pending: 'Sin orden: {value}',
+          split: 'Dividir',
+          nothingPending: 'Todos los ítems ya están en órdenes de compra.',
+          cancel: 'Cancelar',
+          confirm: 'Generar {count} orden(es)',
+          done: '{count} orden(es) de compra generada(s).',
+          errors: {
+            empty: 'Indique la cantidad de al menos un ítem.',
+            missingProvider: 'Elija el proveedor de cada línea con cantidad.',
+            overPending: 'La suma de un ítem supera lo que falta poner en orden.',
+          },
+        },
+        purchaseOrder: {
+          listTitle: 'Órdenes de compra',
+          listSubtitle: 'Una orden por proveedor; nace de una solicitud o sola.',
+          viewsAriaLabel: 'Vistas de las órdenes de compra',
+          views: { abertas: 'Abiertas', recebidas: 'Recibidas', todas: 'Todas' },
+          originAriaLabel: 'Origen de las órdenes de compra',
+          origins: { todas: 'Cualquier origen', solicitacao: 'De la solicitud', avulsa: 'Sueltas' },
+          searchPlaceholder: 'Buscar por código, proveedor, solicitud o finca',
+          empty: 'Ninguna orden de compra en esta vista.',
+          status: 'Situación',
+          code: 'Código',
+          provider: 'Proveedor',
+          request: 'Solicitud',
+          farm: 'Finca',
+          forecast: 'Previsión de entrega',
+          forecastPending: 'A definir',
+          total: 'Total',
+          standalone: 'Suelta',
+          detailTitle: 'Orden de compra',
+          detailSubtitle: 'Orden de un único proveedor, con una previsión de entrega.',
+          back: 'Volver',
+          generalTitle: 'Datos de la orden',
+          contact: 'Contacto del proveedor',
+          date: 'Fecha de la orden',
+          changeForecast: 'Cambiar previsión',
+          setForecast: 'Definir previsión',
+          forecastHint: 'La previsión es de la orden, no de cada ítem: el proveedor es uno solo.',
+          originTitle: 'Origen',
+          originFrom: 'Generada a partir de la solicitud',
+          originStandalone: 'Esta orden empezó sola, sin solicitud.',
+          itemsTitle: 'Ítems',
+          item: 'Producto / descripción',
+          quantity: 'Cant.',
+          unitPrice: 'Precio unitario',
+          forecastDialogTitle: 'Previsión de entrega de la orden',
+          cancel: 'Cancelar',
+          save: 'Guardar',
+          forecastSaved: 'Previsión de entrega guardada.',
+          newButton: 'Nueva orden suelta',
+          newTitle: 'Nueva orden de compra suelta',
+          newSubtitle: 'Orden que empieza sola, sin solicitud: un proveedor y los ítems acordados con él.',
+          markNone: 'Ninguna',
+          addItem: 'Agregar ítem',
+          removeItem: 'Quitar ítem',
+          create: 'Crear orden',
+          created: 'Orden {code} creada.',
+          categoryMark: 'Categoría',
+          deliveryHint: 'Opcional: complete el lugar para guardar la entrega acordada con el proveedor.',
+          paymentHint: 'Opcional: con la condición, las cuotas son iguales sobre ítems + gastos, desde el 1er vencimiento.',
+          installmentsCount: 'Nº de cuotas',
+          firstDue: '1er vencimiento',
+          intervalDays: 'Días entre cuotas',
+          installmentsPreview: '{count} cuota(s) de {value} — total {total}',
+          errors: {
+            provider: 'Elija el proveedor.',
+            farm: 'Elija la finca.',
+            category: 'Elija la categoría.',
+            items: 'Incluya al menos un ítem.',
+            itemIncomplete: 'Complete descripción, cantidad y precio unitario de cada ítem (o quite la línea).',
+            paymentIncomplete: 'Con condición de pago, indique el nº de cuotas y el 1er vencimiento.',
+          },
         },
         duplicate: {
           button: 'Duplicar',
@@ -244,12 +338,17 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         categories: {
           label: 'Categoría',
           names: {
-            insumos: 'Insumos',
-            manutencao: 'Mantenimiento',
-            servicos: 'Servicios',
-            adiantamento: 'Anticipo y reembolso',
-            despesasFixas: 'Gastos fijos',
-            frete: 'Flete',
+            produto: 'Producto',
+            servico: 'Servicio',
+            reembolsoAdiantamento: 'Reembolso y anticipo',
+            despesaFixa: 'Gasto fijo',
+          },
+        },
+        marks: {
+          label: 'Marca',
+          names: {
+            urgencia: 'Urgencia',
+            regularizacao: 'Regularización',
           },
         },
         settings: {
@@ -279,9 +378,18 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           },
           selected: 'En uso',
           categoriesTitle: 'Categorías',
-          categoriesHint: 'Reemplazan los 11 tipos actuales; cada tipo cae en una categoría.',
+          categoriesHint: 'Reemplazan los 11 tipos actuales (decisión del 25/11); cada tipo cae en una categoría.',
           categoryColumn: 'Categoría',
           typesColumn: 'Tipos actuales',
+          marksTitle: 'Marcas',
+          marksHint: 'Emergencial y Compra efectuada dejan de ser tipo y pasan a ser marca de la orden.',
+          markColumn: 'Marca',
+          markTypeColumn: 'Tipo actual',
+          markEffectColumn: 'Efecto',
+          markEffects: {
+            urgencia: 'Sigue el perfil Simple',
+            regularizacao: 'Compra ya hecha: omite la cotización',
+          },
           quotesTitle: 'Cotización por rango de valor',
           quotesHint: 'Cuántas cotizaciones pide la orden antes de la aprobación (perfil Estándar y Completo).',
           rangeColumn: 'Valor de la orden',
@@ -542,7 +650,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     myProcesses: {
       titleModule: 'Mis Procesos',
       pageTitle: 'Mis Procesos',
-      pageSubtitle: 'Órdenes de compra bajo su responsabilidad.',
+      pageSubtitle: 'Solicitudes de compra bajo su responsabilidad.',
       emptyState: {
         titleEmpty: 'Ningún proceso bajo su responsabilidad',
         descriptionEmpty: 'Las solicitudes asignadas a usted aparecerán aquí.',
@@ -570,7 +678,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     rejected: {
       titleModule: 'Rechazados y Cancelados',
       pageTitle: 'Rechazados / Cancelados',
-      pageSubtitle: 'Órdenes de compra rechazadas o canceladas.',
+      pageSubtitle: 'Solicitudes de compra rechazadas o canceladas.',
       emptyState: {
         titleEmpty: 'Ninguna solicitud rechazada o cancelada',
         descriptionEmpty: 'Las solicitudes rechazadas o canceladas aparecerán aquí.',
@@ -603,7 +711,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inQuotation: {
       titleModule: 'Cotizaciones',
       pageTitle: 'Cotizaciones',
-      pageSubtitle: 'Órdenes de compra en cotización en toda la finca.',
+      pageSubtitle: 'Solicitudes de compra en cotización en toda la finca.',
       emptyState: {
         titleEmpty: 'Ninguna solicitud en cotización',
         descriptionEmpty: 'Las solicitudes en cotización aparecerán aquí.',
@@ -615,7 +723,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inPurchase: {
       titleModule: 'Compras',
       pageTitle: 'Compras',
-      pageSubtitle: 'Órdenes de compra en compra en toda la finca.',
+      pageSubtitle: 'Solicitudes de compra en compra en toda la finca.',
       emptyState: {
         titleEmpty: 'Ninguna solicitud en compra',
         descriptionEmpty: 'Las solicitudes en compra aparecerán aquí.',

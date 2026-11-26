@@ -11,7 +11,7 @@ export const languageRequestReceipts: ModuleRequestReceipts = {
     pluralLabel: 'Receipts',
     titleModule: 'Receipts',
     pageTitle: 'Receipts',
-    pageSubtitle: 'Manage receipt confirmation for purchase orders.',
+    pageSubtitle: 'Manage receipt confirmation for purchase requests.',
 
     list: {
       table: {
@@ -66,7 +66,7 @@ export const languageRequestReceipts: ModuleRequestReceipts = {
 
     confirm: {
       pageTitle: 'Confirm Receipt',
-      pageSubtitle: 'Confirm receipt of the purchase order items.',
+      pageSubtitle: 'Confirm receipt of the purchase request items.',
       fields: {
         code: 'Code',
         responsible: 'Responsible',

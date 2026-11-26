@@ -209,7 +209,7 @@ import { PrototypeItemsTable } from './prototype/PrototypeItemsTable';
 import { PrototypeApprovalsTable } from './prototype/PrototypeApprovalsTable';
 import { DuplicateOrderDialog } from './prototype/DuplicateOrderDialog';
 import { PrototypeOrderActions } from './prototype/PrototypeOrderActions';
-import { categoryOfType } from './prototype/purchaseOrderCategories';
+import { categoryOfType, markOfType } from './prototype/purchaseOrderCategories';
 import { isDuplicateOrderState } from './prototype/duplicateOrder';
 import type { PrototypePurchaseOrder } from './prototype/prototypeFields';
 import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
@@ -843,13 +843,18 @@ export default function CreateOrUpdateSolicitacao() {
                 )}
               />
 
-              {/* PROTÓTIPO (lote 5): Categoria no lugar do Tipo, derivada dele. */}
+              {/* PROTÓTIPO (lote 5): Categoria no lugar do Tipo, derivada dele;
+                  Emergencial e Compra efetuada aparecem como marcação (decisão de 25/11). */}
               {PURCHASE_ORDER_PROTOTYPE && (
                 <InputReadOnly
                   label={text.form.prototype.categories.label}
                   value={(() => {
-                    const category = categoryOfType(watch('type')?.value);
-                    return category ? text.form.prototype.categories.names[category] : '—';
+                    const type = watch('type')?.value;
+                    const category = categoryOfType(type);
+                    if (!category) return '—';
+                    const mark = markOfType(type);
+                    const name = text.form.prototype.categories.names[category];
+                    return mark ? `${name} · ${text.form.prototype.marks.names[mark]}` : name;
                   })()}
                   loading={isLoading}
                 />

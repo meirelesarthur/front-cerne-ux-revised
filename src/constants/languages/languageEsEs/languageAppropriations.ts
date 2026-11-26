@@ -52,7 +52,7 @@ export const languageAppropriations: ModuleAppropriations = {
       emptyState: {
         title: 'Todavía no hay apuntes.',
         description:
-          'El apunte registra el trabajo de su equipo, como pintar una cerca o abonar un lote. Para comprar un producto o contratar un servicio de fuera, use la Orden de compra.',
+          'El apunte registra el trabajo de su equipo, como pintar una cerca o abonar un lote. Para contratar a alguien de fuera, use Orden de Servicio.',
         titleFiltered: 'Ningún apunte encontrado.',
         descriptionFiltered: 'Intente ajustar los filtros o borrar la búsqueda.',
         cta: 'Registrar trabajo',

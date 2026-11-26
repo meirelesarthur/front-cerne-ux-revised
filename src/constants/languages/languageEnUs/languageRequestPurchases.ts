@@ -1,5 +1,5 @@
 // src/constants/languages/languageEnUs/languageRequestPurchases.ts
-// EN-US translation of the "Purchase Order" module (RequestPurchase —
+// EN-US translation of the "Purchase Request" module (RequestPurchase —
 // Administrative / Procurement, pipeline 97-Esteiras/022, TASK-RP-FE-03). See
 // `@/@types/language/module-request-purchases` for the full contract.
 
@@ -7,9 +7,9 @@ import { ModuleRequestPurchases } from '@/@types/language/module-request-purchas
 
 export const languageRequestPurchases: ModuleRequestPurchases = {
   requestPurchase: {
-    singularLabel: 'Purchase Order',
-    pluralLabel: 'Purchase Orders',
-    titleModule: 'Purchase Orders',
+    singularLabel: 'Purchase Request',
+    pluralLabel: 'Purchase Requests',
+    titleModule: 'Purchase Requests',
 
     // ADDITIVE (TASK-CQ-FE-15) — see note in
     // `ModuleRequestPurchases.requestPurchase.legend`.
@@ -18,8 +18,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     },
 
     list: {
-      pageTitle: 'Purchase Orders',
-      pageSubtitle: 'Manage the farm purchase orders.',
+      pageTitle: 'Purchase Requests',
+      pageSubtitle: 'Manage the farm purchase requests.',
       table: {
         code: 'Code',
         type: 'Type',
@@ -41,9 +41,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
       emptyState: {
         titleEmpty: 'No requests registered',
         titleFiltered: 'No requests found',
-        descriptionEmpty: 'Register the first Purchase Order.',
+        descriptionEmpty: 'Register the first Purchase Request.',
         descriptionFiltered: 'Adjust the filters to find what you are looking for.',
-        cta: 'New Purchase Order',
+        cta: 'New Request',
       },
       deletedToast: 'Record deleted successfully.',
       deleteConfirm: {
@@ -70,14 +70,14 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
 
     form: {
       title: {
-        create: 'New Purchase Order',
-        edit: 'Edit Purchase Order',
-        view: 'View Purchase Order',
+        create: 'New Purchase Request',
+        edit: 'Edit Purchase Request',
+        view: 'View Purchase Request',
       },
       subtitle: {
-        create: 'Register a new purchase order.',
-        edit: 'Update the purchase order data.',
-        view: 'View the purchase order data.',
+        create: 'Register a new purchase request.',
+        edit: 'Update the purchase request data.',
+        view: 'View the purchase request data.',
       },
       tabs: {
         general: 'General Data',
@@ -118,7 +118,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           received: 'Received',
           balance: 'Balance',
           forecast: 'Forecast',
-          orderTotal: 'Order total',
+          orderTotal: 'Request total',
         },
         forecast: {
           label: 'Delivery forecast',
@@ -159,12 +159,106 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         },
         links: {
           tab: 'Links',
-          origin: 'Source order',
-          derived: 'Derived orders',
+          origin: 'Source request',
+          derived: 'Derived requests',
           code: 'Code',
           justification: 'Justification',
-          noOrigin: 'This order did not come from another one.',
-          noDerived: 'No order was created from this one.',
+          noOrigin: 'This request did not come from another one.',
+          noDerived: 'No request was created from this one.',
+          ordersTitle: 'Generated purchase orders',
+          noneShort: 'None yet',
+          provider: 'Supplier',
+          status: 'Status',
+          itemsCount: 'Items',
+          forecast: 'Delivery forecast',
+          forecastPending: 'To be set on the order',
+          noOrders: 'No purchase order was generated from this request.',
+          coverageTitle: 'Items in orders',
+          item: 'Item',
+          requested: 'Requested',
+          ordered: 'In orders',
+          pending: 'Without order',
+        },
+        generateOrders: {
+          button: 'Generate purchase orders',
+          dialogTitle: 'Generate purchase orders',
+          description:
+            'Each order has a single supplier. Choose the supplier for each item; use "Split" when a supplier does not have the full quantity. The request stays open and linked to the orders.',
+          quantity: 'Quantity',
+          provider: 'Supplier',
+          pending: 'Without order: {value}',
+          split: 'Split',
+          nothingPending: 'All items are already in purchase orders.',
+          cancel: 'Cancel',
+          confirm: 'Generate {count} order(s)',
+          done: '{count} purchase order(s) generated.',
+          errors: {
+            empty: 'Enter the quantity of at least one item.',
+            missingProvider: 'Choose the supplier for each line with a quantity.',
+            overPending: 'An item total exceeds what is still without an order.',
+          },
+        },
+        purchaseOrder: {
+          listTitle: 'Purchase orders',
+          listSubtitle: 'One order per supplier; created from a request or on its own.',
+          viewsAriaLabel: 'Purchase order views',
+          views: { abertas: 'Open', recebidas: 'Received', todas: 'All' },
+          originAriaLabel: 'Purchase order origin',
+          origins: { todas: 'Any origin', solicitacao: 'From a request', avulsa: 'Standalone' },
+          searchPlaceholder: 'Search by code, supplier, request or farm',
+          empty: 'No purchase orders in this view.',
+          status: 'Status',
+          code: 'Code',
+          provider: 'Supplier',
+          request: 'Request',
+          farm: 'Farm',
+          forecast: 'Delivery forecast',
+          forecastPending: 'To be set',
+          total: 'Total',
+          standalone: 'Standalone',
+          detailTitle: 'Purchase order',
+          detailSubtitle: 'Order from a single supplier, with one delivery forecast.',
+          back: 'Back',
+          generalTitle: 'Order details',
+          contact: 'Supplier contact',
+          date: 'Order date',
+          changeForecast: 'Change forecast',
+          setForecast: 'Set forecast',
+          forecastHint: 'The forecast belongs to the order, not to each item: there is only one supplier.',
+          originTitle: 'Origin',
+          originFrom: 'Generated from request',
+          originStandalone: 'This order started on its own, without a request.',
+          itemsTitle: 'Items',
+          item: 'Product / description',
+          quantity: 'Qty',
+          unitPrice: 'Unit price',
+          forecastDialogTitle: 'Order delivery forecast',
+          cancel: 'Cancel',
+          save: 'Save',
+          forecastSaved: 'Delivery forecast saved.',
+          newButton: 'New standalone order',
+          newTitle: 'New standalone purchase order',
+          newSubtitle: 'Order that starts on its own, without a request: one supplier and the items agreed with it.',
+          markNone: 'None',
+          addItem: 'Add item',
+          removeItem: 'Remove item',
+          create: 'Create order',
+          created: 'Order {code} created.',
+          categoryMark: 'Category',
+          deliveryHint: 'Optional: fill in the place to record the delivery agreed with the supplier.',
+          paymentHint: 'Optional: with a condition, installments are equal over items + expenses, from the first due date.',
+          installmentsCount: 'No. of installments',
+          firstDue: 'First due date',
+          intervalDays: 'Days between installments',
+          installmentsPreview: '{count} installment(s) of {value} — total {total}',
+          errors: {
+            provider: 'Choose the supplier.',
+            farm: 'Choose the farm.',
+            category: 'Choose the category.',
+            items: 'Add at least one item.',
+            itemIncomplete: 'Fill in description, quantity and unit price of each item (or remove the line).',
+            paymentIncomplete: 'With a payment condition, enter the number of installments and the first due date.',
+          },
         },
         duplicate: {
           button: 'Duplicate',
@@ -244,12 +338,17 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         categories: {
           label: 'Category',
           names: {
-            insumos: 'Inputs',
-            manutencao: 'Maintenance',
-            servicos: 'Services',
-            adiantamento: 'Advance and reimbursement',
-            despesasFixas: 'Fixed expenses',
-            frete: 'Freight',
+            produto: 'Product',
+            servico: 'Service',
+            reembolsoAdiantamento: 'Reimbursement and advance',
+            despesaFixa: 'Fixed expense',
+          },
+        },
+        marks: {
+          label: 'Flag',
+          names: {
+            urgencia: 'Urgent',
+            regularizacao: 'Regularization',
           },
         },
         settings: {
@@ -279,9 +378,18 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           },
           selected: 'In use',
           categoriesTitle: 'Categories',
-          categoriesHint: 'They replace the 11 current types; each type falls into one category.',
+          categoriesHint: 'They replace the 11 current types (decision of 11/25); each type falls into one category.',
           categoryColumn: 'Category',
           typesColumn: 'Current types',
+          marksTitle: 'Flags',
+          marksHint: 'Emergency and Purchase made are no longer types and become order flags.',
+          markColumn: 'Flag',
+          markTypeColumn: 'Current type',
+          markEffectColumn: 'Effect',
+          markEffects: {
+            urgencia: 'Follows the Simple profile',
+            regularizacao: 'Purchase already made: skips quotation',
+          },
           quotesTitle: 'Quotation by value range',
           quotesHint: 'How many quotations the order needs before approval (Standard and Complete profiles).',
           rangeColumn: 'Order value',
@@ -539,7 +647,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     myProcesses: {
       titleModule: 'My Processes',
       pageTitle: 'My Processes',
-      pageSubtitle: 'Purchase orders under your responsibility.',
+      pageSubtitle: 'Purchase requests under your responsibility.',
       emptyState: {
         titleEmpty: 'No process under your responsibility',
         descriptionEmpty: 'Requests assigned to you will show up here.',
@@ -567,7 +675,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     rejected: {
       titleModule: 'Rejected and Cancelled',
       pageTitle: 'Rejected / Cancelled',
-      pageSubtitle: 'Rejected or cancelled purchase orders.',
+      pageSubtitle: 'Rejected or cancelled purchase requests.',
       emptyState: {
         titleEmpty: 'No rejected or cancelled request',
         descriptionEmpty: 'Rejected or cancelled requests will show up here.',
@@ -600,7 +708,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inQuotation: {
       titleModule: 'Quotations',
       pageTitle: 'Quotations',
-      pageSubtitle: 'Purchase orders in quotation across the whole farm.',
+      pageSubtitle: 'Purchase requests in quotation across the whole farm.',
       emptyState: {
         titleEmpty: 'No request in quotation',
         descriptionEmpty: 'Requests in quotation will show up here.',
@@ -612,7 +720,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
     inPurchase: {
       titleModule: 'Purchases',
       pageTitle: 'Purchases',
-      pageSubtitle: 'Purchase orders being purchased across the whole farm.',
+      pageSubtitle: 'Purchase requests being purchased across the whole farm.',
       emptyState: {
         titleEmpty: 'No request being purchased',
         descriptionEmpty: 'Requests being purchased will show up here.',
