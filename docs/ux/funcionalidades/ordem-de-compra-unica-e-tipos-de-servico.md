@@ -30,6 +30,9 @@ Relacionados: [ordem-de-servico-apontamento.md](ordem-de-servico-apontamento.md)
   "Pulverização · Aplicação de herbicida") e continua enviando `operation_uuid` e `activity_uuid`.
 - **24/11 — Nasce um cadastro novo, "Operações"**, usado na **Ordem de compra**: campo obrigatório no cabeçalho, sem
   Atividade, levado à despesa gerada. Não é o cadastro antigo (esse virou "Tipos de serviço").
+- **26/11 — A Operação é da Ordem de compra** (a entidade nova, de fornecedor único), não da Solicitação: a regra de
+  24/11 foi escrita quando "Ordem de compra" era o nome da Solicitação; a decisão do dono confirma que o campo fica na
+  Ordem (gerada ou avulsa) e segue dela para a despesa.
 - **24/11 — A Operação classifica o custo:** cada Operação tem categoria financeira e centro de custo padrão; na
   autorização, o rateio vem preenchido com eles (100%) e quem organiza a despesa pode ajustar ou dividir, como hoje.
 - **26/11 — Ordem de compra do tipo Serviço passa a usar Tipo de serviço e Serviço** (campo "Serviço" no item), em vez
@@ -67,10 +70,13 @@ Relacionados: [ordem-de-servico-apontamento.md](ordem-de-servico-apontamento.md)
   minimalista e funcional, no padrão do sistema.
 - **25/11 — Protótipo da Ordem de compra (não portar):** serve para apresentar o fluxo antes de a API existir. Só liga
   com dados fictícios; no front oficial fica sempre desligado. O `StepTrack` do kit é portável.
-- **26/11 — Aprovação automática (tela "Fluxo da ordem de compra", protótipo):** campo **"Aprovação automática até"**
-  (valor por ordem) e, na mesma linha, o interruptor **"Limite diário"**; ligado, o valor do limite aparece dentro da
-  mesma caixa. Com ele ligado, a soma das ordens aprovadas automaticamente no dia não passa desse valor; acima dele, a
-  ordem vai para o aprovador.
+- **26/11 — Aprovação automática por Valor, Prazo e Contagem** (tela "Fluxo da ordem de compra", protótipo): a soma
+  das ordens aprovadas sem aprovador dentro do **prazo** (diário, semanal, mensal ou anual) não passa do **valor**;
+  acima dele, a ordem vai para o aprovador. A **contagem** decide a janela: **dias corridos** conta para trás a partir
+  de hoje (1, 7, 30 ou 365 dias, incluindo hoje); **período fechado** corta no início do período (hoje, segunda-feira
+  da semana, dia 1 do mês, 1º de janeiro).
+- ~~**26/11 — "Aprovação automática até" (valor por ordem) com o interruptor "Limite diário"**~~ (outra sessão, sem
+  commit). **Substituída em 26/11** pela regra acima.
 - ~~**26/11 — Aprovação automática com valor por ordem, limite diário e transações por dia, que se redistribuíam
   (limite diário = valor por ordem × transações por dia)**~~ (commit `9b70d01`). **Substituída em 26/11** pela regra
   acima.
@@ -192,7 +198,7 @@ feito sobre o plano "Ordem de compra — validação e plano" (fases F0–F6). M
 | 4 | Aba Notas fiscais: NFs com a soma ao lado do total. **26/11:** saiu da Solicitação e está na Ordem | `PrototypeFinancePanels.tsx` | feito |
 | 4 | Registrar recebimento: NF + quantidade (inteira) por item (padrão = saldo); saldo cai e, sem saldo, vira recebida; NF entra na aba. **26/11:** ação da Ordem (`PrototypeReceiptDialog`), não mais da Solicitação | `PrototypeOrderActions.tsx` (rodapé); rota simulada `/prototype/receipt` | feito |
 | 4 | Cancelar saldo, cancelar item e reabrir, com justificativa. **26/11:** Cancelar saldo é da Ordem; "Cancelar item" saiu da Solicitação; Reabrir ficou na Solicitação | `PrototypeOrderActions.tsx`, `PrototypeItemsTable.tsx`; rotas `/prototype/cancel-balance`, `/cancel-item`, `/reopen` | feito |
-| 5 | Tela "Fluxo da ordem de compra" (`/administrativo/ordens-de-compra/parametros`, item de menu `adm-sup-flx` em Suprimentos): perfil Simples/Padrão/Completo, categorias com os tipos atuais, cotação por faixa de valor (editável), aprovação automática ("Aprovação automática até" e, na mesma linha, o interruptor "Limite diário" com o valor dentro da caixa quando ligado: limita a soma aprovada automaticamente no dia) e níveis de alçada; "Salvar" só avisa (protótipo) | `OrdensCompra/PurchaseOrderFlowSettings.tsx`; `ToggleRow` do kit ganhou conteúdo opcional à direita, dentro da caixa, na altura de um campo (38px); rota e menu só com `PURCHASE_ORDER_PROTOTYPE`. A regra de redistribuição `Solicitacao/prototype/autoApprovalLimits.ts` (e seu teste) saiu | feito |
+| 5 | Tela "Fluxo da ordem de compra" (`/administrativo/ordens-de-compra/parametros`, item de menu `adm-sup-flx` em Suprimentos): perfil Simples/Padrão/Completo, categorias com os tipos atuais, cotação por faixa de valor (editável), aprovação automática por **Valor, Prazo (diário, semanal, mensal, anual) e Contagem (dias corridos ou período fechado)**, com a frase "Hoje entram na soma as ordens de <início> até <hoje>" e níveis de alçada; "Salvar" só avisa (protótipo) | `OrdensCompra/PurchaseOrderFlowSettings.tsx`; regra `Solicitacao/prototype/autoApprovalWindow.ts` (com teste); rota e menu só com `PURCHASE_ORDER_PROTOTYPE`. A regra de redistribuição `autoApprovalLimits.ts` (e seu teste) saiu | feito |
 | 5 | Diagrama do fluxo (F0): uma linha de etapas por perfil, só com as etapas que o perfil tem (linhas de tamanhos diferentes), legenda do que muda e as exceções (recusa, recebimento parcial, cancelamento, reabrir) | topo da mesma tela, `StepTrack` | feito |
 | 5 | Categoria no lugar do Tipo: campo somente leitura ao lado de Tipo, derivado dele. ~~6 categorias~~ — **26/11: 4 categorias + 2 marcações** (o campo mostra, por exemplo, "Produto · Urgência"); tabela "Marcações" no "Fluxo da ordem de compra" | `Solicitacao/prototype/purchaseOrderCategories.ts` (`categoryOfType`, `markOfType`, com teste); `CreateOrUpdateSolicitacao.tsx`; `PurchaseOrderFlowSettings.tsx` | feito |
 
@@ -271,8 +277,9 @@ o "Receber" original (API real) fica escondido.
 1. Roteiro dos 9 passos: 1–2 em "Fluxo da ordem de compra"; 3 na lista (Todas, contadores, selo Atrasada); 4 na
    0012 ou em Duplicar; 5 na aba Cotações; 6 em Histórico → Aprovações; 7 em Pagamento e Entrega; 8 em "Registrar
    recebimento"; 9 em "Cancelar saldo" e na linha do tempo.
-2. `/administrativo/ordens-de-compra/parametros`: preencher "Aprovação automática até"; ligar "Limite diário" e
-   conferir que o campo do valor aparece dentro da mesma caixa, na mesma linha; desligar e conferir que some.
+2. `/administrativo/ordens-de-compra/parametros`, seção Aprovação: Valor, Prazo e Contagem numa linha; com Mensal +
+   Período fechado a frase diz "de 01/<mês> até hoje"; com Semanal + Dias corridos, "dos últimos 7 dias até hoje".
+   Regra `Solicitacao/prototype/autoApprovalWindow.ts` (com teste); a regra antiga `autoApprovalLimits.ts` saiu.
 3. Recarregar a página: as ações simuladas voltam ao estado inicial.
 
 **Solicitação × Ordem de compra (protótipo, dados fictícios)**
@@ -416,7 +423,8 @@ o "Receber" original (API real) fica escondido.
 | 26/11/2026 | `c77ee03`, `5ead0e6` | Tela própria da Ordem de compra (lista e detalhe) |
 | 26/11/2026 | `1ed4512` | Entrega, pagamento, notas e recebimento vão para a Ordem |
 | 26/11/2026 | `e3aa804`, `446d425` | Ordem avulsa pela tela, com entrega e pagamento; trilha do topo pelo caminho mais específico (PR #2, integrado na `main` em `d6d4285`) |
-| 26/11/2026 | (este commit) | Doc consolidado: conceito Solicitação × Ordem nas regras vigentes, seções novas, validação, "A fazer" e pendências |
+| 26/11/2026 | `91bd88c` | Doc consolidado: conceito Solicitação × Ordem nas regras vigentes, seções novas, validação, "A fazer" e pendências |
+| 26/11/2026 | (este commit) | Aprovação automática por Valor, Prazo e Contagem (no lugar de valor por ordem, limite diário e transações); Operação é da Ordem de compra |
 
 ## Anexo: Mapa de impacto no backend (Tipos de serviço e Serviços)
 

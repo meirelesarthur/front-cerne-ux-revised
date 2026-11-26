@@ -43,8 +43,9 @@ Relacionados: [ordem-de-compra-unica-e-tipos-de-servico.md](ordem-de-compra-unic
 - **24/11 — Nasce o cadastro novo "Operações"** (não é o antigo, que virou "Tipos de serviço"): obrigatório, só
   Operação (sem Atividade), classifica o custo (categoria financeira e centro de custo padrão) e vai para a despesa
   gerada. Ordens antigas sem operação abrem normalmente e só exigem o campo ao serem editadas.
-- **26/11 — Em qual documento a Operação fica (Solicitação, Ordem ou os dois)** ainda não foi decidido: a regra de 24/11
-  foi escrita quando "Ordem de compra" era o nome da Solicitação (ver "Pendências de decisão").
+- **26/11 — A Operação é da Ordem de compra** (a entidade nova, de fornecedor único, gerada ou avulsa), não da
+  Solicitação; segue da Ordem para a despesa. A regra de 24/11 foi escrita quando "Ordem de compra" era o nome da
+  Solicitação.
 
 ## O que mudou
 
@@ -86,7 +87,7 @@ compra** desde 26/11.
 | Totais | Produtos, frete, seguro, outras | Aba Pagamento da **Ordem**, com conferência parcelas × (itens + despesas) (protótipo) |
 | Autorizadores | Alçada, data, situação, observação | Aprovações na aba Histórico da Solicitação (protótipo) |
 | Reabrir e cancelar | Na própria ordem | Reabrir na Solicitação; Cancelar saldo na Ordem (protótipo) |
-| Operação | — | Decidida em 24/11; documento ainda em aberto (ver regras) |
+| Operação | — | Na **Ordem de compra** (decidido em 26/11); campo e API a fazer |
 | Justificativa por item | Por produto | Mantida geral; avaliar depois |
 | Serviço | — | No tipo Serviço, falar "Confirmar serviço" e "Serviço feito" no recebimento (a fazer) |
 | Fiscal (ICMS, IPI, CBS/IBS) | Por item | Fora do escopo: o Cerne não emite a NF da compra |
@@ -138,7 +139,6 @@ compra** desde 26/11.
 
 ### Pendências de decisão
 
-- Em qual documento fica a **Operação** (Solicitação, Ordem ou os dois) e como ela chega à despesa da Ordem.
 - Se **Pastagem, Planejamentos, Rateios, Áreas, Contas a pagar e NF de entrada** também passam a usar o campo único
   "Serviço" (Tipo de serviço · Serviço), ou só o Apontamento.
 - Destino das OS já cadastradas: arquivar ou converter (uma OS Aberta pode virar apontamento Aberto).
@@ -152,7 +152,8 @@ compra** desde 26/11.
 | 24/11/2026 | `521ead7` | 003: fim da OS; "Solicitação de compra" renomeada para "Ordem de compra" (desfeito em 26/11) |
 | 24/11/2026 | `f9e02ae` | Tipo de serviço e operação obrigatória na compra |
 | 26/11/2026 | `2920f89` | Textos voltam a "Solicitação de compra" (conceito Solicitação × Ordem) |
-| 26/11/2026 | (este commit) | Doc reescrito pela lei 6; regras de 26/11 (Solicitação × Ordem, "Gera execução", Serviço só descrição); proposta do ERP atualizada com o que o protótipo já cobre |
+| 26/11/2026 | `91bd88c` | Doc reescrito pela lei 6; regras de 26/11 (Solicitação × Ordem, "Gera execução", Serviço só descrição); proposta do ERP atualizada com o que o protótipo já cobre |
+| 26/11/2026 | (este commit) | Operação é da Ordem de compra (decisão do dono) |
 
 ## Anexo: Web × App — catálogo de fluxos do GB CERNE APP (24/11)
 

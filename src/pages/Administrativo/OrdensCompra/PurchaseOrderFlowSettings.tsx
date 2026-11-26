@@ -7,7 +7,8 @@
 //      linha do diagrama;
 //   3. categorias no lugar dos 11 tipos e as 2 marcações (`purchaseOrderCategories.ts`);
 //   4. cotação por faixa de valor (limites e quantidade, editáveis);
-//   5. aprovação automática até um valor e níveis de alçada.
+//   5. aprovação automática por valor, prazo (diário, semanal, mensal, anual) e
+//      contagem (dias corridos ou período fechado), e níveis de alçada.
 // Só aparece com `PURCHASE_ORDER_PROTOTYPE`. Nada é gravado: "Salvar" mostra o
 // aviso de protótipo. Rota `/administrativo/ordens-de-compra/parametros`.
 // -----------------------------------------------------------------------------
@@ -15,10 +16,12 @@
 import { type ReactNode, useState } from 'react';
 
 import { Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
 import { MaskedInput } from '@/components/Form/MaskedInput';
+import { Select } from '@/components/Form/Select';
 import { FormContainer } from '@/components/Layout/FormContainer';
 import { Icon } from '@/components/ui/Icon';
 import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
@@ -29,6 +32,7 @@ import { toaster } from '@/components/ui/toaster';
 import { useLanguage } from '@/hooks/useLanguage';
 
 import formatCurrencyBRL from '@/utils/formatCurrencyBRL';
+import formatDate from '@/utils/formatDate';
 
 import { requestPurchaseTypeOptions } from '@/constants/RequestPurchases/options';
 import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
@@ -36,10 +40,13 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 import type { IconName } from '@/design/icons';
 
 import {
-  type AutoApprovalField,
-  type AutoApprovalLimits,
-  redistributeAutoApproval,
-} from '../Solicitacao/prototype/autoApprovalLimits';
+  APPROVAL_COUNTINGS,
+  APPROVAL_PERIODS,
+  type ApprovalCounting,
+  type ApprovalPeriod,
+  approvalWindowStart,
+  type AutoApprovalRule,
+} from '../Solicitacao/prototype/autoApprovalWindow';
 import {
   PURCHASE_ORDER_CATEGORIES,
   PURCHASE_ORDER_MARKS,
@@ -76,11 +83,11 @@ export default function PurchaseOrderFlowSettings() {
   const [profile, setProfile] = useState<PurchaseOrderFlowProfile>('padrao');
   const [limits, setLimits] = useState<(number | null)[]>([1000, 5000, 50000]);
   const [quotes, setQuotes] = useState<(number | null)[]>([0, 1, 2, 3]);
-  // Aprovação automática: valor por ordem, limite diário e transações por dia
-  // andam juntos (`autoApprovalLimits.ts`): mudar um redistribui os outros.
-  const [auto, setAuto] = useState<AutoApprovalLimits>({ perOrder: 1000, dailyValue: 10000, dailyCount: 10 });
-  const changeAuto = (field: AutoApprovalField) => (value: number | null) =>
-    setAuto((current) => redistributeAutoApproval(current, field, value));
+  // Aprovação automática (26/11): valor, prazo e contagem (`autoApprovalWindow.ts`).
+  const [auto, setAuto] = useState<AutoApprovalRule>({ value: 10000, period: 'mensal', counting: 'fechado' });
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const periodOptions = APPROVAL_PERIODS.map((p) => ({ label: text.autoPeriods[p], value: p }));
+  const countingOptions = APPROVAL_COUNTINGS.map((c) => ({ label: text.autoCountings[c], value: c }));
 
   const typeLabel = new Map(requestPurchaseTypeOptions.options(languageGB).map((o) => [o.value, o.label]));
 
@@ -330,34 +337,42 @@ export default function PurchaseOrderFlowSettings() {
       </Section>
 
       <Section title={text.approvalTitle} hint={text.autoApproveHint}>
+        {/* 26/11: Valor + Prazo + Contagem (`autoApprovalWindow.ts`), no lugar de
+            valor por ordem × limite diário × transações por dia. */}
         <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} maxW="960px">
           <MaskedInput
             kind="currency"
-            name="auto_approve"
-            label={text.autoApprove}
-            value={auto.perOrder}
-            onValueChange={changeAuto('perOrder')}
+            name="auto_approve_value"
+            label={text.autoValue}
+            value={auto.value}
+            onValueChange={(value) => setAuto((current) => ({ ...current, value }))}
             min={0}
           />
-          <MaskedInput
-            kind="currency"
-            name="auto_approve_daily_value"
-            label={text.dailyLimit}
-            value={auto.dailyValue}
-            onValueChange={changeAuto('dailyValue')}
-            min={0}
+          <Select
+            name="auto_approve_period"
+            label={text.autoPeriod}
+            options={periodOptions}
+            value={periodOptions.find((o) => o.value === auto.period) ?? null}
+            onChange={(option) =>
+              setAuto((current) => ({ ...current, period: (option?.value as ApprovalPeriod) ?? current.period }))
+            }
+            noClearable
           />
-          <MaskedInput
-            kind="integer"
-            name="auto_approve_daily_count"
-            label={text.dailyCount}
-            value={auto.dailyCount}
-            onValueChange={changeAuto('dailyCount')}
-            min={0}
+          <Select
+            name="auto_approve_counting"
+            label={text.autoCounting}
+            options={countingOptions}
+            value={countingOptions.find((o) => o.value === auto.counting) ?? null}
+            onChange={(option) =>
+              setAuto((current) => ({ ...current, counting: (option?.value as ApprovalCounting) ?? current.counting }))
+            }
+            noClearable
           />
         </SimpleGrid>
         <Text fontSize="sm" color="fg.muted" mt={2} mb={5}>
-          {text.dailyHint}
+          {text.autoWindowExample
+            .replace('{start}', formatDate(approvalWindowStart(today, auto.period, auto.counting)))
+            .replace('{today}', formatDate(today))}
         </Text>
         <Text fontSize="sm" fontWeight="semibold" mb={2}>
           {text.levelsTitle}

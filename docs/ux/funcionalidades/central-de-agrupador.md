@@ -73,4 +73,4 @@ Relacionados: [ordem-de-servico-apontamento.md](ordem-de-servico-apontamento.md)
 | 24/11/2026 | `3f2b0db` | Central por agrupador com cards e descrição das 193 telas |
 | 26/11/2026 | `2920f89`, `c77ee03` | "Solicitações de compra" e o item novo "Ordens de compra" em Suprimentos |
 | 26/11/2026 | `446d425` | Trilha do topo pelo caminho mais específico |
-| 26/11/2026 | (este commit) | Doc reescrito pela lei 6 |
+| 26/11/2026 | `91bd88c` | Doc reescrito pela lei 6 |
