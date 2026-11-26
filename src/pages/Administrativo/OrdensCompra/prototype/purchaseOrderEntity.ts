@@ -12,6 +12,12 @@ import api from '@/services/api';
 
 import type { PrototypeReceiptPayload } from '../../Solicitacao/prototype/prototypeActions';
 import type {
+  PurchaseOrderCategoryKey,
+  PurchaseOrderMarkKey,
+} from '../../Solicitacao/prototype/purchaseOrderCategories';
+
+import type { StandaloneOrderPayload } from './standaloneOrder';
+import type {
   PurchaseOrderDelivery,
   PurchaseOrderInvoice,
   PurchaseOrderPayment,
@@ -34,6 +40,9 @@ export interface PurchaseOrderSummary {
   delivery_forecast: string | null;
   /** Solicitação de origem; `null` quando a Ordem começou sozinha. */
   request: { uuid: string; code: string; description: string } | null;
+  /** Categoria (as 4 de 25/11) e marcação; na ordem gerada, vêm do tipo da Solicitação. */
+  category: PurchaseOrderCategoryKey | null;
+  mark: PurchaseOrderMarkKey | null;
   items_count: number;
   total: number;
 }
@@ -84,6 +93,24 @@ export async function fetchPurchaseOrder(uuid: string): Promise<PurchaseOrderEnt
   const { data } = await api.V2.get<{ data: PurchaseOrderEntity }>(`/prototype/purchase-orders/${uuid}`);
   return data.data;
 }
+
+export interface StandaloneOrderOptions {
+  providers: { uuid: string; name: string }[];
+  farms: { uuid: string; description: string }[];
+}
+
+export async function fetchStandaloneOrderOptions(): Promise<StandaloneOrderOptions> {
+  const { data } = await api.V2.get<{ data: StandaloneOrderOptions }>('/prototype/purchase-orders/options');
+  return data.data;
+}
+
+/** Cria a Ordem avulsa (sem Solicitação) e devolve o detalhe dela. */
+export async function createStandaloneOrder(payload: StandaloneOrderPayload): Promise<PurchaseOrderEntity> {
+  const { data } = await api.V2.post<{ data: PurchaseOrderEntity }>('/prototype/purchase-orders', payload);
+  return data.data;
+}
+
+export const PURCHASE_ORDER_NEW_PATH = `${PURCHASE_ORDER_ENTITY_PATH}/nova`;
 
 export function setPurchaseOrderForecast(uuid: string, date: string) {
   return api.V2.post(`/prototype/purchase-orders/${uuid}/forecast`, { date });

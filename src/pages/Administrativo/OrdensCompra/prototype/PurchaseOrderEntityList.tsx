@@ -10,8 +10,9 @@ import { useMemo, useState } from 'react';
 
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { Button } from '@/components/Button';
 import { ContainerGrid } from '@/components/ContainerGrid';
 import { ListToolbar } from '@/components/ui/ListToolbar';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -28,6 +29,7 @@ import {
   countPurchaseOrderViews,
   fetchPurchaseOrders,
   filterPurchaseOrders,
+  PURCHASE_ORDER_NEW_PATH,
   purchaseOrderEntityPath,
   purchaseOrderEntityQueryKey,
   type PurchaseOrderEntityView,
@@ -41,6 +43,7 @@ export default function PurchaseOrderEntityList() {
   const [view, setView] = useState<PurchaseOrderEntityView>('abertas');
   const [origin, setOrigin] = useState<PurchaseOrderOrigin>('todas');
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
   const { data = [], isLoading } = useQuery({
     queryKey: purchaseOrderEntityQueryKey.list,
@@ -91,9 +94,11 @@ export default function PurchaseOrderEntityList() {
 
   return (
     <ContainerGrid>
-      <Box mb={2}>
+      <Flex mb={2} justify="space-between" align="flex-start" gap={4} wrap="wrap">
         <PageHeader title={text.listTitle} description={text.listSubtitle} count={visible.length} />
-      </Box>
+        {/* 26/11: Ordem avulsa, que começa sozinha (sem Solicitação). */}
+        <Button title={text.newButton} type="button" onClick={() => navigate(PURCHASE_ORDER_NEW_PATH)} />
+      </Flex>
       <Flex gap={3} wrap="wrap" align="center" mb={3}>
         <ViewSelect
           options={(['abertas', 'recebidas', 'todas'] as PurchaseOrderEntityView[]).map((key) => ({

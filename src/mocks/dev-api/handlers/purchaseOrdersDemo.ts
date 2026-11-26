@@ -17,6 +17,13 @@
 
 import type { MockRoute } from '../index';
 
+import {
+  categoryOfType,
+  markOfType,
+  type PurchaseOrderCategoryKey,
+  type PurchaseOrderMarkKey,
+} from '@/pages/Administrativo/Solicitacao/prototype/purchaseOrderCategories';
+
 const ME = { uuid: '00000000-0000-4000-8000-0000000000aa', name: 'Usuário UX (dev)' };
 const ANA = { uuid: 'demo-user-ana', name: 'Ana Paula Ribeiro' };
 const JOAO = { uuid: 'demo-user-joao', name: 'João Batista Lima' };
@@ -941,6 +948,9 @@ interface DemoPurchaseOrder {
   request?: DemoOrder;
   delivery?: DemoDelivery;
   payment?: DemoPayment;
+  /** Categoria (4 de 25/11) e marcação; na ordem gerada vêm do tipo da Solicitação. */
+  category?: PurchaseOrderCategoryKey | null;
+  mark?: PurchaseOrderMarkKey | null;
   items: DemoPurchaseOrderItem[];
 }
 
@@ -954,6 +964,7 @@ const STANDALONE_ORDERS: DemoStandaloneOrder[] = [
     status: 6,
     date: '2026-11-24',
     farm: SANTA_RITA,
+    category: 'produto',
     forecast: '2026-11-29',
     delivery: { freight_type: 'CIF', place: 'Fazenda Santa Rita — tanque de combustível', carrier: 'Posto Estrada Real', needs_unloading: false },
     payment: {
@@ -970,6 +981,8 @@ const STANDALONE_ORDERS: DemoStandaloneOrder[] = [
     status: 8,
     date: '2026-11-17',
     farm: BOA_VISTA,
+    category: 'produto',
+    mark: 'urgencia',
     forecast: '2026-11-21',
     received: { 0: 4, 1: 4 },
     delivery: { freight_type: 'FOB', place: 'Retirada na TratorMaq (Uberlândia)', needs_unloading: false },
@@ -1006,6 +1019,8 @@ function purchaseOrders(): DemoPurchaseOrder[] {
       // vão para a 1ª ordem (a 0012 tem uma só).
       delivery: o.delivery,
       payment: index === 0 ? o.payment : undefined,
+      category: categoryOfType(o.type),
+      mark: markOfType(o.type),
       items: g.items.map((row) => {
         const item = o.items[row.index];
         return {
@@ -1038,6 +1053,8 @@ function purchaseOrderSummary(po: DemoPurchaseOrder) {
     request: po.request
       ? { uuid: uuidOf(po.request.n), code: po.request.code, description: po.request.description }
       : null,
+    category: po.category ?? null,
+    mark: po.mark ?? null,
     items_count: po.items.length,
     total: po.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0),
   };
@@ -1089,6 +1106,49 @@ function purchaseOrderAction(action: string, run: (po: DemoPurchaseOrder, body: 
 }
 
 const purchaseOrderRoutes: MockRoute[] = [
+  // Opções da Ordem avulsa (antes do detalhe `/{uuid}`, que também casaria "options").
+  {
+    method: 'get',
+    pattern: /^\/prototype\/purchase-orders\/options$/,
+    handler: () => ({
+      body: {
+        providers: Object.values(PROVIDERS).map((p) => ({ uuid: p.uuid, name: p.name })),
+        farms: [SANTA_RITA, BOA_VISTA],
+      },
+    }),
+  },
+  // Ordem avulsa (26/11): começa sozinha, sem Solicitação; nasce "Aguardando a Compra".
+  {
+    method: 'post',
+    pattern: /^\/prototype\/purchase-orders$/,
+    handler: ({ body }) => {
+      const input = parseBody(body);
+      const provider = (Object.keys(PROVIDERS) as (keyof typeof PROVIDERS)[]).find(
+        (key) => PROVIDERS[key].uuid === input.provider_uuid
+      );
+      const farm = [SANTA_RITA, BOA_VISTA].find((f) => f.uuid === input.farm_uuid);
+      if (!provider || !farm) return { status: 422, body: null };
+      const next = 32 + STANDALONE_ORDERS.filter((po) => po.uuid.startsWith('demo-oc-nova-')).length;
+      const order: DemoStandaloneOrder = {
+        uuid: `demo-oc-nova-${String(next).padStart(4, '0')}`,
+        code: `OC-${String(next).padStart(4, '0')}`,
+        provider,
+        status: 6,
+        date: new Date().toISOString().slice(0, 10),
+        farm,
+        category: input.category ?? null,
+        mark: input.mark ?? null,
+        forecast: input.delivery_forecast || undefined,
+        items: (input.items ?? []).map((item: { description: string; quantity: number; unit_price: number }) => ({
+          description: String(item.description),
+          quantity: Number(item.quantity),
+          unitPrice: Number(item.unit_price),
+        })),
+      };
+      STANDALONE_ORDERS.push(order);
+      return { status: 201, body: purchaseOrderDetail({ ...order, target: order }) };
+    },
+  },
   purchaseOrderAction('forecast', (po, body) => {
     po.target.forecast = String(body.date ?? '') || undefined;
   }),

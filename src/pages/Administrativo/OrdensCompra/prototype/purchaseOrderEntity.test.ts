@@ -22,6 +22,8 @@ const base: PurchaseOrderSummary = {
   farm: { uuid: 'f1', description: 'Fazenda Santa Rita' },
   delivery_forecast: null,
   request: { uuid: 's1', code: '0013', description: 'Semente de soja' },
+  category: 'produto',
+  mark: null,
   items_count: 1,
   total: 1000,
 };

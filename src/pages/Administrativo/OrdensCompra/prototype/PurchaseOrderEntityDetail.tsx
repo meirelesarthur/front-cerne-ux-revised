@@ -184,6 +184,16 @@ export default function PurchaseOrderEntityDetail() {
           />
         </Box>
         <InputReadOnly label={text.total} value={formatCurrencyBRL(data.total)} />
+        <InputReadOnly
+          label={text.categoryMark}
+          value={
+            data.category
+              ? [proto.categories.names[data.category], data.mark ? proto.marks.names[data.mark] : null]
+                  .filter(Boolean)
+                  .join(' · ')
+              : '—'
+          }
+        />
       </SimpleGrid>
       <Text fontSize="sm" color="fg.muted" mt={2}>
         {text.forecastHint}

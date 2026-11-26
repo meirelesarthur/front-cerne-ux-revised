@@ -3050,6 +3050,9 @@ const OrdensCompraHub = lazy(() => import('@/pages/Administrativo/OrdensCompra')
 const PurchaseOrderEntityList = lazy(
   () => import('@/pages/Administrativo/OrdensCompra/prototype/PurchaseOrderEntityList')
 );
+const PurchaseOrderStandaloneForm = lazy(
+  () => import('@/pages/Administrativo/OrdensCompra/prototype/PurchaseOrderStandaloneForm')
+);
 const PurchaseOrderEntityDetail = lazy(
   () => import('@/pages/Administrativo/OrdensCompra/prototype/PurchaseOrderEntityDetail')
 );
@@ -6550,6 +6553,16 @@ export function AppRoutes() {
             element={
               <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
                 {lazyRoute(PurchaseOrderEntityList)}
+              </RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path={`${PURCHASE_ORDERS_PATH}/ordens/nova`}
+            element={
+              <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
+                {lazyRoute(PurchaseOrderStandaloneForm)}
               </RequirePermission>
             }
           />

@@ -281,6 +281,16 @@ export interface ModuleRequestPurchases {
           cancel: string;
           save: string;
           forecastSaved: string;
+          newButton: string;
+          newTitle: string;
+          newSubtitle: string;
+          markNone: string;
+          addItem: string;
+          removeItem: string;
+          create: string;
+          created: string;
+          categoryMark: string;
+          errors: { provider: string; farm: string; category: string; items: string; itemIncomplete: string };
         };
         duplicate: {
           button: string;
