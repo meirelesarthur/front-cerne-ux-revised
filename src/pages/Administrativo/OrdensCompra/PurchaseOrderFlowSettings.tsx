@@ -5,7 +5,7 @@
 //      etapas que o perfil tem) e as exceções que valem em qualquer perfil (F0);
 //   2. perfil do fluxo (Simples, Padrão, Completo) — o escolhido destaca a
 //      linha do diagrama;
-//   3. categorias no lugar dos 11 tipos (`purchaseOrderCategories.ts`);
+//   3. categorias no lugar dos 11 tipos e as 2 marcações (`purchaseOrderCategories.ts`);
 //   4. cotação por faixa de valor (limites e quantidade, editáveis);
 //   5. aprovação automática até um valor e níveis de alçada.
 // Só aparece com `PURCHASE_ORDER_PROTOTYPE`. Nada é gravado: "Salvar" mostra o
@@ -40,7 +40,10 @@ import {
   type AutoApprovalLimits,
   redistributeAutoApproval,
 } from '../Solicitacao/prototype/autoApprovalLimits';
-import { PURCHASE_ORDER_CATEGORIES } from '../Solicitacao/prototype/purchaseOrderCategories';
+import {
+  PURCHASE_ORDER_CATEGORIES,
+  PURCHASE_ORDER_MARKS,
+} from '../Solicitacao/prototype/purchaseOrderCategories';
 import {
   type PurchaseOrderFlowProfile,
   purchaseOrderSteps,
@@ -128,6 +131,21 @@ export default function PurchaseOrderFlowSettings() {
           ))}
         </Flex>
       ),
+    },
+  }));
+
+  // ---- 3b. marcações (Emergencial e Compra efetuada deixam de ser tipo)
+  const markColumns: SimpleTableColumn[] = [
+    { key: 'mark', header: text.markColumn },
+    { key: 'type', header: text.markTypeColumn },
+    { key: 'effect', header: text.markEffectColumn },
+  ];
+  const markRows: SimpleTableRow[] = PURCHASE_ORDER_MARKS.map((mark) => ({
+    key: mark.key,
+    cells: {
+      mark: <Text fontWeight="semibold">{proto.marks.names[mark.key]}</Text>,
+      type: typeLabel.get(mark.type as never) ?? mark.type,
+      effect: text.markEffects[mark.key],
     },
   }));
 
@@ -301,6 +319,10 @@ export default function PurchaseOrderFlowSettings() {
 
       <Section title={text.categoriesTitle} hint={text.categoriesHint}>
         <SimpleTable columns={categoryColumns} rows={categoryRows} ariaLabel={text.categoriesTitle} />
+      </Section>
+
+      <Section title={text.marksTitle} hint={text.marksHint}>
+        <SimpleTable columns={markColumns} rows={markRows} ariaLabel={text.marksTitle} />
       </Section>
 
       <Section title={text.quotesTitle} hint={text.quotesHint}>

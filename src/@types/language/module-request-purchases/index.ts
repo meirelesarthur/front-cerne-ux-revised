@@ -294,13 +294,15 @@ export interface ModuleRequestPurchases {
         categories: {
           label: string;
           names: {
-            insumos: string;
-            manutencao: string;
-            servicos: string;
-            adiantamento: string;
-            despesasFixas: string;
-            frete: string;
+            produto: string;
+            servico: string;
+            reembolsoAdiantamento: string;
+            despesaFixa: string;
           };
+        };
+        marks: {
+          label: string;
+          names: { urgencia: string; regularizacao: string };
         };
         settings: {
           pageTitle: string;
@@ -319,6 +321,12 @@ export interface ModuleRequestPurchases {
           categoriesHint: string;
           categoryColumn: string;
           typesColumn: string;
+          marksTitle: string;
+          marksHint: string;
+          markColumn: string;
+          markTypeColumn: string;
+          markEffectColumn: string;
+          markEffects: { urgencia: string; regularizacao: string };
           quotesTitle: string;
           quotesHint: string;
           rangeColumn: string;

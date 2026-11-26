@@ -244,12 +244,17 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         categories: {
           label: 'Categoría',
           names: {
-            insumos: 'Insumos',
-            manutencao: 'Mantenimiento',
-            servicos: 'Servicios',
-            adiantamento: 'Anticipo y reembolso',
-            despesasFixas: 'Gastos fijos',
-            frete: 'Flete',
+            produto: 'Producto',
+            servico: 'Servicio',
+            reembolsoAdiantamento: 'Reembolso y anticipo',
+            despesaFixa: 'Gasto fijo',
+          },
+        },
+        marks: {
+          label: 'Marca',
+          names: {
+            urgencia: 'Urgencia',
+            regularizacao: 'Regularización',
           },
         },
         settings: {
@@ -279,9 +284,18 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           },
           selected: 'En uso',
           categoriesTitle: 'Categorías',
-          categoriesHint: 'Reemplazan los 11 tipos actuales; cada tipo cae en una categoría.',
+          categoriesHint: 'Reemplazan los 11 tipos actuales (decisión del 25/11); cada tipo cae en una categoría.',
           categoryColumn: 'Categoría',
           typesColumn: 'Tipos actuales',
+          marksTitle: 'Marcas',
+          marksHint: 'Emergencial y Compra efectuada dejan de ser tipo y pasan a ser marca de la orden.',
+          markColumn: 'Marca',
+          markTypeColumn: 'Tipo actual',
+          markEffectColumn: 'Efecto',
+          markEffects: {
+            urgencia: 'Sigue el perfil Simple',
+            regularizacao: 'Compra ya hecha: omite la cotización',
+          },
           quotesTitle: 'Cotización por rango de valor',
           quotesHint: 'Cuántas cotizaciones pide la orden antes de la aprobación (perfil Estándar y Completo).',
           rangeColumn: 'Valor de la orden',

@@ -244,12 +244,17 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
         categories: {
           label: 'Category',
           names: {
-            insumos: 'Inputs',
-            manutencao: 'Maintenance',
-            servicos: 'Services',
-            adiantamento: 'Advance and reimbursement',
-            despesasFixas: 'Fixed expenses',
-            frete: 'Freight',
+            produto: 'Product',
+            servico: 'Service',
+            reembolsoAdiantamento: 'Reimbursement and advance',
+            despesaFixa: 'Fixed expense',
+          },
+        },
+        marks: {
+          label: 'Flag',
+          names: {
+            urgencia: 'Urgent',
+            regularizacao: 'Regularization',
           },
         },
         settings: {
@@ -279,9 +284,18 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           },
           selected: 'In use',
           categoriesTitle: 'Categories',
-          categoriesHint: 'They replace the 11 current types; each type falls into one category.',
+          categoriesHint: 'They replace the 11 current types (decision of 11/25); each type falls into one category.',
           categoryColumn: 'Category',
           typesColumn: 'Current types',
+          marksTitle: 'Flags',
+          marksHint: 'Emergency and Purchase made are no longer types and become order flags.',
+          markColumn: 'Flag',
+          markTypeColumn: 'Current type',
+          markEffectColumn: 'Effect',
+          markEffects: {
+            urgencia: 'Follows the Simple profile',
+            regularizacao: 'Purchase already made: skips quotation',
+          },
           quotesTitle: 'Quotation by value range',
           quotesHint: 'How many quotations the order needs before approval (Standard and Complete profiles).',
           rangeColumn: 'Order value',
