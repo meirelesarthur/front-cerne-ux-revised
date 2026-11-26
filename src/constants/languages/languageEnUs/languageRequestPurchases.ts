@@ -169,6 +169,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           provider: 'Supplier',
           status: 'Status',
           itemsCount: 'Items',
+          forecast: 'Delivery forecast',
+          forecastPending: 'To be set on the order',
           noOrders: 'No purchase order was generated from this request.',
           coverageTitle: 'Items in orders',
           item: 'Item',

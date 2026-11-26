@@ -74,7 +74,7 @@ export interface PurchaseOrderPrototypeFields {
   buyer?: { uuid: string; name: string } | null;
   /** Etapa em que a ordem foi cancelada (situação 10). */
   cancelled_at_step?: PurchaseOrderStepKey;
-  /** Previsão de entrega da ordem: a mais tarde entre os itens. */
+  /** Previsão de entrega da ORDEM: uma data só, porque o fornecedor é único (26/11); não há previsão por item. */
   delivery_forecast?: string | null;
   delivery?: PurchaseOrderDelivery | null;
   /** Ordens de compra geradas por esta Solicitação, uma por fornecedor (26/11). */

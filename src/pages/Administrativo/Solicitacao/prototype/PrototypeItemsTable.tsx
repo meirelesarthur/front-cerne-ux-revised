@@ -1,8 +1,9 @@
 // src/pages/Administrativo/Solicitacao/prototype/PrototypeItemsTable.tsx
 // -----------------------------------------------------------------------------
 // PROTÓTIPO (lote 2, item 1 do plano — F1) — Itens da Ordem de compra na
-// VISUALIZAÇÃO, com Qtde, Vlr. unitário, Vlr. total, Recebido, Saldo e
-// Previsão, e o total da ordem no rodapé. `unit_price` e `received_quantity`
+// VISUALIZAÇÃO, com Qtde, Vlr. unitário, Vlr. total, Recebido e Saldo, e o
+// total da ordem no rodapé. A previsão de entrega é da ordem (fornecedor
+// único), não do item: fica no topo (`PurchaseOrderProcessBar`), 26/11/2026. `unit_price` e `received_quantity`
 // ainda não existem na API (vêm dos dados de demonstração); a conta está em
 // `itemTotals` (`prototypeFields.ts`, com teste). Edição continua no
 // `RequestItemRow`.
@@ -20,7 +21,6 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 import { useLanguage } from '@/hooks/useLanguage';
 
 import formatCurrencyBRL from '@/utils/formatCurrencyBRL';
-import formatDate from '@/utils/formatDate';
 
 import { RequestTabEmpty, RequestTabHeader } from '../RequestTabParts';
 
@@ -52,7 +52,7 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
     { key: 'total', header: text.total, align: 'right' },
     { key: 'received', header: text.received, align: 'right' },
     { key: 'balance', header: text.balance, align: 'right' },
-    { key: 'forecast', header: text.forecast },
+    // 26/11: sem "Previsão" por item — a previsão é da ordem (fornecedor único), no topo.
     ...(canCancelItems ? [{ key: 'actions', header: '', align: 'right' as const }] : []),
   ];
 
@@ -94,7 +94,6 @@ export function PrototypeItemsTable({ data }: { data: PrototypePurchaseOrder }) 
             {qty(t.balance)}
           </Text>
         ),
-        forecast: item.forecast_delivery_date ? formatDate(item.forecast_delivery_date) : '—',
         actions:
           canCancelItems && !t.cancelled && (t.balance ?? 0) > 0 ? (
             <Box

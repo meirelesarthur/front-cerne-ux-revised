@@ -70,7 +70,6 @@ interface DemoItem {
   quantity: number | null;
   amount: number;
   product?: string;
-  forecast?: string;
   /** Quantidade já recebida (padrão: tudo se a ordem foi recebida, senão 0). */
   received?: number;
   cancelled?: boolean;
@@ -118,6 +117,8 @@ interface DemoQuotation {
 
 interface DemoOrder {
   n: number;
+  /** Previsão de entrega da ORDEM (fornecedor único ⇒ uma data só), 26/11/2026. */
+  forecast?: string;
   code: string;
   type: string;
   status: number;
@@ -192,9 +193,10 @@ const ORDERS: DemoOrder[] = [
     responsible: ME,
     farm: SANTA_RITA,
     duration: '22d 4h',
+    forecast: '2026-11-28',
     items: [
-      { description: 'Fertilizante NPK 20-05-20 (t)', quantity: 40, amount: 138000, product: 'NPK 20-05-20', forecast: '2026-11-28' },
-      { description: 'Ureia agrícola 45% N (t)', quantity: 12, amount: 46680, product: 'Ureia 45%', forecast: '2026-11-28' },
+      { description: 'Fertilizante NPK 20-05-20 (t)', quantity: 40, amount: 138000, product: 'NPK 20-05-20' },
+      { description: 'Ureia agrícola 45% N (t)', quantity: 12, amount: 46680, product: 'Ureia 45%' },
     ],
     movements: [
       { status: 1, user: ANA, at: '2026-11-03T08:12:00', elapsed: '2h' },
@@ -249,7 +251,8 @@ const ORDERS: DemoOrder[] = [
     responsible: JOAO,
     farm: SANTA_RITA,
     duration: '7d 2h',
-    items: [{ description: 'Semente soja TMG 7063 IPRO (sc 40 kg)', quantity: 320, amount: 108800, product: 'Soja TMG 7063', forecast: '2026-12-02' }],
+    forecast: '2026-12-02',
+    items: [{ description: 'Semente soja TMG 7063 IPRO (sc 40 kg)', quantity: 320, amount: 108800, product: 'Soja TMG 7063' }],
     delivery: { freight_type: 'CIF', place: 'Fazenda Santa Rita — galpão de sementes', needs_unloading: true, note: 'Descarga com empilhadeira (big bags).' },
     movements: [
       { status: 1, user: ME, at: '2026-11-18T07:50:00', elapsed: '1h' },
@@ -281,7 +284,8 @@ const ORDERS: DemoOrder[] = [
     responsible: CARLOS,
     farm: BOA_VISTA,
     duration: '4d 6h',
-    items: [{ description: 'Óleo diesel S10 (L)', quantity: 18000, amount: 112860, product: 'Diesel S10', forecast: '2026-12-01' }],
+    forecast: '2026-12-01',
+    items: [{ description: 'Óleo diesel S10 (L)', quantity: 18000, amount: 112860, product: 'Diesel S10' }],
     delivery: { freight_type: 'CIF', place: 'Fazenda Boa Vista — tanque de combustível', carrier: 'Posto Estrada Real', needs_unloading: false },
     movements: [
       { status: 1, user: ANA, at: '2026-11-21T13:00:00', elapsed: '3h' },
@@ -308,9 +312,10 @@ const ORDERS: DemoOrder[] = [
     responsible: ME,
     farm: BOA_VISTA,
     duration: '5h',
+    forecast: '2026-11-27',
     items: [
-      { description: 'Rolamento do cubo dianteiro', quantity: 2, amount: 1840, product: 'Rolamento 32212', forecast: '2026-11-27' },
-      { description: 'Retentor do cubo', quantity: 2, amount: 310, product: 'Retentor JD', forecast: '2026-11-27' },
+      { description: 'Rolamento do cubo dianteiro', quantity: 2, amount: 1840, product: 'Rolamento 32212' },
+      { description: 'Retentor do cubo', quantity: 2, amount: 310, product: 'Retentor JD' },
     ],
     delivery: { freight_type: 'FOB', place: 'Retirada na TratorMaq (Uberlândia)', needs_unloading: false, note: 'O motorista da fazenda retira no balcão.' },
     movements: [{ status: 1, user: ME, at: '2026-11-25T07:30:00', elapsed: '5h' }],
@@ -329,7 +334,8 @@ const ORDERS: DemoOrder[] = [
     responsible: CARLOS,
     farm: SANTA_RITA,
     duration: '15d',
-    items: [{ description: 'Aplicação aérea (ha)', quantity: 420, amount: 54600, forecast: '2026-11-22' }],
+    forecast: '2026-11-22',
+    items: [{ description: 'Aplicação aérea (ha)', quantity: 420, amount: 54600 }],
     movements: [
       { status: 1, user: MARINA, at: '2026-11-10T08:00:00', elapsed: '1d' },
       { status: 2, user: CARLOS, at: '2026-11-11T08:00:00', elapsed: '6d' },
@@ -370,7 +376,8 @@ const ORDERS: DemoOrder[] = [
     responsible: ANA,
     farm: BOA_VISTA,
     duration: '18d',
-    items: [{ description: 'Frete rodoviário (t)', quantity: 600, amount: 42000, forecast: '2026-10-15' }],
+    forecast: '2026-10-15',
+    items: [{ description: 'Frete rodoviário (t)', quantity: 600, amount: 42000 }],
     delivery: { freight_type: 'FOB', place: 'Armazém Cerrado Grãos — Uberlândia', carrier: 'Transportes Rio Grande', needs_unloading: false },
     movements: [
       { status: 1, user: ANA, at: '2026-10-02T08:00:00', elapsed: '1d' },
@@ -452,7 +459,8 @@ const ORDERS: DemoOrder[] = [
     responsible: ANA,
     farm: BOA_VISTA,
     duration: '9d',
-    items: [{ description: 'Adiantamento de mão de obra', quantity: null, amount: 9600, forecast: '2026-11-15' }],
+    forecast: '2026-11-15',
+    items: [{ description: 'Adiantamento de mão de obra', quantity: null, amount: 9600 }],
     movements: [
       { status: 1, user: ME, at: '2026-11-12T08:00:00', elapsed: '1d' },
       { status: 7, user: CARLOS, at: '2026-11-13T08:00:00', elapsed: '5d' },
@@ -474,9 +482,10 @@ const ORDERS: DemoOrder[] = [
     responsible: JOAO,
     farm: SANTA_RITA,
     duration: '6d',
+    forecast: '2026-11-24',
     items: [
-      { description: 'Motorredutor 1,5 cv', quantity: 3, amount: 16500, product: 'Motorredutor pivô', forecast: '2026-11-24' },
-      { description: 'Mão de obra de revisão', quantity: 1, amount: 4800, forecast: '2026-11-24' },
+      { description: 'Motorredutor 1,5 cv', quantity: 3, amount: 16500, product: 'Motorredutor pivô' },
+      { description: 'Mão de obra de revisão', quantity: 1, amount: 4800 },
     ],
     delivery: { freight_type: 'CIF', place: 'Fazenda Santa Rita — pivô 2', carrier: 'TratorMaq Peças Agrícolas', needs_unloading: true, note: 'Instalação feita pelo técnico do fornecedor.' },
     movements: [
@@ -512,12 +521,13 @@ const ORDERS: DemoOrder[] = [
     priority: 1,
     date: '2026-11-23',
     description: 'Semente de milho — talhão 12 (separada da 0013)',
-    justification: 'Item de milho separado da ordem de sementes de soja para cotar com outro fornecedor.',
+    justification: 'Item de milho separado da solicitação de sementes de soja para cotar com outro fornecedor.',
     user: ME,
     responsible: CARLOS,
     farm: SANTA_RITA,
     duration: '2d',
-    items: [{ description: 'Semente milho híbrido (sc 60 mil sementes)', quantity: 45, amount: 40500, product: 'Milho híbrido', forecast: '2026-12-05' }],
+    forecast: '2026-12-05',
+    items: [{ description: 'Semente milho híbrido (sc 60 mil sementes)', quantity: 45, amount: 40500, product: 'Milho híbrido' }],
     movements: [
       { status: 1, user: ME, at: '2026-11-23T10:00:00', elapsed: '1h', justify: 'Separada da ordem 0013.' },
       { status: 2, user: CARLOS, at: '2026-11-23T11:00:00', elapsed: '2d' },
@@ -579,12 +589,7 @@ function listItem(o: DemoOrder) {
     winning_provider: o.winner ? { uuid: PROVIDERS[o.winner].uuid, name: PROVIDERS[o.winner].name } : null,
     buyer: o.buyer ?? null,
     cancelled_at_step: o.cancelledAt,
-    delivery_forecast:
-      o.items
-        .map((item) => item.forecast)
-        .filter((date): date is string => !!date)
-        .sort()
-        .at(-1) ?? null,
+    delivery_forecast: o.forecast ?? null,
   };
 }
 
@@ -627,7 +632,7 @@ function detail(o: DemoOrder) {
       service_description: null,
       daily_quantity: null,
       delivery_date: null,
-      forecast_delivery_date: item.forecast ?? null,
+      forecast_delivery_date: null, // a previsão é da ordem (`delivery_forecast`), não do item
       is_authorized: o.status >= 6,
       // Protótipo: valor unitário e quantidade recebida (saldo = qtde − recebido).
       unit_price: item.quantity ? item.amount / item.quantity : item.amount,
@@ -670,6 +675,8 @@ function detail(o: DemoOrder) {
       code: `OC-${o.code}-${index + 1}`,
       provider: { uuid: PROVIDERS[g.provider].uuid, name: PROVIDERS[g.provider].name },
       status_label: STATUS_LABEL[6],
+      delivery_forecast: null, // definida na ordem, com o fornecedor
+
       items: g.items.map((row) => ({ request_item_uuid: `${uuidOf(o.n)}-i${row.index}`, quantity: row.quantity })),
     })),
     provider_options: Object.values(PROVIDERS).map((p) => ({ uuid: p.uuid, name: p.name })),

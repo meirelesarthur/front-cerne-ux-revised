@@ -211,15 +211,14 @@ function ReceiptDialog({
                 </Text>
               </Box>
               <Box w="140px">
+                {/* Inteiro: digitar "200" dá 200 (com casas decimais a máscara enche da direita). */}
                 <NumberInput
-                  allowDot
                   name={`receive_${item.uuid}`}
                   aria-label={text.items}
                   value={quantities[item.uuid] ?? null}
                   onValueChange={(q) =>
                     setQuantities((current) => ({ ...current, [item.uuid]: Math.min(q ?? 0, t.balance ?? 0) }))
                   }
-                  decimalPlaces={3}
                   min={0}
                 />
               </Box>

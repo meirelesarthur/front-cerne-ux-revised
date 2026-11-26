@@ -19,6 +19,8 @@ export interface GeneratedOrder {
   code: string;
   provider: { uuid: string; name: string };
   status_label: string;
+  /** Previsão de entrega da ordem (uma só: fornecedor único); definida na ordem, depois de gerada. */
+  delivery_forecast: string | null;
   items: GeneratedOrderItem[];
 }
 

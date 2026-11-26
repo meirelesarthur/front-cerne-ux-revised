@@ -169,6 +169,8 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           provider: 'Fornecedor',
           status: 'Situação',
           itemsCount: 'Itens',
+          forecast: 'Previsão de entrega',
+          forecastPending: 'A definir na ordem',
           noOrders: 'Nenhuma ordem de compra foi gerada a partir desta solicitação.',
           coverageTitle: 'Itens em ordem',
           item: 'Item',

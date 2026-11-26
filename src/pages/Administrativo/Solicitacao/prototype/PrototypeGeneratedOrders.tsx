@@ -11,6 +11,8 @@ import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/comp
 
 import { useLanguage } from '@/hooks/useLanguage';
 
+import formatDate from '@/utils/formatDate';
+
 import { RequestTabEmpty, RequestTabHeader } from '../RequestTabParts';
 
 import { itemCoverage } from './generateOrders';
@@ -28,6 +30,7 @@ export function PrototypeGeneratedOrders({ data }: { data: PrototypePurchaseOrde
     { key: 'code', header: text.code },
     { key: 'provider', header: text.provider },
     { key: 'items', header: text.itemsCount },
+    { key: 'forecast', header: text.forecast },
     { key: 'status', header: text.status },
   ];
   const orderRows: SimpleTableRow[] = orders.map((order) => ({
@@ -40,6 +43,7 @@ export function PrototypeGeneratedOrders({ data }: { data: PrototypePurchaseOrde
       ),
       provider: order.provider.name,
       items: order.items.length,
+      forecast: order.delivery_forecast ? formatDate(order.delivery_forecast) : text.forecastPending,
       status: order.status_label,
     },
   }));

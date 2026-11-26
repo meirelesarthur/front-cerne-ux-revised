@@ -142,13 +142,12 @@ export function GenerateOrdersDialog({ isOpen, onClose, data, onDone }: Generate
                 </Text>
               </Box>
               <Box w="120px">
+                {/* Inteiro: digitar "200" dá 200 (com casas decimais a máscara enche da direita). */}
                 <NumberInput
-                  allowDot
                   name={`qty_${row.key}`}
                   label={text.quantity}
                   value={row.quantity}
                   onValueChange={(q) => update(row.key, { quantity: q ?? 0 })}
-                  decimalPlaces={3}
                 />
               </Box>
               <Box flex="2" minW="200px">

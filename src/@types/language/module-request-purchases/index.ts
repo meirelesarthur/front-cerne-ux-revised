@@ -219,6 +219,8 @@ export interface ModuleRequestPurchases {
           provider: string;
           status: string;
           itemsCount: string;
+          forecast: string;
+          forecastPending: string;
           noOrders: string;
           coverageTitle: string;
           item: string;

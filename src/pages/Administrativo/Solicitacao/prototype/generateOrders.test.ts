@@ -20,6 +20,7 @@ const orders: GeneratedOrder[] = [
     code: 'OC-1',
     provider: { uuid: 'p1', name: 'Fornecedor 1' },
     status_label: 'Aguardando a Compra',
+    delivery_forecast: null,
     items: [{ request_item_uuid: 'i1', quantity: 60 }],
   },
 ];
