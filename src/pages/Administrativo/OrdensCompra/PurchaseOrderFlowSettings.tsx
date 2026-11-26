@@ -35,6 +35,11 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 
 import type { IconName } from '@/design/icons';
 
+import {
+  type AutoApprovalField,
+  type AutoApprovalLimits,
+  redistributeAutoApproval,
+} from '../Solicitacao/prototype/autoApprovalLimits';
 import { PURCHASE_ORDER_CATEGORIES } from '../Solicitacao/prototype/purchaseOrderCategories';
 import {
   type PurchaseOrderFlowProfile,
@@ -68,7 +73,11 @@ export default function PurchaseOrderFlowSettings() {
   const [profile, setProfile] = useState<PurchaseOrderFlowProfile>('padrao');
   const [limits, setLimits] = useState<(number | null)[]>([1000, 5000, 50000]);
   const [quotes, setQuotes] = useState<(number | null)[]>([0, 1, 2, 3]);
-  const [autoApprove, setAutoApprove] = useState<number | null>(1000);
+  // Aprovação automática: valor por ordem, limite diário e transações por dia
+  // andam juntos (`autoApprovalLimits.ts`): mudar um redistribui os outros.
+  const [auto, setAuto] = useState<AutoApprovalLimits>({ perOrder: 1000, dailyValue: 10000, dailyCount: 10 });
+  const changeAuto = (field: AutoApprovalField) => (value: number | null) =>
+    setAuto((current) => redistributeAutoApproval(current, field, value));
 
   const typeLabel = new Map(requestPurchaseTypeOptions.options(languageGB).map((o) => [o.value, o.label]));
 
@@ -299,16 +308,35 @@ export default function PurchaseOrderFlowSettings() {
       </Section>
 
       <Section title={text.approvalTitle} hint={text.autoApproveHint}>
-        <Box maxW="320px" mb={5}>
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={4} maxW="960px">
           <MaskedInput
             kind="currency"
             name="auto_approve"
             label={text.autoApprove}
-            value={autoApprove}
-            onValueChange={setAutoApprove}
+            value={auto.perOrder}
+            onValueChange={changeAuto('perOrder')}
             min={0}
           />
-        </Box>
+          <MaskedInput
+            kind="currency"
+            name="auto_approve_daily_value"
+            label={text.dailyLimit}
+            value={auto.dailyValue}
+            onValueChange={changeAuto('dailyValue')}
+            min={0}
+          />
+          <MaskedInput
+            kind="integer"
+            name="auto_approve_daily_count"
+            label={text.dailyCount}
+            value={auto.dailyCount}
+            onValueChange={changeAuto('dailyCount')}
+            min={0}
+          />
+        </SimpleGrid>
+        <Text fontSize="sm" color="fg.muted" mt={2} mb={5}>
+          {text.dailyHint}
+        </Text>
         <Text fontSize="sm" fontWeight="semibold" mb={2}>
           {text.levelsTitle}
         </Text>

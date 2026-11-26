@@ -330,6 +330,9 @@ export interface ModuleRequestPurchases {
           approvalTitle: string;
           autoApprove: string;
           autoApproveHint: string;
+          dailyLimit: string;
+          dailyCount: string;
+          dailyHint: string;
           levelsTitle: string;
           levelColumn: string;
           whoColumn: string;
