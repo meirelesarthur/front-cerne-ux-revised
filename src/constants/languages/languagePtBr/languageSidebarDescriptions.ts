@@ -92,7 +92,7 @@ export const navDescriptions: Record<string, string> = {
   'adm-sup-oc': 'Uma ordem por fornecedor, da solicitação ou avulsa, com previsão de entrega.',
   'adm-sup-flx': 'Perfil do fluxo, categorias, cotação por valor e alçada.',
   'adm-sup-meu': 'Ordens de compra sob sua responsabilidade.',
-  'adm-sup-sol': 'Pedir, aprovar, cotar, comprar e receber, numa tela só.',
+  'adm-sup-sol': 'Pedir, cotar, aprovar e gerar as ordens de compra, numa tela só.',
   'adm-sup-rej': 'Ordens não aprovadas ou canceladas.',
   'adm-sup-cot': 'Cotar preços com fornecedores.',
   'adm-sup-aut': 'Aprovar ou recusar ordens de compra.',
