@@ -215,6 +215,30 @@ export interface ModuleRequestPurchases {
           justification: string;
           noOrigin: string;
           noDerived: string;
+          ordersTitle: string;
+          provider: string;
+          status: string;
+          itemsCount: string;
+          noOrders: string;
+          coverageTitle: string;
+          item: string;
+          requested: string;
+          ordered: string;
+          pending: string;
+        };
+        generateOrders: {
+          button: string;
+          dialogTitle: string;
+          description: string;
+          quantity: string;
+          provider: string;
+          pending: string;
+          split: string;
+          nothingPending: string;
+          cancel: string;
+          confirm: string;
+          done: string;
+          errors: { empty: string; missingProvider: string; overPending: string };
         };
         duplicate: {
           button: string;

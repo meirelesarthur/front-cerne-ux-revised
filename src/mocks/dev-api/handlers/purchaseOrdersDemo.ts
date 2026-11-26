@@ -152,6 +152,8 @@ interface DemoOrder {
   invoices?: DemoInvoice[];
   /** Situação antes de cancelar/encerrar (para "Reabrir"). */
   previousStatus?: number;
+  /** Protótipo (26/11): Ordens de compra geradas por esta Solicitação, uma por fornecedor. */
+  generated?: { provider: keyof typeof PROVIDERS; items: { index: number; quantity: number }[] }[];
 }
 
 const installments = (values: number[], firstDue: string, stepDays: number, paid = 0) =>
@@ -662,6 +664,15 @@ function detail(o: DemoOrder) {
     })),
     quotation_justification: null,
     children: children.map((c) => ({ uuid: uuidOf(c.n), code: c.code, justification: c.justification })),
+    // Protótipo (26/11): Ordens de compra geradas por esta Solicitação e os fornecedores possíveis.
+    generated_orders: (o.generated ?? []).map((g, index) => ({
+      uuid: `${uuidOf(o.n)}-oc${index + 1}`,
+      code: `OC-${o.code}-${index + 1}`,
+      provider: { uuid: PROVIDERS[g.provider].uuid, name: PROVIDERS[g.provider].name },
+      status_label: STATUS_LABEL[6],
+      items: g.items.map((row) => ({ request_item_uuid: `${uuidOf(o.n)}-i${row.index}`, quantity: row.quantity })),
+    })),
+    provider_options: Object.values(PROVIDERS).map((p) => ({ uuid: p.uuid, name: p.name })),
   };
 }
 
@@ -850,6 +861,19 @@ const actionRoutes: MockRoute[] = [
       item.cancelled = false;
     });
     addMovement(o, o.status, `Ordem reaberta: ${body.justify ?? ''}`);
+  }),
+  // Gerar ordens (26/11): uma Ordem de compra por fornecedor; a Solicitação continua viva.
+  actionRoute('generate-orders', (o, body) => {
+    const byUuid = Object.entries(PROVIDERS) as [keyof typeof PROVIDERS, (typeof PROVIDERS)[keyof typeof PROVIDERS]][];
+    (body.orders ?? []).forEach((order: { provider_uuid: string; items: { item_uuid: string; quantity: number }[] }) => {
+      const provider = byUuid.find(([, p]) => p.uuid === order.provider_uuid)?.[0];
+      if (!provider) return;
+      const items = order.items
+        .map((row) => ({ index: itemIndex(o, row.item_uuid), quantity: Number(row.quantity) }))
+        .filter((row) => row.index >= 0 && row.quantity > 0);
+      if (items.length) o.generated = [...(o.generated ?? []), { provider, items }];
+    });
+    addMovement(o, o.status, `Ordens de compra geradas: ${(body.orders ?? []).length}.`);
   }),
 ];
 

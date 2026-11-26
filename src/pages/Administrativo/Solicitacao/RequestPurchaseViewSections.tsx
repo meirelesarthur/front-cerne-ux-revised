@@ -34,6 +34,7 @@ import type { RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
 
 import { PrototypeInvoicesPanel, PrototypePaymentPanel } from './prototype/PrototypeFinancePanels';
+import { PrototypeGeneratedOrders } from './prototype/PrototypeGeneratedOrders';
 import type { PrototypePurchaseOrder, PurchaseOrderPrototypeFields } from './prototype/prototypeFields';
 import { classificationLabel, showReceiptSection } from './requestPurchaseViewRules';
 import { RequestTabEmpty, RequestTabHeader } from './RequestTabParts';
@@ -61,7 +62,9 @@ export function availableViewSections(data: RequestPurchaseData): RequestPurchas
   if ((data.ratio ?? []).length > 0) sections.push('ratio');
   if (PURCHASE_ORDER_PROTOTYPE) {
     // PROTÓTIPO: "Vínculos" mostra a origem E as derivadas (no lugar de Sub Solicitações).
-    if (data.parent || (data.children ?? []).length > 0) sections.push('links');
+    // 26/11: também as Ordens de compra geradas por esta Solicitação.
+    const generated = (data as RequestPurchaseData & PurchaseOrderPrototypeFields).generated_orders ?? [];
+    if (data.parent || (data.children ?? []).length > 0 || generated.length > 0) sections.push('links');
   } else if ((data.children ?? []).length > 0) {
     sections.push('children');
   }
@@ -152,6 +155,7 @@ export function RequestPurchaseViewSections({ data, section }: RequestPurchaseVi
             <RequestTabEmpty>{linksText.noDerived}</RequestTabEmpty>
           )}
         </Box>
+        <PrototypeGeneratedOrders data={data as PrototypePurchaseOrder} />
       </Box>
     );
   }

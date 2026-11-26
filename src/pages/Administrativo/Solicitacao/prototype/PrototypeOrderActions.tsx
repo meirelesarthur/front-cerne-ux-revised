@@ -30,6 +30,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { queryKey } from '@/constants/query-key';
 import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
 
+import { isFullyOrdered, itemCoverage } from './generateOrders';
+import { GenerateOrdersDialog } from './GenerateOrdersDialog';
 import {
   cancelPrototypeBalance,
   registerPrototypeReceipt,
@@ -234,7 +236,15 @@ export function PrototypeOrderActions({ data }: { data: PrototypePurchaseOrder }
   const { languageGB } = useLanguage();
   const proto = languageGB.requestPurchases.requestPurchase.form.prototype;
   const refresh = useRefreshPurchaseOrder(data.uuid);
-  const [open, setOpen] = useState<'receipt' | 'cancelBalance' | 'reopen' | null>(null);
+  const [open, setOpen] = useState<'receipt' | 'cancelBalance' | 'reopen' | 'generate' | null>(null);
+
+  // Solicitação gera Ordens (26/11): enquanto houver item sem ordem e a Solicitação não estiver encerrada.
+  const coverage = itemCoverage(data.items ?? [], data.generated_orders ?? []);
+  const canGenerate =
+    !!data.provider_options?.length &&
+    !isFullyOrdered(coverage) &&
+    data.status !== requestPurchaseStatus.pedidoFinalizado &&
+    data.status !== requestPurchaseStatus.pedidoCancelado;
 
   const hasBalance = data.items.some((item) => (itemTotals(item).balance ?? 0) > 0);
   const canReceive = data.status === requestPurchaseStatus.compraEfetuada && hasBalance;
@@ -249,6 +259,11 @@ export function PrototypeOrderActions({ data }: { data: PrototypePurchaseOrder }
       )}
       {canReopen && <Button title={proto.actions.reopen} variant="outline" type="button" onClick={() => setOpen('reopen')} />}
       {canReceive && <Button title={proto.receipt.button} type="button" onClick={() => setOpen('receipt')} />}
+      {canGenerate && (
+        <Button title={proto.generateOrders.button} variant="outline" type="button" onClick={() => setOpen('generate')} />
+      )}
+
+      <GenerateOrdersDialog isOpen={open === 'generate'} onClose={() => setOpen(null)} data={data} onDone={refresh} />
 
       <ReceiptDialog isOpen={open === 'receipt'} onClose={() => setOpen(null)} data={data} onDone={refresh} />
       <PrototypeJustifyDialog

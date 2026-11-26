@@ -10,6 +10,7 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 
 import type { RequestItemRow, RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 
+import type { GeneratedOrder } from './generateOrders';
 import type { PurchaseOrderFlowProfile, PurchaseOrderStepKey } from './purchaseOrderSteps';
 
 export interface PurchaseOrderDelivery {
@@ -76,6 +77,10 @@ export interface PurchaseOrderPrototypeFields {
   /** Previsão de entrega da ordem: a mais tarde entre os itens. */
   delivery_forecast?: string | null;
   delivery?: PurchaseOrderDelivery | null;
+  /** Ordens de compra geradas por esta Solicitação, uma por fornecedor (26/11). */
+  generated_orders?: GeneratedOrder[];
+  /** Fornecedores que podem receber uma Ordem (só nos dados de demonstração). */
+  provider_options?: { uuid: string; name: string }[];
 }
 
 /** Campos de protótipo no item. */
