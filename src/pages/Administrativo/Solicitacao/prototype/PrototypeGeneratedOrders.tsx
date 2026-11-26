@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------
 
 import { Box, Text } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
 
@@ -14,6 +15,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import formatDate from '@/utils/formatDate';
 
 import { RequestTabEmpty, RequestTabHeader } from '../RequestTabParts';
+
+import { purchaseOrderEntityPath } from '../../OrdensCompra/prototype/purchaseOrderEntity';
 
 import { itemCoverage } from './generateOrders';
 import type { PrototypePurchaseOrder } from './prototypeFields';
@@ -37,9 +40,11 @@ export function PrototypeGeneratedOrders({ data }: { data: PrototypePurchaseOrde
     key: order.uuid,
     cells: {
       code: (
-        <Text as="span" fontFamily="mono">
-          {order.code}
-        </Text>
+        <Link to={purchaseOrderEntityPath(order.uuid)}>
+          <Text as="span" fontFamily="mono" color="primaryMain" textDecoration="underline">
+            {order.code}
+          </Text>
+        </Link>
       ),
       provider: order.provider.name,
       items: order.items.length,

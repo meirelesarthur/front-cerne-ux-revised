@@ -241,9 +241,15 @@ Plano: documento "Ordem de compra — protótipo visual para apresentação" (ro
 
 **Ajustes de 26/11:** quantidade nos diálogos "Gerar ordens" e "Registrar recebimento" passou a ser inteira (digitar "200" dá 200; antes a máscara de 3 casas transformava em 0,200); previsão de entrega só na ordem (dados de demonstração com `forecast` na ordem, não no item); justificativa da 0022 fala em "solicitação".
 
+**Tela própria da Ordem de compra (26/11, protótipo — não portar):**
+- **Lista** em `/administrativo/ordens-de-compra/ordens` (menu Suprimentos → "Ordens de compra", `adm-sup-oc`): visões Abertas / Recebidas / Todas (com contagem), origem (qualquer, da solicitação, avulsas), busca por código, fornecedor, solicitação ou fazenda; colunas situação, código (abre o detalhe), fornecedor, solicitação de origem (abre a Solicitação) ou "Avulsa", fazenda, previsão de entrega e total.
+- **Detalhe** em `/administrativo/ordens-de-compra/ordens/:uuid`: situação no topo; dados da ordem (fornecedor e contato, fazenda, data, **previsão de entrega da ordem** com "Definir/Alterar previsão", total); **Origem** com link de volta para a Solicitação (abre na aba Vínculos) ou "começou sozinha"; itens com qtde, valor unitário e total.
+- Na Solicitação, o código de cada ordem gerada (aba Vínculos) abre o detalhe da Ordem.
+- Arquivos: `OrdensCompra/prototype/purchaseOrderEntity.ts` (tipos, chamadas e regras `filterPurchaseOrders`/`countPurchaseOrderViews`, com teste), `PurchaseOrderEntityList.tsx`, `PurchaseOrderEntityDetail.tsx`; rotas no `router/index.tsx` só com `PURCHASE_ORDER_PROTOTYPE`; dados em `purchaseOrdersDemo.ts` (rotas `/prototype/purchase-orders*`: ordens geradas pelas Solicitações + 2 avulsas, OC-0031 e OC-0029). Kit usado: `PageHeader`, `ViewSelect`, `ListToolbar`, `SimpleTable`, `StatusTag`, `FormContainer`, `InputReadOnly`, `CustomDialog`.
+
 **A fazer (Solicitação × Ordem, 26/11):**
-- [ ] front: tela própria da Ordem de compra (lista e detalhe por fornecedor), com o vínculo de volta para a Solicitação de origem; hoje as ordens geradas só aparecem na Solicitação.
-- [ ] front: Ordem que começa sozinha (sem Solicitação).
+- [ ] front: levar para a Ordem o que hoje ainda aparece na Solicitação do protótipo e é da Ordem (cotação vencedora, pagamento, notas fiscais, recebimento, previsão no topo).
+- [ ] front: criar uma Ordem avulsa pela tela (hoje as avulsas vêm só dos dados de demonstração).
 - [ ] produto: em que etapa a Solicitação gera as ordens (depois da cotação? da aprovação?) e o que acontece com o status dela quando tudo está em ordem.
 - [ ] backend: entidade Ordem de compra (fornecedor único, itens com `request_item_uuid`) e a rota de gerar ordens.
 

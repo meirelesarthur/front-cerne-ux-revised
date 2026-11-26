@@ -154,7 +154,13 @@ interface DemoOrder {
   /** Situação antes de cancelar/encerrar (para "Reabrir"). */
   previousStatus?: number;
   /** Protótipo (26/11): Ordens de compra geradas por esta Solicitação, uma por fornecedor. */
-  generated?: { provider: keyof typeof PROVIDERS; items: { index: number; quantity: number }[] }[];
+  generated?: {
+    provider: keyof typeof PROVIDERS;
+    items: { index: number; quantity: number }[];
+    /** Previsão de entrega da ordem (definida na tela da Ordem). */
+    forecast?: string;
+    date?: string;
+  }[];
 }
 
 const installments = (values: number[], firstDue: string, stepDays: number, paid = 0) =>
@@ -675,8 +681,7 @@ function detail(o: DemoOrder) {
       code: `OC-${o.code}-${index + 1}`,
       provider: { uuid: PROVIDERS[g.provider].uuid, name: PROVIDERS[g.provider].name },
       status_label: STATUS_LABEL[6],
-      delivery_forecast: null, // definida na ordem, com o fornecedor
-
+      delivery_forecast: g.forecast ?? null, // definida na tela da Ordem, com o fornecedor
       items: g.items.map((row) => ({ request_item_uuid: `${uuidOf(o.n)}-i${row.index}`, quantity: row.quantity })),
     })),
     provider_options: Object.values(PROVIDERS).map((p) => ({ uuid: p.uuid, name: p.name })),
@@ -878,13 +883,155 @@ const actionRoutes: MockRoute[] = [
       const items = order.items
         .map((row) => ({ index: itemIndex(o, row.item_uuid), quantity: Number(row.quantity) }))
         .filter((row) => row.index >= 0 && row.quantity > 0);
-      if (items.length) o.generated = [...(o.generated ?? []), { provider, items }];
+      if (items.length)
+        o.generated = [...(o.generated ?? []), { provider, items, date: new Date().toISOString().slice(0, 10) }];
     });
     addMovement(o, o.status, `Ordens de compra geradas: ${(body.orders ?? []).length}.`);
   }),
 ];
 
+// ---------------------------------------------------------------------------
+// ORDENS DE COMPRA (26/11/2026): entidade nova, de UM fornecedor. Nascem de uma
+// Solicitação ("Gerar ordens", em `DemoOrder.generated`) ou sozinhas
+// (`STANDALONE_ORDERS`). Rotas `/prototype/purchase-orders*` só existem aqui.
+// ---------------------------------------------------------------------------
+
+interface DemoPurchaseOrderItem {
+  description: string;
+  product?: string;
+  quantity: number;
+  unitPrice: number;
+  requestItemUuid?: string;
+}
+
+interface DemoPurchaseOrder {
+  uuid: string;
+  code: string;
+  provider: keyof typeof PROVIDERS;
+  status: number;
+  date: string;
+  farm: { uuid: string; description: string };
+  /** Onde a previsão fica gravada (a ordem avulsa ou a entrada em `generated`). */
+  target: { forecast?: string };
+  request?: DemoOrder;
+  items: DemoPurchaseOrderItem[];
+}
+
+const STANDALONE_ORDERS: (Omit<DemoPurchaseOrder, 'target'> & { forecast?: string })[] = [
+  {
+    uuid: 'demo-oc-avulsa-0031',
+    code: 'OC-0031',
+    provider: 'postoestrada',
+    status: 6,
+    date: '2026-11-24',
+    farm: SANTA_RITA,
+    forecast: '2026-11-29',
+    items: [{ description: 'Óleo diesel S10 (L)', product: 'Diesel S10', quantity: 5000, unitPrice: 6.27 }],
+  },
+  {
+    uuid: 'demo-oc-avulsa-0029',
+    code: 'OC-0029',
+    provider: 'tratormaq',
+    status: 8,
+    date: '2026-11-17',
+    farm: BOA_VISTA,
+    forecast: '2026-11-21',
+    items: [
+      { description: 'Filtro de óleo do motor', product: 'Filtro JD RE504836', quantity: 4, unitPrice: 180 },
+      { description: 'Filtro de combustível', product: 'Filtro JD RE533026', quantity: 4, unitPrice: 145 },
+    ],
+  },
+];
+
+function purchaseOrders(): DemoPurchaseOrder[] {
+  const standalone = STANDALONE_ORDERS.map((po) => ({ ...po, target: po }));
+  const generated = ORDERS.flatMap((o) =>
+    (o.generated ?? []).map((g, index) => ({
+      uuid: `${uuidOf(o.n)}-oc${index + 1}`,
+      code: `OC-${o.code}-${index + 1}`,
+      provider: g.provider,
+      status: 6,
+      date: g.date ?? o.date,
+      farm: o.farm,
+      target: g,
+      request: o,
+      items: g.items.map((row) => {
+        const item = o.items[row.index];
+        return {
+          description: item.description,
+          product: item.product,
+          quantity: row.quantity,
+          unitPrice: item.quantity ? item.amount / item.quantity : item.amount,
+          requestItemUuid: `${uuidOf(o.n)}-i${row.index}`,
+        };
+      }),
+    }))
+  );
+  return [...generated, ...standalone];
+}
+
+function purchaseOrderSummary(po: DemoPurchaseOrder) {
+  return {
+    uuid: po.uuid,
+    code: po.code,
+    provider: { uuid: PROVIDERS[po.provider].uuid, name: PROVIDERS[po.provider].name },
+    status: po.status,
+    status_label: STATUS_LABEL[po.status],
+    date: po.date,
+    farm: po.farm,
+    delivery_forecast: po.target.forecast ?? null,
+    request: po.request
+      ? { uuid: uuidOf(po.request.n), code: po.request.code, description: po.request.description }
+      : null,
+    items_count: po.items.length,
+    total: po.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0),
+  };
+}
+
+function purchaseOrderDetail(po: DemoPurchaseOrder) {
+  return {
+    ...purchaseOrderSummary(po),
+    provider_contact: { email: PROVIDERS[po.provider].email, phone: PROVIDERS[po.provider].cellphone },
+    items: po.items.map((item, index) => ({
+      uuid: `${po.uuid}-it${index}`,
+      description: item.description,
+      product: item.product ?? null,
+      quantity: item.quantity,
+      unit_price: item.unitPrice,
+      total: item.quantity * item.unitPrice,
+      request_item_uuid: item.requestItemUuid ?? null,
+    })),
+  };
+}
+
+const purchaseOrderRoutes: MockRoute[] = [
+  {
+    method: 'post',
+    pattern: /^\/prototype\/purchase-orders\/([^/]+)\/forecast$/,
+    handler: ({ match, body }) => {
+      const po = purchaseOrders().find((row) => row.uuid === match[1]);
+      if (!po) return { status: 404, body: null };
+      po.target.forecast = String(parseBody(body).date ?? '') || undefined;
+      return { body: purchaseOrderDetail(po) };
+    },
+  },
+  {
+    method: 'get',
+    pattern: /^\/prototype\/purchase-orders\/([^/]+)$/,
+    handler: ({ match }) => {
+      const po = purchaseOrders().find((row) => row.uuid === match[1]);
+      return po ? { body: purchaseOrderDetail(po) } : { status: 404, body: null };
+    },
+  },
+  {
+    method: 'get',
+    pattern: /^\/prototype\/purchase-orders$/,
+    handler: () => ({ body: purchaseOrders().map(purchaseOrderSummary) }),
+  },
+];
+
 export const purchaseOrderDemoRoutes: MockRoute[] = [
+  ...purchaseOrderRoutes,
   ...actionRoutes,
   // Listas específicas antes do detalhe `/{uuid}`.
   listRoute(/^\/request-purchases\/my-processes$/, (o) => o.responsible.uuid === ME.uuid && ![9, 10].includes(o.status)),

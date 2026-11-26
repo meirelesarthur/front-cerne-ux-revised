@@ -83,6 +83,7 @@ export const languageSidebar: Sidebar = {
     administrativo: 'Administrative',
     'adm-suprimentos': 'Procurement',
     'adm-sup-sla': 'SLA Parameters',
+    'adm-sup-oc': 'Purchase orders',
     'adm-sup-flx': 'Purchase order flow',
     'adm-sup-meu': 'My Processes',
     'adm-sup-sol': 'Purchase requests',

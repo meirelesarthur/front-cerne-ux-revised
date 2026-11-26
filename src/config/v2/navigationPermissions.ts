@@ -287,6 +287,7 @@ export const navigationPermissions: Record<string, NavPermissionRule> = {
     ? { anyOf: PURCHASE_ORDER_PERMISSIONS }
     : { permission: 'request-purchases_view' },
   // Protótipo "Fluxo da ordem de compra" (só com dados de demonstração).
+  'adm-sup-oc': { anyOf: PURCHASE_ORDER_PERMISSIONS },
   'adm-sup-flx': { anyOf: PURCHASE_ORDER_PERMISSIONS },
   // Rejeitados/Cancelados: `rejected-requests_view`, igual ao legado (tela Blade
   // `rejected-requests`, papel próprio) e ao que `GET /request-purchases/rejected`

@@ -3047,6 +3047,12 @@ const ComprasList = lazy(() => import('@/pages/Administrativo/Compras'));
 // Tela única "Ordens de compra" (decisão do dono 24/11/2026): as listas de
 // Suprimentos em abas. Ver `pages/Administrativo/OrdensCompra`.
 const OrdensCompraHub = lazy(() => import('@/pages/Administrativo/OrdensCompra'));
+const PurchaseOrderEntityList = lazy(
+  () => import('@/pages/Administrativo/OrdensCompra/prototype/PurchaseOrderEntityList')
+);
+const PurchaseOrderEntityDetail = lazy(
+  () => import('@/pages/Administrativo/OrdensCompra/prototype/PurchaseOrderEntityDetail')
+);
 const PurchaseOrderFlowSettings = lazy(
   () => import('@/pages/Administrativo/OrdensCompra/PurchaseOrderFlowSettings')
 );
@@ -6533,6 +6539,27 @@ export function AppRoutes() {
             element={
               <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
                 {lazyRoute(PurchaseOrderFlowSettings)}
+              </RequirePermission>
+            }
+          />
+        )}
+        {/* Protótipo (26/11): Ordem de compra como entidade própria, uma por fornecedor. */}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path={`${PURCHASE_ORDERS_PATH}/ordens`}
+            element={
+              <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
+                {lazyRoute(PurchaseOrderEntityList)}
+              </RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path={`${PURCHASE_ORDERS_PATH}/ordens/:uuid`}
+            element={
+              <RequirePermission anyOf={PURCHASE_ORDER_PERMISSIONS}>
+                {lazyRoute(PurchaseOrderEntityDetail)}
               </RequirePermission>
             }
           />

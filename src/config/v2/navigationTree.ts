@@ -779,6 +779,13 @@ export const menuModules: NavModule[] = [
               // Protótipo (apresentação): perfil, categorias, cotação e alçada.
               ...(PURCHASE_ORDER_PROTOTYPE
                 ? [
+                    // 26/11: Ordem de compra (uma por fornecedor), entidade própria.
+                    {
+                      id: 'adm-sup-oc',
+                      label: 'Ordens de compra',
+                      path: '/administrativo/ordens-de-compra/ordens',
+                      icon: 'cart' as IconName,
+                    },
                     {
                       id: 'adm-sup-flx',
                       label: 'Fluxo da ordem de compra',
