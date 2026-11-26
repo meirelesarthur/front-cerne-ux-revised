@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="16" y="16" width="208" height="208" rx="52" ry="52" fill="#059669"/>
+<g transform="translate(120 120) scale(0.66) translate(-120 -120)">
+<path d="M 193.06 175.91 A 92 92 0 0 1 166.32 199.49 L 145.50 158.28 A 46 46 0 0 0 154.79 150.10 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 156.50 204.45 A 92 92 0 0 1 121.65 211.99 L 123.58 165.86 A 46 46 0 0 0 135.68 163.24 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 110.66 211.52 A 92 92 0 0 1 76.56 201.10 L 100.75 161.78 A 46 46 0 0 0 112.59 165.40 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 67.20 195.34 A 92 92 0 0 1 42.52 169.60 L 82.82 147.08 A 46 46 0 0 0 91.39 156.02 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 37.15 160.00 A 92 92 0 0 1 28.16 125.50 L 74.33 125.50 A 46 46 0 0 0 77.45 137.48 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 28.16 114.50 A 92 92 0 0 1 37.15 80.00 L 77.45 102.52 A 46 46 0 0 0 74.33 114.50 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 42.52 70.40 A 92 92 0 0 1 67.20 44.66 L 91.39 83.98 A 46 46 0 0 0 82.82 92.92 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 76.56 38.90 A 92 92 0 0 1 110.66 28.48 L 112.59 74.60 A 46 46 0 0 0 100.75 78.22 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 121.65 28.01 A 92 92 0 0 1 156.50 35.55 L 135.68 76.76 A 46 46 0 0 0 123.58 74.14 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+<path d="M 166.32 40.51 A 92 92 0 0 1 193.06 64.09 L 154.79 89.90 A 46 46 0 0 0 145.50 81.72 Z" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+</g>
+</svg>
