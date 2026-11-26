@@ -160,6 +160,8 @@ interface DemoOrder {
     /** Previsão de entrega da ordem (definida na tela da Ordem). */
     forecast?: string;
     date?: string;
+    /** Situação da ordem (padrão 6, Aguardando a Compra). */
+    status?: number;
   }[];
 }
 
@@ -200,6 +202,19 @@ const ORDERS: DemoOrder[] = [
     farm: SANTA_RITA,
     duration: '22d 4h',
     forecast: '2026-11-28',
+    // 26/11: esta Solicitação já gerou a sua Ordem (AgroNutri, compra efetuada).
+    generated: [
+      {
+        provider: 'agronutri',
+        items: [
+          { index: 0, quantity: 40 },
+          { index: 1, quantity: 12 },
+        ],
+        forecast: '2026-11-28',
+        date: '2026-11-10',
+        status: 7,
+      },
+    ],
     items: [
       { description: 'Fertilizante NPK 20-05-20 (t)', quantity: 40, amount: 138000, product: 'NPK 20-05-20' },
       { description: 'Ureia agrícola 45% N (t)', quantity: 12, amount: 46680, product: 'Ureia 45%' },
@@ -680,7 +695,7 @@ function detail(o: DemoOrder) {
       uuid: `${uuidOf(o.n)}-oc${index + 1}`,
       code: `OC-${o.code}-${index + 1}`,
       provider: { uuid: PROVIDERS[g.provider].uuid, name: PROVIDERS[g.provider].name },
-      status_label: STATUS_LABEL[6],
+      status_label: STATUS_LABEL[g.status ?? 6],
       delivery_forecast: g.forecast ?? null, // definida na tela da Ordem, com o fornecedor
       items: g.items.map((row) => ({ request_item_uuid: `${uuidOf(o.n)}-i${row.index}`, quantity: row.quantity })),
     })),
@@ -950,7 +965,7 @@ function purchaseOrders(): DemoPurchaseOrder[] {
       uuid: `${uuidOf(o.n)}-oc${index + 1}`,
       code: `OC-${o.code}-${index + 1}`,
       provider: g.provider,
-      status: 6,
+      status: g.status ?? 6,
       date: g.date ?? o.date,
       farm: o.farm,
       target: g,

@@ -52,14 +52,15 @@ export const purchaseOrderEntityQueryKey = {
   detail: (uuid: string) => ['prototype-purchase-orders', uuid] as const,
 };
 
+// Resposta no envelope de sempre da API: `{ data: ... }`.
 export async function fetchPurchaseOrders(): Promise<PurchaseOrderSummary[]> {
-  const { data } = await api.V2.get('/prototype/purchase-orders');
-  return data as PurchaseOrderSummary[];
+  const { data } = await api.V2.get<{ data: PurchaseOrderSummary[] }>('/prototype/purchase-orders');
+  return data.data ?? [];
 }
 
 export async function fetchPurchaseOrder(uuid: string): Promise<PurchaseOrderEntity> {
-  const { data } = await api.V2.get(`/prototype/purchase-orders/${uuid}`);
-  return data as PurchaseOrderEntity;
+  const { data } = await api.V2.get<{ data: PurchaseOrderEntity }>(`/prototype/purchase-orders/${uuid}`);
+  return data.data;
 }
 
 export function setPurchaseOrderForecast(uuid: string, date: string) {
