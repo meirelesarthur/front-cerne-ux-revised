@@ -772,7 +772,7 @@ export const menuModules: NavModule[] = [
           ? [
               {
                 id: 'adm-sup-sol',
-                label: 'Ordens de compra',
+                label: 'Solicitações de compra',
                 path: '/administrativo/ordens-de-compra',
                 icon: 'document-add',
               },
@@ -799,7 +799,7 @@ export const menuModules: NavModule[] = [
           },
           {
             id: 'adm-sup-sol',
-            label: 'Ordens de compra',
+            label: 'Solicitações de compra',
             path: '/administrativo/solicitacao',
             icon: 'document-add',
           },

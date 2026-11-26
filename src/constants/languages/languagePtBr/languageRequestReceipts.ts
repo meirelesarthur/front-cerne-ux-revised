@@ -11,7 +11,7 @@ export const languageRequestReceipts: ModuleRequestReceipts = {
     pluralLabel: 'Recebimentos',
     titleModule: 'Recebimentos',
     pageTitle: 'Recebimentos',
-    pageSubtitle: 'Gerencie a confirmação de recebimento das ordens de compra.',
+    pageSubtitle: 'Gerencie a confirmação de recebimento das solicitações de compra.',
 
     list: {
       table: {
@@ -66,7 +66,7 @@ export const languageRequestReceipts: ModuleRequestReceipts = {
 
     confirm: {
       pageTitle: 'Confirmar Recebimento',
-      pageSubtitle: 'Confirme o recebimento dos itens da ordem de compra.',
+      pageSubtitle: 'Confirme o recebimento dos itens da solicitação de compra.',
       fields: {
         code: 'Código',
         responsible: 'Responsável',

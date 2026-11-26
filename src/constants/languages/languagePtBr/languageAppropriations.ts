@@ -52,7 +52,7 @@ export const languageAppropriations: ModuleAppropriations = {
       emptyState: {
         title: 'Nenhum apontamento ainda.',
         description:
-          'Apontamento é o registro do trabalho da sua equipe, como pintar uma cerca ou adubar um talhão. Se for comprar um produto ou contratar um serviço de fora, use a Ordem de compra.',
+          'Apontamento é o registro do trabalho da sua equipe, como pintar uma cerca ou adubar um talhão. Se for contratar alguém de fora, use Ordem de Serviço.',
         titleFiltered: 'Nenhum apontamento encontrado.',
         descriptionFiltered: 'Tente ajustar os filtros ou limpar a busca.',
         cta: 'Registrar trabalho',

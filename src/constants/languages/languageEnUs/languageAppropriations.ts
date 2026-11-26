@@ -52,7 +52,7 @@ export const languageAppropriations: ModuleAppropriations = {
       emptyState: {
         title: 'No appointments yet.',
         description:
-          'An appointment records work by your team, like painting a fence or fertilizing a field. To buy a product or hire a service from outside, use a Purchase order.',
+          'An appointment records work by your team, like painting a fence or fertilizing a field. To hire someone from outside, use Service Order.',
         titleFiltered: 'No appropriations found.',
         descriptionFiltered: 'Try adjusting the filters or clearing the search.',
         cta: 'Record work',

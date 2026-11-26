@@ -8,7 +8,8 @@
 
 1. **Operações → "Tipos de serviço"** e **Atividades → "Serviços"** (renomeação do cadastro atual).
 2. **Nasce um cadastro novo, "Operações"**, usado na **Ordem de compra** (campo obrigatório no cabeçalho, sem Atividade, levado à despesa gerada).
-3. **Todas as telas de solicitação convergem numa única "Ordens de compra"**, filtrável por status (solicitação, cotação, aprovação, compra, recebimento, encerradas).
+3. ~~**Todas as telas de solicitação convergem numa única "Ordens de compra"**~~ — substituída em 26/11 (item 4): as telas convergem numa única **"Solicitações de compra"**, filtrável por status (solicitação, cotação, aprovação, compra, recebimento, encerradas).
+4. **Solicitação × Ordem de compra (26/11, depois da conversa com o CEO):** a **Solicitação de compra** continua como era (com os ajustes visuais e a tela única com o combo de status); o nome "Ordem de compra" dado a ela em `521ead7` foi desfeito. A **Ordem de compra** é nova: começa sozinha ou nasce de uma Solicitação. **Uma Solicitação gera N Ordens**, porque cada Ordem é de **um único fornecedor**; a Solicitação continua viva e ligada às suas Ordens. Categoria e marcação aparecem nas duas.
 
 ## 1. Tipos de serviço e Serviços (o cadastro atual)
 

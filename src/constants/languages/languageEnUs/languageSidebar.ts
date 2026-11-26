@@ -85,7 +85,7 @@ export const languageSidebar: Sidebar = {
     'adm-sup-sla': 'SLA Parameters',
     'adm-sup-flx': 'Purchase order flow',
     'adm-sup-meu': 'My Processes',
-    'adm-sup-sol': 'Purchase orders',
+    'adm-sup-sol': 'Purchase requests',
     'adm-sup-rej': 'Rejected / Cancelled',
     'adm-sup-cot': 'Quotations',
     'adm-sup-aut': 'Authorization',
