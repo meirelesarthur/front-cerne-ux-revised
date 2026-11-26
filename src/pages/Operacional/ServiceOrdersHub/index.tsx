@@ -21,7 +21,7 @@ import { Button } from '@/components/Button';
 import { Dialog } from '@/components/ui/dialog';
 import type { IconName } from '@/components/ui/Icon';
 import { ModuleLinkCard } from '@/components/ui/ModuleLinkCard';
-import { PageCard } from '@/components/ui/PageCard';
+import { HubPage } from '@/components/ui/HubPage';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StepIndicator } from '@/components/ui/StepIndicator';
 
@@ -74,8 +74,8 @@ export default function ServiceOrdersHub() {
   }
 
   return (
-    <PageCard>
-      <Box p={{ base: '16px', md: '24px' }}>
+    <HubPage>
+      <Box>
         <Flex justify="space-between" align="flex-start" gap="16px" wrap="wrap">
           <PageHeader title={text.pageTitle} description={text.pageSubtitle} />
           <Button
@@ -201,6 +201,6 @@ export default function ServiceOrdersHub() {
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Root>
-    </PageCard>
+    </HubPage>
   );
 }

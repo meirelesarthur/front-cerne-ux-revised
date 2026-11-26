@@ -13,7 +13,7 @@ import { Box, Grid, Text } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ModuleLinkCard } from '@/components/ui/ModuleLinkCard';
-import { PageCard } from '@/components/ui/PageCard';
+import { HubPage } from '@/components/ui/HubPage';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { GROUP_HUB_BASE, findGroupByHubPath, type NavSubItem } from '@/config/v2/navigationTree';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -39,11 +39,9 @@ export default function GroupHub() {
 
   if (!found) {
     return (
-      <PageCard>
-        <Box p={{ base: '16px', md: '24px' }}>
-          <PageHeader title={text.notFoundTitle} description={text.notFoundDescription} />
-        </Box>
-      </PageCard>
+      <HubPage>
+        <PageHeader title={text.notFoundTitle} description={text.notFoundDescription} />
+      </HubPage>
     );
   }
 
@@ -57,8 +55,8 @@ export default function GroupHub() {
     .replace('{module}', moduleLabel);
 
   return (
-    <PageCard>
-      <Box p={{ base: '16px', md: '24px' }}>
+    <HubPage>
+      <Box>
         <PageHeader title={label(group.id, group.label)} description={subtitle} />
 
         <Box as="nav" aria-label={text.cardsAriaLabel} mt={{ base: '24px', md: '32px' }}>
@@ -104,6 +102,6 @@ export default function GroupHub() {
           ))}
         </Box>
       </Box>
-    </PageCard>
+    </HubPage>
   );
 }
