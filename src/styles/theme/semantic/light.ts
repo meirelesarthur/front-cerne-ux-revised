@@ -46,7 +46,9 @@ const colors: SemanticTokensColors = {
   gridBG: { value: "{colors.white}" }, // zebra base #FFFFFF (Ajustes Globais)
   gridBGAlternate: { value: "#FBFBFB" }, // zebra alternada (Ajustes Globais)
   // Suprimentos (execução 081, T-081-FE-01) — linha do tipo U (Emergencial) e bolinhas de status 1..11, cores do legado (`RequestPurchase::colors()` e `#EE6D8F`).
-  supplyEmergencyRowBg: { value: '#EE6D8F' },
+  // Linha Emergencial em tom pastel (decisão do dono, 26/11): o #EE6D8F do legado
+  // gritava e prejudicava a leitura; o rosado suave sinaliza sem tirar o contraste.
+  supplyEmergencyRowBg: { value: '#FCEEF2' },
   supplyStatus1: { value: '#858796' },
   supplyStatus2: { value: '#FEC02C' },
   supplyStatus3: { value: '#B8860B' },

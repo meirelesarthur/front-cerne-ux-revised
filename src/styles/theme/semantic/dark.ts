@@ -46,7 +46,7 @@ const colors: SemanticTokensColors = {
   gridBG: { value: '#0e2a1d' }, // GBMode bg.surface (= cardBG/formBG)
   gridBGAlternate: { value: '#0b1e14' }, // GBMode bg.subtle (zebra)
   // Suprimentos (execução 081, T-081-FE-01) — mesmos tokens do light, ajustados para contraste no dark (o navy #0f294b do status 11 some em fundo escuro).
-  supplyEmergencyRowBg: { value: '#7A2E45' },
+  supplyEmergencyRowBg: { value: '#3A2229' }, // pastel equivalente no escuro (26/11)
   supplyStatus1: { value: '#9A9CAB' },
   supplyStatus2: { value: '#FEC02C' },
   supplyStatus3: { value: '#D4A017' },
