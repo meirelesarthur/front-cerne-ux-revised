@@ -118,7 +118,7 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           received: 'Recibido',
           balance: 'Saldo',
           forecast: 'Previsión',
-          orderTotal: 'Total de la orden',
+          orderTotal: 'Total de la solicitud',
         },
         forecast: {
           label: 'Previsión de entrega',
