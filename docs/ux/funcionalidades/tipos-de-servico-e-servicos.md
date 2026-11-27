@@ -10,8 +10,9 @@ Relacionados: [ordem-de-compra-unica-e-tipos-de-servico.md](ordem-de-compra-unic
 
 ## Regras vigentes
 
-- **26/11 (dono) — "Tipos de serviço" e "Serviços" são os novos nomes de Operações e Atividades.** Muda só o que a
-  pessoa vê. API, tabelas e permissões seguem com os nomes antigos (`operations_*`, `activities_*`).
+- **26/11 (dono) — "Tipos de serviço" e "Serviços" nascem de Operações e Atividades.** API, tabelas e permissões
+  seguem com os nomes antigos (`operations_*`, `activities_*`). **Atualizado em 27/11:** a tela de Operação continua
+  existindo, sem alteração (ver abaixo).
 - **26/11 — O Tipo de serviço guarda todos os parâmetros do Apontamento** e o "Gera execução". O **Serviço** é só
   nome, descrição e situação (ativo ou inativo).
 - **26/11 — Um Serviço pode estar em vários Tipos de serviço** (muitos-para-muitos). Na tela do Serviço, escolher ao
