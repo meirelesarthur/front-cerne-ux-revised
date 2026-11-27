@@ -34,8 +34,10 @@ Relacionados: [ordem-de-compra-unica-e-tipos-de-servico.md](ordem-de-compra-unic
   **Gera execução**. Filtros: uso, agrupador, status e Gera execução. A lista de **Serviços** mostra Nome, Descrição,
   Tipos de serviço (etiquetas) e Status, com filtro por tipo de serviço e status.
 - **27/11 — "Valor/Hectare" e "Tipo (À Definir)" saíram do Serviço** (decisão: só descrição e situação). Ver "A fazer".
-- **27/11 — Com o protótipo ligado, o menu Agrícolas troca "Operações" e "Atividades" por "Tipos de Serviço" e
-  "Serviços".** Sem o protótipo, o menu fica como estava.
+- **27/11 (dono) — "Operação" continua existindo, como era antes** (tela, menu e lógica intactos); será alterada
+  depois. Tipos de serviço e Serviços não a desfazem: com o protótipo ligado, o menu Agrícolas mostra "Operações"
+  junto de "Tipos de Serviço" e "Serviços" ("Serviços" ocupa o lugar de "Atividades"). Sem o protótipo, o menu fica
+  como estava.
 - **27/11 — Caminho provisório dos Serviços:** `/cadastros-base/servicos-agricolas`, porque
   `/cadastros-base/servicos` já é de outro cadastro (Gerais › Serviços).
 - **Número da Ordem (referência do dono):** automático e somente leitura, como no cadastro de hoje (próximo número
@@ -63,7 +65,7 @@ Subir o front em modo demonstração (`VITE_DEMO_MODE=true` ou `VITE_DEV_MOCKS=t
 
 **Tipos de serviço**
 
-1. Menu Cadastros Base › Agrícolas: aparecem "Tipos de Serviço" e "Serviços" (e não "Operações" e "Atividades").
+1. Menu Cadastros Base › Agrícolas: aparecem "Operações", "Tipos de Serviço" e "Serviços" (sem "Atividades").
 2. Abrir Tipos de Serviço: 14 linhas, 10 por página, 2 páginas, colunas Nome, Agrupador, Ordem, Uso, Gera execução e
    Status.
 3. Buscar por "plantio"; abrir Filtros e filtrar por "Gera execução = Não": devem sobrar Armazenagem, Construção

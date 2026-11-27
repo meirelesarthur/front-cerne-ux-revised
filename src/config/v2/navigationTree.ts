@@ -528,8 +528,15 @@ export const menuModules: NavModule[] = [
         label: 'Agrícolas',
         icon: 'grain',
         items: [
-          // Protótipo (27/11, não portar): com ele ligado, "Tipos de Serviço" e "Serviços" entram no
-          // lugar de "Operações" e "Atividades" (só rótulos; API, tabelas e permissões seguem iguais).
+          // Operações continua existindo, como era (decisão do dono, 27/11: será alterada depois).
+          {
+            id: 'cad-agr-ope',
+            label: 'Operações',
+            path: '/cadastros-base/operacoes',
+            icon: 'settings-sliders' as IconName,
+          },
+          // Protótipo (27/11, não portar): com ele ligado, "Tipos de Serviço" e "Serviços" entram
+          // junto de "Operações"; "Serviços" ocupa o lugar de "Atividades".
           ...(PURCHASE_ORDER_PROTOTYPE
             ? [
                 {
@@ -546,12 +553,6 @@ export const menuModules: NavModule[] = [
                 },
               ]
             : [
-                {
-                  id: 'cad-agr-ope',
-                  label: 'Operações',
-                  path: '/cadastros-base/operacoes',
-                  icon: 'settings-sliders' as IconName,
-                },
                 {
                   id: 'cad-agr-ati',
                   label: 'Atividades',
