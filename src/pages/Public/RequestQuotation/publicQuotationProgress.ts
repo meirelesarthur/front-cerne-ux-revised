@@ -6,13 +6,23 @@
 // regra de validação nem de cálculo (isso continua em `publicQuotationTotals`).
 // -----------------------------------------------------------------------------
 
-type ItemLike = { unitary_value: number | null | undefined };
+type ItemLike = { unitary_value: number | null | undefined; quantity?: number | null };
 
-// Item "preenchido" = preço unitário informado e maior que zero. (O campo de
-// dinheiro devolve 0 quando o fornecedor apaga o valor, então 0 vale "vazio".)
+// Item "preenchido" = preço unitário informado e maior que zero E, quando há
+// quantidade ofertada (27/11: o fornecedor pode ofertar menos que o pedido),
+// quantidade maior que zero. (O campo de dinheiro devolve 0 quando o fornecedor
+// apaga o valor, então 0 vale "vazio".) Sem `quantity` no item, só o preço conta.
 export function isItemPriced(item: ItemLike | undefined): boolean {
   const value = item?.unitary_value;
-  return typeof value === 'number' && !Number.isNaN(value) && value > 0;
+  const priced = typeof value === 'number' && !Number.isNaN(value) && value > 0;
+  const quantity = item?.quantity;
+  const hasQuantity = quantity === undefined || quantity === null || quantity > 0;
+  return priced && hasQuantity;
+}
+
+/** A quantidade ofertada é menor que a pedida (oferta parcial). */
+export function isPartialOffer(offered: number | null | undefined, requested: number): boolean {
+  return typeof offered === 'number' && offered > 0 && offered < requested;
 }
 
 export function countPricedItems(items: readonly ItemLike[]): number {

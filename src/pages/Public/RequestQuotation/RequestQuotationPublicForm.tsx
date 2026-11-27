@@ -96,7 +96,6 @@ export function RequestQuotationPublicForm({
   const {
     control,
     handleSubmit,
-    setValue,
     setError,
     watch,
     formState: { errors },
@@ -194,6 +193,7 @@ export function RequestQuotationPublicForm({
       total_value: totalValue,
       items: data.items.map((item) => ({
         request_item_uuid: item.request_item_uuid,
+        quantity: item.quantity,
         unitary_value: item.unitary_value ?? 0,
         brand: item.brand ?? '',
         observation: item.observation || null,
@@ -229,7 +229,6 @@ export function RequestQuotationPublicForm({
           <RequestQuotationPublicItems
             control={control}
             errors={errors}
-            setValue={setValue}
             items={quotation.items}
             itemLabel={itemLabel}
             disabled={isSubmitting}

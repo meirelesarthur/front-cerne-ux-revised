@@ -312,7 +312,8 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         itemService: 'Serviços',
         totalValue: 'Vl.Total',
         quotationNote: 'Observação',
-        quantity: 'Quantidade',
+        quantity: 'Qtde pedida',
+        offeredQuantity: 'Qtde ofertada',
         brand: 'Marca',
         unitaryValue: 'Valor Unitário',
         amount: 'Valor Total',
@@ -419,6 +420,7 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         subtitle: 'Preencha a marca e o valor unitário. O total é calculado sozinho.',
         tableLabel: 'Itens para cotar',
         itemNumber: 'Item {n}',
+        partialOffer: 'Parcial',
       },
       paymentsExtra: {
         subtitle: 'Informe pelo menos uma forma de pagamento. Você pode adicionar mais de uma.',

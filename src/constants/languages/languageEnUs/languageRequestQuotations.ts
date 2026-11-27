@@ -312,7 +312,8 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         itemService: 'Services',
         totalValue: 'Total Amt.',
         quotationNote: 'Note',
-        quantity: 'Quantity',
+        quantity: 'Requested qty',
+        offeredQuantity: 'Offered qty',
         brand: 'Brand',
         unitaryValue: 'Unit Value',
         amount: 'Total Value',
@@ -418,6 +419,7 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         subtitle: 'Fill in the brand and the unit price. The total is calculated for you.',
         tableLabel: 'Items to quote',
         itemNumber: 'Item {n}',
+        partialOffer: 'Partial',
       },
       paymentsExtra: {
         subtitle: 'Enter at least one payment method. You can add more than one.',

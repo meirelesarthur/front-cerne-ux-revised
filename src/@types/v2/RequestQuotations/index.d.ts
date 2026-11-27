@@ -355,11 +355,15 @@ export interface PublicRequestQuotationData {
 
 // -------- Payload de submissão (multipart/form-data, `POST`) --------
 
-/** `items[].quantity` é aceito pelo Form Request real (`sometimes`) mas
- *  SEMPRE descartado pela Action (lida do `RequestItem` real do servidor) —
- *  por isso NÃO faz parte deste payload de escrita (nunca enviado). */
+/** `items[].quantity` é a QUANTIDADE OFERTADA pelo fornecedor (27/11/2026): ele
+ *  pode não ter o total pedido, então a coluna vem preenchida com a quantidade
+ *  da solicitação e ele altera. O Form Request real já aceita `quantity`
+ *  (`sometimes`), mas a Action ainda a DESCARTA e lê a do `RequestItem` — o
+ *  backend precisa passar a gravar a quantidade ofertada (ver doc). */
 export interface PublicRequestQuotationItemPayload {
   request_item_uuid: string;
+  /** Quantidade ofertada (padrão: a pedida). */
+  quantity: number;
   unitary_value: number;
   brand: string;
   observation?: string | null;

@@ -5,6 +5,7 @@ import {
   countPricedItems,
   formatCurrency,
   isItemPriced,
+  isPartialOffer,
 } from './publicQuotationProgress';
 
 describe('publicQuotationProgress', () => {
@@ -24,6 +25,20 @@ describe('publicQuotationProgress', () => {
     expect(allItemsPriced([])).toBe(false);
     expect(allItemsPriced([{ unitary_value: 1 }, { unitary_value: null }])).toBe(false);
     expect(allItemsPriced([{ unitary_value: 1 }, { unitary_value: 2 }])).toBe(true);
+  });
+
+  it('com quantidade ofertada, ela também precisa ser maior que zero', () => {
+    expect(isItemPriced({ unitary_value: 10, quantity: 45 })).toBe(true);
+    expect(isItemPriced({ unitary_value: 10, quantity: 0 })).toBe(false);
+    expect(isItemPriced({ unitary_value: 10, quantity: null })).toBe(true);
+    expect(allItemsPriced([{ unitary_value: 1, quantity: 5 }, { unitary_value: 2, quantity: 0 }])).toBe(false);
+  });
+
+  it('oferta parcial: ofertou menos que o pedido', () => {
+    expect(isPartialOffer(30, 45)).toBe(true);
+    expect(isPartialOffer(45, 45)).toBe(false);
+    expect(isPartialOffer(0, 45)).toBe(false);
+    expect(isPartialOffer(null, 45)).toBe(false);
   });
 
   it('formata em reais', () => {

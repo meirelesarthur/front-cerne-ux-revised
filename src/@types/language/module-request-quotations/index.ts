@@ -471,6 +471,7 @@ export interface ModuleRequestQuotations {
         /** Observação do cotador (`note`), somente leitura. */
         quotationNote: string;
         quantity: string;
+        offeredQuantity: string;
         brand: string;
         unitaryValue: string;
         amount: string;
@@ -587,6 +588,7 @@ export interface ModuleRequestQuotations {
         tableLabel: string;
         /** "Item {n}" — título do cartão do item no celular. */
         itemNumber: string;
+        partialOffer: string;
       };
       paymentsExtra: {
         subtitle: string;

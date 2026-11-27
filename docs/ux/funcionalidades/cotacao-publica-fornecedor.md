@@ -24,6 +24,17 @@ Cotações, mapa de cotações e Solicitação × Ordem)
   lançar muitos produtos sem rolar de cartão em cartão; no celular a tabela rola dentro do próprio quadro, sem rolar a
   página de lado. **Enter desce para o mesmo campo da linha de baixo** (marca → marca, valor → valor) e nunca envia o
   formulário. ~~Um cartão por item no celular (27/11, primeira versão)~~ — substituída no mesmo dia.
+- **27/11 — Quantidade ofertada:** o fornecedor nem sempre tem o total pedido, então a tabela tem a coluna **"Qtde
+  ofertada"**, que **já vem com a quantidade da solicitação** e ele pode alterar. Quando oferta menos, a linha ganha a
+  marca **"Parcial"**. O **valor da linha e o total** usam a quantidade **ofertada** (preço unitário × qtde ofertada).
+  "Qtde pedida" continua como coluna de leitura. O item só conta como preenchido com preço **e** quantidade ofertada
+  maiores que zero. A quantidade é inteira (só aceita casas quando o pedido já é fracionado).
+- **27/11 — As condições de pagamento também são uma tabela com edição na linha:** forma de pagamento, parcelas e
+  intervalo editáveis; valor total e valor da parcela calculados; remover (lixeira) no fim da linha e "Adicionar
+  condição" embaixo. Regras de antes mantidas: adicionar só com a condição anterior completa, confirmação ao remover e
+  nunca remover a última. ~~Uma condição por cartão numerado (`RepeaterList`, 27/11)~~ — substituída no mesmo dia.
+- **27/11 — Uma única barra de rolagem lateral** nas tabelas (a do `SimpleTable`); a duplicada que apareceu nos itens
+  saiu.
 - **27/11 — O cabeçalho usa a logo oficial do CERNE** (a mesma da barra lateral, versão clara ou escura conforme o
   tema) ao lado do título "Cotação de compra", no lugar do ícone genérico.
 - ~~Foco automático no primeiro valor unitário ao abrir~~ — **Substituída em 27/11:** com o resumo no topo, o foco
@@ -45,6 +56,12 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
 - **`RequestQuotationPublicItems.tsx` e `RequestQuotationPublicItemRow.tsx`:** **tabela** (`SimpleTable` do kit) em
   qualquer largura, com a coluna "#" e as células editáveis na linha; rola por dentro do quadro no celular; Enter
   desce de linha. O cartão por item saiu.
+- **Quantidade ofertada:** coluna editável em `RequestQuotationPublicItemRow.tsx` (campo `items.N.quantity` do
+  formulário, que já existia e agora vem editável); `publicQuotationProgress.ts` ganhou `isPartialOffer` e a regra do
+  "preenchido" considera a quantidade (com teste). O envio passa `items[i][quantity]` (tipo
+  `PublicRequestQuotationItemPayload` e `request-quotation-public-service.ts`).
+- **`RequestQuotationPublicPaymentRow.tsx`:** condições em `SimpleTable` com edição na linha. **`tableKeyboard.ts`
+  (novo):** Enter desce para o mesmo campo da linha de baixo, nas duas tabelas.
 - **`index.tsx`:** logo oficial (`assets/Logo.svg` e `Logo-white.svg`) no cabeçalho.
 - **`RequestQuotationPublicPaymentRow.tsx`:** `RepeaterList` do kit, um cartão numerado por condição; mantidas a
   confirmação de remoção, a trava de última condição e "adicionar só com a anterior completa".
@@ -89,7 +106,10 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
   quebra de linha.
 - [ ] **Validar com o negócio:** ver o estado "já enviada" e o 404 reais (o simulador não deixa a cotação como
   recebida e devolve 200 para hash desconhecido).
-- [ ] **Backend:** nada novo; a API pública continua a mesma.
+- [ ] **Backend:** a Action da cotação pública hoje **descarta** `items[].quantity` e lê a quantidade do pedido; passar a
+  **gravar a quantidade ofertada** por item e recalcular o total da cotação com ela. O Form Request já aceita o campo.
+- [ ] **Produto:** o que o comprador vê no mapa de cotações quando a oferta é parcial (hoje o mapa de demonstração não
+  usa a quantidade ofertada) e se o fornecedor pode ofertar **mais** que o pedido (hoje não há limite).
 
 ### Pendências de decisão
 
@@ -100,4 +120,5 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
 | Data | Commit | O que mudou |
 |---|---|---|
 | 27/11/2026 | `fab09ae` | Repaginação da cotação pública: resumo, passos, tabela e cartões, barra de envio, condições em `RepeaterList`, cartão de sucesso; link de demonstração `demo-22-4` |
-| 27/11/2026 | (este commit) | Itens sempre em tabela com edição na linha e Enter descendo de linha (o cartão do celular saiu); logo oficial do CERNE no cabeçalho |
+| 27/11/2026 | `946814c` | Itens sempre em tabela com edição na linha e Enter descendo de linha (o cartão do celular saiu); logo oficial do CERNE no cabeçalho |
+| 27/11/2026 | (este commit) | Coluna Qtde ofertada editável (vem com o total, marca "Parcial", total usa a ofertada); condições de pagamento em tabela com edição na linha; Enter desce de linha nas duas tabelas; uma só barra de rolagem |

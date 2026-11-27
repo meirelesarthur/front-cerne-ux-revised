@@ -102,6 +102,8 @@ function buildPublicSubmissionFormData(payload: PublicRequestQuotationSubmission
   payload.items.forEach((item, index) => {
     fd.append(`items[${index}][request_item_uuid]`, item.request_item_uuid);
     fd.append(`items[${index}][unitary_value]`, String(item.unitary_value));
+    // 27/11: quantidade OFERTADA (o fornecedor pode ofertar menos que o pedido).
+    fd.append(`items[${index}][quantity]`, String(item.quantity));
     fd.append(`items[${index}][brand]`, item.brand);
     if (item.observation) fd.append(`items[${index}][observation]`, item.observation);
   });
