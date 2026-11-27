@@ -9,9 +9,10 @@
 // Orquestra os 4 estados obrigatórios (roteiro frontend §1.3): loading (hash
 // resolvendo) · error (hash inválido/expirado → 404 genérico, MESMA paridade
 // do legado — nunca diferenciar "não existe" de "outro erro"; 429 — limite de
-// tentativas; outro erro — retry) · success com `status===recebida` (banner
-// "cotação finalizada", mirror EV-069) · success com `status!==recebida`
-// (formulário pronto para preencher, `RequestQuotationPublicForm`).
+// tentativas; outro erro — retry) · success com `status===recebida` (cartão
+// "já enviada", mirror EV-069) · success com `status!==recebida` (formulário
+// pronto para preencher, `RequestQuotationPublicForm`). Logo depois de um envio
+// bem-sucedido mostra o cartão de confirmação com o total enviado.
 //
 // ⚠️ ISOLAMENTO OBRIGATÓRIO (gate 6.1) — nenhum import de
 // `@/contexts/AuthContext`/`@/hooks/useAuth`/`@/stores/*Farm*`/
@@ -19,15 +20,15 @@
 // globais e independentes de sessão (ver `PublicQuotationLayout.tsx`).
 // -----------------------------------------------------------------------------
 
-import { ElementType } from 'react';
+import { useState } from 'react';
 
-import { Box, EmptyState, Flex, Icon, Spinner, Text, VStack } from '@chakra-ui/react';
+import { Box, EmptyState, Flex, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import { FiAlertTriangle, FiCheckCircle, FiClock, FiSearch } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
+import { Icon, type IconName } from '@/components/ui/Icon';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -36,6 +37,11 @@ import { requestQuotationStatus } from '@/constants/RequestQuotations/request-qu
 import { getPublicRequestQuotationByHash } from '@/services/v2/RequestQuotations/request-quotation-public-service';
 
 import { RequestQuotationPublicForm } from './RequestQuotationPublicForm';
+import {
+  RequestQuotationPublicHowTo,
+  RequestQuotationPublicSummary,
+} from './RequestQuotationPublicIntro';
+import { RequestQuotationPublicSuccess } from './RequestQuotationPublicSuccess';
 
 function StateCard({
   icon,
@@ -44,7 +50,7 @@ function StateCard({
   retryLabel,
   onRetry,
 }: {
-  icon: ElementType;
+  icon: IconName;
   title: string;
   description: string;
   retryLabel?: string;
@@ -54,13 +60,24 @@ function StateCard({
     <EmptyState.Root>
       <EmptyState.Content>
         <EmptyState.Indicator>
-          <Icon as={icon} boxSize={8} color="fg.muted" />
+          <Flex
+            align="center"
+            justify="center"
+            boxSize="56px"
+            borderRadius="full"
+            bg="bg.muted"
+            color="cardTextSecondary"
+          >
+            <Icon name={icon} size="xl" />
+          </Flex>
         </EmptyState.Indicator>
-        <VStack textAlign="center" gap={1}>
+        <VStack textAlign="center" gap={1} role="status">
           <EmptyState.Title>{title}</EmptyState.Title>
           {description && <EmptyState.Description>{description}</EmptyState.Description>}
         </VStack>
-        {retryLabel && onRetry && <Button title={retryLabel} variant="outline" onClick={onRetry} />}
+        {retryLabel && onRetry && (
+          <Button title={retryLabel} variant="outline" onClick={onRetry} />
+        )}
       </EmptyState.Content>
     </EmptyState.Root>
   );
@@ -70,6 +87,10 @@ export function RequestQuotationPublicPage() {
   const { hash } = useParams<{ hash: string }>();
   const { languageGB } = useLanguage();
   const text = languageGB.requestQuotations.requestQuotation.publicForm;
+
+  // Total enviado agora (só depois de um POST bem-sucedido) — mostra o cartão de
+  // confirmação mesmo que a reconsulta do `GET` ainda esteja em andamento.
+  const [submittedTotal, setSubmittedTotal] = useState<number | null>(null);
 
   const query = useQuery({
     queryKey: ['public-request-quotation', hash],
@@ -82,93 +103,104 @@ export function RequestQuotationPublicPage() {
     refetchOnWindowFocus: false,
   });
 
-  function handleSubmittedOrAlreadySubmitted() {
+  function handleSubmittedOrAlreadySubmitted(total?: number) {
+    if (typeof total === 'number') setSubmittedTotal(total);
     query.refetch();
   }
 
   const statusCode = isAxiosError(query.error) ? query.error.response?.status : undefined;
+  const quotation = query.data?.data;
+  // Resposta 200 sem a lista de itens (corpo inesperado) = mesmo tratamento de "outro erro".
+  const isMalformed = query.isSuccess && !Array.isArray(quotation?.items);
 
   return (
-    <Flex minH="100vh" align="center" justify="center" p={{ base: 4, md: 8 }}>
+    <Box as="main" minH="100vh" bg="contentOuterBG" px={4} py={{ base: 4, md: 8 }}>
       <Box
         w="full"
-        maxW="960px"
-        bg="bg.default"
+        maxW="1040px"
+        mx="auto"
+        bg="cardBG"
         borderRadius="xl"
-        boxShadow="md"
-        border="1px solid"
-        borderColor="border.subtle"
-        p={{ base: 5, md: 8 }}
+        boxShadow="cardShadow"
+        borderWidth="1px"
+        borderColor="cardBorder"
+        // Sem `overflow: hidden`: a barra de envio fixa (`sticky`) precisa rolar com a página.
       >
-        <Text fontSize="xl" fontWeight="bold" mb={6}>
-          {text.pageTitle}
-        </Text>
-
-        {!hash || statusCode === 404 ? (
-          <StateCard
-            icon={FiSearch as ElementType}
-            title={text.notFoundState.title}
-            description={text.notFoundState.description}
-          />
-        ) : query.isPending ? (
-          <Flex direction="column" align="center" justify="center" py={12} gap={3}>
-            <Spinner size="lg" />
-            <Text fontSize="sm" color="fg.muted">
-              {text.loadingState}
-            </Text>
+        <Flex
+          align="center"
+          gap={3}
+          px={{ base: 4, md: 8 }}
+          py={4}
+          borderBottomWidth="1px"
+          borderColor="cardBorder"
+        >
+          <Flex
+            align="center"
+            justify="center"
+            boxSize="40px"
+            flexShrink={0}
+            borderRadius="lg"
+            bg="feedBack.successMain"
+            color="white"
+          >
+            <Icon name="cart" size="lg" />
           </Flex>
-        ) : statusCode === 429 ? (
-          <StateCard
-            icon={FiClock as ElementType}
-            title={text.pageTitle}
-            description={text.rateLimitedError}
-          />
-        ) : query.isError ? (
-          <StateCard
-            icon={FiAlertTriangle as ElementType}
-            title={text.loadErrorState.title}
-            description={text.loadErrorState.description}
-            retryLabel={text.loadErrorState.retry}
-            onRetry={() => query.refetch()}
-          />
-        ) : query.data && query.data.data.status === requestQuotationStatus.recebida ? (
-          <StateCard
-            icon={FiCheckCircle as ElementType}
-            title={text.alreadySubmittedState.title}
-            description={text.alreadySubmittedState.description}
-          />
-        ) : query.data ? (
-          <>
-            <Flex direction="column" gap={1} mb={6} fontSize="sm" color="fg.muted">
-              {query.data.data.request_purchase && (
-                <>
-                  {/* Legado: "Solicitação Nº {code} - {fazenda}". */}
-                  <Text>
-                    {text.requestHeader
-                      .replace('{code}', query.data.data.request_purchase.code)
-                      .replace('{farm}', query.data.data.farm?.description ?? '')}
-                  </Text>
-                  <Text>
-                    {text.descriptionLabel} {query.data.data.request_purchase.description}
-                  </Text>
-                </>
-              )}
-              {query.data.data.provider && (
-                <Text>
-                  {text.providerLabel} {query.data.data.provider.name}
-                </Text>
-              )}
-            </Flex>
+          <Box minW={0}>
+            <Text fontSize="xs" fontWeight="semibold" color="cardTextSecondary" textTransform="uppercase">
+              {text.brandName}
+            </Text>
+            <Text as="h1" fontSize="xl" fontWeight="bold" color="cardTextPrimary" lineHeight="1.2">
+              {text.heading}
+            </Text>
+          </Box>
+        </Flex>
 
-            <RequestQuotationPublicForm
-              hash={hash as string}
-              quotation={query.data.data}
-              onSubmittedOrAlreadySubmitted={handleSubmittedOrAlreadySubmitted}
+        <Box px={{ base: 4, md: 8 }} py={{ base: 5, md: 6 }}>
+          {!hash || statusCode === 404 ? (
+            <StateCard
+              icon="search-empty"
+              title={text.notFoundState.title}
+              description={text.notFoundState.description}
             />
-          </>
-        ) : null}
+          ) : submittedTotal !== null ? (
+            <RequestQuotationPublicSuccess total={submittedTotal} />
+          ) : query.isPending ? (
+            <Flex direction="column" align="center" justify="center" py={12} gap={3} role="status">
+              <Spinner size="lg" />
+              <Text fontSize="sm" color="cardTextSecondary">
+                {text.loadingState}
+              </Text>
+            </Flex>
+          ) : statusCode === 429 ? (
+            <StateCard
+              icon="clock"
+              title={text.rateLimitedTitle}
+              description={text.rateLimitedError}
+            />
+          ) : query.isError || isMalformed ? (
+            <StateCard
+              icon="warning"
+              title={text.loadErrorState.title}
+              description={text.loadErrorState.description}
+              retryLabel={text.loadErrorState.retry}
+              onRetry={() => query.refetch()}
+            />
+          ) : quotation && quotation.status === requestQuotationStatus.recebida ? (
+            <RequestQuotationPublicSuccess already />
+          ) : quotation ? (
+            <Flex direction="column" gap={6}>
+              <RequestQuotationPublicSummary quotation={quotation} />
+              <RequestQuotationPublicHowTo />
+              <RequestQuotationPublicForm
+                hash={hash as string}
+                quotation={quotation}
+                onSubmittedOrAlreadySubmitted={handleSubmittedOrAlreadySubmitted}
+              />
+            </Flex>
+          ) : null}
+        </Box>
       </Box>
-    </Flex>
+    </Box>
   );
 }
 

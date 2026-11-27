@@ -40,6 +40,7 @@ const PROVIDERS = {
   sementesbrasil: { uuid: 'demo-prov-sementes', name: 'Sementes Brasil Central', email: 'vendas@sementesbc.test', cellphone: '(62) 99421-7790' },
   postoestrada: { uuid: 'demo-prov-posto', name: 'Posto Estrada Real', email: 'faturamento@postoestrada.test', cellphone: '(34) 99118-3301' },
   tratormaq: { uuid: 'demo-prov-tratormaq', name: 'TratorMaq Peças Agrícolas', email: 'pecas@tratormaq.test', cellphone: '(34) 99265-0042' },
+  agrovale: { uuid: 'demo-prov-agrovale', name: 'AgroVale Distribuidora', email: 'cotacao@agrovale.test', cellphone: '(34) 99644-1180' },
 };
 
 const STATUS_LABEL: Record<number, string> = {
@@ -577,6 +578,8 @@ const ORDERS: DemoOrder[] = [
         provider: 'campoforte', status: 3, total: 39300, discount: 0, date: '2026-11-25T08:40:00',
         prices: [null, null, null, 3020, 51], freight: 380, deliveryDays: 6, payment: '45 dias',
       },
+      // 27/11: cotação ainda pendente — o link público de exemplo é /orcamento/demo-22-4.
+      { provider: 'agrovale', status: 2, total: 0 },
     ],
     profile: 'padrao',
     buyer: CARLOS,
@@ -1241,6 +1244,56 @@ export const purchaseOrderDemoRoutes: MockRoute[] = [
     handler: ({ match }) => {
       const order = byUuid(match[1]);
       return order ? { body: quotationsOf(order) } : { status: 404, body: null };
+    },
+  },
+  // Formulário PÚBLICO do fornecedor (27/11, demonstração): `/public/request-quotations/{hash}`,
+  // com o hash `demo-<n>-<índice da cotação>` (ex.: demo-22-4, a AgroVale na 0022).
+  {
+    method: 'get',
+    pattern: /^\/public\/request-quotations\/demo-(\d+)-(\d+)$/,
+    handler: ({ match }) => {
+      const o = ORDERS.find((row) => row.n === Number(match[1]));
+      const q = o?.quotations?.[Number(match[2])];
+      if (!o || !q) return { status: 404, body: null };
+      return {
+        body: {
+          status: q.status,
+          status_label: q.status === 3 ? 'Recebida' : q.status === 2 ? 'Enviada' : 'Aguardando',
+          note: 'Favor cotar com entrega CIF na Fazenda Santa Rita. Validade mínima de 10 dias.',
+          requires_file: false,
+          farm: { description: o.farm.description },
+          request_purchase: { code: o.code, description: o.description, type: o.type, type_label: o.type },
+          provider: { name: PROVIDERS[q.provider].name },
+          items: o.items.map((item, index) => ({
+            request_item_uuid: `${uuidOf(o.n)}-i${index}`,
+            description: item.product ? `${item.product} — ${item.description}` : item.description,
+            brand: null,
+            quantity: item.quantity ?? 0,
+          })),
+        },
+      };
+    },
+  },
+  {
+    method: 'post',
+    pattern: /^\/public\/request-quotations\/demo-(\d+)-(\d+)$/,
+    handler: ({ match, body }) => {
+      const o = ORDERS.find((row) => row.n === Number(match[1]));
+      const q = o?.quotations?.[Number(match[2])];
+      if (!o || !q) return { status: 404, body: null };
+      // O envio é multipart: lê os preços `items[i][unitary_value]` quando vierem num FormData.
+      const prices: (number | null)[] = o.items.map(() => null);
+      if (typeof FormData !== 'undefined' && body instanceof FormData) {
+        body.forEach((value, key) => {
+          const hit = /^items\[(\d+)\]\[unitary_value\]$/.exec(key);
+          if (hit) prices[Number(hit[1])] = Number(value) || null;
+        });
+      }
+      q.status = 3;
+      q.date = new Date().toISOString();
+      q.prices = prices;
+      q.total = o.items.reduce((sum, item, i) => sum + (item.quantity ?? 0) * (prices[i] ?? 0), 0);
+      return { body: null };
     },
   },
   // Mapa de cotações (27/11): itens e, por fornecedor, preço de cada item, frete,

@@ -400,6 +400,57 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
       },
       rateLimitedError:
         'Demasiados intentos en poco tiempo. Espere unos instantes e intente de nuevo.',
+      rateLimitedTitle: 'Demasiados intentos',
+      heading: 'Cotización de compra',
+      brandName: 'GB Cerne',
+      summary: {
+        title: 'Resumen de la solicitud',
+        request: 'Solicitud nº',
+        farm: 'Finca',
+        description: 'Descripción',
+        provider: 'Cotización para',
+        buyerNote: 'Observación del comprador',
+      },
+      howTo: {
+        title: 'Cómo completar',
+        step1: { title: 'Precios', text: 'Informe la marca y el valor unitario de cada ítem.' },
+        step2: { title: 'Condiciones', text: 'Indique cómo y en cuántas cuotas recibe el pago.' },
+        step3: { title: 'Datos y envío', text: 'Informe el responsable, la validez y envíe.' },
+      },
+      itemsSection: {
+        title: 'Ítems de la cotización',
+        subtitle: 'Complete la marca y el valor unitario. El total se calcula solo.',
+        tableLabel: 'Ítems para cotizar',
+        itemNumber: 'Ítem {n}',
+      },
+      paymentsExtra: {
+        subtitle: 'Informe al menos una forma de pago. Puede agregar más de una.',
+        conditionNumber: 'Condición {n}',
+      },
+      respondentSection: {
+        title: 'Datos del responsable',
+        subtitle: 'Quién responde y hasta cuándo vale este precio.',
+      },
+      fileSection: {
+        title: 'Adjunto',
+        subtitle: 'Envíe el archivo en PDF con la información técnica.',
+      },
+      submitBar: {
+        totalLabel: 'Total de la cotización',
+        itemsProgress: '{filled} de {total} ítems completados',
+        missingPrice: 'Informe el valor de todos los ítems para poder enviar.',
+        ready: 'Todo listo. Revise los datos y envíe.',
+      },
+      successState: {
+        title: '¡Cotización enviada!',
+        description: 'Recibimos sus precios y condiciones.',
+        totalLabel: 'Total enviado',
+        notifiedNote: 'El comprador fue avisado y analizará su cotización.',
+        closeHint: 'Ya puede cerrar esta página.',
+        alreadyTitle: 'Esta cotización ya fue enviada',
+        alreadyDescription:
+          'Los precios ya fueron recibidos y el comprador fue avisado. No es necesario hacer nada más.',
+      },
     },
   },
 };

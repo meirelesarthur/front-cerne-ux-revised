@@ -562,6 +562,61 @@ export interface ModuleRequestQuotations {
       /** 429 (`throttle:quotation-public`) — distinto de erro genérico de
        *  carregamento/submissão, mensagem própria (rate limit). */
       rateLimitedError: string;
+      /** Título do estado de limite de tentativas (429). */
+      rateLimitedTitle: string;
+      /** REPAGINAÇÃO — moldura, resumo e "como preencher". */
+      heading: string;
+      brandName: string;
+      summary: {
+        title: string;
+        request: string;
+        farm: string;
+        description: string;
+        provider: string;
+        buyerNote: string;
+      };
+      howTo: {
+        title: string;
+        step1: { title: string; text: string };
+        step2: { title: string; text: string };
+        step3: { title: string; text: string };
+      };
+      itemsSection: {
+        title: string;
+        subtitle: string;
+        tableLabel: string;
+        /** "Item {n}" — título do cartão do item no celular. */
+        itemNumber: string;
+      };
+      paymentsExtra: {
+        subtitle: string;
+        /** "Condição {n}". */
+        conditionNumber: string;
+      };
+      respondentSection: {
+        title: string;
+        subtitle: string;
+      };
+      fileSection: {
+        title: string;
+        subtitle: string;
+      };
+      submitBar: {
+        totalLabel: string;
+        /** "{filled} de {total} itens preenchidos". */
+        itemsProgress: string;
+        missingPrice: string;
+        ready: string;
+      };
+      successState: {
+        title: string;
+        description: string;
+        totalLabel: string;
+        notifiedNote: string;
+        closeHint: string;
+        alreadyTitle: string;
+        alreadyDescription: string;
+      };
     };
   };
 }

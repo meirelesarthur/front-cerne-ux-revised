@@ -47,6 +47,7 @@
 import axios from 'axios';
 
 import { API_TIMEOUT, API_URL } from '@/config/env';
+import { installDevMocks } from '@/mocks/dev-api';
 
 import type {
   PublicRequestQuotationData,
@@ -71,6 +72,11 @@ const publicApi = axios.create({
     Accept: 'application/json',
   },
 });
+
+// Só desenvolvimento/demonstração (NÃO PORTAR): com os dados fictícios ligados,
+// o formulário público também lê e grava no simulador (`mocks/dev-api`), sem
+// sessão — `installDevMocks` não faz nada fora desse modo. 27/11/2026.
+installDevMocks(publicApi);
 
 async function getPublicRequestQuotationByHash(
   hash: string

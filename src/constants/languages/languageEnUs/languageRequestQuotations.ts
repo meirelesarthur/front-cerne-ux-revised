@@ -396,6 +396,57 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         description: '',
       },
       rateLimitedError: 'Too many attempts in a short time. Please wait a moment and try again.',
+      rateLimitedTitle: 'Too many attempts',
+      heading: 'Purchase quotation',
+      brandName: 'GB Cerne',
+      summary: {
+        title: 'Request summary',
+        request: 'Request no.',
+        farm: 'Farm',
+        description: 'Description',
+        provider: 'Quotation for',
+        buyerNote: "Buyer's note",
+      },
+      howTo: {
+        title: 'How to fill in',
+        step1: { title: 'Prices', text: 'Enter the brand and the unit price of each item.' },
+        step2: { title: 'Conditions', text: 'Tell us how and in how many installments you get paid.' },
+        step3: { title: 'Details and submit', text: 'Enter the responsible person, the validity and submit.' },
+      },
+      itemsSection: {
+        title: 'Quotation items',
+        subtitle: 'Fill in the brand and the unit price. The total is calculated for you.',
+        tableLabel: 'Items to quote',
+        itemNumber: 'Item {n}',
+      },
+      paymentsExtra: {
+        subtitle: 'Enter at least one payment method. You can add more than one.',
+        conditionNumber: 'Condition {n}',
+      },
+      respondentSection: {
+        title: 'Responsible person',
+        subtitle: 'Who is answering and until when this price is valid.',
+      },
+      fileSection: {
+        title: 'Attachment',
+        subtitle: 'Upload the PDF file with the technical information.',
+      },
+      submitBar: {
+        totalLabel: 'Quotation total',
+        itemsProgress: '{filled} of {total} items filled in',
+        missingPrice: 'Enter the price of every item to be able to submit.',
+        ready: 'All set. Review the details and submit.',
+      },
+      successState: {
+        title: 'Quotation submitted!',
+        description: 'We received your prices and conditions.',
+        totalLabel: 'Total submitted',
+        notifiedNote: 'The buyer has been notified and will review your quotation.',
+        closeHint: 'You can now close this page.',
+        alreadyTitle: 'This quotation was already submitted',
+        alreadyDescription:
+          'The prices were already received and the buyer has been notified. Nothing else is needed.',
+      },
     },
   },
 };

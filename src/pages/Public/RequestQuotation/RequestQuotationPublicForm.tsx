@@ -16,19 +16,17 @@
 // `src/pages/Public/**` (checável por grep/lint de import).
 // -----------------------------------------------------------------------------
 
-import { Alert, Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { Alert, Flex } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 
-import { Button } from '@/components/Button';
 import { DateInput } from '@/components/DateInput';
 import { Form } from '@/components/Form';
 import { Field } from '@/components/Form/Field';
 import { FileUpload } from '@/components/Form/FileUpload';
 import { Input } from '@/components/Form/Input';
-import { MoneyInput } from '@/components/Form/MoneyInput';
-import { Textarea } from '@/components/Form/Textarea';
+import { FormSection } from '@/components/FormSection';
 import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -46,9 +44,11 @@ import type {
   PublicRequestQuotationSubmissionPayload,
 } from '@/@types/v2/RequestQuotations';
 
+import { allItemsPriced, countPricedItems } from './publicQuotationProgress';
 import { installmentAmount, totalAmount } from './publicQuotationTotals';
-import { RequestQuotationPublicItemRow } from './RequestQuotationPublicItemRow';
+import { RequestQuotationPublicItems } from './RequestQuotationPublicItems';
 import { RequestQuotationPublicPaymentRow } from './RequestQuotationPublicPaymentRow';
+import { RequestQuotationPublicSubmitBar } from './RequestQuotationPublicSubmitBar';
 
 export interface RequestQuotationPublicFormProps {
   hash: string;
@@ -56,8 +56,9 @@ export interface RequestQuotationPublicFormProps {
   /** Acionado após POST bem-sucedido OU 409 (`QUOTATION_ALREADY_SUBMITTED`)
    *  — em AMBOS os casos o PAI (`index.tsx`) deve reconsultar o `GET` (a
    *  fonte da verdade de `status` é sempre o servidor, nunca um estado local
-   *  otimista deste componente). */
-  onSubmittedOrAlreadySubmitted: () => void;
+   *  otimista deste componente). `submittedTotal` só vem no POST bem-sucedido
+   *  (para o cartão de confirmação mostrar o total enviado). */
+  onSubmittedOrAlreadySubmitted: (submittedTotal?: number) => void;
 }
 
 function buildDefaultValues(quotation: PublicRequestQuotationData): PublicRequestQuotationForm {
@@ -107,9 +108,9 @@ export function RequestQuotationPublicForm({
   const submitMutation = useMutation({
     mutationFn: (payload: PublicRequestQuotationSubmissionPayload) =>
       submitPublicRequestQuotation(hash, payload),
-    onSuccess: () => {
+    onSuccess: (_data, payload) => {
       toaster.success({ title: text.pageTitle, description: text.submittedToast, duration: 7000 });
-      onSubmittedOrAlreadySubmitted();
+      onSubmittedOrAlreadySubmitted(payload.total_value);
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -214,60 +215,45 @@ export function RequestQuotationPublicForm({
   const isSubmitting = submitMutation.isPending;
 
   // Total geral exibido ("Vl.Total"), derivado dos preços digitados.
-  const grandTotal = totalAmount(watch('items') ?? []);
+  const watchedItems = watch('items') ?? [];
+  const grandTotal = totalAmount(watchedItems);
+  const pricedCount = countPricedItems(watchedItems);
+  const canSubmit = allItemsPriced(watchedItems);
   const itemLabel =
     quotation.request_purchase?.type === 'P' ? text.fields.itemProduct : text.fields.itemService;
 
   return (
-    <Form noPadding onSubmit={handleSubmit(onSubmit)}>
-      <Flex direction="column" gap={6}>
-        <Textarea
-          label={text.fields.quotationNote}
-          name="note"
-          value={quotation.note ?? ''}
-          readOnly
-          rows={3}
-        />
+    <Form noPadding onSubmit={handleSubmit(onSubmit)} aria-label={text.heading}>
+      <Flex direction="column">
+        <FormSection title={text.itemsSection.title} subtitle={text.itemsSection.subtitle}>
+          <RequestQuotationPublicItems
+            control={control}
+            errors={errors}
+            setValue={setValue}
+            items={quotation.items}
+            itemLabel={itemLabel}
+            disabled={isSubmitting}
+          />
+        </FormSection>
 
-        <Box>
-          <Text fontSize="sm" fontWeight="semibold" mb={3}>
-            {itemLabel}
-          </Text>
-          {quotation.items.map((item, index) => (
-            <RequestQuotationPublicItemRow
-              key={item.request_item_uuid}
-              control={control}
-              errors={errors}
-              setValue={setValue}
-              index={index}
-              item={item}
-              itemLabel={itemLabel}
-              disabled={isSubmitting}
-            />
-          ))}
-          <Flex justify="flex-end" mt={4}>
-            <Box w={{ base: 'full', sm: '200px' }}>
-              <MoneyInput
-                name="total_value"
-                label={text.fields.totalValue}
-                value={grandTotal}
-                error={errors.root?.totalValue?.message}
-                readOnly
-                disabled
-              />
-            </Box>
-          </Flex>
-        </Box>
+        <FormSection
+          title={text.paymentsSection.title}
+          subtitle={text.paymentsExtra.subtitle}
+        >
+          <RequestQuotationPublicPaymentRow
+            control={control}
+            errors={errors}
+            watch={watch}
+            grandTotal={grandTotal}
+            disabled={isSubmitting}
+          />
+        </FormSection>
 
-        <RequestQuotationPublicPaymentRow
-          control={control}
-          errors={errors}
-          watch={watch}
-          grandTotal={grandTotal}
-          disabled={isSubmitting}
-        />
-
-        <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+        <FormSection
+          title={text.respondentSection.title}
+          subtitle={text.respondentSection.subtitle}
+          columns={2}
+        >
           <Controller
             name="reponsible"
             control={control}
@@ -304,50 +290,51 @@ export function RequestQuotationPublicForm({
               </Field>
             )}
           />
-        </SimpleGrid>
+        </FormSection>
 
         {quotation.requires_file && (
-          <Alert.Root status="warning" borderRadius="md">
-            <Alert.Indicator />
-            <Alert.Title>{text.requiresFileAlert}</Alert.Title>
-          </Alert.Root>
-        )}
+          <FormSection title={text.fileSection.title} subtitle={text.fileSection.subtitle}>
+            <Flex direction="column" gap={4}>
+              <Alert.Root status="warning" borderRadius="md">
+                <Alert.Indicator />
+                <Alert.Title>{text.requiresFileAlert}</Alert.Title>
+              </Alert.Root>
 
-        {quotation.requires_file && (
-          <Controller
-            name="file"
-            control={control}
-            render={({ field, fieldState }) => (
-              <FileUpload
-                label={text.fields.file}
-                file={field.value}
-                onFileSelected={(file) => field.onChange(file)}
-                onRemove={() => field.onChange(null)}
-                accept=".pdf"
-                maxSizeMb={REQUEST_QUOTATION_PUBLIC_FILE_MAX_SIZE_MB}
-                disabled={isSubmitting}
-                error={fieldState.error?.message}
-                dropzoneTitle={text.fileUpload.dropzoneTitle}
-                dropzoneDraggingTitle={text.fileUpload.dropzoneDraggingTitle}
-                changeLabel={text.fileUpload.changeFileLabel}
-                removeLabel={text.fileUpload.removeFileLabel}
-                replaceLabel={text.fileUpload.replaceFileLabel}
-                existingFileLabel={text.fileUpload.existingFileLabel}
-                errorTypeMessage={text.fileUpload.errorTypeMessage}
-                errorSizeMessage={text.fileUpload.errorSizeMessage}
+              <Controller
+                name="file"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <FileUpload
+                    label={text.fields.file}
+                    file={field.value}
+                    onFileSelected={(file) => field.onChange(file)}
+                    onRemove={() => field.onChange(null)}
+                    accept=".pdf"
+                    maxSizeMb={REQUEST_QUOTATION_PUBLIC_FILE_MAX_SIZE_MB}
+                    disabled={isSubmitting}
+                    error={fieldState.error?.message}
+                    dropzoneTitle={text.fileUpload.dropzoneTitle}
+                    dropzoneDraggingTitle={text.fileUpload.dropzoneDraggingTitle}
+                    changeLabel={text.fileUpload.changeFileLabel}
+                    removeLabel={text.fileUpload.removeFileLabel}
+                    replaceLabel={text.fileUpload.replaceFileLabel}
+                    existingFileLabel={text.fileUpload.existingFileLabel}
+                    errorTypeMessage={text.fileUpload.errorTypeMessage}
+                    errorSizeMessage={text.fileUpload.errorSizeMessage}
+                  />
+                )}
               />
-            )}
-          />
+            </Flex>
+          </FormSection>
         )}
 
-        <Flex justify="flex-end">
-          <Button
-            title={text.submitButton}
-            type="submit"
-            loading={isSubmitting}
-            disabled={isSubmitting}
-          />
-        </Flex>
+        <RequestQuotationPublicSubmitBar
+          total={grandTotal}
+          filled={pricedCount}
+          count={quotation.items.length}
+          isSubmitting={isSubmitting}
+          totalError={errors.root?.totalValue?.message}
+        />
       </Flex>
     </Form>
   );
