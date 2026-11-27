@@ -268,7 +268,7 @@ export function RequestQuotationPublicForm({
         <FormSection
           title={text.respondentSection.title}
           subtitle={text.respondentSection.subtitle}
-          columns={2}
+          columns={3}
         >
           <Controller
             name="reponsible"

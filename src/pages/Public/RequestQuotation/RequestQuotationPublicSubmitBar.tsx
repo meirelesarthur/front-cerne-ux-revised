@@ -52,9 +52,12 @@ export function RequestQuotationPublicSubmitBar({
       position="sticky"
       bottom={0}
       zIndex={10}
-      mx={{ base: -4, md: -8 }}
+      // Casa com o recuo do card (index.tsx: px 3/5, py 4/5): ocupa a largura do card e cola no fundo dele.
+      mx={{ base: -3, md: -5 }}
+      mb={{ base: -4, md: -5 }}
       px={{ base: 3, md: 5 }}
       py={3}
+      borderBottomRadius="xl"
       bg="cardBG"
       borderTopWidth="1px"
       borderColor="cardBorder"
