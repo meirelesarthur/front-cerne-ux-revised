@@ -1,44 +1,76 @@
-# Central de agrupador — Melhorias de UX
+# Central de agrupador
 
-- **Área:** navegação (menu de 2º nível)
-- **Rota nova:** `/central/:groupId` (genérica); grupos com central própria usam `hubPath`
-- **Permissões:** nenhuma nova; a tela usa a árvore já podada por permissão (`useMenuModules`)
+Atualizado em 26/11/2026 · Status: feito
 
-## Resumo por ação
+Relacionados: [ordem-de-servico-apontamento.md](ordem-de-servico-apontamento.md) (Central "Trabalho e compras"),
+[ordem-de-compra-unica-e-tipos-de-servico.md](ordem-de-compra-unica-e-tipos-de-servico.md) (itens de Suprimentos)
 
-| Ação | Antes | Depois | Status |
-|------|-------|--------|--------|
-| Clicar no nome do agrupador (ex.: Agricultura, Estoque, Suprimentos) | Só abria ou fechava a lista | Abre a central do grupo, com um card por funcionalidade, e expande a lista | implementada |
-| Clicar na seta do agrupador | Abria ou fechava | Continua só abrindo ou fechando | igual |
-| Trabalho e compras | — | Abre a Central própria (`/operacional/central`) | implementada |
+## Regras vigentes
+
+- **24/11 — O nome do agrupador do menu abre uma central** do grupo, com um card (ícone, nome e descrição) por
+  funcionalidade, e expande a lista; a **seta** só abre ou fecha a lista.
+- **24/11 — Os cards trazem uma descrição curta** de cada funcionalidade, nos 3 idiomas, para todas as telas dos
+  módulos com agrupador. Tela nova nesses módulos entra com descrição (o teste de guarda falha sem ela).
+- **24/11 — "Trabalho e compras" tem central própria** (`/operacional/central`), em vez da central genérica.
+- **26/11 — Suprimentos:** "Solicitações de compra" (tela única com o combo de status) e, com o protótipo ligado,
+  **"Ordens de compra"** (entidade nova, uma por fornecedor) e "Fluxo da ordem de compra", cada um com sua descrição.
+- **26/11 — A trilha do topo usa o item de menu mais específico** quando a rota não é exata (ex.: o detalhe de uma
+  Ordem mostra "Ordens de compra", não "Solicitações de compra").
+
+## O que mudou
+
+### Central por agrupador (feito, 24/11)
+
+- **Rota nova** `/central/:groupId` (genérica); grupos com central própria usam `hubPath`. Sem permissão nova: a tela
+  usa a árvore já podada por permissão (`useMenuModules`).
+- **Tela** `pages/GroupHub/index.tsx`: `PageCard` + `PageHeader` + grade de `ModuleLinkCard`; item com 3º nível vira
+  seção com os cards dos filhos; "Grupo não encontrado".
+- **Menu** `components/Layout/SecondaryNav.tsx`: cabeçalho do grupo em dois botões — rótulo (abre a central e expande)
+  e seta (só expande); rótulo destacado com a central aberta. Afeta todas as telas com menu de 2º nível.
+- **Trilha** `components/Header/index.tsx`: Início › Módulo › Grupo na central.
+- **Configuração** `config/v2/navigationTree.ts`: `NavGroup.hubPath?`, `GROUP_HUB_BASE`, `getGroupHubPath`,
+  `findGroupByHubPath`; `ope-apontamento` com `hubPath: '/operacional/central'`. `hooks/useMenuModules.ts` reconhece
+  `/central/<grupo>`. Rota em `router/index.tsx`.
+- **Textos** `sidebar.groupHub.*` e `sidebar.descriptions` (id do item → texto) em `languageSidebar.ts` e
+  `languageSidebarDescriptions.ts` nos 3 idiomas; tipo em `sidebar.d.ts`.
+- **Cobertura:** as 193 telas de Cadastros Base, Administrativo, Operacional, Financeiro, Gestão Fiscal e Integrações.
+  Dashboards, Relatórios, Frota e Configurações não têm agrupador nem central.
+
+### Suprimentos e trilha do topo (feito, 26/11)
+
+- Itens `adm-sup-sol` ("Solicitações de compra"), `adm-sup-oc` ("Ordens de compra", só com `PURCHASE_ORDER_PROTOTYPE`)
+  e `adm-sup-flx` ("Fluxo da ordem de compra", idem), com descrição nos 3 idiomas e permissão em
+  `navigationPermissions.ts`.
+- `findItemByPath` (`config/v2/navigationTree.ts`): sem caminho exato, vale o **prefixo mais longo**; antes valia o
+  primeiro da lista.
+
+## Como validar
+
+1. Operacional › clicar em "Agricultura": abre `/central/ope-agricultura` com os cards; Carregamento e Rastreabilidade
+   aparecem como seções; a seta de "Pecuária" só abre a lista.
+2. "Trabalho e compras" abre `/operacional/central`.
+3. Administrativo › "Estoque" mostra 12 funcionalidades; Administrativo › "Suprimentos" mostra "Solicitações de compra"
+   (e, no protótipo, "Ordens de compra" e "Fluxo da ordem de compra"), cada uma com descrição.
+4. Abrir uma Ordem de compra (protótipo): a trilha diz Início › Administrativo › Ordens de compra.
+5. Usuário sem permissão não vê o card.
+6. Testes: `npx vitest run src/pages/GroupHub src/config` (inclui `groupHub.test.ts`, que falha se faltar descrição em
+   algum idioma ou se as chaves divergirem).
+
+## A fazer
+
+- [ ] **Produto:** revisar as descrições de Afiliados, Contratantes, Serviços (Gerais), Parâmetros Animais,
+  Processamentos e Gerenciamento Avançado (escritas a partir do nome e da rota; pedem quem conhece a tela).
+- [ ] **Front:** quando "Tipos de serviço" e "Serviços" forem renomeados no menu, ajustar as descrições dos dois.
+
+### Pendências de decisão
+
+—
 
 ## Registro de edições
 
-### UX-central-de-agrupador-001 · Navegação · Central por agrupador — 2026-11-24
-- **Status:** implementada (aguardando revisão do dono; sem commit)
-- **Tipo:** navegação · layout
-- **Problema:** o agrupador do menu é só um rótulo; quem não sabe o nome exato da tela precisa abrir grupo por grupo.
-- **Proposta:** o rótulo do agrupador vira um link para uma central com cards (ícone e nome) de cada funcionalidade do grupo, na mesma linha visual da Central de Trabalho e compras. Item com 3º nível vira uma seção com os cards dos filhos. Breadcrumb: Início › Módulo › Grupo.
-- **Mudanças técnicas:**
-
-  | Arquivo | O que mudou |
-  |---------|-------------|
-  | `src/config/v2/navigationTree.ts` | `NavGroup.hubPath?`, `GROUP_HUB_BASE`, `getGroupHubPath`, `findGroupByHubPath`; `ope-apontamento` com `hubPath: '/operacional/central'` |
-  | `src/pages/GroupHub/index.tsx` | Tela nova: `PageCard` + `PageHeader` + grade de `ModuleLinkCard`; seções para itens com filhos; "Grupo não encontrado" |
-  | `src/components/Layout/SecondaryNav.tsx` | Cabeçalho do grupo em dois botões: rótulo (abre a central e expande) e seta (só expande); rótulo destacado quando a central está aberta |
-  | `src/hooks/useMenuModules.ts` | `useMenuModuleByPath` reconhece `/central/<grupo>` (abre o menu do módulo certo) |
-  | `src/components/Header/index.tsx` | Breadcrumb mostra o grupo na central |
-  | `src/router/index.tsx` | Rota `/central/:groupId` |
-  | `languageSidebar.ts` (3 idiomas) e `sidebar.d.ts` | `sidebar.groupHub.*` |
-
-- **Compartilhado afetado:** `SecondaryNav` (todas as telas com menu de 2º nível). Nenhum componente do kit mudou.
-- **Como validar:** Operacional › clicar em "Agricultura" abre `/central/ope-agricultura` com os cards; Carregamento e Rastreabilidade aparecem como seções; a seta de "Pecuária" só abre a lista; "Trabalho e compras" abre `/operacional/central`; Administrativo › "Estoque" mostra 12 funcionalidades; usuário sem permissão não vê o card.
-- **Testes:** `src/pages/GroupHub/index.test.tsx`, `src/config/v2/groupHub.test.ts`.
-
-### UX-central-de-agrupador-002 · Copy · Descrição nos cards — 2026-11-24
-- **Status:** implementada (aguardando revisão do dono; sem commit)
-- **Decisão do dono:** os cards da central trazem uma descrição curta de cada funcionalidade.
-- **Mudanças técnicas:** `sidebar.descriptions` (id do item → texto) em `languageSidebarDescriptions.ts` nos 3 idiomas, ligado em `languageSidebar.ts`; tipo em `sidebar.d.ts`; `GroupHub` passa a descrição ao `ModuleLinkCard`.
-- **Cobertura:** todas as 193 telas dos módulos com agrupadores (Cadastros Base, Administrativo, Operacional, Financeiro, Gestão Fiscal, Integrações). Módulos sem agrupador (Dashboards, Relatórios, Frota, Configurações) não têm central.
-- **Teste de guarda:** `groupHub.test.ts` falha se uma tela nova de módulo com agrupador entrar sem descrição em algum idioma, ou se as chaves divergirem entre idiomas.
-- **Revisar com o negócio:** os textos foram escritos a partir do nome e da rota de cada tela. Os de Afiliados, Contratantes, Serviços (Gerais), Parâmetros Animais, Processamentos e Gerenciamento Avançado merecem conferência de quem conhece a tela.
+| Data | Commit | O que mudou |
+|---|---|---|
+| 24/11/2026 | `3f2b0db` | Central por agrupador com cards e descrição das 193 telas |
+| 26/11/2026 | `2920f89`, `c77ee03` | "Solicitações de compra" e o item novo "Ordens de compra" em Suprimentos |
+| 26/11/2026 | `446d425` | Trilha do topo pelo caminho mais específico |
+| 26/11/2026 | `91bd88c` | Doc reescrito pela lei 6 |

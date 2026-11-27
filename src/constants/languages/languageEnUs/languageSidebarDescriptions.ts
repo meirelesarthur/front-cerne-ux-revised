@@ -91,7 +91,7 @@ export const navDescriptions: Record<string, string> = {
   'adm-sup-oc': 'One order per supplier, from a request or standalone, with a delivery forecast.',
   'adm-sup-flx': 'Flow profile, categories, quotation by value and approval levels.',
   'adm-sup-meu': 'Purchase orders under your responsibility.',
-  'adm-sup-sol': 'Request, approve, quote, buy and receive, in one screen.',
+  'adm-sup-sol': 'Request, quote, approve and generate purchase orders, in one screen.',
   'adm-sup-rej': 'Orders not approved or canceled.',
   'adm-sup-cot': 'Get quotes from suppliers.',
   'adm-sup-aut': 'Approve or reject purchase orders.',

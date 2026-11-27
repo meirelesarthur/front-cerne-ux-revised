@@ -427,9 +427,12 @@ export interface ModuleRequestPurchases {
           approvalTitle: string;
           autoApprove: string;
           autoApproveHint: string;
-          dailyLimit: string;
-          dailyCount: string;
-          dailyHint: string;
+          autoValue: string;
+          autoPeriod: string;
+          autoCounting: string;
+          autoPeriods: { diario: string; semanal: string; mensal: string; anual: string };
+          autoCountings: { corridos: string; fechado: string };
+          autoWindowExample: string;
           levelsTitle: string;
           levelColumn: string;
           whoColumn: string;
