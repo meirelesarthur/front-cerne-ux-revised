@@ -107,6 +107,9 @@ import { Button } from '@/components/Button';
 import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog';
 import { IconButtonTable } from '@/components/IconButtonTable';
 import { QuotationsMapButton } from '@/components/Suprimentos/QuotationsMapButton';
+import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
+
+import { QuotationMapDialog } from './prototype/QuotationMapDialog';
 import { canSendToAuthorization } from '@/components/Suprimentos/supplyActionRules';
 import { useSupplyActionContext } from '@/components/Suprimentos/useSupplyActionContext';
 import { Badge as UiBadge } from '@/components/ui/Badge';
@@ -226,6 +229,7 @@ export function RequestQuotationTab({
 
   // ---- Seleção em lote (IG-09 — habilita "Enviar E-mail em Lote") --------
   const [selectedUuids, setSelectedUuids] = useState<string[]>([]);
+  const [mapOpen, setMapOpen] = useState(false);
 
   function toggleSelected(uuid: string) {
     setSelectedUuids((prev) =>
@@ -557,10 +561,23 @@ export function RequestQuotationTab({
               onClick={handleSendEmailBatch}
             />
           )}
-          <QuotationsMapButton
-            requestPurchaseUuid={requestPurchaseUuid}
-            quotationsCount={items.length}
-          />
+          {/* PROTÓTIPO (27/11): o mapa abre em pop-up (`QuotationMapDialog`) no lugar do Excel. */}
+          {PURCHASE_ORDER_PROTOTYPE ? (
+            items.length > 0 && (
+              <Button
+                title={languageGB.requestPurchases.requestPurchase.supply.quotationsMap.button}
+                variant="outline"
+                size="sm"
+                type="button"
+                onClick={() => setMapOpen(true)}
+              />
+            )
+          ) : (
+            <QuotationsMapButton
+              requestPurchaseUuid={requestPurchaseUuid}
+              quotationsCount={items.length}
+            />
+          )}
           {canAddProvider && (
             <Button
               title={text.addProviderButton}
@@ -657,6 +674,15 @@ export function RequestQuotationTab({
         </VStack>
       )}
 
+
+      {PURCHASE_ORDER_PROTOTYPE && (
+        <QuotationMapDialog
+          isOpen={mapOpen}
+          onClose={() => setMapOpen(false)}
+          requestPurchaseUuid={requestPurchaseUuid}
+          requestCode={requestPurchaseCode}
+        />
+      )}
 
       <DeleteConfirmDialog
         isOpen={deleteDisclosure.open}

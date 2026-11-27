@@ -35,7 +35,6 @@ import formatCurrencyBRL from '@/utils/formatCurrencyBRL';
 import formatDate from '@/utils/formatDate';
 
 import { requestPurchaseTypeOptions } from '@/constants/RequestPurchases/options';
-import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purchase-status';
 
 import type { IconName } from '@/design/icons';
 
@@ -53,7 +52,7 @@ import {
 } from '../Solicitacao/prototype/purchaseOrderCategories';
 import {
   type PurchaseOrderFlowProfile,
-  purchaseOrderSteps,
+  profilePath,
 } from '../Solicitacao/prototype/purchaseOrderSteps';
 import { RequestTabHeader } from '../Solicitacao/RequestTabParts';
 
@@ -91,17 +90,15 @@ export default function PurchaseOrderFlowSettings() {
 
   const typeLabel = new Map(requestPurchaseTypeOptions.options(languageGB).map((o) => [o.value, o.label]));
 
-  // ---- 1. diagrama: o caminho completo de cada perfil (situação "finalizado").
-  // Só as etapas que o perfil tem (as puladas não aparecem).
+  // ---- 1. diagrama (27/11): o caminho da Solicitação em cada perfil, numerado
+  // (todas "a fazer"); termina na Ordem de compra, que segue na tela dela.
   const flow = PROFILES.map((key) => ({
     key,
-    items: purchaseOrderSteps(requestPurchaseStatus.pedidoFinalizado, key)
-      .filter((step) => step.state !== 'skipped')
-      .map((step) => ({
-        key: step.key,
-        label: steps.steps[step.key],
-        state: step.state,
-      })),
+    items: profilePath(key).map((step) => ({
+      key: step,
+      label: steps.steps[step],
+      state: 'todo' as const,
+    })),
   }));
 
   const exceptions: { icon: IconName; text: string }[] = [
@@ -245,29 +242,30 @@ export default function PurchaseOrderFlowSettings() {
           {flow.map((row) => {
             const active = row.key === profile;
             return (
+              // 27/11: nome do perfil em cima e a linha de etapas na largura toda
+              // (com as faixas Solicitação | Ordem de compra, não cabia ao lado).
               <Flex
                 key={row.key}
-                align="center"
-                gap={4}
+                direction="column"
+                gap={3}
                 px={4}
                 py={3}
                 borderWidth={active ? '2px' : '1px'}
                 borderColor={active ? 'green.600' : 'semanticNeutral.200'}
                 borderRadius="xl"
                 bg="cardBG"
+                minW={0}
               >
-                <Box w="170px" flexShrink={0}>
-                  <Flex align="center" gap={2}>
-                    <Text fontWeight="semibold" color={active ? 'green.700' : 'strongText'}>
-                      {steps.profiles[row.key]}
-                    </Text>
-                    {active && <StatusTag size="sm" label={text.selected} color="green.600" />}
-                  </Flex>
-                  <Text fontSize="sm" color="fg.muted">
-                    {text.flowCaption[row.key]}
+                <Flex align="baseline" gap={2} wrap="wrap">
+                  <Text fontWeight="semibold" color={active ? 'green.700' : 'strongText'}>
+                    {steps.profiles[row.key]}
                   </Text>
-                </Box>
-                <Box flex="1" minW="420px">
+                  {active && <StatusTag size="sm" label={text.selected} color="green.600" />}
+                  <Text fontSize="sm" color="fg.muted">
+                    · {text.flowCaption[row.key]}
+                  </Text>
+                </Flex>
+                <Box minW={0}>
                   <StepTrack items={row.items} ariaLabel={`${text.flowTitle}: ${steps.profiles[row.key]}`} />
                 </Box>
               </Flex>

@@ -11,7 +11,7 @@ import { requestPurchaseStatus } from '@/constants/RequestPurchases/request-purc
 import type { RequestItemRow, RequestPurchaseData } from '@/@types/v2/RequestPurchases';
 
 import type { GeneratedOrder } from './generateOrders';
-import type { PurchaseOrderFlowProfile, PurchaseOrderStepKey } from './purchaseOrderSteps';
+import type { PurchaseOrderCancelStep, PurchaseOrderFlowProfile } from './purchaseOrderSteps';
 
 export interface PurchaseOrderDelivery {
   freight_type: 'CIF' | 'FOB';
@@ -73,7 +73,7 @@ export interface PurchaseOrderPrototypeFields {
   /** Quem compra (setor de compras). */
   buyer?: { uuid: string; name: string } | null;
   /** Etapa em que a ordem foi cancelada (situação 10). */
-  cancelled_at_step?: PurchaseOrderStepKey;
+  cancelled_at_step?: PurchaseOrderCancelStep;
   /** Previsão de entrega da ORDEM: uma data só, porque o fornecedor é único (26/11); não há previsão por item. */
   delivery_forecast?: string | null;
   delivery?: PurchaseOrderDelivery | null;

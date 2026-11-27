@@ -15,13 +15,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { Button } from '@/components/Button';
-import { CustomDialog } from '@/components/CustomDialog';
-import { Input } from '@/components/Form/Input';
 import { InputReadOnly } from '@/components/Form/InputReadOnly';
 import { FormContainer } from '@/components/Layout/FormContainer';
 import { SimpleTable, type SimpleTableColumn, type SimpleTableRow } from '@/components/ui/SimpleTable';
 import { StatusTag } from '@/components/ui/StatusTag';
-import { toaster } from '@/components/ui/toaster';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -47,7 +44,6 @@ import {
   purchaseOrderItemBalance,
   purchaseOrderStatusColor,
   registerPurchaseOrderReceipt,
-  setPurchaseOrderForecast,
 } from './purchaseOrderEntity';
 
 const qty = (value: number) => value.toLocaleString('pt-BR', { maximumFractionDigits: 3 });
@@ -62,9 +58,7 @@ export default function PurchaseOrderEntityDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<OrderTab>('items');
-  const [dialog, setDialog] = useState<'forecast' | 'receipt' | 'cancelBalance' | null>(null);
-  const [newDate, setNewDate] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [dialog, setDialog] = useState<'receipt' | 'cancelBalance' | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: purchaseOrderEntityQueryKey.detail(uuid),
@@ -74,18 +68,6 @@ export default function PurchaseOrderEntityDetail() {
 
   // A lista e o detalhe compartilham o prefixo da chave: um invalidate atualiza os dois.
   const refresh = () => queryClient.invalidateQueries({ queryKey: purchaseOrderEntityQueryKey.list });
-
-  async function saveForecast() {
-    setBusy(true);
-    try {
-      await setPurchaseOrderForecast(uuid, newDate);
-      await refresh();
-      toaster.success({ title: text.forecastSaved });
-      setDialog(null);
-    } finally {
-      setBusy(false);
-    }
-  }
 
   if (isLoading || !data) {
     return (
@@ -166,23 +148,11 @@ export default function PurchaseOrderEntityDetail() {
         <InputReadOnly label={text.contact} value={data.provider_contact.phone} />
         <InputReadOnly label={text.farm} value={data.farm.description} />
         <InputReadOnly label={text.date} value={formatDate(data.date)} />
-        <Box>
-          <InputReadOnly
-            label={text.forecast}
-            value={data.delivery_forecast ? formatDate(data.delivery_forecast) : text.forecastPending}
-          />
-          <Button
-            title={data.delivery_forecast ? text.changeForecast : text.setForecast}
-            variant="outline"
-            size="sm"
-            type="button"
-            mt={2}
-            onClick={() => {
-              setNewDate(data.delivery_forecast?.slice(0, 10) ?? '');
-              setDialog('forecast');
-            }}
-          />
-        </Box>
+        {/* 27/11: previsão só para leitura (o dono tirou "Alterar previsão"). */}
+        <InputReadOnly
+          label={text.forecast}
+          value={data.delivery_forecast ? formatDate(data.delivery_forecast) : text.forecastPending}
+        />
         <InputReadOnly label={text.total} value={formatCurrencyBRL(data.total)} />
         <InputReadOnly
           label={text.categoryMark}
@@ -248,27 +218,6 @@ export default function PurchaseOrderEntityDetail() {
           </Tabs.Content>
         </Tabs.Root>
       </Box>
-
-      <CustomDialog
-        isOpen={dialog === 'forecast'}
-        onClose={() => setDialog(null)}
-        title={text.forecastDialogTitle}
-        size="sm"
-        footer={
-          <Flex gap={3}>
-            <Button title={text.cancel} variant="secondary" type="button" onClick={() => setDialog(null)} />
-            <Button title={text.save} type="button" onClick={saveForecast} loading={busy} disabled={!newDate || busy} />
-          </Flex>
-        }
-      >
-        <Input
-          label={text.forecast}
-          type="date"
-          value={newDate}
-          onChange={(event) => setNewDate(event.target.value)}
-          isRequired
-        />
-      </CustomDialog>
 
       <PrototypeReceiptDialog
         isOpen={dialog === 'receipt'}

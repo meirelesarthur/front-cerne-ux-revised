@@ -7,6 +7,9 @@
 //   skipped  pulada pela configuração (tracejada e esmaecida)
 //   stopped  o processo parou aqui (recusa ou cancelamento; vermelho)
 // Só leitura. A etapa atual leva `aria-current="step"`.
+// Opcional (27/11): `group` em cada etapa desenha, acima da linha, uma faixa com
+// o nome do grupo sobre as etapas seguidas do mesmo grupo (ex.: Solicitação |
+// Ordem de compra). Sem `group`, nada muda.
 
 import { Box, Flex, Text } from '@chakra-ui/react';
 
@@ -20,11 +23,24 @@ export interface StepTrackItem {
   state: StepTrackState;
   /** Texto de apoio (ex.: "Pulada pelo perfil Simples"); vira o `title`. */
   hint?: string;
+  /** Grupo da etapa (ex.: "Solicitação", "Ordem de compra"); etapas seguidas do mesmo grupo ganham uma faixa com o nome em cima. */
+  group?: string;
 }
 
 export interface StepTrackProps {
   items: StepTrackItem[];
   ariaLabel: string;
+}
+
+/** Faixas de grupo: etapas seguidas com o mesmo `group` viram um trecho com o nome. */
+function groupSegments(items: StepTrackItem[]): { label: string; count: number }[] {
+  const segments: { label: string; count: number }[] = [];
+  items.forEach((item) => {
+    const last = segments.at(-1);
+    if (last && last.label === (item.group ?? '')) last.count += 1;
+    else segments.push({ label: item.group ?? '', count: 1 });
+  });
+  return segments;
 }
 
 const MARK: Record<StepTrackState, { bg: string; border: string; color: string }> = {
@@ -36,7 +52,33 @@ const MARK: Record<StepTrackState, { bg: string; border: string; color: string }
 };
 
 export function StepTrack({ items, ariaLabel }: StepTrackProps) {
+  const segments = items.some((item) => item.group) ? groupSegments(items) : [];
   return (
+    <Box w="full">
+      {segments.length > 0 && (
+        <Flex w="full" mb="10px" aria-hidden>
+          {segments.map((segment, index) => (
+            <Box key={`${segment.label}-${index}`} flex={segment.count} minW={0} px="6px">
+              {segment.label && (
+                <Text
+                  fontSize="xs"
+                  fontWeight="semibold"
+                  color="fg.muted"
+                  textTransform="uppercase"
+                  letterSpacing="0.05em"
+                  textAlign="center"
+                  lineClamp="1"
+                  pb="4px"
+                  borderBottomWidth="2px"
+                  borderBottomColor={index === 0 ? 'green.600' : 'semanticNeutral.300'}
+                >
+                  {segment.label}
+                </Text>
+              )}
+            </Box>
+          ))}
+        </Flex>
+      )}
     <Flex as="ol" aria-label={ariaLabel} align="flex-start" w="full" listStyleType="none" m={0} p={0}>
       {items.map((item, index) => {
         const mark = MARK[item.state];
@@ -90,7 +132,9 @@ export function StepTrack({ items, ariaLabel }: StepTrackProps) {
               mt="6px"
               fontSize="sm"
               textAlign="center"
-              lineClamp="1"
+              lineClamp="2"
+              px="2px"
+              lineHeight="1.25"
               fontWeight={item.state === 'current' || item.state === 'stopped' ? 'semibold' : 'medium'}
               color={
                 item.state === 'current'
@@ -109,6 +153,7 @@ export function StepTrack({ items, ariaLabel }: StepTrackProps) {
         );
       })}
     </Flex>
+    </Box>
   );
 }
 

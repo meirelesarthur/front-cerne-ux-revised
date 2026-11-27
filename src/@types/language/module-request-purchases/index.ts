@@ -146,6 +146,7 @@ export interface ModuleRequestPurchases {
         stepsAriaLabel: string;
         steps: {
           pedido: string;
+          ciencia: string;
           cotacao: string;
           aprovacao: string;
           compra: string;
@@ -304,6 +305,31 @@ export interface ModuleRequestPurchases {
             itemIncomplete: string;
             paymentIncomplete: string;
           };
+        };
+        quotationMap: {
+          title: string;
+          subtitle: string;
+          item: string;
+          quantity: string;
+          waiting: string;
+          bestTotal: string;
+          partial: string;
+          cheapest: string;
+          subtotal: string;
+          freight: string;
+          discount: string;
+          total: string;
+          delivery: string;
+          days: string;
+          payment: string;
+          close: string;
+          noneComplete: string;
+          bestByItem: string;
+          bestByItemDetail: string;
+          someItemMissing: string;
+          answers: string;
+          answersDetail: string;
+          footnote: string;
         };
         duplicate: {
           button: string;

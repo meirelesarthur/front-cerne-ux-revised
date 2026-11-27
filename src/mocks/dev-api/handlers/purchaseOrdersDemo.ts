@@ -120,6 +120,11 @@ interface DemoQuotation {
   total: number;
   discount?: number;
   date?: string;
+  /** Mapa de cotações (27/11): preço unitário por item, na ordem dos itens; null = não cotou. */
+  prices?: (number | null)[];
+  freight?: number;
+  deliveryDays?: number;
+  payment?: string;
 }
 
 interface DemoOrder {
@@ -190,7 +195,7 @@ interface DemoApproval {
 
 const LEVEL_1 = 'Encarregado';
 const LEVEL_2 = 'Diretoria — acima de R$ 100.000';
-const LEVEL_SCIENCE = 'Ciência da diretoria — serviços acima de R$ 50.000';
+const LEVEL_SCIENCE = 'Ciência do gestor — logo após o pedido (perfil Completo)';
 
 // A ordem do roteiro é a 0012 (fertilizante, compra efetuada, recebimento em 2 cargas).
 const ORDERS: DemoOrder[] = [
@@ -516,29 +521,16 @@ const ORDERS: DemoOrder[] = [
       { description: 'Mão de obra de revisão', quantity: 1, amount: 4800 },
     ],
     delivery: { freight_type: 'CIF', place: 'Fazenda Santa Rita — pivô 2', carrier: 'TratorMaq Peças Agrícolas', needs_unloading: true, note: 'Instalação feita pelo técnico do fornecedor.' },
+    // 27/11: perfil Completo — a ciência do gestor vem logo depois do pedido,
+    // antes da cotação; a 0021 está parada nela.
     movements: [
-      { status: 1, user: ME, at: '2026-11-19T08:00:00', elapsed: '1d' },
-      { status: 2, user: CARLOS, at: '2026-11-20T08:00:00', elapsed: '3d' },
-      { status: 3, user: CARLOS, at: '2026-11-23T08:00:00', elapsed: '1d' },
-      { status: 4, user: JOAO, at: '2026-11-24T08:00:00', elapsed: '1d 6h' },
-    ],
-    quotations: [
-      { provider: 'tratormaq', status: 3, total: 21300, discount: 800, date: '2026-11-22T10:00:00' },
-      { provider: 'cerrado', status: 3, total: 23950, discount: 0, date: '2026-11-22T15:00:00' },
+      { status: 1, user: ME, at: '2026-11-19T08:00:00', elapsed: '2h' },
+      { status: 4, user: ME, at: '2026-11-19T10:00:00', elapsed: '6d' },
     ],
     authorizer: JOAO,
     profile: 'completo',
-    winner: 'tratormaq',
     buyer: CARLOS,
-    payment: {
-      condition: '30/60 dias',
-      installments: installments([10825, 10825], '2026-12-24', 30),
-      expenses: { freight: 350, insurance: 0, other: 0 },
-    },
-    approvals: [
-      { level: 1, label: LEVEL_1, user: JOAO, status: 'approved', at: '2026-11-24T08:00:00', note: 'Pivô necessário para o feijão de inverno.' },
-      { level: 2, label: LEVEL_SCIENCE, user: MARINA, status: 'pending' },
-    ],
+    approvals: [{ level: 1, label: LEVEL_SCIENCE, user: MARINA, status: 'pending' }],
   },
   // Separada da 0013 (Vínculos: origem e derivada).
   {
@@ -548,21 +540,43 @@ const ORDERS: DemoOrder[] = [
     status: 2,
     priority: 1,
     date: '2026-11-23',
-    description: 'Semente de milho — talhão 12 (separada da 0013)',
-    justification: 'Item de milho separado da solicitação de sementes de soja para cotar com outro fornecedor.',
+    description: 'Plantio do milho — talhão 12 (separada da 0013)',
+    justification: 'Insumos do milho separados da solicitação de sementes de soja para cotar com outros fornecedores.',
     user: ME,
     responsible: CARLOS,
     farm: SANTA_RITA,
     duration: '2d',
     forecast: '2026-12-05',
-    items: [{ description: 'Semente milho híbrido (sc 60 mil sementes)', quantity: 45, amount: 40500, product: 'Milho híbrido' }],
+    // 27/11: cotação de exemplo para o "Mapa de cotações" — 5 itens, 4 fornecedores,
+    // preço por item (null = não cotou), frete, desconto, prazo e condição.
+    items: [
+      { description: 'Semente milho híbrido (sc 60 mil sementes)', quantity: 45, amount: 40500, product: 'Milho híbrido' },
+      { description: 'Inoculante para milho (dose)', quantity: 45, amount: 810, product: 'Inoculante Azospirillum' },
+      { description: 'Tratamento de sementes (L)', quantity: 20, amount: 2900, product: 'Tratamento de sementes' },
+      { description: 'Adubo NPK 08-28-16 (t)', quantity: 12, amount: 38400, product: 'NPK 08-28-16' },
+      { description: 'Herbicida pré-emergente (L)', quantity: 60, amount: 3120, product: 'Herbicida pré-emergente' },
+    ],
     movements: [
-      { status: 1, user: ME, at: '2026-11-23T10:00:00', elapsed: '1h', justify: 'Separada da ordem 0013.' },
+      { status: 1, user: ME, at: '2026-11-23T10:00:00', elapsed: '1h', justify: 'Separada da solicitação 0013.' },
       { status: 2, user: CARLOS, at: '2026-11-23T11:00:00', elapsed: '2d' },
     ],
     quotations: [
-      { provider: 'sementesbrasil', status: 2, total: 0 },
-      { provider: 'cerrado', status: 3, total: 40500, discount: 500, date: '2026-11-24T14:00:00' },
+      {
+        provider: 'sementesbrasil', status: 3, total: 43387.5, discount: 300, date: '2026-11-24T09:30:00',
+        prices: [880, 17.5, 150, null, null], freight: 0, deliveryDays: 5, payment: '30 dias',
+      },
+      {
+        provider: 'cerrado', status: 3, total: 85360, discount: 500, date: '2026-11-24T14:00:00',
+        prices: [910, 18, 140, 3150, 50], freight: 450, deliveryDays: 7, payment: '30/60 dias',
+      },
+      {
+        provider: 'agronutri', status: 3, total: 85135.5, discount: 0, date: '2026-11-24T16:10:00',
+        prices: [925, 16.9, 138, 3090, 48.5], freight: 0, deliveryDays: 4, payment: '28 dias',
+      },
+      {
+        provider: 'campoforte', status: 3, total: 39300, discount: 0, date: '2026-11-25T08:40:00',
+        prices: [null, null, null, 3020, 51], freight: 380, deliveryDays: 6, payment: '45 dias',
+      },
     ],
     profile: 'padrao',
     buyer: CARLOS,
@@ -1227,6 +1241,38 @@ export const purchaseOrderDemoRoutes: MockRoute[] = [
     handler: ({ match }) => {
       const order = byUuid(match[1]);
       return order ? { body: quotationsOf(order) } : { status: 404, body: null };
+    },
+  },
+  // Mapa de cotações (27/11): itens e, por fornecedor, preço de cada item, frete,
+  // desconto, prazo e condição. Sem `prices`, o fornecedor entra só com o total.
+  {
+    method: 'get',
+    pattern: /^\/request-purchases\/([0-9a-f-]{36})\/prototype\/quotation-map$/,
+    handler: ({ match }) => {
+      const o = byUuid(match[1]);
+      if (!o) return { status: 404, body: null };
+      return {
+        body: {
+          items: o.items.map((item, index) => ({
+            uuid: `${uuidOf(o.n)}-i${index}`,
+            product: item.product ?? null,
+            description: item.description,
+            quantity: item.quantity ?? 0,
+          })),
+          suppliers: (o.quotations ?? []).map((q, index) => ({
+            uuid: `${uuidOf(o.n)}-q${index}`,
+            name: PROVIDERS[q.provider].name,
+            received: q.status === 3,
+            date: q.date ?? null,
+            prices: q.prices ?? o.items.map(() => null),
+            total_reported: q.status === 3 ? q.total : null,
+            freight: q.freight ?? 0,
+            discount: q.discount ?? 0,
+            delivery_days: q.deliveryDays ?? null,
+            payment_condition: q.payment ?? null,
+          })),
+        },
+      };
     },
   },
   {

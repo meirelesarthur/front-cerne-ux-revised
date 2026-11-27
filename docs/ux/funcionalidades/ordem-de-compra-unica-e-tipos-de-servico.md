@@ -70,6 +70,17 @@ Relacionados: [ordem-de-servico-apontamento.md](ordem-de-servico-apontamento.md)
   minimalista e funcional, no padrão do sistema.
 - **25/11 — Protótipo da Ordem de compra (não portar):** serve para apresentar o fluxo antes de a API existir. Só liga
   com dados fictícios; no front oficial fica sempre desligado. O `StepTrack` do kit é portável.
+- **27/11 — Etapas da Solicitação por perfil, terminando na Ordem de compra:** **Simples** Pedido → Ordem de compra;
+  **Padrão** Pedido → Cotação → Aprovação → Ordem de compra; **Completo** Pedido → **Ciência** → Cotação → Aprovação →
+  Ordem de compra. A **ciência do gestor vem logo depois do pedido** (perfil Completo). Recebimento e encerramento são
+  de cada Ordem, na tela dela. ~~Padrão e Completo com as mesmas etapas, a "ciência da diretoria" depois da aprovação e
+  a linha indo até Recebimento e Encerrada~~ — substituída em 27/11.
+- **27/11 — A previsão de entrega da Ordem é só leitura** (sem "Alterar previsão"). ~~"Definir/Alterar previsão" no
+  detalhe da Ordem (26/11)~~ — substituída em 27/11.
+- **27/11 — Mapa de cotações abre em pop-up, no lugar do Excel:** compara os fornecedores item a item, com o **mais
+  barato no geral primeiro** (quem cotou todos os itens, do menor para o maior total; depois quem cotou parte; por
+  último quem não respondeu), o **menor preço de cada item** em destaque e o "**melhor de cada item**" (total, quantos
+  fornecedores e economia sobre o melhor total).
 - **26/11 — Aprovação automática por Valor, Prazo e Contagem** (tela "Fluxo da ordem de compra", protótipo): a soma
   das ordens aprovadas sem aprovador dentro do **prazo** (diário, semanal, mensal ou anual) não passa do **valor**;
   acima dele, a ordem vai para o aprovador. A **contagem** decide a janela: **dias corridos** conta para trás a partir
@@ -245,6 +256,28 @@ o "Receber" original (API real) fica escondido.
   OC-0029). Kit: `PageHeader`, `ViewSelect`, `ListToolbar`, `SimpleTable`, `StatusTag`, `FormContainer`,
   `InputReadOnly`, `CustomDialog`, `RepeaterList`, `ToggleRow`, `MaskedInput`.
 
+### Etapas por perfil e mapa de cotações (protótipo, não portar, 27/11)
+
+- **Etapas:** regra `Solicitacao/prototype/purchaseOrderSteps.ts` (com teste) ganhou a etapa **Ciência** (só no
+  Completo, logo após o pedido; a situação 4 "Aguardando Ciência" fica nela, e no perfil sem Ciência conta como
+  Aprovação) e `profilePath` (o caminho de cada perfil); a linha **termina em "Ordem de compra"** (situação 6 em
+  andamento; 7, 8 e 9 concluída). Recebimento e Encerrada saíram da linha da Solicitação.
+- **Tela "Fluxo da ordem de compra":** cada perfil num cartão, nome e resumo em cima e a linha de etapas **numerada**
+  na largura toda (antes, todas apareciam como concluídas e Padrão e Completo ficavam iguais); a dica explica que a
+  Solicitação termina ao gerar as Ordens.
+- **Kit `StepTrack`:** o nome da etapa quebra em até 2 linhas; ganhou a prop opcional `group` (faixa com o nome do
+  grupo acima das etapas), que hoje não é usada. Sem `group`, nada muda.
+- **Detalhe da Ordem:** "Alterar previsão" e o diálogo saíram; a previsão fica só para leitura.
+- **Dados de demonstração:** a **0021** (Completo) para na Ciência logo depois do pedido; a **0022** virou "Plantio do
+  milho — talhão 12" com **5 itens** (semente, inoculante, tratamento de sementes, NPK e herbicida) e **4 cotações**
+  com preço por item, frete, desconto, prazo e condição (duas cotaram só parte dos itens).
+- **Mapa de cotações:** na aba Cotações, "Mapa de Cotações" abre `QuotationMapDialog` (com o protótipo ligado; sem ele,
+  continua o Excel). Resumo (melhor total, melhor de cada item, cotações recebidas), tabela item × fornecedor (preço
+  unitário e total da linha; menor preço em verde com "Menor"; "—" quando não cotou; marcas "Melhor total" e "N de 5
+  itens") e, embaixo, subtotal, frete, desconto, total, prazo e condição. Regra `Solicitacao/prototype/quotationMap.ts`
+  (com teste); rota simulada `/request-purchases/{uuid}/prototype/quotation-map`. Kit: `CustomDialog`, `SimpleTable`,
+  `StatusTag`.
+
 ### Ajustes globais de 26/11
 
 - **Trilha do topo:** `findItemByPath` (`config/v2/navigationTree.ts`) escolhe o item de menu **mais específico**
@@ -290,11 +323,20 @@ o "Receber" original (API real) fica escondido.
 3. Clicar no código da ordem: abre o detalhe da Ordem, com "Gerada a partir da solicitação 0013".
 4. **OC-0031** (avulsa): "Registrar recebimento" de 3.000 → saldo 2.000, NF na aba Notas fiscais; "Cancelar saldo"
    → "Compra Recebida" e os botões somem.
-5. **OC-0012-1**: "Alterar previsão" → a data muda também na aba Vínculos da Solicitação 0012.
+5. **OC-0012-1**: a previsão de entrega aparece só para leitura (sem "Alterar previsão").
 6. "Nova ordem avulsa": salvar vazio acusa o fornecedor; preencher fornecedor, fazenda, categoria, um item, local de
    entrega e condição com 3 parcelas → a Ordem abre com Entrega e Pagamento ("parcelas conferem com o total").
 7. Na Solicitação 0012 não aparecem mais as abas Entrega, Pagamento e Notas fiscais.
 8. Recarregar a página volta tudo ao estado inicial.
+
+**Etapas e mapa de cotações (27/11)**
+
+1. "Fluxo da ordem de compra": três cartões com caminhos diferentes (2, 4 e 5 etapas), todos terminando em "Ordem de
+   compra", e o Completo com Ciência logo depois do Pedido.
+2. Solicitação **0021**: a faixa do topo para em "Ciência".
+3. Solicitação **0022** → aba Cotações → "Mapa de Cotações": abre o pop-up; AgroNutri vem primeiro ("Melhor total",
+   R$ 85.135,50); "melhor de cada item" R$ 82.270,50 com 3 fornecedores; Campo Forte "2 de 5 itens" e Sementes Brasil
+   "3 de 5 itens".
 
 **Cores**
 
@@ -424,7 +466,8 @@ o "Receber" original (API real) fica escondido.
 | 26/11/2026 | `1ed4512` | Entrega, pagamento, notas e recebimento vão para a Ordem |
 | 26/11/2026 | `e3aa804`, `446d425` | Ordem avulsa pela tela, com entrega e pagamento; trilha do topo pelo caminho mais específico (PR #2, integrado na `main` em `d6d4285`) |
 | 26/11/2026 | `91bd88c` | Doc consolidado: conceito Solicitação × Ordem nas regras vigentes, seções novas, validação, "A fazer" e pendências |
-| 26/11/2026 | (este commit) | Aprovação automática por Valor, Prazo e Contagem (no lugar de valor por ordem, limite diário e transações); Operação é da Ordem de compra |
+| 26/11/2026 | `38f101a` | Aprovação automática por Valor, Prazo e Contagem (no lugar de valor por ordem, limite diário e transações); Operação é da Ordem de compra |
+| 27/11/2026 | (este commit) | Etapas da Solicitação por perfil terminando na Ordem de compra, com Ciência no Completo; previsão da Ordem só leitura; mapa de cotações em pop-up; 0022 com 5 itens e 4 cotações |
 
 ## Anexo: Mapa de impacto no backend (Tipos de serviço e Serviços)
 
