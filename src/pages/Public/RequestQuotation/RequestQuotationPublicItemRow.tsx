@@ -127,8 +127,7 @@ function renderEditableFields(
   observation: ReactNode;
 } {
   const itemErrors = errors.items?.[index];
-  // Quantidade inteira: digitar "30" dá 30. Só admite casas quando o pedido já é fracionado.
-  const fractional = !Number.isInteger(item.quantity);
+  // Quantidade com 4 casas decimais, mesma máscara do valor unitário (27/11, pedido do dono).
 
   function markUnavailable() {
     setValue(`items.${index}.available`, false, { shouldDirty: true, shouldValidate: true });
@@ -160,8 +159,8 @@ function renderEditableFields(
                     if (!unavailable && (field.value ?? 0) === 0) markUnavailable();
                   }}
                   min={0}
-                  allowDot={fractional}
-                  decimalPlaces={fractional ? 3 : 0}
+                  allowDot
+                  decimalPlaces={4}
                   error={itemErrors?.quantity?.message as string | undefined}
                   isRequired
                   disabled={disabled || unavailable}
@@ -284,7 +283,7 @@ export function getItemTableCells(
     ),
     requested: (
       <Text as="span" fontSize="inherit" css={{ fontVariantNumeric: 'tabular-nums' }}>
-        {String(props.item.quantity)}
+        {props.item.quantity.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}
       </Text>
     ),
     quantity: <Box minW="90px">{fields.quantity}</Box>,
