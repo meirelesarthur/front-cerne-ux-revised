@@ -5,7 +5,9 @@
 // (`PublicRequestQuotationData`), nada é calculado nem enviado daqui.
 // -----------------------------------------------------------------------------
 
-import { Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { useState } from 'react';
+
+import { Box, Button, Flex, IconButton, SimpleGrid, Text } from '@chakra-ui/react';
 
 import { Icon, type IconName } from '@/components/ui/Icon';
 
@@ -96,33 +98,58 @@ export function RequestQuotationPublicSummary({
           />
         )}
       </SimpleGrid>
-
-      {quotation.note && (
-        <Flex
-          mt={3}
-          gap={3}
-          align="flex-start"
-          p={4}
-          bg="feedBack.warn"
-          borderWidth="1px"
-          borderColor="feedBack.warnMain"
-          borderRadius="lg"
-          color="cardTextPrimary"
-        >
-          <Box color="feedBack.warnMain" mt="2px">
-            <Icon name="message" size="md" />
-          </Box>
-          <Box minW={0}>
-            <Text fontSize="sm" fontWeight="semibold">
-              {text.buyerNote}
-            </Text>
-            <Text fontSize="md" whiteSpace="pre-wrap" wordBreak="break-word">
-              {quotation.note}
-            </Text>
-          </Box>
-        </Flex>
-      )}
     </Box>
+  );
+}
+
+/**
+ * Aviso do comprador como BARRA no topo do cartão (27/11): discreta, neutra, com
+ * "Entendi" e fechar (ambos só escondem a barra; nada é enviado). Antes era um
+ * quadro amarelo no meio do resumo, que chamava atenção demais.
+ */
+export function RequestQuotationPublicNoticeBar({ note }: { note: string }) {
+  const { languageGB } = useLanguage();
+  const text = languageGB.requestQuotations.requestQuotation.publicForm.summary;
+  const [visible, setVisible] = useState(true);
+
+  if (!visible) return null;
+
+  return (
+    <Flex
+      role="note"
+      align="center"
+      gap={3}
+      px={{ base: 4, md: 8 }}
+      py={2}
+      bg="bg.muted"
+      borderBottomWidth="1px"
+      borderColor="cardBorder"
+      borderTopRadius="xl"
+      color="cardTextPrimary"
+      fontSize="sm"
+    >
+      <Box color="cardTextSecondary" flexShrink={0}>
+        <Icon name="info" size="sm" />
+      </Box>
+      <Text fontSize="inherit" flex="1" minW={0} wordBreak="break-word" whiteSpace="pre-wrap">
+        <Text as="span" fontSize="inherit" fontWeight="semibold">
+          {text.buyerNote}:
+        </Text>{' '}
+        {note}
+      </Text>
+      <Button size="xs" variant="outline" flexShrink={0} onClick={() => setVisible(false)}>
+        {text.buyerNoteAck}
+      </Button>
+      <IconButton
+        size="xs"
+        variant="ghost"
+        flexShrink={0}
+        aria-label={text.buyerNoteClose}
+        onClick={() => setVisible(false)}
+      >
+        <Icon name="close" size="sm" />
+      </IconButton>
+    </Flex>
   );
 }
 

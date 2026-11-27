@@ -416,6 +416,8 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         description: 'Descripción',
         provider: 'Cotización para',
         buyerNote: 'Observación del comprador',
+        buyerNoteAck: 'Entendido',
+        buyerNoteClose: 'Cerrar aviso',
       },
       howTo: {
         title: 'Cómo completar',

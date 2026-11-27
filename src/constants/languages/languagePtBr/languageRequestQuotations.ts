@@ -413,6 +413,8 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         description: 'Descrição',
         provider: 'Cotação para',
         buyerNote: 'Observação do comprador',
+        buyerNoteAck: 'Entendi',
+        buyerNoteClose: 'Fechar aviso',
       },
       howTo: {
         title: 'Como preencher',

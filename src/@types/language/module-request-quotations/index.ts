@@ -580,6 +580,8 @@ export interface ModuleRequestQuotations {
         description: string;
         provider: string;
         buyerNote: string;
+        buyerNoteAck: string;
+        buyerNoteClose: string;
       };
       howTo: {
         title: string;

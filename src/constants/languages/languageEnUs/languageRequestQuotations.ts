@@ -412,6 +412,8 @@ export const languageRequestQuotations: ModuleRequestQuotations = {
         description: 'Description',
         provider: 'Quotation for',
         buyerNote: "Buyer's note",
+        buyerNoteAck: 'Got it',
+        buyerNoteClose: 'Close notice',
       },
       howTo: {
         title: 'How to fill in',

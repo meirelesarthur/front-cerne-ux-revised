@@ -42,6 +42,7 @@ import { getPublicRequestQuotationByHash } from '@/services/v2/RequestQuotations
 import { RequestQuotationPublicForm } from './RequestQuotationPublicForm';
 import {
   RequestQuotationPublicHowTo,
+  RequestQuotationPublicNoticeBar,
   RequestQuotationPublicSummary,
 } from './RequestQuotationPublicIntro';
 import { RequestQuotationPublicSuccess } from './RequestQuotationPublicSuccess';
@@ -130,6 +131,9 @@ export function RequestQuotationPublicPage() {
         borderColor="cardBorder"
         // Sem `overflow: hidden`: a barra de envio fixa (`sticky`) precisa rolar com a página.
       >
+        {quotation?.note && quotation.status !== requestQuotationStatus.recebida && (
+          <RequestQuotationPublicNoticeBar note={quotation.note} />
+        )}
         <Flex
           align="center"
           gap={3}
