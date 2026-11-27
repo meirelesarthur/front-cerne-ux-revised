@@ -286,7 +286,11 @@ o "Receber" original (API real) fica escondido.
 
 ### Tipos de serviço, Serviços e cadastro novo de Operações
 
-— (nada feito ainda nas telas; ver "A fazer" e os anexos).
+- **27/11 (protótipo, não portar):** telas de cadastro de **Tipos de serviço** (com todos os parâmetros e o "Gera
+  execução") e de **Serviços** (só descrição, situação e os tipos em que aparece), com dados de demonstração, em
+  [tipos-de-servico-e-servicos.md](tipos-de-servico-e-servicos.md).
+- Ainda por fazer: o cadastro de verdade (API), o Apontamento lendo os parâmetros e o campo "Serviço" na ordem (ver
+  "A fazer" abaixo e o doc acima).
 
 ## Como validar
 

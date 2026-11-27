@@ -143,6 +143,7 @@ import { ModuleXmlDocuments } from './module-xml-documents';
 import { ModuleOpenMovements } from './module-open-movements';
 import { ModuleOpeningBalances } from './module-opening-balances';
 import { ModuleOperations } from './module-operations';
+import { ModuleServiceTypes } from './module-service-types';
 import { ModulePackages } from './module-packages';
 import { ModuleParameterAnimals } from './module-parameter-animals';
 import { ModuleParameters } from './module-parameters';
@@ -378,6 +379,8 @@ export interface LanguageDate {
   activities: ModuleActivities;
   /** Módulo de Operações (Operation — Cadastros Base / Agrícola) */
   operations: ModuleOperations;
+  /** PROTÓTIPO (27/11/2026, não portar): Tipos de serviço e Serviços (substituem Operações e Atividades na tela). */
+  serviceTypes: ModuleServiceTypes;
   /** Módulo de Estágio Reprodutivo (CategoryMatrix — Cadastros Base / Pecuária) */
   categoryMatrix: ModuleCategoryMatrix;
   /** Módulo de Estados (State — Cadastros Base / Geografia) */

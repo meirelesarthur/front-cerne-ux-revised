@@ -49,6 +49,8 @@ export const navDescriptions: Record<string, string> = {
   'cad-fis-pla': 'Company chart of accounts.',
   // Base Registrations › Agricultural
   'cad-agr-ope': 'Field service groups, such as spraying.',
+  'cad-agr-tpserv': 'What the Appointment asks for in each service type and whether a purchase generates execution.',
+  'cad-agr-serv': 'Simple services, linked to one or more service types.',
   'cad-agr-ati': 'Services of each operation used in records.',
   'cad-agr-cul': 'Crops and varieties planted.',
   'cad-agr-cic': 'Production cycles of each crop.',

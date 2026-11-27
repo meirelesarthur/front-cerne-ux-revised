@@ -178,6 +178,9 @@ export const navigationPermissions: Record<string, NavPermissionRule> = {
   'cad-fis-pla': { permission: 'plan-accounts_view' },
   'cad-agr-ope': { permission: 'operations_view' },
   'cad-agr-ati': { permission: 'activities_view' },
+  // Protótipo (27/11, não portar): Tipos de serviço e Serviços usam as permissões das telas antigas.
+  'cad-agr-tpserv': { permission: 'operations_view' },
+  'cad-agr-serv': { permission: 'activities_view' },
   'cad-agr-cul': { permission: 'cultivations_view' },
   'cad-agr-cic': { permission: 'production-cycles_view' },
   'cad-pec-rac': { permission: 'breeds_view' },

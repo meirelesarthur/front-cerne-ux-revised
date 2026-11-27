@@ -21,6 +21,7 @@ import { PURCHASE_ORDER_PROTOTYPE } from '@/config/v2/purchaseOrderPrototype';
 import { farmRoutes } from './handlers/farms';
 import { purchaseOrderDemoRoutes } from './handlers/purchaseOrdersDemo';
 import { referenceRoutes } from './handlers/reference';
+import { serviceTypesDemoRoutes } from './handlers/serviceTypesDemo';
 import { loadSynthetic, syntheticHandle } from './synthetic';
 
 export const DEV_MOCKS =
@@ -46,6 +47,8 @@ export interface MockRoute {
 // (antes do sintético). Ver `config/v2/purchaseOrderPrototype.ts`.
 const routes: MockRoute[] = [
   ...(PURCHASE_ORDER_PROTOTYPE ? purchaseOrderDemoRoutes : []),
+  // Tipos de serviço e Serviços de demonstração (27/11): cadastro novo, só com o protótipo ligado.
+  ...(PURCHASE_ORDER_PROTOTYPE ? serviceTypesDemoRoutes : []),
   ...farmRoutes,
   ...referenceRoutes,
 ];

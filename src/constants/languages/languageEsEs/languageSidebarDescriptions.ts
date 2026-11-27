@@ -50,6 +50,8 @@ export const navDescriptions: Record<string, string> = {
   'cad-fis-pla': 'Plan de cuentas contable de la empresa.',
   // Registros Base › Agrícolas
   'cad-agr-ope': 'Grupos de servicio del cultivo, como fumigación.',
+  'cad-agr-tpserv': 'Lo que el Apunte pide de cada tipo de servicio y si la compra genera ejecución.',
+  'cad-agr-serv': 'Servicios simples, ligados a uno o más tipos de servicio.',
   'cad-agr-ati': 'Servicios de cada operación usados en registros.',
   'cad-agr-cul': 'Cultivos y variedades sembrados.',
   'cad-agr-cic': 'Ciclos de producción de cada cultivo.',

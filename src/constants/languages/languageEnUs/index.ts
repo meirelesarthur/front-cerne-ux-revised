@@ -161,6 +161,7 @@ import { languageWorkTeams } from './languageWorkTeams';
 import { languageWriteOff } from './languageWriteOff';
 import { languageXmlDocuments } from './languageXmlDocuments';
 import { languageOperations } from './languageOperations';
+import { languageServiceTypes } from './languageServiceTypes';
 import { languagePackages } from './languagePackages';
 import { languageParameterAnimal } from './languageParameterAnimal';
 import { languageParameters } from './languageParameters';
@@ -386,6 +387,9 @@ export const languageEnUs: Pick<LanguagesDate, 'US'> = {
     },
     operations: {
       ...languageOperations,
+    },
+    serviceTypes: {
+      ...languageServiceTypes,
     },
     categoryMatrix: {
       ...languageCategoryMatrix,

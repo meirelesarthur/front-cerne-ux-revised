@@ -60,6 +60,8 @@ export const languageSidebar: Sidebar = {
     'cad-agricolas': 'Agrícolas',
     'cad-agr-ope': 'Operações',
     'cad-agr-ati': 'Atividades',
+    'cad-agr-tpserv': 'Tipos de Serviço',
+    'cad-agr-serv': 'Serviços',
     'cad-agr-cul': 'Cultura / Variedade',
     'cad-agr-cic': 'Ciclo de Produção',
     'cad-pecuarios': 'Pecuários',

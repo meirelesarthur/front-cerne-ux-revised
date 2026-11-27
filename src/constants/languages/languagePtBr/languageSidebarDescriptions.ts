@@ -50,6 +50,8 @@ export const navDescriptions: Record<string, string> = {
   'cad-fis-pla': 'Plano de contas contábil da empresa.',
   // Cadastros Base › Agrícolas
   'cad-agr-ope': 'Grupos de serviço da lavoura, como pulverização.',
+  'cad-agr-tpserv': 'O que o Apontamento pede de cada tipo de serviço e se a compra gera execução.',
+  'cad-agr-serv': 'Serviços simples, ligados a um ou mais tipos de serviço.',
   'cad-agr-ati': 'Serviços de cada operação usados no apontamento.',
   'cad-agr-cul': 'Culturas e variedades plantadas.',
   'cad-agr-cic': 'Ciclos de produção de cada cultura.',

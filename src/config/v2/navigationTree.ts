@@ -528,18 +528,37 @@ export const menuModules: NavModule[] = [
         label: 'Agrícolas',
         icon: 'grain',
         items: [
-          {
-            id: 'cad-agr-ope',
-            label: 'Operações',
-            path: '/cadastros-base/operacoes',
-            icon: 'settings-sliders',
-          },
-          {
-            id: 'cad-agr-ati',
-            label: 'Atividades',
-            path: '/cadastros-base/atividades',
-            icon: 'clipboard-list',
-          },
+          // Protótipo (27/11, não portar): com ele ligado, "Tipos de Serviço" e "Serviços" entram no
+          // lugar de "Operações" e "Atividades" (só rótulos; API, tabelas e permissões seguem iguais).
+          ...(PURCHASE_ORDER_PROTOTYPE
+            ? [
+                {
+                  id: 'cad-agr-tpserv',
+                  label: 'Tipos de Serviço',
+                  path: '/cadastros-base/tipos-de-servico',
+                  icon: 'settings-sliders' as IconName,
+                },
+                {
+                  id: 'cad-agr-serv',
+                  label: 'Serviços',
+                  path: '/cadastros-base/servicos-agricolas',
+                  icon: 'clipboard-list' as IconName,
+                },
+              ]
+            : [
+                {
+                  id: 'cad-agr-ope',
+                  label: 'Operações',
+                  path: '/cadastros-base/operacoes',
+                  icon: 'settings-sliders' as IconName,
+                },
+                {
+                  id: 'cad-agr-ati',
+                  label: 'Atividades',
+                  path: '/cadastros-base/atividades',
+                  icon: 'clipboard-list' as IconName,
+                },
+              ]),
           {
             id: 'cad-agr-cul',
             label: 'Cultura / Variedade',

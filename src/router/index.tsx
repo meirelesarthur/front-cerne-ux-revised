@@ -2493,6 +2493,16 @@ const CreateOrUpdateOperacao = lazy(
   () => import('@/pages/CadastrosBase/Operacoes/CreateOrUpdateOperacao')
 );
 
+// ---- Protótipo (27/11, não portar): Tipos de serviço e Serviços (ex-Operações e ex-Atividades) ----
+const TiposServicoList = lazy(() => import('@/pages/CadastrosBase/TiposServico'));
+const CreateOrUpdateTipoServico = lazy(
+  () => import('@/pages/CadastrosBase/TiposServico/CreateOrUpdateTipoServico')
+);
+const ServicosAgricolasList = lazy(() => import('@/pages/CadastrosBase/ServicosAgricolas'));
+const CreateOrUpdateServicoAgricola = lazy(
+  () => import('@/pages/CadastrosBase/ServicosAgricolas/CreateOrUpdateServico')
+);
+
 // ---- Privado: Cadastros Base — Agrupadores (Grouper) ----
 // Listagem em árvore (TASK-FE-030) + formulário create/edit (TASK-FE-031).
 const AgrupadoresList = lazy(() => import('@/pages/BaseRegistrations/Groupers'));
@@ -5492,6 +5502,66 @@ export function AppRoutes() {
             </RequirePermission>
           }
         />
+
+        {/* Protótipo (27/11, não portar): Tipos de serviço (ex-Operações) e Serviços (ex-Atividades).
+            Só com os dados de demonstração. `/novo` vem ANTES de `/:uuid`. O caminho de Serviços é
+            provisório: `/cadastros-base/servicos` já é de outro cadastro (Gerais › Serviços). */}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path="/cadastros-base/tipos-de-servico"
+            element={
+              <RequirePermission permission="operations_view">{lazyRoute(TiposServicoList)}</RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path="/cadastros-base/tipos-de-servico/novo"
+            element={
+              <RequirePermission permission="operations_view">
+                {lazyRoute(CreateOrUpdateTipoServico)}
+              </RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path="/cadastros-base/tipos-de-servico/:uuid"
+            element={
+              <RequirePermission permission="operations_view">
+                {lazyRoute(CreateOrUpdateTipoServico)}
+              </RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path="/cadastros-base/servicos-agricolas"
+            element={
+              <RequirePermission permission="activities_view">{lazyRoute(ServicosAgricolasList)}</RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path="/cadastros-base/servicos-agricolas/novo"
+            element={
+              <RequirePermission permission="activities_view">
+                {lazyRoute(CreateOrUpdateServicoAgricola)}
+              </RequirePermission>
+            }
+          />
+        )}
+        {PURCHASE_ORDER_PROTOTYPE && (
+          <Route
+            path="/cadastros-base/servicos-agricolas/:uuid"
+            element={
+              <RequirePermission permission="activities_view">
+                {lazyRoute(CreateOrUpdateServicoAgricola)}
+              </RequirePermission>
+            }
+          />
+        )}
 
         {/* Cadastros Base — Estados + Cidades (Geografia): LISTAGEM real
             (TASK-FE-022/023), declaradas ANTES do catch-all
