@@ -59,6 +59,7 @@ export function RequestQuotationPublicItems({
           { key: 'brand', header: text.fields.brand },
           { key: 'unit', header: text.fields.unitaryValue },
           { key: 'total', header: text.fields.amount, align: 'right' },
+          { key: 'observation', header: text.fields.observation },
         ]}
         rows={items.map((item, index) => ({
           key: item.request_item_uuid,

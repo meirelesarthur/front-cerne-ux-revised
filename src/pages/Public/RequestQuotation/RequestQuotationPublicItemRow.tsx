@@ -276,11 +276,10 @@ export function getItemTableCells(
       </Text>
     ),
     item: (
-      <Box minW="260px">
+      <Box minW="160px">
         <Text as="span" fontSize="inherit" fontWeight="medium" color="cardTextPrimary">
           {props.item.description}
         </Text>
-        <Box mt="8px">{fields.observation}</Box>
       </Box>
     ),
     requested: (
@@ -288,10 +287,11 @@ export function getItemTableCells(
         {String(props.item.quantity)}
       </Text>
     ),
-    quantity: <Box minW="110px">{fields.quantity}</Box>,
-    unavailable: <Box minW="90px">{fields.unavailable}</Box>,
-    brand: <Box minW="130px">{fields.brand}</Box>,
-    unit: <Box minW="130px">{fields.unit}</Box>,
+    quantity: <Box minW="90px">{fields.quantity}</Box>,
+    unavailable: <Box>{fields.unavailable}</Box>,
+    brand: <Box minW="110px">{fields.brand}</Box>,
+    unit: <Box minW="115px">{fields.unit}</Box>,
     total: <LineAmount control={props.control} index={props.index} />,
+    observation: <Box minW="130px">{fields.observation}</Box>,
   };
 }

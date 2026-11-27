@@ -119,10 +119,10 @@ export function RequestQuotationPublicPage() {
   const isMalformed = query.isSuccess && !Array.isArray(quotation?.items);
 
   return (
-    <Box as="main" minH="100vh" bg="contentOuterBG" px={4} py={{ base: 4, md: 8 }}>
+    <Box as="main" minH="100vh" bg="contentOuterBG" px={{ base: 2, md: 3 }} py={{ base: 3, md: 6 }}>
       <Box
         w="full"
-        maxW="1040px"
+        maxW="1280px"
         mx="auto"
         bg="cardBG"
         borderRadius="xl"
@@ -137,7 +137,7 @@ export function RequestQuotationPublicPage() {
         <Flex
           align="center"
           gap={3}
-          px={{ base: 4, md: 8 }}
+          px={{ base: 3, md: 5 }}
           py={4}
           borderBottomWidth="1px"
           borderColor="cardBorder"
@@ -158,7 +158,7 @@ export function RequestQuotationPublicPage() {
           </Box>
         </Flex>
 
-        <Box px={{ base: 4, md: 8 }} py={{ base: 5, md: 6 }}>
+        <Box px={{ base: 3, md: 5 }} py={{ base: 4, md: 5 }}>
           {!hash || statusCode === 404 ? (
             <StateCard
               icon="search-empty"

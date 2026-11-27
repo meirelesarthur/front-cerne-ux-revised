@@ -53,7 +53,7 @@ export function RequestQuotationPublicSubmitBar({
       bottom={0}
       zIndex={10}
       mx={{ base: -4, md: -8 }}
-      px={{ base: 4, md: 8 }}
+      px={{ base: 3, md: 5 }}
       py={3}
       bg="cardBG"
       borderTopWidth="1px"

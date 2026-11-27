@@ -119,7 +119,7 @@ export function RequestQuotationPublicNoticeBar({ note }: { note: string }) {
       role="note"
       align="center"
       gap={3}
-      px={{ base: 4, md: 8 }}
+      px={{ base: 3, md: 5 }}
       py={2}
       bg="bg.muted"
       borderBottomWidth="1px"
