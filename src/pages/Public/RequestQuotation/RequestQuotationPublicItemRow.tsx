@@ -185,7 +185,7 @@ function renderEditableFields(
         name={`items.${index}.available`}
         control={control}
         render={({ field }) => (
-          <Flex direction="column" align="flex-start" gap="4px">
+          <Flex align="center">
             <Checkbox
               checked={field.value === false}
               onCheckedChange={(details: { checked: boolean | 'indeterminate' }) =>
@@ -194,9 +194,6 @@ function renderEditableFields(
               aria-label={`${text.fields.unavailable} - ${item.description}`}
               disabled={disabled}
             />
-            {field.value === false && (
-              <StatusTag size="sm" label={text.itemsSection.unavailableTag} color="semanticNeutral.500" />
-            )}
           </Flex>
         )}
       />
@@ -279,10 +276,11 @@ export function getItemTableCells(
       </Text>
     ),
     item: (
-      <Box minW="200px">
+      <Box minW="260px">
         <Text as="span" fontSize="inherit" fontWeight="medium" color="cardTextPrimary">
           {props.item.description}
         </Text>
+        <Box mt="8px">{fields.observation}</Box>
       </Box>
     ),
     requested: (
@@ -295,6 +293,5 @@ export function getItemTableCells(
     brand: <Box minW="130px">{fields.brand}</Box>,
     unit: <Box minW="130px">{fields.unit}</Box>,
     total: <LineAmount control={props.control} index={props.index} />,
-    observation: <Box minW="150px">{fields.observation}</Box>,
   };
 }
