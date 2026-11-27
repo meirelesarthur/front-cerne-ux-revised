@@ -4,7 +4,11 @@ import {
   allItemsPriced,
   countPricedItems,
   formatCurrency,
+  canSubmitQuotation,
+  countUnavailableItems,
+  isItemAnswered,
   isItemPriced,
+  isItemUnavailable,
   isPartialOffer,
 } from './publicQuotationProgress';
 
@@ -44,5 +48,26 @@ describe('publicQuotationProgress', () => {
   it('formata em reais', () => {
     expect(formatCurrency(1234.5).replace(/\s/g, ' ')).toBe('R$ 1.234,50');
     expect(formatCurrency(Number.NaN).replace(/\s/g, ' ')).toBe('R$ 0,00');
+  });
+});
+
+describe('sem estoque', () => {
+  const priced = { unitary_value: 5, available: true };
+  const none = { unitary_value: null, available: false };
+  const blank = { unitary_value: null, available: true };
+
+  it('item sem estoque conta como respondido, mas não como cotado', () => {
+    expect(isItemPriced(none)).toBe(false);
+    expect(isItemUnavailable(none)).toBe(true);
+    expect(isItemAnswered(none)).toBe(true);
+    expect(isItemAnswered(blank)).toBe(false);
+    expect(countUnavailableItems([priced, none, blank])).toBe(1);
+  });
+
+  it('só envia com todos os itens respondidos e ao menos um cotado', () => {
+    expect(canSubmitQuotation([priced, none])).toBe(true);
+    expect(canSubmitQuotation([priced, blank])).toBe(false);
+    expect(canSubmitQuotation([none, none])).toBe(false);
+    expect(canSubmitQuotation([])).toBe(false);
   });
 });

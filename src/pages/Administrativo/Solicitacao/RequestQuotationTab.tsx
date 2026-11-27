@@ -441,6 +441,13 @@ export function RequestQuotationTab({
               {quotation.provider?.name ?? '—'}
             </Text>
             {isBest && <UiBadge label={compare.bestTag} variant="success" />}
+            {(quotation.unavailable_items_count ?? 0) > 0 && (
+              <StatusTag
+                size="sm"
+                label={languageGB.requestPurchases.requestPurchase.form.prototype.quotationMap.unavailableCount.replace('{n}', String(quotation.unavailable_items_count))}
+                color="semanticNeutral.500"
+              />
+            )}
           </HStack>
           <Text fontSize="sm" color="fg.muted" lineClamp="1">
             {compare.quotedOn.replace(

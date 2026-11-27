@@ -285,6 +285,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           answers: 'Cotizaciones recibidas',
           answersDetail: 'Proveedores del más barato en general al más caro',
           footnote: 'En verde, el menor precio de cada ítem. Lo mejor de cada ítem no incluye flete ni descuento.',
+          unavailable: 'Sin stock',
+          unavailableCount: '{n} sin stock',
+          unavailableFootnote: '"Sin stock": el proveedor informó que no tiene el ítem. Distinto de "—", que es un ítem no cotizado.',
         },
         duplicate: {
           button: 'Duplicar',

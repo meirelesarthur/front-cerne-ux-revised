@@ -97,13 +97,16 @@ function buildPublicSubmissionFormData(payload: PublicRequestQuotationSubmission
 
   fd.append('reponsible', payload.reponsible);
   fd.append('expiration_date', payload.expiration_date);
+  fd.append('delivery_date', payload.delivery_date); // 27/11: previsão de entrega da cotação
   fd.append('total_value', String(payload.total_value));
 
   payload.items.forEach((item, index) => {
     fd.append(`items[${index}][request_item_uuid]`, item.request_item_uuid);
     fd.append(`items[${index}][unitary_value]`, String(item.unitary_value));
-    // 27/11: quantidade OFERTADA (o fornecedor pode ofertar menos que o pedido).
+    // 27/11: quantidade OFERTADA (o fornecedor pode ofertar menos que o pedido) e se o
+    // item está DISPONÍVEL (0 = sem estoque: não impede a cotação, mas fica explícito).
     fd.append(`items[${index}][quantity]`, String(item.quantity));
+    fd.append(`items[${index}][available]`, item.available ? '1' : '0');
     fd.append(`items[${index}][brand]`, item.brand);
     if (item.observation) fd.append(`items[${index}][observation]`, item.observation);
   });

@@ -123,6 +123,8 @@ interface DemoQuotation {
   date?: string;
   /** Mapa de cotações (27/11): preço unitário por item, na ordem dos itens; null = não cotou. */
   prices?: (number | null)[];
+  /** Itens que o fornecedor marcou "sem estoque" ao responder (27/11); não é o mesmo que "não cotou". */
+  unavailable?: boolean[];
   freight?: number;
   deliveryDays?: number;
   payment?: string;
@@ -564,7 +566,8 @@ const ORDERS: DemoOrder[] = [
     quotations: [
       {
         provider: 'sementesbrasil', status: 3, total: 43387.5, discount: 300, date: '2026-11-24T09:30:00',
-        prices: [880, 17.5, 150, null, null], freight: 0, deliveryDays: 5, payment: '30 dias',
+        prices: [880, 17.5, 150, null, null], unavailable: [false, false, false, true, true],
+        freight: 0, deliveryDays: 5, payment: '30 dias',
       },
       {
         provider: 'cerrado', status: 3, total: 85360, discount: 500, date: '2026-11-24T14:00:00',
@@ -576,7 +579,8 @@ const ORDERS: DemoOrder[] = [
       },
       {
         provider: 'campoforte', status: 3, total: 39300, discount: 0, date: '2026-11-25T08:40:00',
-        prices: [null, null, null, 3020, 51], freight: 380, deliveryDays: 6, payment: '45 dias',
+        prices: [null, null, null, 3020, 51], unavailable: [true, true, true, false, false],
+        freight: 380, deliveryDays: 6, payment: '45 dias',
       },
       // 27/11: cotação ainda pendente — o link público de exemplo é /orcamento/demo-22-4.
       { provider: 'agrovale', status: 2, total: 0 },
@@ -746,6 +750,7 @@ function quotationsOf(o: DemoOrder) {
       total_value: received ? q.total : 0,
       discount: received ? q.discount ?? 0 : 0,
       saving,
+      unavailable_items_count: (q.unavailable ?? []).filter(Boolean).length,
       status: q.status,
       status_label: q.status === 3 ? 'Recebida' : q.status === 2 ? 'Enviada' : 'Aguardando',
       requires_file: false,
@@ -1283,16 +1288,35 @@ export const purchaseOrderDemoRoutes: MockRoute[] = [
       if (!o || !q) return { status: 404, body: null };
       // O envio é multipart: lê os preços `items[i][unitary_value]` quando vierem num FormData.
       const prices: (number | null)[] = o.items.map(() => null);
+      const quantities: number[] = o.items.map((item) => item.quantity ?? 0);
+      const unavailable: boolean[] = o.items.map(() => false);
+      let deliveryDate: string | null = null;
       if (typeof FormData !== 'undefined' && body instanceof FormData) {
         body.forEach((value, key) => {
-          const hit = /^items\[(\d+)\]\[unitary_value\]$/.exec(key);
-          if (hit) prices[Number(hit[1])] = Number(value) || null;
+          const field = /^items\[(\d+)\]\[(unitary_value|quantity|available)\]$/.exec(key);
+          if (field) {
+            const i = Number(field[1]);
+            if (field[2] === 'unitary_value') prices[i] = Number(value) || null;
+            if (field[2] === 'quantity') quantities[i] = Number(value) || 0;
+            // Sem estoque vem EXPLÍCITO (`available = 0`): não é o mesmo que não cotar.
+            if (field[2] === 'available') unavailable[i] = value === '0';
+          }
+          if (key === 'delivery_date') deliveryDate = String(value);
         });
       }
+      // Item sem estoque não tem preço; o total usa a quantidade OFERTADA.
+      unavailable.forEach((is, i) => {
+        if (is) prices[i] = null;
+      });
       q.status = 3;
       q.date = new Date().toISOString();
       q.prices = prices;
-      q.total = o.items.reduce((sum, item, i) => sum + (item.quantity ?? 0) * (prices[i] ?? 0), 0);
+      q.unavailable = unavailable;
+      q.total = o.items.reduce((sum, _item, i) => sum + quantities[i] * (prices[i] ?? 0), 0);
+      if (deliveryDate) {
+        const days = Math.round((new Date(`${deliveryDate}T00:00:00`).getTime() - Date.now()) / 86400000);
+        q.deliveryDays = Math.max(0, days);
+      }
       return { body: null };
     },
   },
@@ -1318,6 +1342,7 @@ export const purchaseOrderDemoRoutes: MockRoute[] = [
             received: q.status === 3,
             date: q.date ?? null,
             prices: q.prices ?? o.items.map(() => null),
+            unavailable: q.unavailable ?? o.items.map(() => false),
             total_reported: q.status === 3 ? q.total : null,
             freight: q.freight ?? 0,
             discount: q.discount ?? 0,

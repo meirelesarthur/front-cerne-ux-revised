@@ -44,7 +44,11 @@ import type {
   PublicRequestQuotationSubmissionPayload,
 } from '@/@types/v2/RequestQuotations';
 
-import { allItemsPriced, countPricedItems } from './publicQuotationProgress';
+import {
+  canSubmitQuotation,
+  countAnsweredItems,
+  countUnavailableItems,
+} from './publicQuotationProgress';
 import { installmentAmount, totalAmount } from './publicQuotationTotals';
 import { RequestQuotationPublicItems } from './RequestQuotationPublicItems';
 import { RequestQuotationPublicPaymentRow } from './RequestQuotationPublicPaymentRow';
@@ -58,17 +62,19 @@ export interface RequestQuotationPublicFormProps {
    *  fonte da verdade de `status` é sempre o servidor, nunca um estado local
    *  otimista deste componente). `submittedTotal` só vem no POST bem-sucedido
    *  (para o cartão de confirmação mostrar o total enviado). */
-  onSubmittedOrAlreadySubmitted: (submittedTotal?: number) => void;
+  onSubmittedOrAlreadySubmitted: (submitted?: { total: number; unavailable: number }) => void;
 }
 
 function buildDefaultValues(quotation: PublicRequestQuotationData): PublicRequestQuotationForm {
   return {
     reponsible: null,
     expiration_date: null,
+    delivery_date: null,
     file: null,
     items: quotation.items.map((item) => ({
       request_item_uuid: item.request_item_uuid,
       description: item.description,
+      available: true,
       quantity: item.quantity,
       // Legado: a marca começa vazia (o fornecedor informa).
       brand: '',
@@ -97,6 +103,7 @@ export function RequestQuotationPublicForm({
     control,
     handleSubmit,
     setError,
+    setValue,
     watch,
     formState: { errors },
   } = useForm<PublicRequestQuotationForm>({
@@ -109,7 +116,10 @@ export function RequestQuotationPublicForm({
       submitPublicRequestQuotation(hash, payload),
     onSuccess: (_data, payload) => {
       toaster.success({ title: text.pageTitle, description: text.submittedToast, duration: 7000 });
-      onSubmittedOrAlreadySubmitted(payload.total_value);
+      onSubmittedOrAlreadySubmitted({
+        total: payload.total_value,
+        unavailable: payload.items.filter((item) => !item.available).length,
+      });
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -175,7 +185,7 @@ export function RequestQuotationPublicForm({
   });
 
   function onSubmit(data: PublicRequestQuotationForm) {
-    if (!data.reponsible || !data.expiration_date) return; // guarda defensiva — schema já exige
+    if (!data.reponsible || !data.expiration_date || !data.delivery_date) return; // guarda defensiva — schema já exige
 
     // `total_value` = total geral (soma das linhas), nunca digitado pelo
     // fornecedor. O servidor recalcula (T-081-API-08); aqui vale só o preview.
@@ -190,12 +200,16 @@ export function RequestQuotationPublicForm({
     const payload: PublicRequestQuotationSubmissionPayload = {
       reponsible: data.reponsible,
       expiration_date: data.expiration_date,
+      delivery_date: data.delivery_date,
       total_value: totalValue,
+      // 27/11/2026: item sem estoque vai EXPLÍCITO (`available: false`, quantidade 0), não
+      // como "item esquecido": o comprador vê que o fornecedor respondeu "não tenho".
       items: data.items.map((item) => ({
         request_item_uuid: item.request_item_uuid,
-        quantity: item.quantity,
-        unitary_value: item.unitary_value ?? 0,
-        brand: item.brand ?? '',
+        available: item.available !== false,
+        quantity: item.available === false ? 0 : item.quantity,
+        unitary_value: item.available === false ? 0 : (item.unitary_value ?? 0),
+        brand: item.available === false ? '' : (item.brand ?? ''),
         observation: item.observation || null,
       })),
       payments: data.payments.map((paymentRow) => ({
@@ -217,8 +231,10 @@ export function RequestQuotationPublicForm({
   // Total geral exibido ("Vl.Total"), derivado dos preços digitados.
   const watchedItems = watch('items') ?? [];
   const grandTotal = totalAmount(watchedItems);
-  const pricedCount = countPricedItems(watchedItems);
-  const canSubmit = allItemsPriced(watchedItems);
+  // Respondido = com preço OU sem estoque; precisa de ao menos 1 item com preço para enviar.
+  const answeredCount = countAnsweredItems(watchedItems);
+  const unavailableCount = countUnavailableItems(watchedItems);
+  const canSubmit = canSubmitQuotation(watchedItems);
   const itemLabel =
     quotation.request_purchase?.type === 'P' ? text.fields.itemProduct : text.fields.itemService;
 
@@ -229,6 +245,7 @@ export function RequestQuotationPublicForm({
           <RequestQuotationPublicItems
             control={control}
             errors={errors}
+            setValue={setValue}
             items={quotation.items}
             itemLabel={itemLabel}
             disabled={isSubmitting}
@@ -289,6 +306,26 @@ export function RequestQuotationPublicForm({
               </Field>
             )}
           />
+
+          {/* 27/11/2026: previsão de entrega da cotação (uma só; o fornecedor é um só), logo após a validade. */}
+          <Controller
+            name="delivery_date"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field
+                label={text.fields.deliveryDate}
+                errorText={fieldState.error?.message}
+                isRequired
+              >
+                <DateInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isSubmitting}
+                  minDate={new Date()}
+                />
+              </Field>
+            )}
+          />
         </FormSection>
 
         {quotation.requires_file && (
@@ -329,7 +366,9 @@ export function RequestQuotationPublicForm({
 
         <RequestQuotationPublicSubmitBar
           total={grandTotal}
-          filled={pricedCount}
+          filled={answeredCount}
+          unavailable={unavailableCount}
+          canSubmit={canSubmit}
           count={quotation.items.length}
           isSubmitting={isSubmitting}
           totalError={errors.root?.totalValue?.message}

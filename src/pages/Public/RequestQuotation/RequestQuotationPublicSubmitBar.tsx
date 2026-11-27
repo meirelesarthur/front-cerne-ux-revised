@@ -17,7 +17,12 @@ import { formatCurrency } from './publicQuotationProgress';
 
 export interface RequestQuotationPublicSubmitBarProps {
   total: number;
+  /** Itens respondidos (com preço ou sem estoque). */
   filled: number;
+  /** Itens marcados "sem estoque" (27/11/2026). */
+  unavailable?: number;
+  /** Todos respondidos e ao menos um com preço. */
+  canSubmit: boolean;
   count: number;
   isSubmitting: boolean;
   /** Mensagem de erro do total (ex.: "O valor deve ser maior que zero"). */
@@ -27,16 +32,19 @@ export interface RequestQuotationPublicSubmitBarProps {
 export function RequestQuotationPublicSubmitBar({
   total,
   filled,
+  unavailable = 0,
+  canSubmit,
   count,
   isSubmitting,
   totalError,
 }: RequestQuotationPublicSubmitBarProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.requestQuotations.requestQuotation.publicForm;
-  const complete = count > 0 && filled === count;
-  const progress = text.submitBar.itemsProgress
-    .replace('{filled}', String(filled))
-    .replace('{total}', String(count));
+  const answeredAll = count > 0 && filled === count;
+  const complete = canSubmit;
+  const progress =
+    text.submitBar.itemsProgress.replace('{filled}', String(filled)).replace('{total}', String(count)) +
+    (unavailable > 0 ? ` · ${text.submitBar.unavailableCount.replace('{n}', String(unavailable))}` : '');
   const hintId = 'public-quotation-submit-hint';
 
   return (
@@ -111,7 +119,12 @@ export function RequestQuotationPublicSubmitBar({
         color={totalError ? 'feedBack.errorMain' : 'cardTextSecondary'}
         role={totalError ? 'alert' : undefined}
       >
-        {totalError ?? (complete ? text.submitBar.ready : text.submitBar.missingPrice)}
+        {totalError ??
+          (complete
+            ? text.submitBar.ready
+            : answeredAll
+              ? text.submitBar.noOffer
+              : text.submitBar.missingPrice)}
       </Text>
     </Box>
   );

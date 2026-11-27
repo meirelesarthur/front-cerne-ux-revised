@@ -15,6 +15,12 @@
 // casas) x quantidade OFERTADA, em 2 casas — calculado na tela e nunca enviado
 // como valor (o servidor recalcula).
 //
+// SEM ESTOQUE (27/11/2026): o fornecedor pode marcar o item "Sem estoque" (ou
+// zerar a quantidade ofertada e sair do campo). Isso NÃO impede a cotação do
+// resto: o item segue na devolução como `available: false` (quantidade 0), com
+// preço e marca dispensados, e o comprador vê "Sem estoque" no mapa de cotações.
+// Desmarcar volta a quantidade pedida.
+//
 // REPAGINAÇÃO (só apresentação): cada item é uma LINHA de tabela com edição na
 // própria linha (`getItemTableCells`, usada por `RequestQuotationPublicItems`):
 // sem rótulo visível por campo — o cabeçalho da tabela rotula e cada campo leva
@@ -23,12 +29,13 @@
 
 import type { ReactNode } from 'react';
 
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { Controller, useWatch } from 'react-hook-form';
 
 import { Input } from '@/components/Form/Input';
 import { MoneyInput } from '@/components/Form/MoneyInput';
 import { NumberInput } from '@/components/Form/NumberInput';
+import { Checkbox } from '@/components/ui/checkbox';
 import { StatusTag } from '@/components/ui/StatusTag';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -41,11 +48,12 @@ import type {
 import { formatCurrency, isPartialOffer } from './publicQuotationProgress';
 import { lineAmount } from './publicQuotationTotals';
 
-import type { Control, FieldErrors } from 'react-hook-form';
+import type { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 
 export interface RequestQuotationPublicItemRowProps {
   control: Control<PublicRequestQuotationForm>;
   errors: FieldErrors<PublicRequestQuotationForm>;
+  setValue: UseFormSetValue<PublicRequestQuotationForm>;
   index: number;
   item: PublicItemData;
   disabled: boolean;
@@ -56,6 +64,20 @@ type PublicFormText = ReturnType<typeof usePublicFormText>;
 function usePublicFormText() {
   const { languageGB } = useLanguage();
   return languageGB.requestQuotations.requestQuotation.publicForm;
+}
+
+/** Entrega ao filho se o item está sem estoque (reativo), para desabilitar os campos da linha. */
+function Availability({
+  control,
+  index,
+  children,
+}: {
+  control: Control<PublicRequestQuotationForm>;
+  index: number;
+  children: (unavailable: boolean) => ReactNode;
+}) {
+  const available = useWatch({ control, name: `items.${index}.available` });
+  return <>{children(available === false)}</>;
 }
 
 /** Valor da linha = preço unitário x quantidade OFERTADA, reativo (aria-live fica no total geral). */
@@ -75,7 +97,7 @@ function LineAmount({ control, index }: { control: Control<PublicRequestQuotatio
   );
 }
 
-/** Marca "Parcial" quando o fornecedor oferta menos do que o pedido. */
+/** Marca "Parcial" quando o fornecedor oferta menos do que o pedido (e tem estoque). */
 function PartialTag({
   control,
   index,
@@ -88,40 +110,66 @@ function PartialTag({
   label: string;
 }) {
   const offered = useWatch({ control, name: `items.${index}.quantity` });
-  if (!isPartialOffer(offered, requested)) return null;
+  const available = useWatch({ control, name: `items.${index}.available` });
+  if (available === false || !isPartialOffer(offered, requested)) return null;
   return <StatusTag size="sm" label={label} color="orange.600" />;
 }
 
 /** Campos editáveis do item (sem rótulo visível: o cabeçalho da tabela rotula). */
 function renderEditableFields(
-  { control, errors, index, item, disabled }: RequestQuotationPublicItemRowProps,
+  { control, errors, setValue, index, item, disabled }: RequestQuotationPublicItemRowProps,
   text: PublicFormText
-): { quantity: ReactNode; brand: ReactNode; unit: ReactNode; observation: ReactNode } {
+): {
+  quantity: ReactNode;
+  unavailable: ReactNode;
+  brand: ReactNode;
+  unit: ReactNode;
+  observation: ReactNode;
+} {
   const itemErrors = errors.items?.[index];
   // Quantidade inteira: digitar "30" dá 30. Só admite casas quando o pedido já é fracionado.
   const fractional = !Number.isInteger(item.quantity);
 
+  function markUnavailable() {
+    setValue(`items.${index}.available`, false, { shouldDirty: true, shouldValidate: true });
+    setValue(`items.${index}.quantity`, 0, { shouldDirty: true });
+    setValue(`items.${index}.unitary_value`, null, { shouldDirty: true });
+  }
+
+  function markAvailable() {
+    setValue(`items.${index}.available`, true, { shouldDirty: true, shouldValidate: true });
+    setValue(`items.${index}.quantity`, item.quantity, { shouldDirty: true });
+  }
+
   return {
     quantity: (
       <Box>
-        <Controller
-          name={`items.${index}.quantity`}
-          control={control}
-          render={({ field }) => (
-            <NumberInput
-              name={field.name}
-              aria-label={`${text.fields.offeredQuantity} - ${item.description}`}
-              value={field.value}
-              onValueChange={(value) => field.onChange(value ?? 0)}
-              min={0}
-              allowDot={fractional}
-              decimalPlaces={fractional ? 3 : 0}
-              error={itemErrors?.quantity?.message as string | undefined}
-              isRequired
-              disabled={disabled}
+        <Availability control={control} index={index}>
+          {(unavailable) => (
+            <Controller
+              name={`items.${index}.quantity`}
+              control={control}
+              render={({ field }) => (
+                <NumberInput
+                  name={field.name}
+                  aria-label={`${text.fields.offeredQuantity} - ${item.description}`}
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value ?? 0)}
+                  // Zerar e sair do campo = não tenho este item (marca "sem estoque").
+                  onBlur={() => {
+                    if (!unavailable && (field.value ?? 0) === 0) markUnavailable();
+                  }}
+                  min={0}
+                  allowDot={fractional}
+                  decimalPlaces={fractional ? 3 : 0}
+                  error={itemErrors?.quantity?.message as string | undefined}
+                  isRequired
+                  disabled={disabled || unavailable}
+                />
+              )}
             />
           )}
-        />
+        </Availability>
         <Box mt="4px">
           <PartialTag
             control={control}
@@ -132,41 +180,70 @@ function renderEditableFields(
         </Box>
       </Box>
     ),
-    brand: (
+    unavailable: (
       <Controller
-        name={`items.${index}.brand`}
+        name={`items.${index}.available`}
         control={control}
         render={({ field }) => (
-          <Input
-            aria-label={`${text.fields.brand} - ${item.description}`}
-            name={field.name}
-            placeholder={text.placeholders.brand}
-            value={field.value ?? ''}
-            onChange={(event) => field.onChange(event.target.value)}
-            error={itemErrors?.brand?.message as string | undefined}
-            isRequired
-            disabled={disabled}
-          />
+          <Flex direction="column" align="flex-start" gap="4px">
+            <Checkbox
+              checked={field.value === false}
+              onCheckedChange={(details: { checked: boolean | 'indeterminate' }) =>
+                details.checked === true ? markUnavailable() : markAvailable()
+              }
+              aria-label={`${text.fields.unavailable} - ${item.description}`}
+              disabled={disabled}
+            />
+            {field.value === false && (
+              <StatusTag size="sm" label={text.itemsSection.unavailableTag} color="semanticNeutral.500" />
+            )}
+          </Flex>
         )}
       />
     ),
-    unit: (
-      <Controller
-        name={`items.${index}.unitary_value`}
-        control={control}
-        render={({ field }) => (
-          <MoneyInput
-            name={field.name}
-            aria-label={`${text.fields.unitaryValue} - ${item.description}`}
-            fractionDigits={4}
-            value={field.value}
-            onValueChange={(value) => field.onChange(value)}
-            error={itemErrors?.unitary_value?.message as string | undefined}
-            isRequired
-            disabled={disabled}
+    brand: (
+      <Availability control={control} index={index}>
+        {(unavailable) => (
+          <Controller
+            name={`items.${index}.brand`}
+            control={control}
+            render={({ field }) => (
+              <Input
+                aria-label={`${text.fields.brand} - ${item.description}`}
+                name={field.name}
+                placeholder={unavailable ? '—' : text.placeholders.brand}
+                value={field.value ?? ''}
+                onChange={(event) => field.onChange(event.target.value)}
+                error={itemErrors?.brand?.message as string | undefined}
+                isRequired={!unavailable}
+                disabled={disabled || unavailable}
+              />
+            )}
           />
         )}
-      />
+      </Availability>
+    ),
+    unit: (
+      <Availability control={control} index={index}>
+        {(unavailable) => (
+          <Controller
+            name={`items.${index}.unitary_value`}
+            control={control}
+            render={({ field }) => (
+              <MoneyInput
+                name={field.name}
+                aria-label={`${text.fields.unitaryValue} - ${item.description}`}
+                fractionDigits={4}
+                value={field.value}
+                onValueChange={(value) => field.onChange(value)}
+                error={itemErrors?.unitary_value?.message as string | undefined}
+                isRequired={!unavailable}
+                disabled={disabled || unavailable}
+              />
+            )}
+          />
+        )}
+      </Availability>
     ),
     observation: (
       <Controller
@@ -214,6 +291,7 @@ export function getItemTableCells(
       </Text>
     ),
     quantity: <Box minW="110px">{fields.quantity}</Box>,
+    unavailable: <Box minW="90px">{fields.unavailable}</Box>,
     brand: <Box minW="130px">{fields.brand}</Box>,
     unit: <Box minW="130px">{fields.unit}</Box>,
     total: <LineAmount control={props.control} index={props.index} />,

@@ -472,12 +472,14 @@ export interface ModuleRequestQuotations {
         quotationNote: string;
         quantity: string;
         offeredQuantity: string;
+        unavailable: string;
         brand: string;
         unitaryValue: string;
         amount: string;
         observation: string;
         reponsible: string;
         expirationDate: string;
+        deliveryDate: string;
         file: string;
       };
       /** Alerta quando `requires_file`. */
@@ -526,6 +528,9 @@ export interface ModuleRequestQuotations {
         expirationDateInvalid: string;
         /** `after_or_equal:hoje` (Form Request real) — "mínimo hoje". */
         expirationDateMin: string;
+        deliveryDateRequired: string;
+        deliveryDateInvalid: string;
+        deliveryDateMin: string;
         fileRequired: string;
         unitaryValueRequired: string;
         brandRequired: string;
@@ -589,6 +594,7 @@ export interface ModuleRequestQuotations {
         /** "Item {n}" — título do cartão do item no celular. */
         itemNumber: string;
         partialOffer: string;
+        unavailableTag: string;
       };
       paymentsExtra: {
         subtitle: string;
@@ -607,14 +613,17 @@ export interface ModuleRequestQuotations {
         totalLabel: string;
         /** "{filled} de {total} itens preenchidos". */
         itemsProgress: string;
+        unavailableCount: string;
         missingPrice: string;
         ready: string;
+        noOffer: string;
       };
       successState: {
         title: string;
         description: string;
         totalLabel: string;
         notifiedNote: string;
+        unavailableNote: string;
         closeHint: string;
         alreadyTitle: string;
         alreadyDescription: string;

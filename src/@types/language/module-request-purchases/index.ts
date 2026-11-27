@@ -330,6 +330,9 @@ export interface ModuleRequestPurchases {
           answers: string;
           answersDetail: string;
           footnote: string;
+          unavailable: string;
+          unavailableCount: string;
+          unavailableFootnote: string;
         };
         duplicate: {
           button: string;

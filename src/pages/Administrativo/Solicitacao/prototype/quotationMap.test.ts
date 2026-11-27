@@ -41,6 +41,22 @@ describe('mapa de cotações', () => {
     expect(map.bestByItem).toEqual({ total: 260, suppliers: 2, saving: 30, complete: true });
   });
 
+  it('sem estoque é resposta explícita: conta no fornecedor, mas ele segue parcial', () => {
+    const map = buildQuotationMap({
+      ...data,
+      suppliers: [
+        { ...base, uuid: 'sem', name: 'Sem estoque', received: true, prices: [5, null], unavailable: [false, true], freight: 0, discount: 0 },
+        { ...base, uuid: 'completo', name: 'Completo', received: true, prices: [9, 105], freight: 0, discount: 0 },
+      ],
+    });
+    const sem = map.suppliers.find((s) => s.uuid === 'sem')!;
+    expect(sem.unavailableCount).toBe(1);
+    expect(sem.complete).toBe(false);
+    expect(map.suppliers.map((s) => s.uuid)).toEqual(['completo', 'sem']);
+    expect(map.bestComplete?.uuid).toBe('completo');
+    expect(map.suppliers.find((s) => s.uuid === 'completo')!.unavailableCount).toBe(0);
+  });
+
   it('item que ninguém cotou deixa a combinação incompleta e sem economia', () => {
     const map = buildQuotationMap({
       ...data,

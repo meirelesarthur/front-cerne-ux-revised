@@ -285,6 +285,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           answers: 'Cotações recebidas',
           answersDetail: 'Fornecedores do mais barato no geral para o mais caro',
           footnote: 'Em verde, o menor preço de cada item. O "melhor de cada item" não inclui frete e desconto.',
+          unavailable: 'Sem estoque',
+          unavailableCount: '{n} sem estoque',
+          unavailableFootnote: '"Sem estoque": o fornecedor informou que não tem o item. Diferente de "—", que é item não cotado.',
         },
         duplicate: {
           button: 'Duplicar',

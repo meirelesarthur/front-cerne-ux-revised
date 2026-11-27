@@ -6,18 +6,52 @@
 // regra de validação nem de cálculo (isso continua em `publicQuotationTotals`).
 // -----------------------------------------------------------------------------
 
-type ItemLike = { unitary_value: number | null | undefined; quantity?: number | null };
+type ItemLike = {
+  unitary_value: number | null | undefined;
+  quantity?: number | null;
+  /** `false` = sem estoque (27/11/2026): o item foi RESPONDIDO, só não será ofertado. */
+  available?: boolean;
+};
 
-// Item "preenchido" = preço unitário informado e maior que zero E, quando há
+// Item "com preço" = disponível, preço unitário informado e maior que zero E, quando há
 // quantidade ofertada (27/11: o fornecedor pode ofertar menos que o pedido),
 // quantidade maior que zero. (O campo de dinheiro devolve 0 quando o fornecedor
 // apaga o valor, então 0 vale "vazio".) Sem `quantity` no item, só o preço conta.
 export function isItemPriced(item: ItemLike | undefined): boolean {
+  if (item?.available === false) return false;
   const value = item?.unitary_value;
   const priced = typeof value === 'number' && !Number.isNaN(value) && value > 0;
   const quantity = item?.quantity;
   const hasQuantity = quantity === undefined || quantity === null || quantity > 0;
   return priced && hasQuantity;
+}
+
+/** Item sem estoque: o fornecedor avisou que não tem (não impede a cotação do resto). */
+export function isItemUnavailable(item: ItemLike | undefined): boolean {
+  return item?.available === false;
+}
+
+/** Item RESPONDIDO = com preço ou marcado sem estoque. */
+export function isItemAnswered(item: ItemLike | undefined): boolean {
+  return isItemPriced(item) || isItemUnavailable(item);
+}
+
+export function countUnavailableItems(items: readonly ItemLike[]): number {
+  return items.filter(isItemUnavailable).length;
+}
+
+export function countAnsweredItems(items: readonly ItemLike[]): number {
+  return items.filter(isItemAnswered).length;
+}
+
+// O envio só é liberado quando todos os itens foram respondidos (preço ou sem
+// estoque) E ao menos um tem preço (sem nada a ofertar não há cotação).
+export function canSubmitQuotation(items: readonly ItemLike[]): boolean {
+  return (
+    items.length > 0 &&
+    countAnsweredItems(items) === items.length &&
+    countPricedItems(items) > 0
+  );
 }
 
 /** A quantidade ofertada é menor que a pedida (oferta parcial). */

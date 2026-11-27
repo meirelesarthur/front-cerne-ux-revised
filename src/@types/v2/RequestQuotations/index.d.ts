@@ -150,6 +150,9 @@ export interface RequestQuotationData {
   hash: string;
   quotation_date: string | null;
   expiration_date: string | null;
+  /** Quantos itens o fornecedor marcou "sem estoque" ao responder (27/11/2026);
+   *  não impede a cotação, mas fica explícito para o comprador. API a fazer. */
+  unavailable_items_count?: number | null;
   total_value: number;
   /** "Valor com Desconto" no Dialog Aplicar Saving — CV-04, armadilha
    *  semântica preservada do legado (CL-045): este campo é o DESCONTO
@@ -362,7 +365,11 @@ export interface PublicRequestQuotationData {
  *  backend precisa passar a gravar a quantidade ofertada (ver doc). */
 export interface PublicRequestQuotationItemPayload {
   request_item_uuid: string;
-  /** Quantidade ofertada (padrão: a pedida). */
+  /** `false` = o fornecedor NÃO tem estoque deste item (27/11/2026): não impede a
+   *  cotação do resto, mas o comprador precisa ver isso (mapa de cotações). Com
+   *  `false`, `quantity` vai 0 e preço/marca podem ir vazios. */
+  available: boolean;
+  /** Quantidade ofertada (padrão: a pedida; 0 quando sem estoque). */
   quantity: number;
   unitary_value: number;
   brand: string;
@@ -383,6 +390,8 @@ export interface PublicRequestQuotationPaymentPayload {
 export interface PublicRequestQuotationSubmissionPayload {
   reponsible: string;
   expiration_date: string;
+  /** Previsão de entrega da cotação ('yyyy-MM-dd'; 27/11/2026) — campo novo, API a fazer. */
+  delivery_date: string;
   total_value: number;
   items: PublicRequestQuotationItemPayload[];
   payments: PublicRequestQuotationPaymentPayload[];
@@ -399,6 +408,8 @@ export interface PublicRequestQuotationSubmissionPayload {
 export interface PublicRequestQuotationItemFormRow {
   request_item_uuid: string;
   description: string;
+  /** `false` = sem estoque (zerar a quantidade também marca). Padrão: `true`. */
+  available: boolean;
   quantity: number;
   brand: string | null;
   unitary_value: number | null;
@@ -429,6 +440,8 @@ export interface PublicRequestQuotationPaymentFormRow {
 export interface PublicRequestQuotationForm {
   reponsible: string | null;
   expiration_date: string | null;
+  /** Previsão de entrega ('yyyy-MM-dd'), depois da validade da cotação (27/11/2026). */
+  delivery_date: string | null;
   file: File | null;
   items: PublicRequestQuotationItemFormRow[];
   payments: PublicRequestQuotationPaymentFormRow[];

@@ -18,11 +18,14 @@ export interface RequestQuotationPublicSuccessProps {
   already?: boolean;
   /** Total enviado agora (só logo depois do envio). */
   total?: number;
+  /** Quantos itens foram enviados como "sem estoque" (27/11): fica explícito na devolução. */
+  unavailable?: number;
 }
 
 export function RequestQuotationPublicSuccess({
   already = false,
   total,
+  unavailable = 0,
 }: RequestQuotationPublicSuccessProps) {
   const { languageGB } = useLanguage();
   const text = languageGB.requestQuotations.requestQuotation.publicForm.successState;
@@ -65,6 +68,15 @@ export function RequestQuotationPublicSuccess({
             {formatCurrency(total)}
           </Text>
         </Box>
+      )}
+
+      {!already && unavailable > 0 && (
+        <Flex align="center" gap={2} color="cardTextSecondary" fontSize="sm" fontWeight="medium">
+          <Icon name="warning" size="sm" />
+          <Text as="span" fontSize="inherit">
+            {text.unavailableNote.replace('{n}', String(unavailable))}
+          </Text>
+        </Flex>
       )}
 
       {!already && (

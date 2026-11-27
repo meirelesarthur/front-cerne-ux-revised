@@ -23,11 +23,12 @@ import type {
 import { getItemTableCells } from './RequestQuotationPublicItemRow';
 import { handleEnterMovesDown } from './tableKeyboard';
 
-import type { Control, FieldErrors } from 'react-hook-form';
+import type { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 
 export interface RequestQuotationPublicItemsProps {
   control: Control<PublicRequestQuotationForm>;
   errors: FieldErrors<PublicRequestQuotationForm>;
+  setValue: UseFormSetValue<PublicRequestQuotationForm>;
   items: PublicItemData[];
   /** Rótulo da coluna de itens: "Produto" (tipo P) ou "Serviços". */
   itemLabel: string;
@@ -37,6 +38,7 @@ export interface RequestQuotationPublicItemsProps {
 export function RequestQuotationPublicItems({
   control,
   errors,
+  setValue,
   items,
   itemLabel,
   disabled,
@@ -53,6 +55,7 @@ export function RequestQuotationPublicItems({
           { key: 'item', header: itemLabel },
           { key: 'requested', header: text.fields.quantity, align: 'right' },
           { key: 'quantity', header: text.fields.offeredQuantity },
+          { key: 'unavailable', header: text.fields.unavailable },
           { key: 'brand', header: text.fields.brand },
           { key: 'unit', header: text.fields.unitaryValue },
           { key: 'total', header: text.fields.amount, align: 'right' },
@@ -60,7 +63,7 @@ export function RequestQuotationPublicItems({
         ]}
         rows={items.map((item, index) => ({
           key: item.request_item_uuid,
-          cells: getItemTableCells({ control, errors, index, item, disabled }, text),
+          cells: getItemTableCells({ control, errors, setValue, index, item, disabled }, text),
         }))}
       />
     </Box>

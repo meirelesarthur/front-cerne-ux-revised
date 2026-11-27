@@ -101,6 +101,14 @@ export function QuotationMapDialog({ isOpen, onClose, requestPurchaseUuid, reque
                   color="orange.600"
                 />
               ) : null}
+              {/* 27/11: o fornecedor avisou que NÃO TEM estoque de alguns itens (resposta explícita). */}
+              {s.received && s.unavailableCount > 0 && (
+                <StatusTag
+                  size="sm"
+                  label={text.unavailableCount.replace('{n}', String(s.unavailableCount))}
+                  color="semanticNeutral.500"
+                />
+              )}
             </Flex>
           ),
         })),
@@ -122,7 +130,12 @@ export function QuotationMapDialog({ isOpen, onClose, requestPurchaseUuid, reque
           ...Object.fromEntries(
             map.suppliers.map((s) => {
               const price = s.received ? s.prices[i] : null;
-              if (price === null || price === undefined) return [s.uuid, <Text color="fg.muted">—</Text>];
+              if (price === null || price === undefined) {
+                // "Sem estoque" (resposta explícita do fornecedor) é diferente de "—" (não cotou).
+                return s.received && s.unavailable?.[i]
+                  ? [s.uuid, <StatusTag size="sm" label={text.unavailable} color="semanticNeutral.500" />]
+                  : [s.uuid, <Text color="fg.muted">—</Text>];
+              }
               const isCheapest = map.cheapest[item.uuid]?.supplierUuid === s.uuid;
               return [
                 s.uuid,
@@ -211,6 +224,11 @@ export function QuotationMapDialog({ isOpen, onClose, requestPurchaseUuid, reque
           <Text fontSize="sm" color="fg.muted" mt={3}>
             {text.footnote}
           </Text>
+          {map.suppliers.some((s) => s.received && s.unavailableCount > 0) && (
+            <Text fontSize="sm" color="fg.muted" mt={1}>
+              {text.unavailableFootnote}
+            </Text>
+          )}
         </>
       )}
     </CustomDialog>

@@ -285,6 +285,9 @@ export const languageRequestPurchases: ModuleRequestPurchases = {
           answers: 'Quotes received',
           answersDetail: 'Suppliers from the cheapest overall to the most expensive',
           footnote: 'In green, the lowest price of each item. The best of each item does not include freight and discount.',
+          unavailable: 'Out of stock',
+          unavailableCount: '{n} out of stock',
+          unavailableFootnote: '"Out of stock": the supplier reported not having the item. Different from "—", which is an item not quoted.',
         },
         duplicate: {
           button: 'Duplicate',

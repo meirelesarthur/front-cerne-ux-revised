@@ -8,6 +8,9 @@
 //   - menor preço de cada item (entre as cotações recebidas);
 //   - "melhor de cada item": quanto custaria comprar cada item de quem cobra
 //     menos (vira uma Ordem por fornecedor) e a economia sobre o melhor total.
+// Sem estoque (27/11): o fornecedor pode marcar itens "sem estoque" ao responder.
+// Isso NÃO impede a cotação, mas fica EXPLÍCITO (`unavailable`), diferente de "não
+// cotou"; o fornecedor segue "parcial" e nunca entra como melhor total completo.
 // Rota simulada: `/request-purchases/{uuid}/prototype/quotation-map`.
 // -----------------------------------------------------------------------------
 
@@ -25,6 +28,8 @@ export interface QuotationMapSupplierInput {
   date: string | null;
   /** Preço unitário por item, na ordem de `items`; null = não cotou. */
   prices: (number | null)[];
+  /** Itens que o fornecedor marcou "sem estoque" (27/11): resposta explícita, NÃO é "não cotou". */
+  unavailable?: boolean[];
   /** Total informado quando não há preço por item. */
   total_reported: number | null;
   freight: number;
@@ -42,6 +47,8 @@ export interface QuotationMapSupplier extends QuotationMapSupplierInput {
   subtotal: number;
   total: number;
   quotedCount: number;
+  /** Quantos itens o fornecedor marcou "sem estoque". */
+  unavailableCount: number;
   complete: boolean;
 }
 
@@ -70,6 +77,7 @@ export function buildQuotationMap(data: QuotationMapData): QuotationMap {
       subtotal: round2(subtotal),
       total: round2(subtotal + s.freight - s.discount),
       quotedCount: quoted,
+      unavailableCount: (s.unavailable ?? []).filter(Boolean).length,
       complete,
     };
   });

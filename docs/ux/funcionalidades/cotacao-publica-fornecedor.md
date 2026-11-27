@@ -37,6 +37,13 @@ Cotações, mapa de cotações e Solicitação × Ordem)
   saiu.
 - **27/11 — O cabeçalho usa a logo oficial do CERNE** (a mesma da barra lateral, versão clara ou escura conforme o
   tema) ao lado do título "Cotação de compra", no lugar do ícone genérico.
+- **27/11 — "Sem estoque" por item.** Coluna com caixa de seleção (ou zerar a Qtde ofertada e sair do campo): o item
+  segue na devolução como `available: false`, quantidade 0, com preço e marca dispensados. Não impede a cotação:
+  o envio exige todos os itens respondidos e ao menos um com preço. O comprador vê "Sem estoque" na célula do mapa
+  de cotações (diferente de "—", não cotou), "N sem estoque" no cabeçalho do fornecedor e na aba Cotações; o
+  fornecedor continua "parcial" e nunca vira o melhor total completo.
+- **27/11 — Previsão de entrega** (data, obrigatória, não pode ser passada) logo após a validade da cotação; vai no
+  envio como `delivery_date`.
 - ~~Foco automático no primeiro valor unitário ao abrir~~ — **Substituída em 27/11:** com o resumo no topo, o foco
   empurrava a tela para baixo e abria o teclado no celular.
 
@@ -111,6 +118,9 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
 - [ ] **Produto:** o que o comprador vê no mapa de cotações quando a oferta é parcial (hoje o mapa de demonstração não
   usa a quantidade ofertada) e se o fornecedor pode ofertar **mais** que o pedido (hoje não há limite).
 
+- [ ] **Backend:** gravar `items[].available` e `delivery_date` na cotação pública e expor `unavailable_items_count` e
+  a lista de itens sem estoque ao comprador (hoje só o simulador faz isso).
+
 ### Pendências de decisão
 
 —
@@ -122,3 +132,4 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
 | 27/11/2026 | `fab09ae` | Repaginação da cotação pública: resumo, passos, tabela e cartões, barra de envio, condições em `RepeaterList`, cartão de sucesso; link de demonstração `demo-22-4` |
 | 27/11/2026 | `946814c` | Itens sempre em tabela com edição na linha e Enter descendo de linha (o cartão do celular saiu); logo oficial do CERNE no cabeçalho |
 | 27/11/2026 | (este commit) | Coluna Qtde ofertada editável (vem com o total, marca "Parcial", total usa a ofertada); condições de pagamento em tabela com edição na linha; Enter desce de linha nas duas tabelas; uma só barra de rolagem |
+| 27/11/2026 | (este commit) | Sem estoque por item (formulário, mapa de cotações e aba Cotações) e campo Previsão de entrega após a validade |

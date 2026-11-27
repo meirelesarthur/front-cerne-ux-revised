@@ -18,7 +18,7 @@
 //   expiration_date   required|date|after_or_equal:hoje
 //   items.*.unitary_value  required|numeric (legado: obrigatório, sem mínimo;
 //                          o total geral > 0 é validado no submit — T-081-FE-03)
-//   items.*.brand          required|string
+//   items.*.brand          required|string (dispensado com o item sem estoque, `available=false`)
 //   items.*.observation    nullable|string|max:60
 //   payments.*.payment_method  required, enum (0..4, mirror
 //                              `requestQuotationPaymentMethod`)
@@ -77,6 +77,24 @@ export const requestQuotationPublicSchema = (languageGB: LanguageDate, requiresF
         return !Number.isNaN(parsed.getTime()) && parsed.getTime() >= today.getTime();
       }),
 
+    // 27/11/2026 — PREVISÃO DE ENTREGA da cotação (uma só: o fornecedor é um só):
+    // string ISO 'yyyy-MM-dd', obrigatória, não anterior a hoje (preview client-side;
+    // o servidor é a autoridade — campo novo, API a fazer, ver doc).
+    delivery_date: yup
+      .string()
+      .trim()
+      .nullable()
+      .required(messages.deliveryDateRequired)
+      .matches(/^\d{4}-\d{2}-\d{2}$/, {
+        message: messages.deliveryDateInvalid,
+        excludeEmptyString: true,
+      })
+      .test('delivery-date-min-today', messages.deliveryDateMin, (value) => {
+        if (!value) return true;
+        const parsed = new Date(`${value}T00:00:00`);
+        return !Number.isNaN(parsed.getTime()) && parsed.getTime() >= today.getTime();
+      }),
+
     // `Rule::requiredIf(quotationRequiresFile())` (Form Request real) —
     // `requiresFile` é resolvido pelo CHAMADOR a partir de
     // `PublicRequestQuotationData.requires_file` (mesma técnica de
@@ -97,11 +115,32 @@ export const requestQuotationPublicSchema = (languageGB: LanguageDate, requiresF
       yup.object({
         request_item_uuid: yup.string().required(),
         description: yup.string().nullable(),
+        // 27/11/2026: `false` = o fornecedor marcou o item "sem estoque" (ou zerou a
+        // quantidade). Isso NÃO impede a cotação: só dispensa preço e marca desse item.
+        available: yup.boolean().default(true),
         quantity: yup.number().required(),
         // Legado: obrigatório (HTML), sem mínimo; o que se exige é total geral > 0
         // ("O valor deve ser maior que zero", validado no submit do formulário).
-        unitary_value: v.number().required(messages.unitaryValueRequired),
-        brand: yup.string().trim().required(messages.brandRequired),
+        // Item sem estoque: preço e marca deixam de ser obrigatórios.
+        unitary_value: yup
+          .number()
+          .transform((value, original) => (original === '' || original === null ? undefined : value))
+          .typeError(messages.unitaryValueRequired)
+          .nullable()
+          .when('available', {
+            is: (available: boolean) => available === false,
+            then: (schema) => schema.notRequired(),
+            otherwise: (schema) => schema.required(messages.unitaryValueRequired),
+          }),
+        brand: yup
+          .string()
+          .trim()
+          .nullable()
+          .when('available', {
+            is: (available: boolean) => available === false,
+            then: (schema) => schema.notRequired(),
+            otherwise: (schema) => schema.required(messages.brandRequired),
+          }),
         observation: yup.string().trim().nullable().max(60, messages.observationMax),
         amount: yup.number().nullable(),
       })

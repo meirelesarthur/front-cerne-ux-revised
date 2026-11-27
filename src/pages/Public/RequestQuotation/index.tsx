@@ -94,7 +94,7 @@ export function RequestQuotationPublicPage() {
 
   // Total enviado agora (só depois de um POST bem-sucedido) — mostra o cartão de
   // confirmação mesmo que a reconsulta do `GET` ainda esteja em andamento.
-  const [submittedTotal, setSubmittedTotal] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState<{ total: number; unavailable: number } | null>(null);
 
   const query = useQuery({
     queryKey: ['public-request-quotation', hash],
@@ -107,8 +107,8 @@ export function RequestQuotationPublicPage() {
     refetchOnWindowFocus: false,
   });
 
-  function handleSubmittedOrAlreadySubmitted(total?: number) {
-    if (typeof total === 'number') setSubmittedTotal(total);
+  function handleSubmittedOrAlreadySubmitted(submitted?: { total: number; unavailable: number }) {
+    if (submitted) setSubmitted(submitted);
     query.refetch();
   }
 
@@ -161,8 +161,8 @@ export function RequestQuotationPublicPage() {
               title={text.notFoundState.title}
               description={text.notFoundState.description}
             />
-          ) : submittedTotal !== null ? (
-            <RequestQuotationPublicSuccess total={submittedTotal} />
+          ) : submitted !== null ? (
+            <RequestQuotationPublicSuccess total={submitted.total} unavailable={submitted.unavailable} />
           ) : query.isPending ? (
             <Flex direction="column" align="center" justify="center" py={12} gap={3} role="status">
               <Spinner size="lg" />
