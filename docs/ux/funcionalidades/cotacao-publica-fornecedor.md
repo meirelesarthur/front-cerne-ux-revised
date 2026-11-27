@@ -20,6 +20,12 @@ Cotações, mapa de cotações e Solicitação × Ordem)
 - **27/11 — Envio só com todos os itens com preço maior que zero** (o campo de valor devolve 0 quando o fornecedor
   apaga o preço); marca por item, condição, responsável e validade seguem obrigatórios.
 - **27/11 — A observação do comprador aparece em destaque no resumo**, não mais dentro do formulário.
+- **27/11 — Os itens são sempre uma tabela com edição na própria linha** (marca, valor unitário e observação), para
+  lançar muitos produtos sem rolar de cartão em cartão; no celular a tabela rola dentro do próprio quadro, sem rolar a
+  página de lado. **Enter desce para o mesmo campo da linha de baixo** (marca → marca, valor → valor) e nunca envia o
+  formulário. ~~Um cartão por item no celular (27/11, primeira versão)~~ — substituída no mesmo dia.
+- **27/11 — O cabeçalho usa a logo oficial do CERNE** (a mesma da barra lateral, versão clara ou escura conforme o
+  tema) ao lado do título "Cotação de compra", no lugar do ícone genérico.
 - ~~Foco automático no primeiro valor unitário ao abrir~~ — **Substituída em 27/11:** com o resumo no topo, o foco
   empurrava a tela para baixo e abria o teclado no celular.
 
@@ -36,8 +42,10 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
 - **`RequestQuotationPublicForm.tsx`:** seções (`FormSection`) Itens, Condições de pagamento, Dados do responsável (2
   colunas) e Anexo; **barra de envio fixa** no rodapé. Única mudança de lógica: o callback de sucesso recebe o total
   enviado.
-- **`RequestQuotationPublicItems.tsx` e `RequestQuotationPublicItemRow.tsx`:** **tabela** (`SimpleTable` do kit) a
-  partir de 992px e **um cartão por item** abaixo disso, sem rolagem horizontal da página.
+- **`RequestQuotationPublicItems.tsx` e `RequestQuotationPublicItemRow.tsx`:** **tabela** (`SimpleTable` do kit) em
+  qualquer largura, com a coluna "#" e as células editáveis na linha; rola por dentro do quadro no celular; Enter
+  desce de linha. O cartão por item saiu.
+- **`index.tsx`:** logo oficial (`assets/Logo.svg` e `Logo-white.svg`) no cabeçalho.
 - **`RequestQuotationPublicPaymentRow.tsx`:** `RepeaterList` do kit, um cartão numerado por condição; mantidas a
   confirmação de remoção, a trava de última condição e "adicionar só com a anterior completa".
 - **`RequestQuotationPublicSubmitBar.tsx` (novo):** total com `aria-live`, "N de M itens preenchidos" e botão
@@ -61,11 +69,15 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
    habilita.
 3. Enviar sem responsável: os erros aparecem nos campos. Preencher tudo e enviar: cartão de sucesso com o total e o
    aviso ao comprador.
-4. Em 375px (celular): cartões por item, sem rolagem horizontal e barra fixa; em 1280px: tabela de itens.
+4. Em qualquer largura: tabela de itens (no celular rola dentro do quadro, sem rolar a página de lado) e barra fixa;
+   no valor unitário do item 1 digitar e apertar Enter leva o cursor ao valor do item 2.
 5. Testes: `npx vitest run src/pages/Public` (inclui `publicQuotationProgress.test.ts` e `publicQuotationTotals.test.ts`)
    e `npx tsc --noEmit -p .`.
 
 ## A fazer
+
+- [ ] **Produto:** o valor unitário usa 4 casas (regra do legado): digitar "880" vira "R$ 0,0880" (a máscara enche da
+  direita). Decidir se a cotação pública passa a aceitar 2 casas ou se mantém as 4 com orientação na tela.
 
 - [ ] **Front:** a mensagem do campo "responsável" aparece em inglês cru do schema (`reponsible must be a ...`) quando
   vazio; trocar por texto traduzido (o schema não foi tocado).
@@ -73,6 +85,8 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
   parcelas e intervalo (só o rótulo visual).
 - [ ] **Front/kit:** no celular, o botão de remover condição do `RepeaterList` ocupa uma faixa ao lado do cartão e
   estreita a condição.
+- [ ] **Front:** colunas Marca e Observação ficam estreitas na tabela e o texto longo corta; avaliar largura mínima ou
+  quebra de linha.
 - [ ] **Validar com o negócio:** ver o estado "já enviada" e o 404 reais (o simulador não deixa a cotação como
   recebida e devolve 200 para hash desconhecido).
 - [ ] **Backend:** nada novo; a API pública continua a mesma.
@@ -85,4 +99,5 @@ Repaginação de apresentação (27/11); schema, `useMutation`, tratamento de 40
 
 | Data | Commit | O que mudou |
 |---|---|---|
-| 27/11/2026 | (este commit) | Repaginação da cotação pública: resumo, passos, tabela e cartões, barra de envio, condições em `RepeaterList`, cartão de sucesso; link de demonstração `demo-22-4` |
+| 27/11/2026 | `fab09ae` | Repaginação da cotação pública: resumo, passos, tabela e cartões, barra de envio, condições em `RepeaterList`, cartão de sucesso; link de demonstração `demo-22-4` |
+| 27/11/2026 | (este commit) | Itens sempre em tabela com edição na linha e Enter descendo de linha (o cartão do celular saiu); logo oficial do CERNE no cabeçalho |

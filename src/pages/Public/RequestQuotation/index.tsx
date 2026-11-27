@@ -22,13 +22,16 @@
 
 import { useState } from 'react';
 
-import { Box, EmptyState, Flex, Spinner, Text, VStack } from '@chakra-ui/react';
+import { Box, EmptyState, Flex, Image, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useParams } from 'react-router-dom';
 
+import logoFull from '@/assets/Logo.svg';
+import logoFullWhite from '@/assets/Logo-white.svg';
 import { Button } from '@/components/Button';
 import { Icon, type IconName } from '@/components/ui/Icon';
+import { useTheme } from '@/contexts/ThemeContext';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -86,6 +89,7 @@ function StateCard({
 export function RequestQuotationPublicPage() {
   const { hash } = useParams<{ hash: string }>();
   const { languageGB } = useLanguage();
+  const { theme } = useTheme();
   const text = languageGB.requestQuotations.requestQuotation.publicForm;
 
   // Total enviado agora (só depois de um POST bem-sucedido) — mostra o cartão de
@@ -134,22 +138,17 @@ export function RequestQuotationPublicPage() {
           borderBottomWidth="1px"
           borderColor="cardBorder"
         >
-          <Flex
-            align="center"
-            justify="center"
-            boxSize="40px"
+          {/* Logo oficial do CERNE (a mesma da barra lateral), clara ou escura conforme o tema. */}
+          <Image
+            src={theme === 'dark' ? logoFullWhite : logoFull}
+            alt={text.brandName}
+            h="30px"
+            w="auto"
             flexShrink={0}
-            borderRadius="lg"
-            bg="feedBack.successMain"
-            color="white"
-          >
-            <Icon name="cart" size="lg" />
-          </Flex>
-          <Box minW={0}>
-            <Text fontSize="xs" fontWeight="semibold" color="cardTextSecondary" textTransform="uppercase">
-              {text.brandName}
-            </Text>
-            <Text as="h1" fontSize="xl" fontWeight="bold" color="cardTextPrimary" lineHeight="1.2">
+            userSelect="none"
+          />
+          <Box minW={0} pl={3} borderLeftWidth="1px" borderColor="cardBorder">
+            <Text as="h1" fontSize="lg" fontWeight="bold" color="cardTextPrimary" lineHeight="1.2">
               {text.heading}
             </Text>
           </Box>

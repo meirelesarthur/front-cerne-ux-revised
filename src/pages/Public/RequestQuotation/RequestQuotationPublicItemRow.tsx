@@ -15,21 +15,19 @@
 // cada mudança de `unitary_value` — nunca enviado ao servidor. O preço unitário
 // usa 4 casas (legado, `money4`).
 //
-// REPAGINAÇÃO (só apresentação): os MESMOS campos/nomes são exibidos de dois
-// jeitos — células de tabela no desktop (`getItemTableCells`, sem rótulo
-// visível: o cabeçalho da tabela rotula e cada campo leva `aria-label`) e
-// cartão no celular (`RequestQuotationPublicItemRow`, com rótulo). Só um dos
-// dois é montado por vez (decide `RequestQuotationPublicItems`).
+// REPAGINAÇÃO (só apresentação): cada item é uma LINHA de tabela com edição na
+// própria linha (`getItemTableCells`, usada por `RequestQuotationPublicItems`):
+// sem rótulo visível por campo — o cabeçalho da tabela rotula e cada campo leva
+// `aria-label`. Desde 27/11 não há mais cartão por item no celular.
 // -----------------------------------------------------------------------------
 
 import type { ReactNode } from 'react';
 
-import { Box, Flex, SimpleGrid, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { Controller, useWatch } from 'react-hook-form';
 
 import { Input } from '@/components/Form/Input';
 import { MoneyInput } from '@/components/Form/MoneyInput';
-import { Icon } from '@/components/ui/Icon';
 
 import { useLanguage } from '@/hooks/useLanguage';
 
@@ -168,6 +166,11 @@ export function getItemTableCells(
 ): Record<string, ReactNode> {
   const fields = renderEditableFields(props, text, false);
   return {
+    index: (
+      <Text as="span" fontSize="inherit" color="cardTextSecondary" fontWeight="semibold">
+        {props.index + 1}
+      </Text>
+    ),
     item: (
       <Box minW="200px">
         <Text as="span" fontSize="inherit" fontWeight="medium" color="cardTextPrimary">
@@ -185,73 +188,4 @@ export function getItemTableCells(
     total: <LineAmount control={props.control} index={props.index} />,
     observation: <Box minW="150px">{fields.observation}</Box>,
   };
-}
-
-/** Cartão do item (celular): título, quantidade, campos rotulados e total da linha. */
-export function RequestQuotationPublicItemRow(props: RequestQuotationPublicItemRowProps) {
-  const text = usePublicFormText();
-  const { item, index, control } = props;
-  const fields = renderEditableFields(props, text, true);
-
-  return (
-    <Box
-      as="li"
-      listStyleType="none"
-      bg="cardBG"
-      borderWidth="1px"
-      borderColor="cardBorder"
-      borderRadius="xl"
-      boxShadow="cardShadow"
-      p={4}
-    >
-      <Flex align="flex-start" justify="space-between" gap={3} mb={4}>
-        <Box minW={0}>
-          <Text fontSize="xs" color="cardTextSecondary" fontWeight="semibold" textTransform="uppercase">
-            {text.itemsSection.itemNumber.replace('{n}', String(index + 1))}
-          </Text>
-          <Text fontSize="md" fontWeight="semibold" color="cardTextPrimary" wordBreak="break-word">
-            {item.description}
-          </Text>
-        </Box>
-        <Flex
-          align="center"
-          gap={1}
-          flexShrink={0}
-          px={2}
-          py={1}
-          borderRadius="md"
-          bg="selectedBG"
-          color="cardTextPrimary"
-          fontSize="sm"
-          fontWeight="medium"
-        >
-          <Icon name="package" size="xs" />
-          <Text as="span" fontSize="inherit">
-            {text.fields.quantity}: {String(item.quantity)}
-          </Text>
-        </Flex>
-      </Flex>
-
-      <SimpleGrid columns={{ base: 1, sm: 2 }} gap={3}>
-        {fields.brand}
-        {fields.unit}
-        <Box gridColumn={{ sm: '1 / -1' }}>{fields.observation}</Box>
-      </SimpleGrid>
-
-      <Flex
-        align="center"
-        justify="space-between"
-        mt={4}
-        pt={3}
-        borderTopWidth="1px"
-        borderColor="cardBorder"
-        fontSize="md"
-      >
-        <Text as="span" fontSize="sm" color="cardTextSecondary">
-          {text.fields.amount}
-        </Text>
-        <LineAmount control={control} index={index} strong />
-      </Flex>
-    </Box>
-  );
 }
